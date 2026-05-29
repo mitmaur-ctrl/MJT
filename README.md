@@ -1,0 +1,2 @@
+# MJT
+Mahjong Tutor project
