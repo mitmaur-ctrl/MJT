@@ -1,1 +1,776 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!--
+==================================================
+MJT DEVELOPMENT MANIFEST
+==================================================
+Project:
+Mit's MJT — Mahjong Tutor
+Version:
+6BT v1.14.2
+Purpose:
+- Fix Undo Clear visibility bug on first page load
+- Preserve v1.14.1 Draw Tile workflow
+- Preserve v1.14 TD ↔ HD workflow
+- Player flow: 16 tiles → Draw → 17 tiles → Current Hand Display
+- Dealer flow remains: 17 tiles → Discard placeholder
+- Discard screen still reserved for later v1.x
+- Preserve architecture locks from v1.14
+Roadmap:
+V1 = Input Layer
+V2 = Mahjong Engine
+V3 = Graphics & Polish
+V4 = Photo Recognition
+==================================================
+MJT ARCHITECTURE LOCKS
+==================================================
+LOCK #1 — Masthead = Information Only
+Contains:
+- Title
+- Version
+- Tile counter
+- Player / Dealer toggle
+- Status line
+Must NOT contain:
+- Clear All
+- Start
+- Accept
+- Undo Clear
+- Helper text
+--------------------------------------------------
+LOCK #2 — Bottom Action Area
+Contains:
+- Clear All
+- Start / Accept
+- Undo Clear when available
+- "Long press tile to clear it."
+--------------------------------------------------
+LOCK #3 — Tile Layout
+Chars = 3 x 3
+Bams = 3 x 3
+Dots = 3 x 3
+Winds = 4 across
+Dragons = 3 across
+--------------------------------------------------
+LOCK #4 — TD ↔ HD Workflow
+TD Entry Mode:
+[Clear All] [Start]
+Start opens Starting Hand Display.
+HD Starting Mode:
+Player:
+[Revise] [Draw]
+Dealer:
+[Revise] [Discard]
+Suggested Discard:
+Engine coming in V2
+Revise returns to TD Revision Mode.
+TD Revision Mode:
+[Clear All] [Accept]
+Accept returns to Current Hand Display.
+Start appears only in Entry Mode.
+Accept appears only in Revision Mode.
+--------------------------------------------------
+LOCK #5 — Undo Clear Behavior
+Clear All saves previous hand.
+Undo Clear restores previous hand.
+Applies in Entry Mode and Revision Mode.
+Undo Clear:
+- Hidden on page load
+- Hidden during normal tile entry
+- Appears only after Clear All
+- Restores the hand immediately before Clear All
+- Is not a Word/Excel-style history undo
+- Does not step backward through tile taps
+--------------------------------------------------
+LOCK #6 — Hand Limits
+Player = 16 tiles
+Dealer = 17 tiles
+--------------------------------------------------
+LOCK #7 — Tile Behavior
+Tap:
+blank → 1 → 2 → 3 → 4 → blank
+Long press:
+clears individual tile
+--------------------------------------------------
+LOCK #8 — Draw Screen
+Draw screen adds exactly one tile.
+Draw screen does not replace the TD screen.
+Draw screen does not alter starting-hand entry rules.
+After Draw, Current Hand Display appears.
+==================================================
+REGRESSION CHECKLIST
+==================================================
+TD Screen:
+□ Chars/Bams/Dots = 3x3
+□ Winds = 4 across
+□ Dragons = 3 across
+□ Suit counters work
+□ Selected tiles highlight yellow
+□ Tile counts are blue
+□ Long press clears individual tile
+□ iPhone popup suppressed
+□ Max tile lock works
+□ Player = 16
+□ Dealer = 17
+□ Player/Dealer target updates
+Buttons:
+□ Clear All works
+□ Undo Clear appears only after Clear All
+□ Undo Clear works in Entry Mode
+□ Undo Clear works in Revision Mode
+□ Start disabled until complete
+□ Start appears only in Entry Mode
+□ Start opens Starting Hand Display
+□ Accept appears only in Revision Mode
+□ Accept returns to Current Hand Display
+HD Screen:
+□ Starting Hand Display appears after initial Start
+□ Current Hand Display appears after Accept
+□ Player Starting HD shows Revise + Draw
+□ Dealer Starting HD shows Revise + Discard
+□ Dealer HD shows "Engine coming in V2"
+□ Grouped display, not raw vertical list
+□ Revise returns to TD with selections preserved
+Draw Screen:
+□ Draw opens tile selector
+□ Draw tile adds exactly one tile
+□ After Draw, Current Hand Display appears
+□ Current Hand Display shows 17 tiles after player draw
+□ Current Hand Display then offers Discard
+Revision Mode:
+□ Initial message = "Review and revise your hand."
+□ After valid tile changes = "Revision ready. Press Accept."
+==================================================
+END MANIFEST
+==================================================
+-->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mit's MJT</title>
+<style>
+html, body {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+body {
+  font-family: Arial, sans-serif;
+  background: #f5f5f5;
+  margin: 0;
+  padding: 0;
+}
+.fixed-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 999;
+  background: white;
+  border-bottom: 1px solid #ddd;
+  padding: 4px 8px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.1);
+}
+.title {
+  text-align: center;
+  font-size: 22px;
+  font-weight: bold;
+  line-height: 1.1;
+}
+.subtitle {
+  text-align: center;
+  font-size: 12px;
+  color: #666;
+}
+.counter {
+  text-align: center;
+  font-size: 14px;
+  margin-top: 4px;
+}
+.mode-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+.mode-button,
+.action-button {
+  border: none;
+  border-radius: 8px;
+  padding: 7px 12px;
+  font-size: 14px;
+  background: #ddd;
+  color: #000;
+}
+.mode-button.active {
+  background: #222;
+  color: white;
+}
+.suggestion {
+  text-align: center;
+  font-size: 13px;
+  font-weight: bold;
+  margin-top: 4px;
+}
+.container {
+  max-width: 900px;
+  margin: auto;
+  padding: 120px 8px 20px;
+  background: white;
+}
+.hidden {
+  display: none !important;
+}
+.section {
+  margin-top: 10px;
+}
+.section h2 {
+  margin: 4px 0;
+  font-size: 18px;
+}
+.tile-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+.wind-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+.dragon-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+.tile {
+  background: #e9e9e9;
+  border-radius: 10px;
+  text-align: center;
+  padding: 10px 4px;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  touch-action: manipulation;
+}
+.tile.selected {
+  background: #fff3a3;
+}
+.tile-name {
+  font-size: 16px;
+  font-weight: bold;
+  color: black;
+}
+.tile-count {
+  height: 20px;
+  font-size: 18px;
+  margin-top: 3px;
+  color: #0047ab;
+  font-weight: bold;
+}
+.actions,
+.undo-row {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+.start-button.enabled {
+  background: #222;
+  color: white;
+}
+.accept-button.enabled {
+  background: #0057b8;
+  color: white;
+}
+.start-button.disabled,
+.accept-button.disabled {
+  background: #bbb;
+  color: #666;
+}
+.undo-button {
+  background: #0057b8;
+  color: white;
+}
+.tip {
+  text-align: center;
+  font-size: 12px;
+  color: #666;
+  margin-top: 6px;
+  margin-bottom: 8px;
+}
+.hand-title,
+.draw-title {
+  text-align: center;
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+.hand-meta,
+.draw-meta {
+  text-align: center;
+  font-size: 14px;
+  font-weight: bold;
+  color: #444;
+  margin-bottom: 10px;
+}
+.hand-display {
+  background: #f0f0f0;
+  border-radius: 10px;
+  padding: 12px;
+  font-size: 16px;
+}
+.hand-section {
+  margin-bottom: 12px;
+}
+.hand-section-title {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+.hand-tile {
+  display: inline-block;
+  background: white;
+  border-radius: 8px;
+  padding: 6px 8px;
+  margin: 3px;
+  font-weight: bold;
+}
+.engine-panel {
+  background: #fff3a3;
+  border-radius: 10px;
+  padding: 10px;
+  margin-top: 12px;
+  text-align: center;
+}
+.engine-title {
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+.engine-placeholder {
+  color: #0047ab;
+  font-weight: bold;
+}
+</style>
+</head>
+<body>
+<div class="fixed-header">
+  <div class="title">Mit's MJT</div>
+  <div class="subtitle">(6BT v1.14.2)</div>
+  <div class="counter">
+    Tiles Entered: <span id="total">0</span> / <span id="target">16</span>
+  </div>
+  <div class="mode-buttons">
+    <button id="playerBtn" class="mode-button active" onclick="setMode('player')">Player</button>
+    <button id="dealerBtn" class="mode-button" onclick="setMode('dealer')">Dealer</button>
+  </div>
+  <div id="suggestion" class="suggestion">Need 16 more tile(s).</div>
+</div>
+<div class="container">
+  <div id="tdScreen">
+    <div class="section">
+      <h2>Chars (<span id="charsTotal">0</span>)</h2>
+      <div class="tile-grid" id="characters"></div>
+    </div>
+    <div class="section">
+      <h2>Bams (<span id="bamsTotal">0</span>)</h2>
+      <div class="tile-grid" id="bams"></div>
+    </div>
+    <div class="section">
+      <h2>Dots (<span id="dotsTotal">0</span>)</h2>
+      <div class="tile-grid" id="dots"></div>
+    </div>
+    <div class="section">
+      <h2>Winds (<span id="windsTotal">0</span>)</h2>
+      <div class="wind-grid" id="winds"></div>
+    </div>
+    <div class="section">
+      <h2>Dragons (<span id="dragonsTotal">0</span>)</h2>
+      <div class="dragon-grid" id="dragons"></div>
+    </div>
+    <div class="actions">
+      <button class="action-button" onclick="clearAll()">Clear All</button>
+      <button id="startBtn" class="action-button start-button disabled" onclick="startHand()" disabled>Start</button>
+      <button id="acceptBtn" class="action-button accept-button disabled hidden" onclick="acceptRevision()" disabled>Accept</button>
+    </div>
+    <div class="tip">Long press tile to clear it.</div>
+    <div id="undoRow" class="undo-row hidden">
+      <button class="action-button undo-button" onclick="undoClear()">Undo Clear</button>
+    </div>
+  </div>
+  <div id="hdScreen" class="hidden">
+    <div id="handTitle" class="hand-title">Starting Hand Display</div>
+    <div id="handMeta" class="hand-meta"></div>
+    <div id="handDisplay" class="hand-display"></div>
+    <div id="enginePanel" class="engine-panel hidden">
+      <div class="engine-title">Suggested Discard</div>
+      <div class="engine-placeholder">Engine coming in V2</div>
+    </div>
+    <div class="actions">
+      <button class="action-button" onclick="reviseHand()">Revise</button>
+      <button id="drawBtn" class="action-button" onclick="openDrawScreen()">Draw</button>
+      <button id="discardBtn" class="action-button hidden" onclick="discardTile()">Discard</button>
+    </div>
+  </div>
+  <div id="drawScreen" class="hidden">
+    <div class="draw-title">Draw Tile</div>
+    <div class="draw-meta">Tap the tile you drew.</div>
+    <div class="section">
+      <h2>Chars</h2>
+      <div class="tile-grid" id="drawCharacters"></div>
+    </div>
+    <div class="section">
+      <h2>Bams</h2>
+      <div class="tile-grid" id="drawBams"></div>
+    </div>
+    <div class="section">
+      <h2>Dots</h2>
+      <div class="tile-grid" id="drawDots"></div>
+    </div>
+    <div class="section">
+      <h2>Winds</h2>
+      <div class="wind-grid" id="drawWinds"></div>
+    </div>
+    <div class="section">
+      <h2>Dragons</h2>
+      <div class="dragon-grid" id="drawDragons"></div>
+    </div>
+    <div class="actions">
+      <button class="action-button" onclick="cancelDraw()">Cancel</button>
+    </div>
+  </div>
+</div>
+<script>
+const counts = {};
+const tileLabels = {};
+let mode = "player";
+let screenMode = "entry";
+let hdMode = "starting";
+let undoSnapshot = null;
+let pressTimer = null;
+let longPressFired = false;
+let activeTileKey = null;
+let revisionTouched = false;
+function getTarget() {
+  return mode === "dealer" ? 17 : 16;
+}
+function getTotal() {
+  let total = 0;
+  for (const key in counts) total += counts[key];
+  return total;
+}
+function createTile(containerId, label, key) {
+  counts[key] = 0;
+  tileLabels[key] = label;
+  const tile = document.createElement("div");
+  tile.className = "tile";
+  tile.id = "tile-" + key;
+  tile.addEventListener("contextmenu", function(e) {
+    e.preventDefault();
+  });
+  tile.addEventListener("pointerdown", function(e) {
+    e.preventDefault();
+    activeTileKey = key;
+    longPressFired = false;
+    pressTimer = setTimeout(function() {
+      counts[key] = 0;
+      longPressFired = true;
+      if (screenMode === "revision") {
+        revisionTouched = true;
+      }
+      hideUndo();
+      updateDisplay("Tile cleared.");
+    }, 650);
+  });
+  tile.addEventListener("pointerup", function(e) {
+    e.preventDefault();
+    clearTimeout(pressTimer);
+    if (activeTileKey !== key) return;
+    if (longPressFired) {
+      longPressFired = false;
+      activeTileKey = null;
+      return;
+    }
+    cycleTile(key);
+    activeTileKey = null;
+  });
+  tile.addEventListener("pointercancel", function() {
+    clearTimeout(pressTimer);
+    activeTileKey = null;
+  });
+  tile.addEventListener("pointerleave", function() {
+    clearTimeout(pressTimer);
+  });
+  tile.innerHTML =
+    '<div class="tile-name">' + label + '</div>' +
+    '<div class="tile-count" id="count-' + key + '"></div>';
+  document.getElementById(containerId).appendChild(tile);
+}
+function createDrawTile(containerId, label, key) {
+  const tile = document.createElement("div");
+  tile.className = "tile";
+  tile.addEventListener("contextmenu", function(e) {
+    e.preventDefault();
+  });
+  tile.addEventListener("click", function(e) {
+    e.preventDefault();
+    drawSelectedTile(key);
+  });
+  tile.innerHTML =
+    '<div class="tile-name">' + label + '</div>' +
+    '<div class="tile-count"></div>';
+  document.getElementById(containerId).appendChild(tile);
+}
+function cycleTile(key) {
+  const total = getTotal();
+  const target = getTarget();
+  if (counts[key] === 0 && total >= target) {
+    updateDisplay("Maximum tiles selected.");
+    return;
+  }
+  counts[key] = (counts[key] + 1) % 5;
+  if (screenMode === "revision") {
+    revisionTouched = true;
+  }
+  hideUndo();
+  updateDisplay();
+}
+function buildTiles() {
+  for (let i = 1; i <= 9; i++) createTile("characters", i + " Char", "char" + i);
+  for (let i = 1; i <= 9; i++) createTile("bams", i + " Bam", "bam" + i);
+  for (let i = 1; i <= 9; i++) createTile("dots", i + " Dot", "dot" + i);
+  createTile("winds", "East", "east");
+  createTile("winds", "South", "south");
+  createTile("winds", "West", "west");
+  createTile("winds", "North", "north");
+  createTile("dragons", "Red", "red");
+  createTile("dragons", "Green", "green");
+  createTile("dragons", "White", "white");
+}
+function buildDrawTiles() {
+  for (let i = 1; i <= 9; i++) createDrawTile("drawCharacters", i + " Char", "char" + i);
+  for (let i = 1; i <= 9; i++) createDrawTile("drawBams", i + " Bam", "bam" + i);
+  for (let i = 1; i <= 9; i++) createDrawTile("drawDots", i + " Dot", "dot" + i);
+  createDrawTile("drawWinds", "East", "east");
+  createDrawTile("drawWinds", "South", "south");
+  createDrawTile("drawWinds", "West", "west");
+  createDrawTile("drawWinds", "North", "north");
+  createDrawTile("drawDragons", "Red", "red");
+  createDrawTile("drawDragons", "Green", "green");
+  createDrawTile("drawDragons", "White", "white");
+}
+function setMode(newMode) {
+  mode = newMode;
+  if (screenMode === "revision") {
+    revisionTouched = true;
+  }
+  document.getElementById("playerBtn").classList.toggle("active", mode === "player");
+  document.getElementById("dealerBtn").classList.toggle("active", mode === "dealer");
+  hideUndo();
+  updateDisplay();
+}
+function updateDisplay(customMessage) {
+  let total = 0;
+  let chars = 0;
+  let bams = 0;
+  let dots = 0;
+  let winds = 0;
+  let dragons = 0;
+  for (const key in counts) {
+    const value = counts[key];
+    total += value;
+    document.getElementById("count-" + key).textContent = value === 0 ? "" : value;
+    document.getElementById("tile-" + key).classList.toggle("selected", value > 0);
+    if (key.startsWith("char")) chars += value;
+    else if (key.startsWith("bam")) bams += value;
+    else if (key.startsWith("dot")) dots += value;
+    else if (key === "east" || key === "south" || key === "west" || key === "north") winds += value;
+    else dragons += value;
+  }
+  const target = getTarget();
+  document.getElementById("total").textContent = total;
+  document.getElementById("target").textContent = target;
+  document.getElementById("charsTotal").textContent = chars;
+  document.getElementById("bamsTotal").textContent = bams;
+  document.getElementById("dotsTotal").textContent = dots;
+  document.getElementById("windsTotal").textContent = winds;
+  document.getElementById("dragonsTotal").textContent = dragons;
+  updateActionButtons(total, target);
+  const suggestion = document.getElementById("suggestion");
+  if (customMessage) {
+    suggestion.textContent = customMessage;
+  } else if (total < target) {
+    suggestion.textContent = "Need " + (target - total) + " more tile(s).";
+  } else if (total > target) {
+    suggestion.textContent = "Too many tiles by " + (total - target) + ".";
+  } else {
+    if (screenMode === "revision") {
+      suggestion.textContent = revisionTouched
+        ? "Revision ready. Press Accept."
+        : "Review and revise your hand.";
+    } else {
+      suggestion.textContent = "Hand complete. Press Start.";
+    }
+  }
+}
+function updateActionButtons(total, target) {
+  const startBtn = document.getElementById("startBtn");
+  const acceptBtn = document.getElementById("acceptBtn");
+  if (screenMode === "entry") {
+    startBtn.classList.remove("hidden");
+    acceptBtn.classList.add("hidden");
+    startBtn.disabled = total !== target;
+    startBtn.classList.toggle("enabled", total === target);
+    startBtn.classList.toggle("disabled", total !== target);
+  } else {
+    startBtn.classList.add("hidden");
+    acceptBtn.classList.remove("hidden");
+    acceptBtn.disabled = total !== target;
+    acceptBtn.classList.toggle("enabled", total === target);
+    acceptBtn.classList.toggle("disabled", total !== target);
+  }
+}
+function clearAll() {
+  if (getTotal() === 0) return;
+  undoSnapshot = {
+    counts: { ...counts },
+    mode: mode,
+    screenMode: screenMode,
+    revisionTouched: revisionTouched
+  };
+  for (const key in counts) counts[key] = 0;
+  if (screenMode === "revision") {
+    revisionTouched = true;
+  }
+  showUndo();
+  updateDisplay("Hand cleared.");
+}
+function undoClear() {
+  if (!undoSnapshot) return;
+  mode = undoSnapshot.mode;
+  screenMode = undoSnapshot.screenMode;
+  revisionTouched = undoSnapshot.revisionTouched;
+  for (const key in undoSnapshot.counts) {
+    counts[key] = undoSnapshot.counts[key];
+  }
+  document.getElementById("playerBtn").classList.toggle("active", mode === "player");
+  document.getElementById("dealerBtn").classList.toggle("active", mode === "dealer");
+  hideUndo();
+  updateDisplay("Hand restored.");
+}
+function showUndo() {
+  document.getElementById("undoRow").classList.remove("hidden");
+}
+function hideUndo() {
+  document.getElementById("undoRow").classList.add("hidden");
+}
+function startHand() {
+  if (getTotal() !== getTarget()) return;
+  hdMode = "starting";
+  screenMode = "entry";
+  showHD();
+}
+function acceptRevision() {
+  if (getTotal() !== getTarget()) return;
+  hdMode = "current";
+  showHD();
+}
+function showHD() {
+  document.getElementById("tdScreen").classList.add("hidden");
+  document.getElementById("drawScreen").classList.add("hidden");
+  document.getElementById("hdScreen").classList.remove("hidden");
+  configureHDMode();
+  buildHandDisplay();
+  if (hdMode === "starting") {
+    document.getElementById("suggestion").textContent = "Verify starting hand.";
+  } else {
+    document.getElementById("suggestion").textContent = "Review current hand.";
+  }
+  document.getElementById("total").textContent = getTotal();
+  document.getElementById("target").textContent = getTarget();
+}
+function configureHDMode() {
+  const handTitle = document.getElementById("handTitle");
+  const handMeta = document.getElementById("handMeta");
+  const drawBtn = document.getElementById("drawBtn");
+  const discardBtn = document.getElementById("discardBtn");
+  const enginePanel = document.getElementById("enginePanel");
+  handTitle.textContent = hdMode === "starting"
+    ? "Starting Hand Display"
+    : "Current Hand Display";
+  handMeta.textContent =
+    "Mode: " + (mode === "dealer" ? "Dealer" : "Player") +
+    " | Tiles: " + getTotal() + " / " + getTarget();
+  if (getTotal() >= 17) {
+    drawBtn.classList.add("hidden");
+    discardBtn.classList.remove("hidden");
+    enginePanel.classList.remove("hidden");
+  } else {
+    drawBtn.classList.remove("hidden");
+    discardBtn.classList.add("hidden");
+    enginePanel.classList.add("hidden");
+  }
+}
+function reviseHand() {
+  screenMode = "revision";
+  revisionTouched = false;
+  document.getElementById("hdScreen").classList.add("hidden");
+  document.getElementById("drawScreen").classList.add("hidden");
+  document.getElementById("tdScreen").classList.remove("hidden");
+  hideUndo();
+  updateDisplay("Review and revise your hand.");
+}
+function openDrawScreen() {
+  document.getElementById("tdScreen").classList.add("hidden");
+  document.getElementById("hdScreen").classList.add("hidden");
+  document.getElementById("drawScreen").classList.remove("hidden");
+  document.getElementById("suggestion").textContent = "Select the tile you drew.";
+}
+function drawSelectedTile(key) {
+  if (counts[key] >= 4) {
+    document.getElementById("suggestion").textContent = "You already have 4 of that tile.";
+    return;
+  }
+  counts[key] += 1;
+  hdMode = "current";
+  showHD();
+}
+function cancelDraw() {
+  document.getElementById("drawScreen").classList.add("hidden");
+  document.getElementById("hdScreen").classList.remove("hidden");
+  document.getElementById("suggestion").textContent = "Draw cancelled.";
+}
+function discardTile() {
+  document.getElementById("suggestion").textContent = "Discard screen coming later.";
+}
+function buildHandDisplay() {
+  const groups = [
+    { title: "Chars", keys: ["char1","char2","char3","char4","char5","char6","char7","char8","char9"] },
+    { title: "Bams", keys: ["bam1","bam2","bam3","bam4","bam5","bam6","bam7","bam8","bam9"] },
+    { title: "Dots", keys: ["dot1","dot2","dot3","dot4","dot5","dot6","dot7","dot8","dot9"] },
+    { title: "Winds", keys: ["east","south","west","north"] },
+    { title: "Dragons", keys: ["red","green","white"] }
+  ];
+  let html = "";
+  for (const group of groups) {
+    let groupHtml = "";
+    for (const key of group.keys) {
+      for (let i = 0; i < counts[key]; i++) {
+        groupHtml += '<span class="hand-tile">' + tileLabels[key] + '</span>';
+      }
+    }
+    if (groupHtml !== "") {
+      html += '<div class="hand-section">';
+      html += '<div class="hand-section-title">' + group.title + '</div>';
+      html += groupHtml;
+      html += '</div>';
+    }
+  }
+  document.getElementById("handDisplay").innerHTML = html || "No tiles selected.";
+}
+buildTiles();
+buildDrawTiles();
+updateDisplay();
+</script>
+</body>
+</html>
