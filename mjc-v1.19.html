@@ -1,0 +1,1795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!--
+==================================================
+MAHJONG COACH DEVELOPMENT MANIFEST
+==================================================
+Project:
+Mahjong Coach
+
+Version:
+6BT v1.19
+
+Purpose:
+- Smartphone-optimized tile management vehicle
+- Patch A Rev 4 implementation
+- Rules and Display dialogs
+- Role / Seat / Round controls with defaults
+- Wind tile indicators
+- Hand Context Lock after gameplay begins
+- Draw Tile Screen: compact single-tile selector, then Confirm
+- Discard Tile Screen: select tile, then Confirm
+- Correct Last Entry workflow for last draw/discard entry with single-tile red correction highlight
+- Display order applied across TSS, HD, Draw, and Discard screens
+- 6BT intro message sequence added to starting tile selection
+- Preserve stable v1.16 tile entry, revise, draw, discard foundations
+- Hand Correction Screen and New Game workflow complete the V1 input layer
+- No engine logic added in this version
+
+Roadmap:
+V1 = Input Layer
+V2 = Mahjong Coach Engine
+V3 = Graphics & Polish
+V4 = Photo Recognition
+==================================================
+-->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Mahjong Coach</title>
+
+<style>
+html, body { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; touch-action: manipulation; }
+body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 0; }
+
+:root { --header-height: 150px; }
+
+.fixed-header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 999;
+  background: #F1F5F9;
+  border-bottom: 1px solid #d8e0e8;
+  box-shadow: 0 1px 5px rgba(0,0,0,.18);
+}
+
+.masthead {
+  background: #F1F5F9;
+  color: #1f5a32;
+  text-align: center;
+  padding: 7px 8px 4px;
+}
+
+.title {
+  text-align: center;
+  font-size: 25px;
+  font-weight: bold;
+  line-height: 1.05;
+  letter-spacing: .2px;
+}
+
+.subtitle {
+  text-align: center;
+  font-size: 12px;
+  color: #1f5a32;
+  margin-top: 1px;
+  font-weight: bold;
+}
+
+.header-controls {
+  padding: 6px 8px 7px;
+  background: #F1F5F9;
+}
+
+.top-control-row,
+.context-row,
+.actions,
+.undo-row,
+.dialog-actions {
+  display: flex;
+  justify-content: center;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.top-control-row { margin-top: 3px; }
+.context-row { margin-top: 5px; align-items: end; }
+
+.context-control {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 82px;
+}
+
+.context-label {
+  font-size: 11px;
+  font-weight: bold;
+  color: #333;
+}
+
+.context-line {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.wind-icon {
+  min-width: 22px;
+  text-align: center;
+  font-size: 22px;
+  line-height: 1;
+}
+
+.control-select {
+  border: 1px solid #bbb;
+  border-radius: 8px;
+  padding: 6px 7px;
+  font-size: 13px;
+  background: #f7f7f7;
+  color: #111;
+}
+
+.context-control select { max-width: 92px; }
+
+.counter { text-align: center; font-size: 14px; margin-top: 6px; }
+
+.mode-button,
+.action-button,
+.dialog-button {
+  border: none;
+  border-radius: 8px;
+  padding: 7px 12px;
+  font-size: 14px;
+  background: #ddd;
+  color: #000;
+}
+
+.dialog-button.primary,
+.start-button.enabled,
+.turn-button.enabled,
+.accept-button.enabled,
+.confirm-button.enabled { background: #222; color: white; }
+
+.accept-button.enabled { background: #0057b8; }
+.undo-button { background: #0057b8; color: white; }
+.correct-button { background: #5b3f8c; color: white; }
+
+.start-button.disabled,
+.accept-button.disabled,
+.turn-button.disabled,
+.confirm-button.disabled,
+.dialog-button.disabled {
+  background: #bbb;
+  color: #666;
+}
+
+.locked-note {
+  text-align: center;
+  font-size: 11px;
+  color: #6b3f00;
+  font-weight: bold;
+  margin-top: 4px;
+}
+
+.suggestion {
+  text-align: center;
+  font-size: 13px;
+  font-weight: bold;
+  margin-top: 5px;
+  color: #0057b8;
+}
+
+.container {
+  max-width: 900px;
+  margin: auto;
+  padding: calc(var(--header-height) + 10px) 8px 20px;
+  background: white;
+}
+
+.container.compact { padding-top: 24px; }
+.hidden { display: none !important; }
+
+.section { margin-top: 10px; }
+.section h2 { margin: 4px 0; font-size: 18px; }
+
+.tile-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.wind-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.dragon-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.tile {
+  background: #e9e9e9;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  text-align: center;
+  padding: 10px 4px;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  touch-action: manipulation;
+}
+
+.tile.selected { background: #fff3a3; }
+.tile.action-selected { background: #fff3a3; border-color: #0057b8; box-shadow: 0 0 0 2px rgba(0,87,184,.16); }
+
+/* v1.18a Hot Fix: Compact Draw Tile Screen */
+.draw-compact {
+  max-width: 560px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.draw-compact .section {
+  margin-top: 7px;
+}
+
+.draw-compact .section h2 {
+  font-size: 15px;
+  margin: 2px 0 4px;
+}
+
+.draw-compact .tile-grid,
+.draw-compact .wind-grid,
+.draw-compact .dragon-grid {
+  gap: 4px;
+}
+
+.draw-compact .tile {
+  padding: 7px 3px;
+  border-radius: 8px;
+}
+
+.draw-compact .tile-name {
+  font-size: 14px;
+}
+
+.draw-compact .tile-count {
+  display: none;
+}
+
+.draw-compact .actions {
+  margin-top: 12px;
+}
+.tile.correction-target { background: #ffd6d6; border-color: #c40000; box-shadow: 0 0 0 2px rgba(196,0,0,.18); }
+
+.hcs-panel {
+  background: #fffdf0;
+  border: 1px solid #eadf9a;
+  border-radius: 10px;
+  padding: 8px;
+  margin: 8px 0 10px;
+}
+.hcs-title {
+  text-align: center;
+  font-size: 22px;
+  font-weight: bold;
+  margin: 8px 0 6px;
+}
+.hcs-meta {
+  text-align: center;
+  font-size: 14px;
+  font-weight: bold;
+  color: #0057b8;
+  margin-bottom: 8px;
+}
+.new-game-row {
+  margin-top: 22px;
+  display: flex;
+  justify-content: flex-start;
+}
+.new-game-button {
+  background: #efefef;
+  border: 1px solid #bbb;
+  color: #333;
+}
+
+
+.tile-name { font-size: 16px; font-weight: bold; color: black; }
+.tile-count { height: 20px; font-size: 18px; margin-top: 3px; color: #0047ab; font-weight: bold; }
+
+.actions,
+.undo-row { margin-top: 16px; }
+
+.coaching-button {
+  background: #efefef;
+  color: #333;
+  border: 1px solid #bbb;
+  font-weight: bold;
+}
+
+.tip { text-align: center; font-size: 12px; color: #666; margin-top: 6px; margin-bottom: 8px; }
+
+.hand-title,
+.draw-title,
+.discard-title {
+  text-align: center;
+  font-size: 22px;
+  font-weight: bold;
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.hand-meta,
+.draw-meta,
+.discard-meta {
+  text-align: center;
+  font-size: 14px;
+  font-weight: bold;
+  color: #444;
+  margin-bottom: 10px;
+}
+
+.hand-display { background: #f0f0f0; border-radius: 10px; padding: 12px; font-size: 16px; }
+.hand-section { margin-bottom: 14px; }
+.hand-section-title { font-weight: bold; margin-bottom: 5px; }
+.hand-tile { display: inline-block; background: white; border-radius: 8px; padding: 6px 8px; margin: 3px; font-weight: bold; }
+.hand-tile.last-drawn { background: #fff3a3; color: #0057b8; border: 2px solid #0057b8; }
+.empty-note { color: #666; font-style: italic; }
+
+.discard-tile {
+  display: inline-block;
+  background: white;
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin: 4px;
+  font-weight: bold;
+  color: #111;
+  border: 2px solid white;
+}
+
+.discard-tile.action-selected { background: #fff3a3; color: #0057b8; border-color: #0057b8; }
+.discard-tile.correction-target { background: #ffd6d6; color: #9b0000; border-color: #c40000; box-shadow: 0 0 0 2px rgba(196,0,0,.18); }
+
+.engine-panel { background: #fff3a3; border-radius: 10px; padding: 10px; margin-top: 12px; text-align: center; }
+.engine-title { font-weight: bold; margin-bottom: 4px; }
+.engine-placeholder { color: #0047ab; font-weight: bold; }
+
+.footer {
+  text-align: center;
+  margin: 24px 0 10px;
+  font-size: 13px;
+  color: #444;
+}
+.footer button {
+  background: none;
+  border: none;
+  color: #0057b8;
+  text-decoration: underline;
+  font-size: 13px;
+  padding: 4px;
+}
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 22px;
+  transform: translateX(-50%);
+  background: #222;
+  color: white;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  z-index: 2000;
+  box-shadow: 0 2px 8px rgba(0,0,0,.3);
+}
+
+.dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.35);
+  z-index: 1500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px;
+}
+
+.dialog {
+  width: min(420px, 96vw);
+  max-height: 88vh;
+  overflow-y: auto;
+  background: white;
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow: 0 8px 28px rgba(0,0,0,.3);
+}
+
+.dialog h2 { margin: 0 0 12px; text-align: center; }
+.dialog-section { margin: 12px 0; }
+.dialog-section-title { font-weight: bold; margin-bottom: 6px; }
+.dialog-option { margin: 8px 0; }
+.dialog-option.indent { margin-left: 26px; }
+.feature-note { color: #777; font-size: 12px; margin: -2px 0 8px 26px; font-style: italic; }
+.readonly-box { background: #eee; border-radius: 8px; padding: 8px 10px; display: inline-block; min-width: 80px; }
+.dialog label { font-size: 14px; }
+.dialog select { margin-top: 4px; width: 100%; }
+
+@media (max-width: 420px) {
+  .title { font-size: 21px; }
+  .subtitle { font-size: 10px; }
+  .header-controls { padding: 5px 5px 6px; }
+  .mode-button, .action-button, .dialog-button { padding: 7px 10px; font-size: 13px; }
+  .context-control { min-width: 72px; }
+  .context-control select { max-width: 78px; font-size: 12px; padding: 5px 4px; }
+  .wind-icon { font-size: 19px; min-width: 18px; }
+  .counter { font-size: 13px; }
+  .suggestion { font-size: 12px; }
+  .tile-name { font-size: 15px; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="fixed-header" id="fixedHeader">
+  <div class="masthead">
+    <div class="title">MJC</div>
+    <div class="subtitle">Mahjong Coach</div>
+  </div>
+
+  <div id="startingHeaderControls" class="header-controls">
+    <div class="top-control-row">
+      <button id="rulesButton" class="mode-button" onclick="openRulesDialog()">Rules</button>
+      <button id="displayButton" class="mode-button" onclick="openDisplayDialog()">Display</button>
+    </div>
+
+    <div class="context-row">
+      <div class="context-control">
+        <div class="context-label">Role</div>
+        <select id="roleSelect" class="control-select" onchange="setMode(this.value)">
+          <option value="player">Player</option>
+          <option value="dealer">Dealer</option>
+        </select>
+      </div>
+
+      <div class="context-control">
+        <div class="context-label">Seat</div>
+        <div class="context-line">
+          <select id="seatWindSelect" class="control-select" onchange="setSeatWind(this.value)">
+            <option value="east">East</option>
+            <option value="south">South</option>
+            <option value="west">West</option>
+            <option value="north">North</option>
+          </select>
+          <span id="seatWindIcon" class="wind-icon">🀀</span>
+        </div>
+      </div>
+
+      <div class="context-control">
+        <div class="context-label">Round</div>
+        <div class="context-line">
+          <select id="prevailingWindSelect" class="control-select" onchange="setPrevailingWind(this.value)">
+            <option value="east">East</option>
+            <option value="south">South</option>
+            <option value="west">West</option>
+            <option value="north">North</option>
+          </select>
+          <span id="prevailingWindIcon" class="wind-icon">🀀</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="lockedNote" class="locked-note hidden">Hand context locked for this hand.</div>
+    <div class="counter">Tiles Entered: <span id="total">0</span> / <span id="target">16</span></div>
+    <div id="suggestion" class="suggestion">Need 16 more tile(s).</div>
+  </div>
+</div>
+
+<div id="mainContainer" class="container">
+
+  <div id="tdScreen">
+    <div id="hcsIntro" class="hcs-panel hidden">
+      <div class="hcs-title">Hand Correction Screen</div>
+      <div id="hcsMeta" class="hcs-meta">Review your hand and make any needed corrections.</div>
+    </div>
+    <div id="section-chars" class="section"><h2>Chars (<span id="charsTotal">0</span>)</h2><div class="tile-grid" id="characters"></div></div>
+    <div id="section-bams" class="section"><h2>Bams (<span id="bamsTotal">0</span>)</h2><div class="tile-grid" id="bams"></div></div>
+    <div id="section-dots" class="section"><h2>Dots (<span id="dotsTotal">0</span>)</h2><div class="tile-grid" id="dots"></div></div>
+    <div id="section-winds" class="section"><h2>Winds (<span id="windsTotal">0</span>)</h2><div class="wind-grid" id="winds"></div></div>
+    <div id="section-dragons" class="section"><h2>Dragons (<span id="dragonsTotal">0</span>)</h2><div class="dragon-grid" id="dragons"></div></div>
+
+    <div class="actions">
+      <button class="action-button" onclick="clearAll()">Clear All</button>
+      <button id="startBtn" class="action-button start-button disabled" onclick="startHand()" disabled>Start</button>
+      <button id="acceptBtn" class="action-button accept-button disabled hidden" onclick="acceptRevision()" disabled>Accept</button>
+    </div>
+
+    <div class="tip">Long press tile to clear it.</div>
+
+    <div id="undoRow" class="undo-row hidden">
+      <button class="action-button undo-button" onclick="undoClear()">Undo Clear</button>
+    </div>
+  </div>
+
+  <div id="hdScreen" class="hidden">
+    <div id="handTitle" class="hand-title">Starting Hand Display</div>
+    <div id="handMeta" class="hand-meta"></div>
+    <div id="handDisplay" class="hand-display"></div>
+
+    <div id="enginePanel" class="engine-panel hidden">
+      <div class="engine-title">Coaching</div>
+      <div class="engine-placeholder">Complete Boxes / Developing Boxes / Reserves coming in V2</div>
+    </div>
+
+    <div class="actions">
+      <button id="reviseBtn" class="action-button" onclick="reviseHand()">Revise</button>
+      <button id="drawBtn" class="action-button turn-button" onclick="openDrawScreen()">Draw</button>
+      <button id="discardBtn" class="action-button turn-button" onclick="openDiscardScreen()">Discard</button>
+      <button id="correctLastBtn" class="action-button correct-button hidden" onclick="correctLastEntry()">Correct Last Entry</button>
+      <button id="handCorrectionBtn" class="action-button hidden" onclick="openHandCorrectionScreen()">Hand Correction</button>
+      <button id="coachingBtn" class="action-button coaching-button hidden" onclick="toggleCoaching()">Coaching - OFF</button>
+    </div>
+
+    <div id="newGameRow" class="new-game-row hidden">
+      <button id="newGameBtn" class="action-button new-game-button" onclick="confirmNewGame()">New Game</button>
+    </div>
+  </div>
+
+  <div id="drawScreen" class="hidden draw-compact">
+    <div class="draw-title">Draw Tile</div>
+    <div id="drawMeta" class="draw-meta">Select the tile you drew or claimed. Then press Confirm.</div>
+
+    <div id="draw-section-chars" class="section"><h2>Chars</h2><div class="tile-grid" id="drawCharacters"></div></div>
+    <div id="draw-section-bams" class="section"><h2>Bams</h2><div class="tile-grid" id="drawBams"></div></div>
+    <div id="draw-section-dots" class="section"><h2>Dots</h2><div class="tile-grid" id="drawDots"></div></div>
+    <div id="draw-section-winds" class="section"><h2>Winds</h2><div class="wind-grid" id="drawWinds"></div></div>
+    <div id="draw-section-dragons" class="section"><h2>Dragons</h2><div class="dragon-grid" id="drawDragons"></div></div>
+
+    <div class="actions">
+      <button class="action-button" onclick="cancelDraw()">Cancel</button>
+      <button id="confirmDrawBtn" class="action-button confirm-button disabled" onclick="confirmDraw()" disabled>Confirm</button>
+    </div>
+  </div>
+
+  <div id="discardScreen" class="hidden">
+    <div class="discard-title">Discard Tile</div>
+    <div id="discardMeta" class="discard-meta">Prepare to Discard. Select one tile. Then press Confirm.</div>
+    <div id="discardDisplay" class="hand-display"></div>
+
+    <div class="actions">
+      <button class="action-button" onclick="cancelDiscard()">Cancel</button>
+      <button id="confirmDiscardBtn" class="action-button confirm-button disabled" onclick="confirmDiscard()" disabled>Confirm</button>
+    </div>
+  </div>
+
+  <div class="footer">
+    <button onclick="openAboutDialog()">About MJC</button>
+    <div>Beta v1.19</div>
+  </div>
+
+</div>
+
+<div id="rulesDialog" class="dialog-backdrop hidden">
+  <div class="dialog">
+    <h2>Rules</h2>
+
+    <div class="dialog-option">
+      <label><input type="radio" name="rulesetRadio" value="chinese13" onclick="featureComingSoon(this)"> Chinese 13-Tile</label>
+    </div>
+    <div class="feature-note">Feature Coming Soon</div>
+
+    <div class="dialog-option">
+      <label><input type="radio" name="rulesetRadio" value="taiwan16" checked> Taiwanese 16-Tile</label>
+    </div>
+
+    <div class="dialog-option">
+      <label><input type="radio" name="rulesetRadio" value="filipino16" onclick="featureComingSoon(this)"> Filipino 16-Tile</label>
+    </div>
+    <div class="dialog-option indent">
+      <label><input type="radio" name="filipinoHonorRadio" value="enabled" onclick="featureComingSoon(this)"> Honors Enabled</label>
+    </div>
+    <div class="dialog-option indent">
+      <label><input type="radio" name="filipinoHonorRadio" value="disabled" onclick="featureComingSoon(this)"> Honors Disabled</label>
+    </div>
+    <div class="feature-note">Feature Coming Soon</div>
+
+    <div class="dialog-actions">
+      <button class="dialog-button primary" onclick="saveRulesDialog()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div id="displayDialog" class="dialog-backdrop hidden">
+  <div class="dialog">
+    <h2>Display</h2>
+
+    <div class="dialog-section">
+      <div class="dialog-section-title">Suits Order</div>
+      <label>First Suit<br>
+        <select id="firstSuitSelect" class="control-select" onchange="updateDisplaySuitOptions()">
+          <option value="chars">Chars</option>
+          <option value="bams">Bams</option>
+          <option value="dots">Dots</option>
+        </select>
+      </label>
+      <br><br>
+      <label>Second Suit<br>
+        <select id="secondSuitSelect" class="control-select" onchange="updateThirdSuitPreview()"></select>
+      </label>
+      <br><br>
+      <div>Third Suit</div>
+      <div id="thirdSuitPreview" class="readonly-box">Dots</div>
+    </div>
+
+    <div class="dialog-section">
+      <div class="dialog-section-title">Honors Order</div>
+      <div class="dialog-option">
+        <label><input type="radio" name="honorsOrderRadio" value="windsFirst" checked> Winds → Dragons</label>
+      </div>
+      <div class="dialog-option">
+        <label><input type="radio" name="honorsOrderRadio" value="dragonsFirst"> Dragons → Winds</label>
+      </div>
+    </div>
+
+    <div class="dialog-actions">
+      <button class="dialog-button primary" onclick="saveDisplayDialog()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div id="aboutDialog" class="dialog-backdrop hidden">
+  <div class="dialog">
+    <h2>About MJC</h2>
+    <p>MJC is a learning tool that helps players understand hand structure, improve tile efficiency, and make better discard decisions through the application of Six Box Theory™.</p>
+    <p>Engine features arrive in V2.</p>
+    <div class="dialog-actions">
+      <button class="dialog-button primary" onclick="closeDialog('aboutDialog')">Close</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script>
+const counts = {};
+const tileLabels = {};
+
+let ruleset = "taiwan16";
+let role = "player";
+let seatWind = "east";
+let prevailingWind = "east";
+let coachingOn = false;
+
+let phase = "starting";
+let screenMode = "entry";
+let hdMode = "starting";
+let gameAction = "draw";
+let lastDrawnTileKey = null;
+let contextLocked = false;
+
+let displayOrder = {
+  firstSuit: "chars",
+  secondSuit: "bams",
+  thirdSuit: "dots",
+  honorsOrder: "windsFirst"
+};
+
+let revisionReturnHDMode = "starting";
+let revisionTarget = null;
+let undoSnapshot = null;
+
+let pressTimer = null;
+let longPressFired = false;
+let activeTileKey = null;
+let revisionTouched = false;
+let toastTimer = null;
+
+let selectedDrawTileKey = null;
+let selectedDiscardTileKey = null;
+let lastActionSnapshot = null;
+let lastActionType = null;
+let lastActionTileKey = null;
+let correctingLastEntry = false;
+let correctionTargetTileKey = null;
+let correctionActionType = null;
+let handCorrectionTarget = null;
+
+function adjustContainerPadding() {
+  const header = document.getElementById("fixedHeader");
+  if (!header) return;
+  document.documentElement.style.setProperty("--header-height", header.offsetHeight + "px");
+}
+
+window.addEventListener("resize", adjustContainerPadding);
+window.addEventListener("load", adjustContainerPadding);
+
+if (window.ResizeObserver) {
+  new ResizeObserver(adjustContainerPadding).observe(document.getElementById("fixedHeader"));
+}
+
+function getBaseHandSize() {
+  return ruleset === "chinese13" ? 13 : 16;
+}
+
+function getStartingTarget() {
+  return role === "dealer" ? getBaseHandSize() + 1 : getBaseHandSize();
+}
+
+function getTotal() {
+  let total = 0;
+  for (const key in counts) total += counts[key];
+  return total;
+}
+
+function showStartingHeader(show) {
+  document.getElementById("startingHeaderControls").classList.toggle("hidden", !show);
+  document.getElementById("mainContainer").classList.toggle("compact", !show);
+  setTimeout(adjustContainerPadding, 0);
+}
+
+function getTarget() {
+  if ((screenMode === "revision" || screenMode === "handCorrection") && revisionTarget !== null) return revisionTarget;
+  return getStartingTarget();
+}
+
+function lockHandContext() {
+  contextLocked = true;
+  updateContextControls();
+}
+
+function updateContextControls() {
+  const locked = contextLocked;
+  document.getElementById("rulesButton").disabled = locked;
+  document.getElementById("displayButton").disabled = locked;
+  document.getElementById("roleSelect").disabled = locked;
+  document.getElementById("seatWindSelect").disabled = locked;
+  document.getElementById("prevailingWindSelect").disabled = locked;
+  document.getElementById("lockedNote").classList.toggle("hidden", !locked);
+}
+
+function setRuleset(newRuleset) {
+  if (contextLocked) return;
+  ruleset = newRuleset;
+
+  if (screenMode === "revision") {
+    revisionTouched = true;
+    revisionTarget = getStartingTarget();
+  } else {
+    revisionTarget = null;
+  }
+
+  hideUndo();
+  updateDisplay();
+}
+
+function setSeatWind(newSeatWind) {
+  if (contextLocked) return;
+  seatWind = newSeatWind;
+  updateWindIcons();
+  updateDisplay();
+}
+
+function setPrevailingWind(newPrevailingWind) {
+  if (contextLocked) return;
+  prevailingWind = newPrevailingWind;
+  updateWindIcons();
+  updateDisplay();
+}
+
+function getWindIcon(value) {
+  if (value === "east") return "🀀";
+  if (value === "south") return "🀁";
+  if (value === "west") return "🀂";
+  if (value === "north") return "🀃";
+  return "";
+}
+
+function updateWindIcons() {
+  document.getElementById("seatWindIcon").textContent = getWindIcon(seatWind);
+  document.getElementById("prevailingWindIcon").textContent = getWindIcon(prevailingWind);
+}
+
+function showToast(message) {
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.classList.remove("hidden");
+
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function() {
+    toast.classList.add("hidden");
+  }, 1600);
+}
+
+function openRulesDialog() {
+  if (contextLocked) {
+    showToast("Hand context is locked for this hand.");
+    return;
+  }
+  document.querySelectorAll('input[name="rulesetRadio"]').forEach(function(radio) {
+    radio.checked = radio.value === ruleset;
+  });
+  openDialog("rulesDialog");
+}
+
+function openDisplayDialog() {
+  if (contextLocked) {
+    showToast("Hand context is locked for this hand.");
+    return;
+  }
+  document.getElementById("firstSuitSelect").value = displayOrder.firstSuit;
+  updateDisplaySuitOptions(displayOrder.secondSuit);
+  document.querySelectorAll('input[name="honorsOrderRadio"]').forEach(function(radio) {
+    radio.checked = radio.value === displayOrder.honorsOrder;
+  });
+  openDialog("displayDialog");
+}
+
+function openAboutDialog() { openDialog("aboutDialog"); }
+
+function openDialog(id) {
+  document.getElementById(id).classList.remove("hidden");
+}
+
+function closeDialog(id) {
+  document.getElementById(id).classList.add("hidden");
+}
+
+function featureComingSoon(input) {
+  showToast("Feature Coming Soon");
+  setTimeout(function() {
+    if (input.name === "rulesetRadio") {
+      document.querySelector('input[name="rulesetRadio"][value="' + ruleset + '"]').checked = true;
+    }
+    if (input.name === "filipinoHonorRadio") input.checked = false;
+  }, 0);
+}
+
+function saveRulesDialog() {
+  const selected = document.querySelector('input[name="rulesetRadio"]:checked');
+  if (selected && selected.value === "taiwan16") setRuleset("taiwan16");
+  closeDialog("rulesDialog");
+  showToast("Rules Saved.");
+}
+
+function updateDisplaySuitOptions(preferredSecond) {
+  const suits = ["chars", "bams", "dots"];
+  const labels = { chars: "Chars", bams: "Bams", dots: "Dots" };
+  const first = document.getElementById("firstSuitSelect").value;
+  const secondSelect = document.getElementById("secondSuitSelect");
+  const validSeconds = suits.filter(s => s !== first);
+  const existingSecond = preferredSecond || secondSelect.value;
+  const nextSecond = validSeconds.includes(existingSecond) ? existingSecond : validSeconds[0];
+
+  secondSelect.innerHTML = "";
+  validSeconds.forEach(function(suit) {
+    const option = document.createElement("option");
+    option.value = suit;
+    option.textContent = labels[suit];
+    secondSelect.appendChild(option);
+  });
+  secondSelect.value = nextSecond;
+  updateThirdSuitPreview();
+}
+
+function updateThirdSuitPreview() {
+  const suits = ["chars", "bams", "dots"];
+  const labels = { chars: "Chars", bams: "Bams", dots: "Dots" };
+  const first = document.getElementById("firstSuitSelect").value;
+  const second = document.getElementById("secondSuitSelect").value;
+  const third = suits.find(s => s !== first && s !== second);
+  document.getElementById("thirdSuitPreview").textContent = labels[third];
+}
+
+function saveDisplayDialog() {
+  const suits = ["chars", "bams", "dots"];
+  const first = document.getElementById("firstSuitSelect").value;
+  const second = document.getElementById("secondSuitSelect").value;
+  const third = suits.find(s => s !== first && s !== second);
+  const honors = document.querySelector('input[name="honorsOrderRadio"]:checked').value;
+
+  displayOrder = { firstSuit: first, secondSuit: second, thirdSuit: third, honorsOrder: honors };
+  closeDialog("displayDialog");
+  showToast("Display Saved.");
+  applyDisplayOrderToScreens();
+
+  if (!document.getElementById("hdScreen").classList.contains("hidden")) buildHandDisplay();
+  if (!document.getElementById("discardScreen").classList.contains("hidden")) buildDiscardDisplay();
+}
+
+function toggleCoaching() {
+  coachingOn = !coachingOn;
+
+  const coachingBtn = document.getElementById("coachingBtn");
+  const enginePanel = document.getElementById("enginePanel");
+
+  coachingBtn.textContent = coachingOn ? "Coaching - ON" : "Coaching - OFF";
+  enginePanel.classList.toggle("hidden", !coachingOn);
+
+  if (coachingOn) showToast("Coaching display coming in V2.");
+}
+
+function createTile(containerId, label, key) {
+  counts[key] = 0;
+  tileLabels[key] = label;
+
+  const tile = document.createElement("div");
+  tile.className = "tile";
+  tile.id = "tile-" + key;
+
+  tile.addEventListener("contextmenu", e => e.preventDefault());
+
+  tile.addEventListener("pointerdown", function(e) {
+    e.preventDefault();
+    activeTileKey = key;
+    longPressFired = false;
+
+    pressTimer = setTimeout(function() {
+      counts[key] = 0;
+      longPressFired = true;
+
+      if (screenMode === "revision" || screenMode === "handCorrection") revisionTouched = true;
+
+      hideUndo();
+      updateDisplay("Tile cleared.");
+    }, 650);
+  });
+
+  tile.addEventListener("pointerup", function(e) {
+    e.preventDefault();
+    clearTimeout(pressTimer);
+
+    if (activeTileKey !== key) return;
+
+    if (longPressFired) {
+      longPressFired = false;
+      activeTileKey = null;
+      return;
+    }
+
+    cycleTile(key);
+    activeTileKey = null;
+  });
+
+  tile.addEventListener("pointercancel", function() {
+    clearTimeout(pressTimer);
+    activeTileKey = null;
+  });
+
+  tile.addEventListener("pointerleave", function() {
+    clearTimeout(pressTimer);
+  });
+
+  tile.innerHTML =
+    '<div class="tile-name">' + label + '</div>' +
+    '<div class="tile-count" id="count-' + key + '"></div>';
+
+  document.getElementById(containerId).appendChild(tile);
+}
+
+function createDrawTile(containerId, label, key) {
+  const tile = document.createElement("div");
+  tile.className = "tile draw-tile";
+  tile.id = "draw-tile-" + key;
+
+  tile.addEventListener("contextmenu", e => e.preventDefault());
+
+  tile.addEventListener("click", function(e) {
+    e.preventDefault();
+    selectDrawTile(key);
+  });
+
+  tile.innerHTML =
+    '<div class="tile-name">' + label + '</div>' +
+    '<div class="tile-count"></div>';
+
+  document.getElementById(containerId).appendChild(tile);
+}
+
+function cycleTile(key) {
+  const total = getTotal();
+  const target = getTarget();
+
+  if ((screenMode === "entry" || screenMode === "revision" || screenMode === "handCorrection") && total >= target && counts[key] < 4) {
+    updateDisplay("Maximum tiles selected.");
+    return;
+  }
+
+  counts[key] = (counts[key] + 1) % 5;
+
+  if (screenMode === "revision" || screenMode === "handCorrection") revisionTouched = true;
+
+  hideUndo();
+  updateDisplay();
+}
+
+function buildTiles() {
+  for (let i = 1; i <= 9; i++) createTile("characters", i + " Char", "char" + i);
+  for (let i = 1; i <= 9; i++) createTile("bams", i + " Bam", "bam" + i);
+  for (let i = 1; i <= 9; i++) createTile("dots", i + " Dot", "dot" + i);
+
+  createTile("winds", "East", "east");
+  createTile("winds", "South", "south");
+  createTile("winds", "West", "west");
+  createTile("winds", "North", "north");
+
+  createTile("dragons", "Red", "red");
+  createTile("dragons", "Green", "green");
+  createTile("dragons", "White", "white");
+}
+
+function buildDrawTiles() {
+  for (let i = 1; i <= 9; i++) createDrawTile("drawCharacters", i + " Char", "char" + i);
+  for (let i = 1; i <= 9; i++) createDrawTile("drawBams", i + " Bam", "bam" + i);
+  for (let i = 1; i <= 9; i++) createDrawTile("drawDots", i + " Dot", "dot" + i);
+
+  createDrawTile("drawWinds", "East", "east");
+  createDrawTile("drawWinds", "South", "south");
+  createDrawTile("drawWinds", "West", "west");
+  createDrawTile("drawWinds", "North", "north");
+
+  createDrawTile("drawDragons", "Red", "red");
+  createDrawTile("drawDragons", "Green", "green");
+  createDrawTile("drawDragons", "White", "white");
+}
+
+function setMode(newRole) {
+  if (contextLocked) return;
+  role = newRole;
+
+  hdMode = "starting";
+  revisionReturnHDMode = "starting";
+
+  gameAction = role === "dealer" ? "discard" : "draw";
+
+  if (screenMode === "revision") {
+    revisionTouched = true;
+    revisionTarget = getStartingTarget();
+  } else {
+    revisionTarget = null;
+  }
+
+  hideUndo();
+  updateDisplay();
+}
+
+function updateDisplay(customMessage) {
+  let total = 0, chars = 0, bams = 0, dots = 0, winds = 0, dragons = 0;
+
+  for (const key in counts) {
+    const value = counts[key];
+    total += value;
+
+    document.getElementById("count-" + key).textContent = value === 0 ? "" : value;
+    document.getElementById("tile-" + key).classList.toggle("selected", value > 0);
+
+    if (key.startsWith("char")) chars += value;
+    else if (key.startsWith("bam")) bams += value;
+    else if (key.startsWith("dot")) dots += value;
+    else if (key === "east" || key === "south" || key === "west" || key === "north") winds += value;
+    else dragons += value;
+  }
+
+  const target = getTarget();
+
+  document.getElementById("total").textContent = total;
+  document.getElementById("target").textContent = target;
+
+  document.getElementById("charsTotal").textContent = chars;
+  document.getElementById("bamsTotal").textContent = bams;
+  document.getElementById("dotsTotal").textContent = dots;
+  document.getElementById("windsTotal").textContent = winds;
+  document.getElementById("dragonsTotal").textContent = dragons;
+
+  updateActionButtons(total, target);
+
+  const suggestion = document.getElementById("suggestion");
+
+  if (customMessage) {
+    suggestion.textContent = customMessage;
+  } else if (screenMode === "handCorrection") {
+    suggestion.textContent = total === target ? "Correction ready. Press Accept." : "Correct your hand to " + target + " tile(s).";
+  } else if (screenMode === "entry" && total === 0) {
+    suggestion.textContent = "Enter the tiles you're starting with.";
+  } else if (screenMode === "entry" && total === 1) {
+    suggestion.textContent = "MJC will organize your hand using Six Box Theory™ (6BT), which may differ from your normal arrangement.";
+  } else if (total < target) {
+    suggestion.textContent = "Need " + (target - total) + " more tile(s).";
+  } else if (total > target) {
+    suggestion.textContent = "Too many tiles by " + (total - target) + ".";
+  } else {
+    suggestion.textContent = screenMode === "revision"
+      ? (revisionTouched ? "Revision ready. Press Accept." : "Review and revise your hand.")
+      : "Hand complete. Press Start.";
+  }
+
+  updateWindIcons();
+  updateContextControls();
+}
+
+function updateActionButtons(total, target) {
+  const startBtn = document.getElementById("startBtn");
+  const acceptBtn = document.getElementById("acceptBtn");
+
+  if (screenMode === "entry") {
+    startBtn.classList.remove("hidden");
+    acceptBtn.classList.add("hidden");
+
+    startBtn.disabled = total !== target;
+    startBtn.classList.toggle("enabled", total === target);
+    startBtn.classList.toggle("disabled", total !== target);
+  } else {
+    startBtn.classList.add("hidden");
+    acceptBtn.classList.remove("hidden");
+
+    acceptBtn.disabled = total !== target;
+    acceptBtn.classList.toggle("enabled", total === target);
+    acceptBtn.classList.toggle("disabled", total !== target);
+  }
+}
+
+function makeSnapshot() {
+  return {
+    counts: { ...counts },
+    ruleset: ruleset,
+    role: role,
+    seatWind: seatWind,
+    prevailingWind: prevailingWind,
+    coachingOn: coachingOn,
+    phase: phase,
+    screenMode: screenMode,
+    hdMode: hdMode,
+    gameAction: gameAction,
+    lastDrawnTileKey: lastDrawnTileKey,
+    revisionReturnHDMode: revisionReturnHDMode,
+    revisionTarget: revisionTarget,
+    revisionTouched: revisionTouched,
+    contextLocked: contextLocked,
+    displayOrder: { ...displayOrder },
+    handCorrectionTarget: handCorrectionTarget
+  };
+}
+
+function restoreSnapshot(snapshot) {
+  if (!snapshot) return;
+  ruleset = snapshot.ruleset;
+  role = snapshot.role;
+  seatWind = snapshot.seatWind;
+  prevailingWind = snapshot.prevailingWind;
+  coachingOn = snapshot.coachingOn;
+  phase = snapshot.phase;
+  screenMode = snapshot.screenMode;
+  hdMode = snapshot.hdMode;
+  gameAction = snapshot.gameAction;
+  lastDrawnTileKey = snapshot.lastDrawnTileKey;
+  revisionReturnHDMode = snapshot.revisionReturnHDMode;
+  revisionTarget = snapshot.revisionTarget;
+  revisionTouched = snapshot.revisionTouched;
+  contextLocked = snapshot.contextLocked;
+  displayOrder = { ...snapshot.displayOrder };
+  handCorrectionTarget = snapshot.handCorrectionTarget || null;
+
+  for (const key in snapshot.counts) counts[key] = snapshot.counts[key];
+
+  document.getElementById("roleSelect").value = role;
+  document.getElementById("seatWindSelect").value = seatWind;
+  document.getElementById("prevailingWindSelect").value = prevailingWind;
+
+  updateWindIcons();
+  updateDisplay();
+}
+
+function clearAll() {
+  if (getTotal() === 0) return;
+
+  undoSnapshot = makeSnapshot();
+
+  for (const key in counts) counts[key] = 0;
+
+  if (screenMode === "revision" || screenMode === "handCorrection") revisionTouched = true;
+
+  showUndo();
+  updateDisplay("Hand cleared.");
+}
+
+function undoClear() {
+  if (!undoSnapshot) return;
+  restoreSnapshot(undoSnapshot);
+  hideUndo();
+  updateDisplay("Hand restored.");
+}
+
+function showUndo() { document.getElementById("undoRow").classList.remove("hidden"); }
+function hideUndo() { document.getElementById("undoRow").classList.add("hidden"); }
+
+function startHand() {
+  if (getTotal() !== getTarget()) return;
+
+  phase = "starting";
+  hdMode = "starting";
+  revisionReturnHDMode = "starting";
+  screenMode = "entry";
+  revisionTarget = null;
+  lastDrawnTileKey = null;
+  coachingOn = false;
+  contextLocked = false;
+  lastActionSnapshot = null;
+  lastActionType = null;
+  lastActionTileKey = null;
+  correctionTargetTileKey = null;
+  correctionActionType = null;
+  handCorrectionTarget = null;
+
+  gameAction = role === "dealer" ? "discard" : "draw";
+
+  showHD();
+}
+
+function acceptRevision() {
+  if (getTotal() !== getTarget()) return;
+
+  if (screenMode === "handCorrection") {
+    hdMode = "current";
+    phase = "game";
+    revisionReturnHDMode = "current";
+    revisionTarget = null;
+    handCorrectionTarget = null;
+    lastDrawnTileKey = null;
+    showToast("Hand correction accepted.");
+    showHD();
+    return;
+  }
+
+  hdMode = revisionReturnHDMode;
+  showHD();
+}
+
+function getWindLabel(value) {
+  if (value === "east") return "East";
+  if (value === "south") return "South";
+  if (value === "west") return "West";
+  if (value === "north") return "North";
+  return "East";
+}
+
+function getRulesetLabel() {
+  if (ruleset === "chinese13") return "Chinese 13-Tile";
+  if (ruleset === "filipino16") return "Filipino 16-Tile";
+  return "Taiwanese 16-Tile";
+}
+
+function showHD() {
+  document.getElementById("tdScreen").classList.add("hidden");
+  document.getElementById("drawScreen").classList.add("hidden");
+  document.getElementById("discardScreen").classList.add("hidden");
+  document.getElementById("hdScreen").classList.remove("hidden");
+  document.getElementById("hcsIntro").classList.add("hidden");
+
+  showStartingHeader(false);
+  screenMode = "entry";
+
+  clearDrawSelection();
+  selectedDiscardTileKey = null;
+  correctionTargetTileKey = null;
+  correctionActionType = null;
+
+  configureHDMode();
+  buildHandDisplay();
+}
+
+function configureHDMode() {
+  const handTitle = document.getElementById("handTitle");
+  const handMeta = document.getElementById("handMeta");
+  const reviseBtn = document.getElementById("reviseBtn");
+  const drawBtn = document.getElementById("drawBtn");
+  const discardBtn = document.getElementById("discardBtn");
+  const coachingBtn = document.getElementById("coachingBtn");
+  const correctLastBtn = document.getElementById("correctLastBtn");
+  const handCorrectionBtn = document.getElementById("handCorrectionBtn");
+  const newGameRow = document.getElementById("newGameRow");
+  const enginePanel = document.getElementById("enginePanel");
+
+  const total = getTotal();
+  const context = "Seat: " + getWindIcon(seatWind) + " " + getWindLabel(seatWind) +
+    " | Round: " + getWindIcon(prevailingWind) + " " + getWindLabel(prevailingWind);
+
+  enginePanel.classList.toggle("hidden", !coachingOn);
+
+  drawBtn.classList.remove("hidden");
+  discardBtn.classList.remove("hidden");
+
+  const canDraw = gameAction === "draw";
+  const canDiscard = gameAction === "discard";
+
+  drawBtn.disabled = !canDraw;
+  discardBtn.disabled = !canDiscard;
+
+  drawBtn.classList.toggle("enabled", canDraw);
+  drawBtn.classList.toggle("disabled", !canDraw);
+
+  discardBtn.classList.toggle("enabled", canDiscard);
+  discardBtn.classList.toggle("disabled", !canDiscard);
+
+  correctLastBtn.classList.toggle("hidden", !(hdMode === "current" && lastActionSnapshot));
+  handCorrectionBtn.classList.toggle("hidden", hdMode !== "current");
+  newGameRow.classList.toggle("hidden", hdMode !== "current");
+
+  if (hdMode === "starting") {
+    handTitle.textContent = "Starting Hand Display";
+    handMeta.textContent =
+      "Role: " + (role === "dealer" ? "Dealer" : "Player") +
+      " | Tiles: " + total +
+      " | " + context;
+
+    reviseBtn.classList.remove("hidden");
+    coachingBtn.classList.remove("hidden");
+    coachingBtn.textContent = coachingOn ? "Coaching - ON" : "Coaching - OFF";
+    return;
+  }
+
+  handTitle.textContent = "Current Hand Display";
+  handMeta.textContent = "Game Hand | Loose Tiles: " + total + " | " + context;
+
+  reviseBtn.classList.add("hidden");
+  coachingBtn.classList.add("hidden");
+}
+
+function reviseHand() {
+  if (hdMode !== "starting") return;
+
+  phase = "starting";
+  screenMode = "revision";
+  revisionTouched = false;
+  revisionReturnHDMode = hdMode;
+  revisionTarget = getStartingTarget();
+  lastDrawnTileKey = null;
+  coachingOn = false;
+  contextLocked = false;
+
+  document.getElementById("hdScreen").classList.add("hidden");
+  document.getElementById("drawScreen").classList.add("hidden");
+  document.getElementById("discardScreen").classList.add("hidden");
+  document.getElementById("tdScreen").classList.remove("hidden");
+
+  showStartingHeader(true);
+  hideUndo();
+  updateDisplay("Review and revise your hand.");
+}
+
+function openDrawScreen() {
+  if (gameAction !== "draw") return;
+
+  document.getElementById("tdScreen").classList.add("hidden");
+  document.getElementById("hdScreen").classList.add("hidden");
+  document.getElementById("discardScreen").classList.add("hidden");
+  document.getElementById("drawScreen").classList.remove("hidden");
+
+  showStartingHeader(false);
+  applyDisplayOrderToScreens();
+  clearDrawSelection();
+  applyCorrectionHighlight("draw");
+}
+
+function selectDrawTile(key) {
+  if (counts[key] >= 4) {
+    showToast("Maximum copies already in hand.");
+    return;
+  }
+
+  selectedDrawTileKey = key;
+  document.querySelectorAll(".draw-tile").forEach(tile => tile.classList.remove("action-selected", "correction-target"));
+  document.getElementById("draw-tile-" + key).classList.add("action-selected");
+
+  const btn = document.getElementById("confirmDrawBtn");
+  btn.disabled = false;
+  btn.classList.add("enabled");
+  btn.classList.remove("disabled");
+  document.getElementById("drawMeta").textContent = tileLabels[key] + " selected. Press Confirm.";
+}
+
+function clearDrawSelection() {
+  selectedDrawTileKey = null;
+  document.querySelectorAll(".draw-tile").forEach(tile => tile.classList.remove("action-selected"));
+  const btn = document.getElementById("confirmDrawBtn");
+  if (btn) {
+    btn.disabled = true;
+    btn.classList.remove("enabled");
+    btn.classList.add("disabled");
+  }
+  const meta = document.getElementById("drawMeta");
+  if (meta) meta.textContent = "Prepare to Draw. Select one tile. Then press Confirm.";
+}
+
+function confirmDraw() {
+  if (!selectedDrawTileKey) {
+    showToast("Select a tile first.");
+    return;
+  }
+
+  if (counts[selectedDrawTileKey] >= 4) {
+    showToast("Maximum copies already in hand.");
+    return;
+  }
+
+  lastActionSnapshot = makeSnapshot();
+  lastActionType = "draw";
+  lastActionTileKey = selectedDrawTileKey;
+
+  counts[selectedDrawTileKey] += 1;
+  lockHandContext();
+
+  phase = "game";
+  hdMode = "current";
+  gameAction = "discard";
+  lastDrawnTileKey = selectedDrawTileKey;
+  revisionReturnHDMode = "current";
+  revisionTarget = null;
+  coachingOn = false;
+  correctingLastEntry = false;
+  correctionTargetTileKey = null;
+  correctionActionType = null;
+
+  showHD();
+}
+
+function cancelDraw() { showHD(); }
+
+function openDiscardScreen() {
+  if (gameAction !== "discard") return;
+
+  document.getElementById("tdScreen").classList.add("hidden");
+  document.getElementById("hdScreen").classList.add("hidden");
+  document.getElementById("drawScreen").classList.add("hidden");
+  document.getElementById("discardScreen").classList.remove("hidden");
+
+  showStartingHeader(false);
+  selectedDiscardTileKey = null;
+  buildDiscardDisplay();
+  applyCorrectionHighlight("discard");
+}
+
+function cancelDiscard() { showHD(); }
+
+function selectDiscardTile(key) {
+  if (counts[key] <= 0) return;
+
+  selectedDiscardTileKey = key;
+  document.querySelectorAll(".discard-tile").forEach(tile => tile.classList.remove("action-selected", "correction-target"));
+
+  const target = document.querySelector('.discard-tile[data-key="' + key + '"]');
+  if (target) target.classList.add("action-selected");
+
+  const btn = document.getElementById("confirmDiscardBtn");
+  btn.disabled = false;
+  btn.classList.add("enabled");
+  btn.classList.remove("disabled");
+  document.getElementById("discardMeta").textContent = tileLabels[key] + " selected. Press Confirm.";
+}
+
+function confirmDiscard() {
+  if (!selectedDiscardTileKey) {
+    showToast("Select a tile first.");
+    return;
+  }
+  if (counts[selectedDiscardTileKey] <= 0) return;
+
+  lastActionSnapshot = makeSnapshot();
+  lastActionType = "discard";
+  lastActionTileKey = selectedDiscardTileKey;
+
+  counts[selectedDiscardTileKey] -= 1;
+  lockHandContext();
+
+  phase = "game";
+  hdMode = "current";
+  gameAction = "draw";
+  lastDrawnTileKey = null;
+  revisionReturnHDMode = "current";
+  revisionTarget = null;
+  coachingOn = false;
+  correctingLastEntry = false;
+  correctionTargetTileKey = null;
+  correctionActionType = null;
+
+  showHD();
+}
+
+function correctLastEntry() {
+  if (!lastActionSnapshot || !lastActionType) return;
+
+  const action = lastActionType;
+  const targetKey = lastActionTileKey;
+  const snapshot = lastActionSnapshot;
+
+  restoreSnapshot(snapshot);
+  lastActionSnapshot = null;
+  lastActionType = null;
+  lastActionTileKey = null;
+  correctingLastEntry = true;
+  correctionTargetTileKey = targetKey;
+  correctionActionType = action;
+
+  if (action === "draw") {
+    showToast("Correct the last draw entry. Red shows the previous entry.");
+    openDrawScreen();
+  } else {
+    showToast("Correct the last discard entry. Red shows the previous entry.");
+    openDiscardScreen();
+  }
+}
+
+function applyCorrectionHighlight(action) {
+  document.querySelectorAll(".correction-target").forEach(function(tile) {
+    tile.classList.remove("correction-target");
+  });
+
+  if (!correctingLastEntry || correctionActionType !== action || !correctionTargetTileKey) return;
+
+  if (action === "draw") {
+    const tile = document.getElementById("draw-tile-" + correctionTargetTileKey);
+    if (tile) tile.classList.add("correction-target");
+  }
+
+  if (action === "discard") {
+    const tile = document.querySelector('.discard-tile[data-key="' + correctionTargetTileKey + '"]');
+    if (tile) tile.classList.add("correction-target");
+  }
+}
+
+function applyDisplayOrderToScreens() {
+  const suits = [displayOrder.firstSuit, displayOrder.secondSuit, displayOrder.thirdSuit];
+  const honors = displayOrder.honorsOrder === "dragonsFirst" ? ["dragons", "winds"] : ["winds", "dragons"];
+  const ordered = suits.concat(honors);
+
+  const tdScreen = document.getElementById("tdScreen");
+  const tdActions = document.querySelector("#tdScreen > .actions");
+  if (tdScreen && tdActions) {
+    ordered.forEach(function(group) {
+      const section = document.getElementById("section-" + group);
+      if (section) tdScreen.insertBefore(section, tdActions);
+    });
+  }
+
+  const drawScreen = document.getElementById("drawScreen");
+  const drawActions = document.querySelector("#drawScreen > .actions");
+  if (drawScreen && drawActions) {
+    ordered.forEach(function(group) {
+      const section = document.getElementById("draw-section-" + group);
+      if (section) drawScreen.insertBefore(section, drawActions);
+    });
+  }
+}
+
+
+function openHandCorrectionScreen() {
+  if (hdMode !== "current") return;
+
+  handCorrectionTarget = getTotal();
+  revisionTarget = handCorrectionTarget;
+  revisionReturnHDMode = "current";
+  screenMode = "handCorrection";
+  revisionTouched = false;
+
+  document.getElementById("hdScreen").classList.add("hidden");
+  document.getElementById("drawScreen").classList.add("hidden");
+  document.getElementById("discardScreen").classList.add("hidden");
+  document.getElementById("tdScreen").classList.remove("hidden");
+  document.getElementById("hcsIntro").classList.remove("hidden");
+  document.getElementById("hcsMeta").textContent = "Review your hand and make any needed corrections.";
+
+  showStartingHeader(true);
+  hideUndo();
+  applyDisplayOrderToScreens();
+  updateDisplay("Review your hand and make any needed corrections.");
+}
+
+function confirmNewGame() {
+  const ok = window.confirm("Start a new game? Current hand data will be cleared.");
+  if (!ok) return;
+  startNewGame();
+}
+
+function startNewGame() {
+  for (const key in counts) counts[key] = 0;
+
+  role = "player";
+  seatWind = "east";
+  prevailingWind = "east";
+  phase = "starting";
+  screenMode = "entry";
+  hdMode = "starting";
+  gameAction = "draw";
+  lastDrawnTileKey = null;
+  contextLocked = false;
+  revisionReturnHDMode = "starting";
+  revisionTarget = null;
+  handCorrectionTarget = null;
+  undoSnapshot = null;
+  selectedDrawTileKey = null;
+  selectedDiscardTileKey = null;
+  lastActionSnapshot = null;
+  lastActionType = null;
+  lastActionTileKey = null;
+  correctingLastEntry = false;
+  correctionTargetTileKey = null;
+  correctionActionType = null;
+  coachingOn = false;
+
+  document.getElementById("roleSelect").value = role;
+  document.getElementById("seatWindSelect").value = seatWind;
+  document.getElementById("prevailingWindSelect").value = prevailingWind;
+
+  document.getElementById("hdScreen").classList.add("hidden");
+  document.getElementById("drawScreen").classList.add("hidden");
+  document.getElementById("discardScreen").classList.add("hidden");
+  document.getElementById("tdScreen").classList.remove("hidden");
+  document.getElementById("hcsIntro").classList.add("hidden");
+
+  showStartingHeader(true);
+  hideUndo();
+  applyDisplayOrderToScreens();
+  updateWindIcons();
+  updateContextControls();
+  updateDisplay();
+  showToast("New game ready.");
+}
+
+function buildDiscardDisplay() {
+  const groups = getTileGroups();
+  let html = "";
+
+  for (const group of groups) {
+    let groupHtml = "";
+
+    for (const key of group.keys) {
+      for (let i = 0; i < counts[key]; i++) {
+        groupHtml += '<button class="discard-tile" data-key="' + key + '" onclick="selectDiscardTile(\'' + key + '\')">' +
+          tileLabels[key] +
+          '</button>';
+      }
+    }
+
+    if (groupHtml !== "") {
+      html += '<div class="hand-section">';
+      html += '<div class="hand-section-title">' + group.title + '</div>';
+      html += groupHtml;
+      html += '</div>';
+    }
+  }
+
+  document.getElementById("discardDisplay").innerHTML =
+    html || '<span class="empty-note">No tiles available to discard.</span>';
+
+  selectedDiscardTileKey = null;
+  const btn = document.getElementById("confirmDiscardBtn");
+  btn.disabled = true;
+  btn.classList.remove("enabled");
+  btn.classList.add("disabled");
+  document.getElementById("discardMeta").textContent = "Prepare to Discard. Select one tile. Then press Confirm.";
+}
+
+function buildHandDisplay() {
+  if (hdMode === "current") buildCurrentHandDisplay();
+  else buildStartingHandDisplay();
+}
+
+function buildStartingHandDisplay() {
+  const groups = getTileGroups();
+  let html = "";
+
+  for (const group of groups) {
+    let groupHtml = "";
+
+    for (const key of group.keys) {
+      for (let i = 0; i < counts[key]; i++) {
+        groupHtml += '<span class="hand-tile">' + tileLabels[key] + '</span>';
+      }
+    }
+
+    if (groupHtml !== "") {
+      html += '<div class="hand-section">';
+      html += '<div class="hand-section-title">' + group.title + '</div>';
+      html += groupHtml;
+      html += '</div>';
+    }
+  }
+
+  document.getElementById("handDisplay").innerHTML = html || "No tiles selected.";
+}
+
+function buildCurrentHandDisplay() {
+  const groups = getTileGroups();
+
+  let looseHtml = "";
+  let drawnHighlightUsed = false;
+
+  for (const group of groups) {
+    let groupHtml = "";
+
+    for (const key of group.keys) {
+      for (let i = 0; i < counts[key]; i++) {
+        const isLastDrawn = key === lastDrawnTileKey && !drawnHighlightUsed;
+
+        groupHtml += '<span class="hand-tile' + (isLastDrawn ? ' last-drawn' : '') + '">' +
+          tileLabels[key] +
+          '</span>';
+
+        if (isLastDrawn) drawnHighlightUsed = true;
+      }
+    }
+
+    if (groupHtml !== "") {
+      looseHtml += '<div class="hand-section">';
+      looseHtml += '<div class="hand-section-title">' + group.title + '</div>';
+      looseHtml += groupHtml;
+      looseHtml += '</div>';
+    }
+  }
+
+  let html = "";
+
+  html += '<div class="hand-section">';
+  html += '<div class="hand-section-title">Loose Tiles</div>';
+  html += looseHtml || '<span class="empty-note">No loose tiles entered.</span>';
+  html += '</div>';
+
+  html += '<div class="hand-section">';
+  html += '<div class="hand-section-title">Exposed Melds</div>';
+  html += '<span class="empty-note">None yet</span>';
+  html += '</div>';
+
+  html += '<div class="hand-section">';
+  html += '<div class="hand-section-title">Hidden Melds</div>';
+  html += '<span class="empty-note">None yet</span>';
+  html += '</div>';
+
+  document.getElementById("handDisplay").innerHTML = html;
+}
+
+function getTileGroups() {
+  const groupMap = {
+    chars: { title: "Chars", keys: ["char1","char2","char3","char4","char5","char6","char7","char8","char9"] },
+    bams: { title: "Bams", keys: ["bam1","bam2","bam3","bam4","bam5","bam6","bam7","bam8","bam9"] },
+    dots: { title: "Dots", keys: ["dot1","dot2","dot3","dot4","dot5","dot6","dot7","dot8","dot9"] },
+    winds: { title: "Winds", keys: ["east","south","west","north"] },
+    dragons: { title: "Dragons", keys: ["red","green","white"] }
+  };
+
+  const suitGroups = [displayOrder.firstSuit, displayOrder.secondSuit, displayOrder.thirdSuit].map(s => groupMap[s]);
+  const honorGroups = displayOrder.honorsOrder === "dragonsFirst"
+    ? [groupMap.dragons, groupMap.winds]
+    : [groupMap.winds, groupMap.dragons];
+
+  return suitGroups.concat(honorGroups);
+}
+
+
+let lastTouchEndTime = 0;
+document.addEventListener("dblclick", function(e) {
+  e.preventDefault();
+}, { passive: false });
+document.addEventListener("touchend", function(e) {
+  const now = Date.now();
+  if (now - lastTouchEndTime <= 300) {
+    e.preventDefault();
+  }
+  lastTouchEndTime = now;
+}, { passive: false });
+
+buildTiles();
+buildDrawTiles();
+updateDisplaySuitOptions(displayOrder.secondSuit);
+applyDisplayOrderToScreens();
+updateWindIcons();
+updateContextControls();
+updateDisplay();
+adjustContainerPadding();
+</script>
+
+</body>
+</html>
