@@ -1365,7 +1365,7 @@ function configureHDMode() {
 
   handTitle.textContent = "Current Hand";
   handMeta.textContent = context;
-  handInstruction.textContent = gameAction === "draw" ? "Prepare to Draw." : "Prepare to Discard.";
+  handInstruction.textContent = gameAction === "draw" ? "After drawing or claiming a tile, press Draw." : "After discarding a tile, press Discard.";
   handInstruction.classList.remove("hidden");
 
   reviseBtn.classList.add("hidden");
@@ -1703,7 +1703,7 @@ function buildDiscardDisplay() {
   btn.disabled = true;
   btn.classList.remove("enabled");
   btn.classList.add("disabled");
-  document.getElementById("discardMeta").textContent = "Select the tile you wish to discard.";
+  document.getElementById("discardMeta").textContent = "Enter the tile you discarded.";
 }
 
 function buildHandDisplay() {
