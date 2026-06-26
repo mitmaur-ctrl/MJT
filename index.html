@@ -1255,7 +1255,7 @@ function updateDisplay(customMessage) {
   if (customMessage) {
     suggestion.textContent = customMessage;
   } else if (screenMode === "handCorrection") {
-    suggestion.textContent = "Your current hand is highlighted in green.";
+    suggestion.textContent = "Tiles in your current MJC hand is highlighted in green.";
   } else if (screenMode === "entry" && total === 0) {
     suggestion.textContent = "Enter your starting tiles.";
   } else if (screenMode === "entry" && total === 1) {
