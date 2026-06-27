@@ -1255,7 +1255,7 @@ function updateDisplay(customMessage) {
   if (customMessage) {
     suggestion.textContent = customMessage;
   } else if (screenMode === "handCorrection") {
-    suggestion.textContent = "Tiles in your current MJC hand is highlighted in green.";
+    suggestion.textContent = "The tiles in your MJC hand are highlighted in green.";
   } else if (screenMode === "entry" && total === 0) {
     suggestion.textContent = "Enter your starting tiles.";
   } else if (screenMode === "entry" && total === 1) {
@@ -1777,7 +1777,7 @@ function openHandCorrectionScreen() {
   showStartingHeader(true);
   hideUndo();
   applyDisplayOrderToScreens();
-  updateDisplay("Tiles in your current MJC hand are highlighted in green.");
+  updateDisplay("The tiles in your MJC hand are highlighted in green.");
   scrollToTopForScreen();
 }
 
