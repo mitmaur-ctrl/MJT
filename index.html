@@ -1267,7 +1267,7 @@ function updateDisplay(customMessage) {
   } else {
     suggestion.textContent = screenMode === "revision"
       ? (revisionTouched ? "Revision ready. Press Accept." : "Review and revise your hand.")
-      : "Check your settings and tiles before starting.";
+      : "Verify your settings and tiles before starting.";
   }
 
   updateWindIcons();
@@ -1504,7 +1504,7 @@ function configureHDMode() {
 
   if (hdMode === "starting") {
     handTitle.textContent = "Starting Hand";
-    handInstruction.innerHTML = "Here's your hand in Six Box Theory™ (6BT).<br>Check your settings and tile entries before starting.";
+    handInstruction.innerHTML = "Here's your hand in Six Box Theory™ (6BT).<br>Verify your settings and tiles before starting.";
     handInstruction.classList.remove("hidden");
     handMeta.textContent =
       "Role: " + (role === "dealer" ? "Dealer" : "Player") +
