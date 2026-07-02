@@ -1817,12 +1817,12 @@ function openHandCorrectionScreen() {
   document.getElementById("tdScreen").classList.remove("hidden");
   document.getElementById("hcsIntro").classList.remove("hidden");
   document.querySelector("#hcsIntro .hcs-title").textContent = "Hand Correction Screen";
-  document.getElementById("hcsMeta").innerHTML = "Correct MJC to reflect the tiles in your rack.";
+  document.getElementById("hcsMeta").innerHTML = "Tap any tile to adjust its quantity.<br>Correct MJC to match the tiles on your rack.";
 
   showStartingHeader(true);
   hideUndo();
   applyDisplayOrderToScreens();
-  updateDisplay("Correct MJC to reflect the tiles in your rack.");
+  updateDisplay("The tiles in your MJC hand are highlighted in green.");
   scrollToTopForScreen();
 }
 
