@@ -1,0 +1,10 @@
+MJC v1.19.5 Final Hot Fix
+
+Scope: Restore only the Hand Correction Screen wording from the approved
+v1.19.4 build.
+
+Do not change: - Discard Tile Screen winds - Play On button behavior -
+CHD layout - SHD wording - Button sizing - Coaching View behavior - Any
+other messages or screens
+
+This is the only approved change for v1.19.5 Final.
