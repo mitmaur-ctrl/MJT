@@ -780,6 +780,27 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 
   </div>
 </div>
 
+<div id="gettingStartedDialog" class="dialog-backdrop hidden">
+  <div class="dialog">
+    <h2>Welcome to Mahjong Coach</h2>
+
+    <p><strong>To get started:</strong></p>
+
+    <ol>
+      <li>Select your Display preferences. This is the order in which you normally organize tiles on your rack.</li>
+      <li>Select your Role: Player or Dealer.</li>
+      <li>Select your Seat and Round winds.</li>
+      <li>Enter your starting tiles.</li>
+      <li>Review your settings and tile entries.</li>
+      <li>Press Play On!</li>
+    </ol>
+
+    <div class="dialog-actions">
+      <button class="dialog-button primary" onclick="closeDialog('gettingStartedDialog')">Close</button>
+    </div>
+  </div>
+</div>  
+  
 <div id="toast" class="toast hidden"></div>
 
 <script>
@@ -976,6 +997,10 @@ function closeDialog(id) {
   document.getElementById(id).classList.add("hidden");
 }
 
+function openGettingStartedDialog() {
+  openDialog("gettingStartedDialog");
+}
+  
 function featureComingSoon(input) {
   showToast("Feature Coming Soon");
   setTimeout(function() {
