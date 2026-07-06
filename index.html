@@ -1183,7 +1183,7 @@ function cycleTile(key) {
   const total = getTotal();
   const target = getTarget();
 
-  if ((screenMode === "entry" && total >= target && counts[key] < 4) {
+  if (screenMode === "entry" && total >= target && counts[key] < 4) {
     updateDisplay("Maximum tiles selected.");
     return;
   }
