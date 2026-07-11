@@ -372,6 +372,7 @@ V4 = Photo Recognition
   
 <div id="toast" class="toast hidden"></div>
 
+<script src="js/ui-utils.js"></script>
 <script>
 /*
 ==================================================
@@ -507,11 +508,7 @@ let handCorrectionSnapshot = null;
 let tcsOriginalCounts = {};
 let tcsAddedCounts = {};
 
-function adjustContainerPadding() {
-  const header = document.getElementById("fixedHeader");
-  if (!header) return;
-  document.documentElement.style.setProperty("--header-height", header.offsetHeight + "px");
-}
+
 
 window.addEventListener("resize", adjustContainerPadding);
 window.addEventListener("load", adjustContainerPadding);
@@ -542,16 +539,7 @@ function getTotal() {
   return total;
 }
 
-function showStartingHeader(show) {
-  document.getElementById("startingHeaderControls").classList.toggle("hidden", !show);
-  document.getElementById("mainContainer").classList.toggle("compact", !show);
-  setTimeout(adjustContainerPadding, 0);
-}
 
-function scrollToTopForScreen() {
-  setTimeout(function() { window.scrollTo(0, 0); }, 0);
-  setTimeout(function() { window.scrollTo(0, 0); }, 60);
-}
 
 function getTarget() {
   if ((screenMode === "revision" || screenMode === "handCorrection") && revisionTarget !== null) return revisionTarget;
@@ -617,16 +605,6 @@ function updateWindIcons() {
   if (prevailingIcon) prevailingIcon.textContent = getWindIcon(prevailingWind);
 }
 
-function showToast(message) {
-  const toast = document.getElementById("toast");
-  toast.textContent = message;
-  toast.classList.remove("hidden");
-
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(function() {
-    toast.classList.add("hidden");
-  }, 1600);
-}
 
 
 
@@ -638,6 +616,8 @@ function toggleCoaching() {
 
   coachingBtn.textContent = coachingOn ? "Standard View" : "Coaching View";
   enginePanel.classList.toggle("hidden", !coachingOn);
+
+  configureHDMode();
 
   if (coachingOn) showToast("Coaching display coming in V2.");
 }
@@ -1003,8 +983,8 @@ function undoClear() {
   updateDisplay("Hand restored.");
 }
 
-function showUndo() { document.getElementById("undoRow").classList.remove("hidden"); }
-function hideUndo() { document.getElementById("undoRow").classList.add("hidden"); }
+
+
 
 function startHand() {
   const target = getTarget();
@@ -1101,74 +1081,6 @@ function showHD() {
   scrollToTopForScreen();
 }
 
-function configureHDMode() {
-  const handTitle = document.getElementById("handTitle");
-  const handMeta = document.getElementById("handMeta");
-  const handInstruction = document.getElementById("handInstruction");
-  const reviseBtn = document.getElementById("reviseBtn");
-  const drawBtn = document.getElementById("drawBtn");
-  const discardBtn = document.getElementById("discardBtn");
-  const coachingBtn = document.getElementById("coachingBtn");
-  const correctLastBtn = document.getElementById("correctLastBtn");
-  const handCorrectionBtn = document.getElementById("handCorrectionBtn");
-  const startingUtilityRow = document.getElementById("startingUtilityRow");
-  const currentCorrectionRow = document.getElementById("currentCorrectionRow");
-  const newGameRow = document.getElementById("newGameRow");
-  const enginePanel = document.getElementById("enginePanel");
-
-  const total = getTotal();
-  const setupContext = "Seat: " + getWindLabel(seatWind) +
-    " | Round: " + getWindLabel(prevailingWind);
-
-  enginePanel.classList.toggle("hidden", !coachingOn);
-
-  drawBtn.classList.remove("hidden");
-  discardBtn.classList.remove("hidden");
-  reviseBtn.classList.remove("hidden");
-  coachingBtn.classList.remove("hidden");
-  correctLastBtn.classList.remove("hidden");
-  handCorrectionBtn.classList.remove("hidden");
-
-  const canDraw = gameAction === "draw";
-  const canDiscard = gameAction === "discard";
-
-  drawBtn.disabled = !canDraw;
-  discardBtn.disabled = !canDiscard;
-
-  drawBtn.classList.toggle("enabled", canDraw);
-  drawBtn.classList.toggle("disabled", !canDraw);
-
-  discardBtn.classList.toggle("enabled", canDiscard);
-  discardBtn.classList.toggle("disabled", !canDiscard);
-
-  startingUtilityRow.classList.remove("hidden");
-  reviseBtn.classList.toggle("hidden", hdMode !== "starting");
-  correctLastBtn.classList.toggle("hidden", hdMode !== "current");
-  currentCorrectionRow.classList.toggle("hidden", hdMode !== "current");
-  correctLastBtn.disabled = !(hdMode === "current" && lastActionSnapshot);
-  correctLastBtn.classList.toggle("disabled", !(hdMode === "current" && lastActionSnapshot));
-  handCorrectionBtn.disabled = hdMode !== "current";
-  newGameRow.classList.add("hidden");
-
-  if (hdMode === "starting") {
-    handTitle.textContent = "Starting Hand";
-    handInstruction.innerHTML = "Here's your hand organized according to 6BT.";
-    handInstruction.classList.remove("hidden");
-    handMeta.textContent =
-      "Role: " + (role === "dealer" ? "Dealer" : "Player") +
-      " | Tiles: " + total +
-      " | " + setupContext;
-
-    coachingBtn.textContent = coachingOn ? "Standard View" : "Coaching View";
-    return;
-  }
-
-  handTitle.textContent = "Current Hand";
-  handMeta.textContent = "";
-  handInstruction.textContent = gameAction === "draw" ? "Prepare to draw. Press Draw when ready." : "Prepare to discard. Press Discard when ready.";
-  handInstruction.classList.remove("hidden");
-
-}
 
 function reviseHand() {
   if (hdMode !== "starting") return;
@@ -1197,101 +1109,6 @@ function reviseHand() {
   scrollToTopForScreen();
 }
 
-function openDrawScreen() {
-  if (gameAction !== "draw") return;
-
-  document.getElementById("tdScreen").classList.add("hidden");
-  document.getElementById("hdScreen").classList.add("hidden");
-  document.getElementById("discardScreen").classList.add("hidden");
-  document.getElementById("drawScreen").classList.remove("hidden");
-
-  showStartingHeader(false);
-  applyDisplayOrderToScreens();
-  scrollToTopForScreen();
-  clearDrawSelection();
-  applyCorrectionHighlight("draw");
-}
-
-function selectDrawTile(key) {
-  if (counts[key] >= 4) {
-    showToast("Maximum copies already in hand.");
-    return;
-  }
-
-  selectedDrawTileKey = key;
-  document.querySelectorAll(".draw-tile").forEach(tile => tile.classList.remove("action-selected", "correction-target"));
-  document.getElementById("draw-tile-" + key).classList.add("action-selected");
-
-  const btn = document.getElementById("confirmDrawBtn");
-  btn.disabled = false;
-  btn.classList.add("enabled");
-  btn.classList.remove("disabled");
-  document.getElementById("drawMeta").textContent = tileLabels[key] + " selected. Press Confirm.";
-}
-
-function clearDrawSelection() {
-  selectedDrawTileKey = null;
-  document.querySelectorAll(".draw-tile").forEach(tile => tile.classList.remove("action-selected"));
-  const btn = document.getElementById("confirmDrawBtn");
-  if (btn) {
-    btn.disabled = true;
-    btn.classList.remove("enabled");
-    btn.classList.add("disabled");
-  }
-  const meta = document.getElementById("drawMeta");
-  if (meta) meta.textContent = "Enter the tile you drew or claimed.";
-}
-
-function confirmDraw() {
-  if (!selectedDrawTileKey) {
-    showToast("Select a tile first.");
-    return;
-  }
-
-  if (counts[selectedDrawTileKey] >= 4) {
-    showToast("Maximum copies already in hand.");
-    return;
-  }
-
-  lastActionSnapshot = makeSnapshot();
-  lastActionType = "draw";
-  lastActionTileKey = selectedDrawTileKey;
-
-  counts[selectedDrawTileKey] += 1;
-  lockHandContext();
-
-  phase = "game";
-  hdMode = "current";
-  gameAction = "discard";
-  lastDrawnTileKey = selectedDrawTileKey;
-  revisionReturnHDMode = "current";
-  revisionTarget = null;
-  coachingOn = false;
-  correctingLastEntry = false;
-  correctionTargetTileKey = null;
-  correctionActionType = null;
-
-  showHD();
-}
-
-function cancelDraw() { showHD(); }
-
-function openDiscardScreen() {
-  if (gameAction !== "discard") return;
-
-  document.getElementById("tdScreen").classList.add("hidden");
-  document.getElementById("hdScreen").classList.add("hidden");
-  document.getElementById("drawScreen").classList.add("hidden");
-  document.getElementById("discardScreen").classList.remove("hidden");
-
-  showStartingHeader(false);
-  updateDiscardContext();
-  scrollToTopForScreen();
-  selectedDiscardTileKey = null;
-  buildDiscardDisplay();
-  updateDiscardContext();
-  applyCorrectionHighlight("discard");
-}
 
 function cancelDiscard() { showHD(); }
 
@@ -1299,49 +1116,6 @@ function showInsightPlaceholder() {
   window.alert("Insight will provide discard recommendations in v2.0.\n\nFor now, continue selecting and confirming your discard.");
 }
 
-function selectDiscardTile(key) {
-  if (counts[key] <= 0) return;
-
-  selectedDiscardTileKey = key;
-  document.querySelectorAll(".discard-tile").forEach(tile => tile.classList.remove("action-selected", "correction-target"));
-
-  const target = document.querySelector('.discard-tile[data-key="' + key + '"]');
-  if (target) target.classList.add("action-selected");
-
-  const btn = document.getElementById("confirmDiscardBtn");
-  btn.disabled = false;
-  btn.classList.add("enabled");
-  btn.classList.remove("disabled");
-  document.getElementById("discardMeta").textContent = tileLabels[key] + " selected. Press Confirm.";
-}
-
-function confirmDiscard() {
-  if (!selectedDiscardTileKey) {
-    showToast("Select a tile first.");
-    return;
-  }
-  if (counts[selectedDiscardTileKey] <= 0) return;
-
-  lastActionSnapshot = makeSnapshot();
-  lastActionType = "discard";
-  lastActionTileKey = selectedDiscardTileKey;
-
-  counts[selectedDiscardTileKey] -= 1;
-  lockHandContext();
-
-  phase = "game";
-  hdMode = "current";
-  gameAction = "draw";
-  lastDrawnTileKey = null;
-  revisionReturnHDMode = "current";
-  revisionTarget = null;
-  coachingOn = false;
-  correctingLastEntry = false;
-  correctionTargetTileKey = null;
-  correctionActionType = null;
-
-  showHD();
-}
 
 function correctLastEntry() {
   if (!lastActionSnapshot || !lastActionType) return;
@@ -1503,149 +1277,6 @@ function startNewGame() {
   showToast("New game ready.");
 }
 
-function buildDiscardDisplay() {
-  // v1.19.6 retained hot-fix:
-  // The Discard Tile Screen must include every tile type currently in the hand, including Winds.
-  // This function intentionally builds its own ordered group list instead of relying on any
-  // Game On display simplification rules.
-  const groupMap = {
-    chars: { title: "Chars", keys: ["char1","char2","char3","char4","char5","char6","char7","char8","char9"] },
-    bams: { title: "Bams", keys: ["bam1","bam2","bam3","bam4","bam5","bam6","bam7","bam8","bam9"] },
-    dots: { title: "Dots", keys: ["dot1","dot2","dot3","dot4","dot5","dot6","dot7","dot8","dot9"] },
-    winds: { title: "Winds", keys: ["east","south","west","north"] },
-    dragons: { title: "Dragons", keys: ["red","green","white"] }
-  };
-
-  const suitGroups = [displayOrder.firstSuit, displayOrder.secondSuit, displayOrder.thirdSuit]
-    .map(function(groupName) { return groupMap[groupName]; });
-
-  const honorGroups = displayOrder.honorsOrder === "dragonsFirst"
-    ? [groupMap.dragons, groupMap.winds]
-    : [groupMap.winds, groupMap.dragons];
-
-  const groups = suitGroups.concat(honorGroups);
-  let html = "";
-
-  for (const group of groups) {
-    let groupHtml = "";
-
-    for (const key of group.keys) {
-      const tileCount = counts[key] || 0;
-      for (let i = 0; i < tileCount; i++) {
-        groupHtml += '<button class="discard-tile" data-key="' + key + '" onclick="selectDiscardTile(\'' + key + '\')">' +
-          tileLabels[key] +
-          '</button>';
-      }
-    }
-
-    if (groupHtml !== "") {
-      html += '<div class="hand-section">';
-      html += '<div class="hand-section-title">' + group.title + '</div>';
-      html += groupHtml;
-      html += '</div>';
-    }
-  }
-
-  document.getElementById("discardDisplay").innerHTML =
-    html || '<span class="empty-note">No tiles available to discard.</span>';
-
-  selectedDiscardTileKey = null;
-  const btn = document.getElementById("confirmDiscardBtn");
-  btn.disabled = true;
-  btn.classList.remove("enabled");
-  btn.classList.add("disabled");
-  document.getElementById("discardMeta").textContent = "Enter the tile you discarded.";
-}
-
-function buildHandDisplay() {
-  if (hdMode === "current") buildCurrentHandDisplay();
-  else buildStartingHandDisplay();
-}
-
-function buildStartingHandDisplay() {
-  const groups = getTileGroups();
-  let html = "";
-
-  for (const group of groups) {
-    let groupHtml = "";
-
-    for (const key of group.keys) {
-      for (let i = 0; i < counts[key]; i++) {
-        groupHtml += '<span class="hand-tile">' + tileLabels[key] + '</span>';
-      }
-    }
-
-    if (groupHtml !== "") {
-      html += '<div class="hand-section">';
-      html += '<div class="hand-section-title">' + group.title + '</div>';
-      html += groupHtml;
-      html += '</div>';
-    }
-  }
-
-  document.getElementById("handDisplay").innerHTML = html || "No tiles selected.";
-}
-
-function buildCurrentHandDisplay() {
-  const groups = getTileGroups();
-
-  let looseHtml = "";
-  let drawnHighlightUsed = false;
-
-  for (const group of groups) {
-    let groupHtml = "";
-
-    for (const key of group.keys) {
-      for (let i = 0; i < counts[key]; i++) {
-        const isLastDrawn = key === lastDrawnTileKey && !drawnHighlightUsed;
-
-        groupHtml += '<span class="hand-tile' + (isLastDrawn ? ' last-drawn' : '') + '">' +
-          tileLabels[key] +
-          '</span>';
-
-        if (isLastDrawn) drawnHighlightUsed = true;
-      }
-    }
-
-    if (groupHtml !== "") {
-      looseHtml += '<div class="hand-section">';
-      looseHtml += '<div class="hand-section-title">' + group.title + '</div>';
-      looseHtml += groupHtml;
-      looseHtml += '</div>';
-    }
-  }
-
-  let html = "";
-
-  html += '<div class="hand-section">';
-  html += '<div class="hand-section-title">Loose Tiles (' + getTotal() + ')</div>';
-  html += looseHtml || '<span class="empty-note">No loose tiles entered.</span>';
-  html += '</div>';
-
-  html += '<div class="hand-section">';
-  html += '<div class="hand-section-title">Hidden Melds</div>';
-  html += '<span class="empty-note">None yet</span>';
-  html += '</div>';
-
-  html += '<div class="hand-section">';
-  html += '<div class="hand-section-title">Exposed Melds</div>';
-  html += '<span class="empty-note">None yet</span>';
-  html += '</div>';
-
-  document.getElementById("handDisplay").innerHTML = html;
-}
-
-function getTileGroups() {
-  const groupMap = MJC_TILE_GROUP_DEFINITIONS;
-
-  const suitGroups = [displayOrder.firstSuit, displayOrder.secondSuit, displayOrder.thirdSuit].map(s => groupMap[s]);
-  const honorGroups = displayOrder.honorsOrder === "dragonsFirst"
-    ? [groupMap.dragons, groupMap.winds]
-    : [groupMap.winds, groupMap.dragons];
-
-  return suitGroups.concat(honorGroups);
-}
-
 
 let lastTouchEndTime = 0;
 document.addEventListener("dblclick", function(e) {
@@ -1661,6 +1292,8 @@ document.addEventListener("touchend", function(e) {
 
 MJCApp.init();
 </script>
+<script src="js/draw-discard.js"></script>
+<script src="js/hand-display.js"></script>
 <script src="js/dialogs.js"></script>
 </body>
 </html>
