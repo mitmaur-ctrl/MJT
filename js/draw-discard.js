@@ -19,6 +19,40 @@ No Mahjong coaching or engine logic belongs in this file.
 ==================================================
 */
 
+function createDrawTile(containerId, label, key) {
+  const tile = document.createElement("div");
+  tile.className = "tile draw-tile";
+  tile.id = "draw-tile-" + key;
+
+  tile.addEventListener("contextmenu", e => e.preventDefault());
+
+  tile.addEventListener("click", function(e) {
+    e.preventDefault();
+    selectDrawTile(key);
+  });
+
+  tile.innerHTML =
+    '<div class="tile-name">' + label + '</div>' +
+    '<div class="tile-count"></div>';
+
+  document.getElementById(containerId).appendChild(tile);
+}
+
+function buildDrawTiles() {
+  for (let i = 1; i <= 9; i++) createDrawTile("drawCharacters", i + " Char", "char" + i);
+  for (let i = 1; i <= 9; i++) createDrawTile("drawBams", i + " Bam", "bam" + i);
+  for (let i = 1; i <= 9; i++) createDrawTile("drawDots", i + " Dot", "dot" + i);
+
+  createDrawTile("drawWinds", "East", "east");
+  createDrawTile("drawWinds", "South", "south");
+  createDrawTile("drawWinds", "West", "west");
+  createDrawTile("drawWinds", "North", "north");
+
+  createDrawTile("drawDragons", "Red", "red");
+  createDrawTile("drawDragons", "Green", "green");
+  createDrawTile("drawDragons", "White", "white");
+}
+
 function openDrawScreen() {
   if (gameAction !== "draw") return;
 
