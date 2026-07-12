@@ -388,7 +388,7 @@ Acceptance standard:
 ==================================================
 */
 
-const MJC_VERSION_LABEL = "Beta v1.23";
+const MJC_VERSION_LABEL = "Beta v1.22";
 
 const MJC_RULESET_BASE_HAND_SIZES = Object.freeze({
   filipino16: 16,
@@ -707,17 +707,10 @@ function cycleTile(key) {
     return;
   }
 
-  const total = getTotal();
-  const target = getTarget();
+  if (counts[key] >= 4) counts[key] = -1;
+  counts[key]++;
 
-  if (screenMode === "entry" && total >= target && counts[key] === 0) {
-    updateDisplay("Maximum tiles selected.");
-    return;
-  }
- 
-  counts[key] = (counts[key] + 1) % 5;
-
-  if (screenMode === "revision" || screenMode === "handCorrection") revisionTouched = true;
+  if (screenMode === "revision") revisionTouched = true;
 
   hideUndo();
   updateDisplay();
@@ -737,6 +730,18 @@ function cycleCorrectionTile(key) {
     counts[key] = 0;
   } else {
     const nextAddedCount = (addedCount + 1) % 5;
+    const nextTotal = getTotal() - addedCount + nextAddedCount;
+  // HCS maximum is determined by the current game state.
+  // Prepare to Draw  -> Base hand size.
+  // Prepare to Discard -> Base hand size + 1.
+    const maxHandCount =
+      getBaseHandSize() + (gameAction === "discard" ? 1 : 0);
+
+    if (nextAddedCount > addedCount && nextTotal > maxHandCount) {
+      updateDisplay("Maximum tiles selected.");
+      return;
+    }
+
     tcsAddedCounts[key] = nextAddedCount;
     counts[key] = nextAddedCount;
   }
