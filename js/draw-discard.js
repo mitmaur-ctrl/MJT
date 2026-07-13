@@ -1,7 +1,7 @@
 /*
 ==================================================
 MJC Draw / Discard
-Version: 6BT v1.23
+Version: 6BT v1.25
 ==================================================
 Draw and Discard workflow functions.
 
@@ -193,7 +193,6 @@ function confirmDiscard() {
   showHD();
 }
 
-
 function buildDiscardDisplay() {
   // v1.19.6 retained hot-fix:
   // The Discard Tile Screen must include every tile type currently in the hand, including Winds.
@@ -248,3 +247,54 @@ function buildDiscardDisplay() {
   document.getElementById("discardMeta").textContent = "Enter the tile you discarded.";
 }
 
+function cancelDiscard() { showHD(); }
+
+function showInsightPlaceholder() {
+  window.alert("Insight will provide discard recommendations in v2.0.\n\nFor now, continue selecting and confirming your discard.");
+}
+
+function showInsightPlaceholder() {
+  window.alert("Insight will provide discard recommendations in v2.0.\n\nFor now, continue selecting and confirming your discard.");
+}
+
+function correctLastEntry() {
+  if (!lastActionSnapshot || !lastActionType) return;
+
+  const action = lastActionType;
+  const targetKey = lastActionTileKey;
+  const snapshot = lastActionSnapshot;
+
+  restoreSnapshot(snapshot);
+  lastActionSnapshot = null;
+  lastActionType = null;
+  lastActionTileKey = null;
+  correctingLastEntry = true;
+  correctionTargetTileKey = targetKey;
+  correctionActionType = action;
+
+  if (action === "draw") {
+    showToast("Correct the last draw entry. Red shows the previous entry.");
+    openDrawScreen();
+  } else {
+    showToast("Correct the last discard entry. Red shows the previous entry.");
+    openDiscardScreen();
+  }
+}
+
+function applyCorrectionHighlight(action) {
+  document.querySelectorAll(".correction-target").forEach(function(tile) {
+    tile.classList.remove("correction-target");
+  });
+
+  if (!correctingLastEntry || correctionActionType !== action || !correctionTargetTileKey) return;
+
+  if (action === "draw") {
+    const tile = document.getElementById("draw-tile-" + correctionTargetTileKey);
+    if (tile) tile.classList.add("correction-target");
+  }
+
+  if (action === "discard") {
+    const tile = document.querySelector('.discard-tile[data-key="' + correctionTargetTileKey + '"]');
+    if (tile) tile.classList.add("correction-target");
+  }
+}
