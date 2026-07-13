@@ -1,7 +1,7 @@
 /*
 ==================================================
 MJC Hand Display
-Version: 6BT v1.23
+Version: 6BT v1.25
 ==================================================
 Hand Display presentation functions.
 
@@ -185,3 +185,40 @@ function configureHDMode() {
   handInstruction.classList.remove("hidden");
 
 }
+
+function toggleCoaching() {
+  coachingOn = !coachingOn;
+
+  const coachingBtn = document.getElementById("coachingBtn");
+  const enginePanel = document.getElementById("enginePanel");
+
+  coachingBtn.textContent = coachingOn ? "Standard View" : "Coaching View";
+  enginePanel.classList.toggle("hidden", !coachingOn);
+
+  configureHDMode();
+
+  if (coachingOn) showToast("Coaching display coming in V2.");
+}
+
+function showHD() {
+  document.getElementById("tdScreen").classList.add("hidden");
+  document.getElementById("drawScreen").classList.add("hidden");
+  document.getElementById("discardScreen").classList.add("hidden");
+  document.getElementById("hdScreen").classList.remove("hidden");
+  document.getElementById("hcsIntro").classList.add("hidden");
+
+  showStartingHeader(false);
+  screenMode = "entry";
+  document.getElementById("startingHeaderControls").classList.remove("correction-header");
+  clearCorrectionState();
+
+  clearDrawSelection();
+  selectedDiscardTileKey = null;
+  correctionTargetTileKey = null;
+  correctionActionType = null;
+
+  configureHDMode();
+  buildHandDisplay();
+  scrollToTopForScreen();
+}
+
