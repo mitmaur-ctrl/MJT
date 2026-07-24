@@ -105,6 +105,7 @@ V4 = Photo Recognition
     <div id="hcsIntro" class="hcs-panel hidden">
       <div class="hcs-title">Hand Correction</div>
       <div id="hcsMeta" class="hcs-meta">Review your hand and make any needed corrections.</div>
+      <div id="hcsMeldVisibility"></div>
     </div>
     <div id="section-chars" class="section"><h2>Chars (<span id="charsTotal">0</span>)</h2><div class="tile-grid" id="characters"></div></div>
     <div id="section-bams" class="section"><h2>Bams (<span id="bamsTotal">0</span>)</h2><div class="tile-grid" id="bams"></div></div>
@@ -132,16 +133,34 @@ V4 = Photo Recognition
     <div id="handInstruction" class="hand-instruction hidden"></div>
     <div id="handDisplay" class="hand-display"></div>
 
-    <div id="enginePanel" class="engine-panel hidden">
-      <div class="engine-title">Coaching</div>
-      <div class="engine-placeholder">Complete Boxes / Developing Boxes / Reserves coming in V2</div>
-    </div>
+    <div id="enginePanel" class="engine-panel hidden"></div>
 
     <div id="hdActions" class="hd-actions">
-      <div id="hdPrimaryRow" class="hd-action-row primary-action-row">
-        <button id="drawBtn" class="action-button turn-button primary-turn-button" onclick="openDrawScreen()">Draw</button>
-        <button id="discardBtn" class="action-button turn-button primary-turn-button" onclick="openDiscardScreen()">Discard</button>
-      </div>
+  <div id="hdPrimaryRow" class="hd-action-row primary-action-row">
+    <button
+      id="drawBtn"
+      class="action-button turn-button primary-turn-button"
+      onclick="openDrawScreen()"
+    >
+      Draw
+    </button>
+
+    <button
+      id="claimBtn"
+      class="action-button turn-button primary-turn-button"
+      onclick="claimTile()"
+    >
+      Claim
+    </button>
+
+    <button
+      id="discardBtn"
+      class="action-button turn-button primary-turn-button"
+      onclick="openDiscardScreen()"
+    >
+      Discard
+    </button>
+  </div>
 
       <div id="startingUtilityRow" class="hd-action-row hidden">
         <button id="coachingBtn" class="action-button coaching-button secondary-hd-button" onclick="toggleCoaching()">Coaching View</button>
@@ -159,8 +178,33 @@ V4 = Photo Recognition
   </div>
 
   <div id="drawScreen" class="hidden draw-compact">
-    <div class="draw-title">Draw Tile</div>
+    <div id="drawTitle" class="draw-title">Draw Tile</div>
     <div id="drawMeta" class="draw-meta">Enter the tile you drew or claimed.</div>
+
+<!--
+  <div class="draw-source-selector">
+    <label>
+      <input
+        type="radio"
+        name="drawSource"
+        value="draw"
+        checked
+        onchange="selectedDrawSource = 'draw'"
+      >
+      Draw
+    </label>
+
+    <label>
+      <input
+        type="radio"
+        name="drawSource"
+        value="claim"
+        onchange="selectedDrawSource = 'claim'"
+      >
+      Claim
+    </label>
+  </div>
+-->
 
     <div id="draw-section-chars" class="section"><h2>Chars</h2><div class="tile-grid" id="drawCharacters"></div></div>
     <div id="draw-section-bams" class="section"><h2>Bams</h2><div class="tile-grid" id="drawBams"></div></div>
@@ -198,7 +242,7 @@ V4 = Photo Recognition
     <button onclick="openFeedbackDialog()">Feedback</button>
     <button onclick="openSupportDialog()">Support MJC</button>
   </div>
-  <div class="footer-version">Beta v1.25</div>
+  <div class="footer-version">Beta v2.2</div>
 </div>
 
 </div>
@@ -273,6 +317,14 @@ V4 = Photo Recognition
       <button class="dialog-button" onclick="closeDialog('displayDialog')">Cancel</button>
       <button class="dialog-button primary" onclick="saveDisplayDialog()">Save</button>
     </div>
+  </div>
+</div>
+
+<div id="mmrDialog" class="dialog-backdrop hidden">
+  <div class="dialog">
+    <h2>Multiple Melds Detected</h2>
+
+    <div id="mmrOptions"></div>
   </div>
 </div>
 
@@ -352,7 +404,7 @@ V4 = Photo Recognition
     <h2>Feedback</h2>
     <p>Thank you for helping us improve Mahjong Coach.</p>
     <p>We welcome bug reports, suggestions, comments, and feature requests.</p>
-    <p><strong>Email:</strong> <a href="mailto:mjcfeedbackteam@gmail.com?subject=Mahjong%20Coach%20Feedback%20-%20Beta%20v1.25">mjcfeedbackteam@gmail.com</a></p>
+    <p><strong>Email:</strong> <a href="mailto:mjcfeedbackteam@gmail.com?subject=Mahjong%20Coach%20Feedback%20-%20Beta%20v2.2">mjcfeedbackteam@gmail.com</a></p>
     <p><em>Every message is read and appreciated.</em></p>
     <div class="dialog-actions">
       <button class="dialog-button primary" onclick="closeDialog('feedbackDialog')">Close</button>
@@ -389,7 +441,7 @@ Acceptance standard:
 ==================================================
 */
 
-const MJC_VERSION_LABEL = "Beta v1.25";
+const MJC_VERSION_LABEL = "Beta v2.2";
 
 const MJC_RULESET_BASE_HAND_SIZES = Object.freeze({
   filipino16: 16,
@@ -411,12 +463,19 @@ const MJC_STATE = {
   getHandCounts: function() {
     return { ...counts };
   },
+
   getDisplayOrder: function() {
     return { ...displayOrder };
   },
   getContext: function() {
     return {
       ruleset: ruleset,
+
+      newsAllowed:
+        document.querySelector(
+          'input[name="newsAllowedCheck"]'
+        )?.checked || false,
+
       role: role,
       seatWind: seatWind,
       prevailingWind: prevailingWind,
@@ -434,7 +493,18 @@ const MJC_STATE = {
     return {
       counts: this.getHandCounts(),
       context: this.getContext(),
-      displayOrder: this.getDisplayOrder()
+      displayOrder: this.getDisplayOrder(),
+      mmrCommittedBoxes:
+    mmrCommittedBoxes.map(function(item) {
+      return {
+        action: item.action,
+        tileKey: item.tileKey,
+        candidate: {
+          type: item.candidate.type,
+          tiles: [...item.candidate.tiles]
+        }
+      };
+    })
     };
   }
 };
@@ -470,7 +540,7 @@ let ruleset = "taiwan16";
 let role = "player";
 let seatWind = "east";
 let prevailingWind = "east";
-let coachingOn = false;
+let coachingOn = true;
 
 let phase = "starting";
 let screenMode = "entry";
@@ -497,13 +567,18 @@ let revisionTouched = false;
 let toastTimer = null;
 
 let selectedDrawTileKey = null;
+let selectedDrawSource = null;
 let selectedDiscardTileKey = null;
 let lastActionSnapshot = null;
 let lastActionType = null;
+let lastActionSource = null;
 let lastActionTileKey = null;
+let mmrState = null;
+let mmrCommittedBoxes = [];
 let correctingLastEntry = false;
 let correctionTargetTileKey = null;
 let correctionActionType = null;
+let cleCancelState = null;
 let handCorrectionTarget = null;
 let handCorrectionSnapshot = null;
 let tcsOriginalCounts = {};
@@ -551,7 +626,7 @@ function startNewGame() {
   correctingLastEntry = false;
   correctionTargetTileKey = null;
   correctionActionType = null;
-  coachingOn = false;
+  coachingOn = true;
 
   document.getElementById("roleSelect").value = role;
   document.getElementById("seatWindSelect").value = seatWind;
@@ -590,6 +665,7 @@ document.addEventListener("touchend", function(e) {
 <script src="js/context.js"></script>
 <script src="js/tile-entry.js"></script>
 <script src="js/draw-discard.js"></script>
+<script src="js/engine.js"></script>
 <script src="js/hand-display.js"></script>
 <script src="js/dialogs.js"></script>
 <script>
