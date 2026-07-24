@@ -148,15 +148,32 @@ console.log(
   incomingMeldCandidates
 );
 
+
+
 if (
   gameAction === "claim" &&
   incomingMeldCandidates.length === 0
 ) {
-  showToast(
-    "Claim not valid. This tile does not complete a meld."
-  );
-  return;
+  const mahjongInput =
+    MJC_STATE.getEngineInput();
+
+  mahjongInput.counts = {
+    ...mahjongInput.counts,
+    [selectedDrawTileKey]:
+      (mahjongInput.counts[selectedDrawTileKey] || 0) + 1
+  };
+
+  const mahjongResult =
+    evaluate17TE(mahjongInput);
+
+  if (!mahjongResult.mahjong) {
+    showToast(
+      "Claim not valid. This tile does not complete a meld."
+    );
+    return;
+  }
 }
+
 
 if (incomingMeldCandidates.length > 1) {
   mmrState = {

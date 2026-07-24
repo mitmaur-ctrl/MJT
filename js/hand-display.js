@@ -323,6 +323,7 @@ function configureHDMode() {
   const reviseBtn = document.getElementById("reviseBtn");
   const drawBtn = document.getElementById("drawBtn");
   const discardBtn = document.getElementById("discardBtn");
+  const claimBtn = document.getElementById("claimBtn");
   const coachingBtn = document.getElementById("coachingBtn");
   const correctLastBtn = document.getElementById("correctLastBtn");
   const handCorrectionBtn = document.getElementById("handCorrectionBtn");
@@ -340,6 +341,7 @@ function configureHDMode() {
 
   drawBtn.classList.remove("hidden");
   discardBtn.classList.remove("hidden");
+  claimBtn.classList.remove("hidden");
   reviseBtn.classList.remove("hidden");
   coachingBtn.classList.remove("hidden");
   correctLastBtn.classList.remove("hidden");
@@ -349,10 +351,14 @@ function configureHDMode() {
   const canDiscard = gameAction === "discard";
 
   drawBtn.disabled = !canDraw;
+  claimBtn.disabled = !canDraw;
   discardBtn.disabled = !canDiscard;
 
   drawBtn.classList.toggle("enabled", canDraw);
   drawBtn.classList.toggle("disabled", !canDraw);
+
+  claimBtn.classList.toggle("enabled", canDraw);
+  claimBtn.classList.toggle("disabled", !canDraw);
 
   discardBtn.classList.toggle("enabled", canDiscard);
   discardBtn.classList.toggle("disabled", !canDiscard);
@@ -375,12 +381,12 @@ function configureHDMode() {
     handInstruction.innerHTML =
         "Here's your hand organized using Six Box Theory™.<br>" +
         (gameAction === "draw"
-            ? "Prepare to Draw. Press Draw when ready."
+            ? "Prepare to Draw or Claim. Press Draw or Claim when ready."
             : "Prepare to Discard. Press Discard when ready.");
 } else {
     handInstruction.textContent =
         gameAction === "draw"
-            ? "Prepare to Draw. Press Draw when ready."
+            ? "Prepare to Draw or Claim. Press Draw or Claim when ready."
             : "Prepare to Discard. Press Discard when ready.";
 }
     handInstruction.classList.remove("hidden");
@@ -394,7 +400,10 @@ function configureHDMode() {
 
   handTitle.textContent = "Current Hand";
   handMeta.textContent = "";
-  handInstruction.textContent = gameAction === "draw" ? "Prepare to Draw. Press Draw when ready." : "Prepare to Discard. Press Discard when ready.";
+  handInstruction.textContent =
+  gameAction === "draw"
+    ? "Prepare to Draw or Claim. Press Draw or Claim when ready."
+    : "Prepare to Discard. Press Discard when ready.";
   handInstruction.classList.remove("hidden");
 
 }
