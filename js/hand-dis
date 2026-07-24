@@ -381,13 +381,13 @@ function configureHDMode() {
     handInstruction.innerHTML =
         "Here's your hand organized using Six Box Theory™.<br>" +
         (gameAction === "draw"
-            ? "Prepare to Draw or Claim. Press Draw or Claim when ready."
-            : "Prepare to Discard. Press Discard when ready.");
+            ? "Prepare to Draw or Claim.<br>Press Draw or Claim when ready."
+            : "Prepare to Discard.<br>Press Discard when ready.");
 } else {
     handInstruction.textContent =
         gameAction === "draw"
-            ? "Prepare to Draw or Claim. Press Draw or Claim when ready."
-            : "Prepare to Discard. Press Discard when ready.";
+            ? "Prepare to Draw or Claim.<br>Press Draw or Claim when ready."
+            : "Prepare to Discard.<br>Press Discard when ready.";
 }
     handInstruction.classList.remove("hidden");
     handMeta.textContent =
