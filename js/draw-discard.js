@@ -53,8 +53,13 @@ function buildDrawTiles() {
   createDrawTile("drawDragons", "White", "white");
 }
 
+function claimTile() {
+  gameAction = "claim";
+  openDrawScreen();
+}
+
 function openDrawScreen() {
-  if (gameAction !== "draw") return;
+  if (gameAction !== "draw" && gameAction !== "claim") return;
 
   document.getElementById("tdScreen").classList.add("hidden");
   document.getElementById("hdScreen").classList.add("hidden");
@@ -65,7 +70,25 @@ function openDrawScreen() {
   applyDisplayOrderToScreens();
   scrollToTopForScreen();
   clearDrawSelection();
-  applyCorrectionHighlight("draw");
+selectedDrawSource = null;
+
+const drawMeta = document.getElementById("drawMeta");
+const drawTitle = document.getElementById("drawTitle");
+
+if (drawTitle) {
+  drawTitle.textContent =
+    gameAction === "claim"
+      ? "Claim Tile"
+      : "Draw Tile";
+}
+
+
+if (gameAction === "draw") {
+  drawMeta.textContent = "Enter the tile you drew.";
+} else if (gameAction === "claim") {
+  drawMeta.textContent = "Enter the tile you claimed.";
+}
+  applyCorrectionHighlight(gameAction);
 }
 
 function selectDrawTile(key) {
@@ -110,10 +133,95 @@ function confirmDraw() {
   }
 
   lastActionSnapshot = makeSnapshot();
-  lastActionType = "draw";
+  lastActionType = gameAction;
+  lastActionSource = gameAction;
   lastActionTileKey = selectedDrawTileKey;
 
-  counts[selectedDrawTileKey] += 1;
+const incomingMeldCandidates =
+  findIncomingTileMeldCandidates(
+    MJC_STATE.getEngineInput(),
+    selectedDrawTileKey
+  );
+
+console.log(
+  "Incoming meld candidates:",
+  incomingMeldCandidates
+);
+
+if (
+  gameAction === "claim" &&
+  incomingMeldCandidates.length === 0
+) {
+  showToast(
+    "Claim not valid. This tile does not complete a meld."
+  );
+  return;
+}
+
+if (incomingMeldCandidates.length > 1) {
+  mmrState = {
+  action: gameAction,
+  tileKey: selectedDrawTileKey,
+  candidates: incomingMeldCandidates,
+  recommendedCandidate:
+    recommendMMRCandidate(
+      MJC_STATE.getEngineInput(),
+      selectedDrawTileKey,
+      incomingMeldCandidates
+    )
+};
+
+  console.log(
+  "MMR state created:",
+  mmrState
+);
+
+openMMRDialog();
+
+return;
+}
+ 
+ let previousCompleteBoxes = [];
+
+if (gameAction === "claim") {
+  const previousResult = evaluate17TE(
+    MJC_STATE.getEngineInput()
+  );
+
+  previousCompleteBoxes =
+    previousResult.completeBoxes;
+}
+
+counts[selectedDrawTileKey] += 1;
+
+if (gameAction === "claim") {
+  const currentResult = evaluate17TE(
+    MJC_STATE.getEngineInput()
+  );
+
+  const claimedBoxes =
+    getClaimedCompleteBoxes(
+      selectedDrawTileKey,
+      previousCompleteBoxes,
+      currentResult.completeBoxes
+    );
+
+  if (claimedBoxes.length === 1) {
+    setCompleteBoxVisibility(
+      claimedBoxes[0].boxId,
+      "exposed"
+    );
+  }
+
+  if (claimedBoxes.length > 1) {
+    console.log(
+      "MMR detected:",
+      claimedBoxes
+    );
+  }
+}
+
+
   lockHandContext();
 
   phase = "game";
@@ -121,8 +229,7 @@ function confirmDraw() {
   gameAction = "discard";
   lastDrawnTileKey = selectedDrawTileKey;
   revisionReturnHDMode = "current";
-  revisionTarget = null;
-  coachingOn = false;
+  revisionTarget = null;  
   correctingLastEntry = false;
   correctionTargetTileKey = null;
   correctionActionType = null;
@@ -130,7 +237,105 @@ function confirmDraw() {
   showHD();
 }
 
-function cancelDraw() { showHD(); }
+function resumeMMRAction() {
+  if (
+    !mmrState ||
+    !mmrState.selectedCandidate
+  ) {
+    return;
+  }
+
+  const selectedTileKey =
+    mmrState.tileKey;
+
+  counts[selectedTileKey] += 1;
+
+  const result =
+    evaluate17TE(
+      MJC_STATE.getEngineInput()
+    );
+
+  console.log(
+    "17TE after MMR selection:",
+    result
+  );
+
+if (mmrState.action === "claim") {
+  const selectedBox =
+    result.completeBoxes.find(function(box) {
+      return (
+        box.type === mmrState.selectedCandidate.type &&
+        getCompleteBoxSignature(box) ===
+          getCompleteBoxSignature(
+            mmrState.selectedCandidate
+          )
+      );
+    });
+
+  if (selectedBox) {
+    setCompleteBoxVisibility(
+      selectedBox.boxId,
+      "exposed"
+    );
+  }
+}
+
+  lockHandContext();
+
+ phase = "game";
+hdMode = "current";
+
+if (
+  mmrState.selectedCandidate.type === "kang"
+) {
+  gameAction = "draw";
+} else {
+  gameAction = "discard";
+}
+
+lastDrawnTileKey =
+  selectedTileKey;
+  revisionReturnHDMode = "current";
+  revisionTarget = null; 
+  correctingLastEntry = false;
+  correctionTargetTileKey = null;
+  correctionActionType = null;
+
+  mmrState = null;
+
+  showHD();
+}
+
+function cancelDraw() {
+  if (
+    correctingLastEntry &&
+    cleCancelState
+  ) {
+    restoreSnapshot(
+      cleCancelState.currentState
+    );
+
+    lastActionSnapshot =
+      cleCancelState.lastActionSnapshot;
+
+    lastActionType =
+      cleCancelState.lastActionType;
+
+    lastActionTileKey =
+      cleCancelState.lastActionTileKey;
+
+    correctingLastEntry = false;
+    correctionTargetTileKey = null;
+    correctionActionType = null;
+    cleCancelState = null;
+
+    showHD();
+    return;
+  }
+
+  showHD();
+}
+
 
 function openDiscardScreen() {
   if (gameAction !== "discard") return;
@@ -144,26 +349,49 @@ function openDiscardScreen() {
   updateDiscardContext();
   scrollToTopForScreen();
   selectedDiscardTileKey = null;
+  if (coachingOn) {
+  buildCoachingDiscardDisplay();
+} else {
   buildDiscardDisplay();
+}
   updateDiscardContext();
   applyCorrectionHighlight("discard");
 }
 
-function selectDiscardTile(key) {
+function selectDiscardTile(key, tileElement = null) {
   if (counts[key] <= 0) return;
 
   selectedDiscardTileKey = key;
-  document.querySelectorAll(".discard-tile").forEach(tile => tile.classList.remove("action-selected", "correction-target"));
 
-  const target = document.querySelector('.discard-tile[data-key="' + key + '"]');
-  if (target) target.classList.add("action-selected");
+  document.querySelectorAll(".discard-tile").forEach(function(tile) {
+    tile.classList.remove(
+      "action-selected",
+      "correction-target"
+    );
+  });
 
-  const btn = document.getElementById("confirmDiscardBtn");
+  const target =
+    tileElement ||
+    document.querySelector(
+      '.discard-tile[data-key="' + key + '"]'
+    );
+
+  if (target) {
+    target.classList.add("action-selected");
+  }
+
+  const btn =
+    document.getElementById("confirmDiscardBtn");
+
   btn.disabled = false;
   btn.classList.add("enabled");
   btn.classList.remove("disabled");
-  document.getElementById("discardMeta").textContent = tileLabels[key] + " selected. Press Confirm.";
+
+  document.getElementById("discardMeta").textContent =
+    tileLabels[key] +
+    " selected. Press Confirm.";
 }
+
 
 function confirmDiscard() {
   if (!selectedDiscardTileKey) {
@@ -185,12 +413,172 @@ function confirmDiscard() {
   lastDrawnTileKey = null;
   revisionReturnHDMode = "current";
   revisionTarget = null;
-  coachingOn = false;
   correctingLastEntry = false;
   correctionTargetTileKey = null;
   correctionActionType = null;
 
   showHD();
+}
+
+function buildCoachingDiscardDisplay() {
+  const result =
+    evaluate17TE(
+      MJC_STATE.getEngineInput()
+    );
+
+  let html = "";
+
+  /*
+  ================================================
+  Active Area
+  ================================================
+  */
+
+  html += '<div class="engine-title">Active Area</div>';
+
+  const activeBoxes = [
+    ...result.developingBoxes,
+    ...(result.halfEye || [])
+  ];
+
+  const firstActiveBoxNumber =
+    result.completeBoxes.length + 1;
+
+  activeBoxes.forEach(function(box, index) {
+    const boxNumber =
+      firstActiveBoxNumber + index;
+
+    const tileHtml =
+      box.tiles.map(function(tileKey) {
+        return (
+          '<button class="discard-tile" ' +
+          'data-key="' + tileKey + '" ' +
+          'onclick="selectDiscardTile(\'' +
+          tileKey +
+          '\', this)">' +
+          tileLabels[tileKey] +
+          '</button>'
+        );
+      }).join("");
+
+    html +=
+      '<div class="hand-section box-card developing-box">' +
+        '<div class="hand-section-title">' +
+          'Box ' +
+          boxNumber +
+          ' — ' +
+          box.type.toUpperCase() +
+        '</div>' +
+        tileHtml +
+      '</div>';
+  });
+
+  const totalBoxes =
+    result.completeBoxes.length +
+    activeBoxes.length;
+
+  for (
+    let boxNumber = totalBoxes + 1;
+    boxNumber <= 6;
+    boxNumber++
+  ) {
+    html +=
+      '<div class="hand-section box-card empty-box">' +
+        '<div class="hand-section-title">' +
+          'Box ' + boxNumber +
+        '</div>' +
+        '<span class="empty-note">Empty</span>' +
+      '</div>';
+  }
+
+  /*
+  ================================================
+  Reserves
+  ================================================
+  */
+
+  html +=
+    '<div class="hand-section reserve-area">' +
+      '<div class="hand-section-title">Reserves</div>';
+
+  if (
+    !result.reserves ||
+    result.reserves.length === 0
+  ) {
+    html +=
+      '<span class="empty-note">None</span>';
+  } else {
+    result.reserves.forEach(function(tileKey) {
+  html +=
+    '<button class="discard-tile" ' +
+    'data-key="' + tileKey + '" ' +
+    'onclick="selectDiscardTile(\'' +
+    tileKey +
+    '\', this)">' +
+    tileLabels[tileKey] +
+    '</button>';
+});
+  }
+
+  html += '</div>';
+
+  /*
+  ================================================
+  Completed Area
+  ================================================
+  */
+
+  html +=
+    '<div class="engine-title">Completed Area</div>';
+
+  result.completeBoxes.forEach(
+    function(box, index) {
+      const tileHtml =
+        box.tiles.map(function(tileKey) {
+          return (
+            '<button class="discard-tile" ' +
+            'data-key="' + tileKey + '" ' +
+            'onclick="selectDiscardTile(\'' +
+            tileKey +
+            '\', this)">' +
+            tileLabels[tileKey] +
+            '</button>'
+          );
+        }).join("");
+
+      html +=
+        '<div class="hand-section box-card complete-box">' +
+          '<div class="hand-section-title">' +
+            'Box ' +
+            (index + 1) +
+            ' — ' +
+            box.type.charAt(0).toUpperCase() +
+            box.type.slice(1) +
+          '</div>' +
+          tileHtml +
+        '</div>';
+    }
+  );
+
+  document.getElementById(
+    "discardDisplay"
+  ).innerHTML = html;
+
+  selectedDiscardTileKey = null;
+
+  const btn =
+    document.getElementById(
+      "confirmDiscardBtn"
+    );
+
+  btn.disabled = true;
+  btn.classList.remove("enabled");
+  btn.classList.add("disabled");
+
+  document.getElementById(
+    "discardMeta"
+  ).textContent =
+    "Select the tile you want to discard.";
 }
 
 function buildDiscardDisplay() {
@@ -264,6 +652,13 @@ function correctLastEntry() {
   const targetKey = lastActionTileKey;
   const snapshot = lastActionSnapshot;
 
+  cleCancelState = {
+    currentState: makeSnapshot(),
+    lastActionSnapshot: lastActionSnapshot,
+    lastActionType: lastActionType,
+    lastActionTileKey: lastActionTileKey
+  };
+
   restoreSnapshot(snapshot);
   lastActionSnapshot = null;
   lastActionType = null;
@@ -273,12 +668,18 @@ function correctLastEntry() {
   correctionActionType = action;
 
   if (action === "draw") {
-    showToast("Correct the last draw entry. Red shows the previous entry.");
-    openDrawScreen();
-  } else {
-    showToast("Correct the last discard entry. Red shows the previous entry.");
-    openDiscardScreen();
-  }
+  showToast("Correct the last draw entry. Red shows the previous entry.");
+  openDrawScreen();
+
+} else if (action === "claim") {
+  showToast("Correct the last claim entry. Red shows the previous entry.");
+  openDrawScreen();
+
+} else if (action === "discard") {
+  showToast("Correct the last discard entry. Red shows the previous entry.");
+  openDiscardScreen();
+}
+
 }
 
 function applyCorrectionHighlight(action) {
@@ -288,10 +689,15 @@ function applyCorrectionHighlight(action) {
 
   if (!correctingLastEntry || correctionActionType !== action || !correctionTargetTileKey) return;
 
-  if (action === "draw") {
-    const tile = document.getElementById("draw-tile-" + correctionTargetTileKey);
-    if (tile) tile.classList.add("correction-target");
+  if (action === "draw" || action === "claim") {
+  const tile = document.getElementById(
+    "draw-tile-" + correctionTargetTileKey
+  );
+
+  if (tile) {
+    tile.classList.add("correction-target");
   }
+}
 
   if (action === "discard") {
     const tile = document.querySelector('.discard-tile[data-key="' + correctionTargetTileKey + '"]');

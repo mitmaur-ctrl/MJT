@@ -55,6 +55,92 @@ function closeDialog(id) {
   document.getElementById(id).classList.add("hidden");
 }
 
+function openMMRDialog() {
+  if (!mmrState || !mmrState.candidates) {
+    return;
+  }
+
+  const optionsContainer =
+    document.getElementById("mmrOptions");
+
+  optionsContainer.innerHTML = "";
+
+  mmrState.candidates.forEach(function(candidate, index) {
+    const button =
+      document.createElement("button");
+
+    button.className =
+      "dialog-button primary";
+
+    button.style.display = "block";
+    button.style.width = "100%";
+    button.style.marginBottom = "10px";
+
+
+   const isRecommended =
+    mmrState.recommendedCandidate &&
+    getCompleteBoxSignature(candidate) ===
+      getCompleteBoxSignature(
+        mmrState.recommendedCandidate
+      );
+
+   button.textContent =
+    candidate.type.toUpperCase() +
+    ": " +
+    candidate.tiles.join(", ") +
+    (
+      isRecommended
+        ? " — MJC Recommended"
+        : ""
+    );
+
+
+    button.onclick = function() {
+      selectMMRCandidate(index);
+    };
+
+    optionsContainer.appendChild(button);
+  });
+
+  document
+    .getElementById("mmrDialog")
+    .classList.remove("hidden");
+}
+
+function selectMMRCandidate(index) {
+  if (
+    !mmrState ||
+    !mmrState.candidates ||
+    !mmrState.candidates[index]
+  ) {
+    return;
+  }
+
+  mmrState.selectedCandidate =
+    mmrState.candidates[index];
+
+  mmrCommittedBoxes.push({
+    action: mmrState.action,
+    tileKey: mmrState.tileKey,
+    candidate: {
+      type: mmrState.selectedCandidate.type,
+      tiles: [...mmrState.selectedCandidate.tiles]
+    }
+  });
+
+  document
+    .getElementById("mmrDialog")
+    .classList.add("hidden");
+
+  console.log(
+    "MMR selected:",
+    mmrState.selectedCandidate
+  );
+
+  resumeMMRAction();
+}
+
+
 function openGettingStartedDialog() {
   openDialog("gettingStartedDialog");
 }

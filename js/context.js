@@ -144,7 +144,59 @@ function makeSnapshot() {
     revisionTouched: revisionTouched,
     contextLocked: contextLocked,
     displayOrder: { ...displayOrder },
-    handCorrectionTarget: handCorrectionTarget
+    handCorrectionTarget: handCorrectionTarget,
+
+    stableCompleteBoxState:
+      stableCompleteBoxState.map(function(box) {
+        return {
+          ...box,
+          tiles: [...box.tiles]
+        };
+      }),
+
+    canonicalStructureState: {
+      completeBoxes:
+        canonicalStructureState.completeBoxes.map(function(box) {
+          return {
+            ...box,
+            tiles: [...box.tiles]
+          };
+        }),
+
+      developingBoxes:
+        canonicalStructureState.developingBoxes.map(function(box) {
+          return {
+            ...box,
+            tiles: [...box.tiles]
+          };
+        }),
+
+      halfEye:
+        canonicalStructureState.halfEye.map(function(box) {
+          return {
+            ...box,
+            tiles: [...box.tiles]
+          };
+        }),
+
+      reserves: [...canonicalStructureState.reserves],
+
+      ambition: {
+        ...canonicalStructureState.ambition
+      }
+    },
+
+    mmrCommittedBoxes:
+      mmrCommittedBoxes.map(function(item) {
+        return {
+          action: item.action,
+          tileKey: item.tileKey,
+          candidate: {
+            type: item.candidate.type,
+            tiles: [...item.candidate.tiles]
+          }
+        };
+      })
   };
 }
 
@@ -166,6 +218,63 @@ function restoreSnapshot(snapshot) {
   contextLocked = snapshot.contextLocked;
   displayOrder = { ...snapshot.displayOrder };
   handCorrectionTarget = snapshot.handCorrectionTarget || null;
+
+stableCompleteBoxState =
+  (snapshot.stableCompleteBoxState || []).map(function(box) {
+    return {
+      ...box,
+      tiles: [...box.tiles]
+    };
+  });
+
+canonicalStructureState = {
+  completeBoxes:
+    (snapshot.canonicalStructureState?.completeBoxes || []).map(function(box) {
+      return {
+        ...box,
+        tiles: [...box.tiles]
+      };
+    }),
+
+  developingBoxes:
+    (snapshot.canonicalStructureState?.developingBoxes || []).map(function(box) {
+      return {
+        ...box,
+        tiles: [...box.tiles]
+      };
+    }),
+
+  halfEye:
+    (snapshot.canonicalStructureState?.halfEye || []).map(function(box) {
+      return {
+        ...box,
+        tiles: [...box.tiles]
+      };
+    }),
+
+  reserves:
+    [...(snapshot.canonicalStructureState?.reserves || [])],
+
+  ambition: {
+    ...(snapshot.canonicalStructureState?.ambition || {
+      active: false,
+      type: null,
+      promptResolved: false
+    })
+  }
+};
+
+mmrCommittedBoxes =
+  (snapshot.mmrCommittedBoxes || []).map(function(item) {
+    return {
+      action: item.action,
+      tileKey: item.tileKey,
+      candidate: {
+        type: item.candidate.type,
+        tiles: [...item.candidate.tiles]
+      }
+    };
+  });
 
   for (const key in snapshot.counts) counts[key] = snapshot.counts[key];
 

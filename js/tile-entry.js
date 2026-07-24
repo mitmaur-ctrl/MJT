@@ -330,7 +330,7 @@ function startHand() {
   screenMode = "entry";
   revisionTarget = null;
   lastDrawnTileKey = null;
-  coachingOn = false;
+  coachingOn = true;
   contextLocked = false;
   lastActionSnapshot = null;
   lastActionType = null;
@@ -378,7 +378,7 @@ function reviseHand() {
   revisionReturnHDMode = hdMode;
   revisionTarget = getStartingTarget();
   lastDrawnTileKey = null;
-  coachingOn = false;
+  coachingOn = true;
   contextLocked = false;
 
   document.getElementById("hdScreen").classList.add("hidden");
@@ -396,6 +396,100 @@ function reviseHand() {
   scrollToTopForScreen();
 }
 
+function renderMeldVisibilityCorrection() {
+  const container =
+    document.getElementById(
+      "hcsMeldVisibility"
+    );
+
+  if (!container) return;
+
+  const result =
+    evaluate17TE(
+      MJC_STATE.getEngineInput()
+    );
+
+  const structureState =
+    result.structureState || result;
+
+  const completeBoxes =
+    structureState.completeBoxes || [];
+
+  if (completeBoxes.length === 0) {
+    container.innerHTML =
+      '<div class="empty-note">' +
+      'No melds to correct.' +
+      '</div>';
+
+    return;
+  }
+
+  let html =
+    '<div class="hand-section-title">' +
+    'Meld Visibility' +
+    '</div>';
+
+  completeBoxes.forEach(function(box) {
+    const typeLabel =
+      box.type.charAt(0).toUpperCase() +
+      box.type.slice(1);
+
+    const tileLabel =
+      box.tiles
+        .map(function(tileKey) {
+          return tileLabels[tileKey];
+        })
+        .join(", ");
+
+    html +=
+      '<div class="hand-section">' +
+        '<div class="hand-section-title">' +
+          typeLabel +
+        '</div>' +
+        '<div>' +
+          tileLabel +
+        '</div>' +
+        '<div class="draw-source-selector">' +
+
+          '<label>' +
+            '<input ' +
+              'type="radio" ' +
+              'name="meldVisibility-' +
+              box.boxId +
+              '" ' +
+              'value="hidden" ' +
+              (box.visibility !== "exposed"
+                ? 'checked '
+                : '') +
+              'onchange="setCompleteBoxVisibility(' +
+              box.boxId +
+              ', \'hidden\')">' +
+            ' Hidden' +
+          '</label>' +
+
+          '<label>' +
+            '<input ' +
+              'type="radio" ' +
+              'name="meldVisibility-' +
+              box.boxId +
+              '" ' +
+              'value="exposed" ' +
+              (box.visibility === "exposed"
+                ? 'checked '
+                : '') +
+              'onchange="setCompleteBoxVisibility(' +
+              box.boxId +
+              ', \'exposed\')">' +
+            ' Exposed' +
+          '</label>' +
+
+        '</div>' +
+      '</div>';
+  });
+
+  container.innerHTML = html;
+}
+
 function openHandCorrectionScreen() {
   if (hdMode !== "current") return;
 
@@ -406,6 +500,7 @@ function openHandCorrectionScreen() {
   screenMode = "handCorrection";
   revisionTouched = false;
   initializeCorrectionStateFromCounts();
+  renderMeldVisibilityCorrection();
 
   document.getElementById("hdScreen").classList.add("hidden");
   document.getElementById("drawScreen").classList.add("hidden");
