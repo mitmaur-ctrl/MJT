@@ -378,16 +378,16 @@ function configureHDMode() {
     handTitle.textContent = "Starting Hand";
   
   if (coachingOn) {
-    handInstruction.innerHTML =
-        "Here's your hand organized using Six Box Theory™.<br>" +
-        (gameAction === "draw"
-            ? "Prepare to Draw or Claim. Press Draw or Claim when ready."
-            : "Prepare to Discard. Press Discard when ready.");
+  handInstruction.innerHTML =
+      "Here's your hand organized using Six Box Theory™.<br>" +
+      (gameAction === "draw"
+          ? "Prepare to Draw or Claim.<br>Press Draw or Claim when ready."
+          : "Prepare to Discard.<br>Press Discard when ready.");
 } else {
-    handInstruction.textContent =
-        gameAction === "draw"
-            ? "Prepare to Draw or Claim. Press Draw or Claim when ready."
-            : "Prepare to Discard. Press Discard when ready.";
+  handInstruction.innerHTML =
+      gameAction === "draw"
+          ? "Prepare to Draw or Claim.<br>Press Draw or Claim when ready."
+          : "Prepare to Discard.<br>Press Discard when ready.";
 }
     handInstruction.classList.remove("hidden");
     handMeta.textContent =
@@ -400,10 +400,10 @@ function configureHDMode() {
 
   handTitle.textContent = "Current Hand";
   handMeta.textContent = "";
-  handInstruction.textContent =
+  handInstruction.innerHTML =
   gameAction === "draw"
-    ? "Prepare to Draw or Claim. Press Draw or Claim when ready."
-    : "Prepare to Discard. Press Discard when ready.";
+    ? "Prepare to Draw or Claim.<br>Press Draw or Claim when ready."
+    : "Prepare to Discard.<br>Press Discard when ready.";
   handInstruction.classList.remove("hidden");
 
 }
