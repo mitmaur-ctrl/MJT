@@ -409,7 +409,7 @@ function configureHDMode() {
 }
 
 function renderActiveArea(completeBoxes, developingBoxes, halfEye) {
-  let html = '<div class="engine-title">Active Area</div>';
+  let html = '<div class="engine-title">Developing Boxes</div>';
   let drawnHighlightUsed = false;
   const firstActiveBoxNumber = completeBoxes.length + 1;
 
@@ -435,12 +435,12 @@ function renderActiveArea(completeBoxes, developingBoxes, halfEye) {
 }).join("");
 
     html +=
-      '<div class="hand-section box-card developing-box">' +
-        '<div class="hand-section-title">Box ' + boxNumber + ' — ' +
-          box.type.toUpperCase() +
-        '</div>' +
-        tileHtml +
-      '</div>';
+  '<div class="hand-section box-card developing-box">' +
+    '<div class="hand-section-title">DB' + boxNumber + ' — ' +
+      box.type.toUpperCase() +
+    '</div>' +
+    tileHtml +
+  '</div>';
   });
 
 if (halfEye && halfEye.length > 0) {
@@ -467,9 +467,9 @@ if (halfEye && halfEye.length > 0) {
 
     html +=
       '<div class="hand-section box-card developing-box">' +
-        '<div class="hand-section-title">Box ' +
-          boxNumber +
-          ' — HE</div>' +
+        '<div class="hand-section-title">DB' +
+  boxNumber +
+  ' — HE</div>' +
         tileHtml +
       '</div>';
   }
@@ -482,7 +482,7 @@ if (halfEye && halfEye.length > 0) {
   for (let boxNumber = totalBoxes + 1; boxNumber <= 6; boxNumber++) {
   html +=
     '<div class="hand-section box-card empty-box">' +
-      '<div class="hand-section-title">Box ' + boxNumber + '</div>' +
+      '<div class="hand-section-title">DB' + boxNumber + '</div>' +
       '<span class="empty-note">Empty</span>' +
     '</div>';
 }
@@ -527,7 +527,7 @@ function renderCompletedArea(completeBoxes) {
     return '<div class="engine-placeholder">No Complete Boxes found.</div>';
   }
 
-  let html = '<div class="engine-title">Completed Area</div>';
+  let html = '<div class="engine-title">Completed Boxes</div>';
   let drawnHighlightUsed = false;
   
   completeBoxes.forEach(function(box, index) {
@@ -553,7 +553,7 @@ const tileHtml = box.tiles.map(function(tileKey) {
 
     html +=
   '<div class="hand-section box-card complete-box">' +
-    '<div class="hand-section-title">Box ' + box.boxId + ' — ' +
+    '<div class="hand-section-title">CB' + box.boxId + ' — ' +
       box.type.charAt(0).toUpperCase() + box.type.slice(1) +
       ' — ' +
       (box.visibility === "exposed" ? "Exposed" : "Hidden") +
