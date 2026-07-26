@@ -60,10 +60,52 @@ function openMMRDialog() {
     return;
   }
 
+  const isSingleSpecialMeld =
+  mmrState.candidates.length === 1 &&
+  (
+    mmrState.candidates[0].type === "kang" ||
+    mmrState.candidates[0].type === "news"
+  );
+
+const specialMeldType =
+  isSingleSpecialMeld
+    ? mmrState.candidates[0].type
+    : null;
+
+  const title =
+      document.getElementById("mmrTitle");
+
+    title.textContent =
+  specialMeldType === "kang"
+    ? "Kang Available"
+    : (
+        specialMeldType === "news"
+          ? "NEWS Available"
+          : "Multiple Melds Detected"
+      );
+
+
   const optionsContainer =
     document.getElementById("mmrOptions");
 
   optionsContainer.innerHTML = "";
+
+if (
+  !isSingleSpecialMeld &&
+  !mmrState.recommendedCandidate
+) {
+  const tieMessage =
+    document.createElement("div");
+
+  tieMessage.textContent =
+    "MJC: Either choice is structurally sound.";
+
+  tieMessage.style.marginBottom = "12px";
+
+  optionsContainer.appendChild(
+    tieMessage
+  );
+}
 
   mmrState.candidates.forEach(function(candidate, index) {
     const button =
@@ -85,14 +127,22 @@ function openMMRDialog() {
       );
 
    button.textContent =
-    candidate.type.toUpperCase() +
-    ": " +
-    candidate.tiles.join(", ") +
-    (
-      isRecommended
-        ? " — MJC Recommended"
-        : ""
-    );
+    specialMeldType === "kang"
+      ? "Declare Kang"
+      : (
+          specialMeldType === "news"
+            ? "Declare NEWS"
+            : (
+                candidate.type.toUpperCase() +
+                ": " +
+                candidate.tiles.join(", ") +
+                (
+                  isRecommended
+                    ? " — MJC Recommended"
+                    : ""
+                )
+              )
+        );
 
 
     button.onclick = function() {
@@ -101,6 +151,32 @@ function openMMRDialog() {
 
     optionsContainer.appendChild(button);
   });
+
+   const ignoreButton =
+     document.createElement("button");
+
+   ignoreButton.className =
+  "dialog-button secondary";
+
+   ignoreButton.style.display = "block";
+   ignoreButton.style.width = "100%";
+   ignoreButton.style.marginTop = "6px";
+
+   ignoreButton.textContent =
+    specialMeldType === "kang"
+      ? "Ignore Kang"
+      : (
+          specialMeldType === "news"
+            ? "Ignore NEWS"
+            : "Ignore Melds"
+        );
+
+   ignoreButton.onclick =
+     ignoreMMRCandidates;
+
+   optionsContainer.appendChild(
+     ignoreButton
+   );
 
   document
     .getElementById("mmrDialog")
@@ -140,6 +216,45 @@ function selectMMRCandidate(index) {
   resumeMMRAction();
 }
 
+function ignoreMMRCandidates() {
+  if (!mmrState) {
+    return;
+  }
+
+const isSingleKang =
+  mmrState.candidates &&
+  mmrState.candidates.length === 1 &&
+  mmrState.candidates[0].type === "kang";
+
+const isSingleNEWS =
+  mmrState.candidates &&
+  mmrState.candidates.length === 1 &&
+  mmrState.candidates[0].type === "news";
+
+if (
+  isSingleKang &&
+  !ignoredKangTileKeys.includes(mmrState.tileKey)
+) {
+  ignoredKangTileKeys.push(
+    mmrState.tileKey
+  );
+}
+
+if (isSingleNEWS) {
+  ignoredNEWS = true;
+}
+
+  document
+    .getElementById("mmrDialog")
+    .classList.add("hidden");
+
+  console.log(
+    "MMR ignored:",
+    mmrState.tileKey
+  );
+
+  resumeMMRAction();
+}
 
 function openGettingStartedDialog() {
   openDialog("gettingStartedDialog");
@@ -185,13 +300,103 @@ function featureComingSoon(input) {
   }, 0);
 }
 
+function updateFilipinoOptions() {
+  const selectedRuleset =
+    document.querySelector(
+      'input[name="rulesetRadio"]:checked'
+    );
+
+  const isFilipino =
+    selectedRuleset &&
+    selectedRuleset.value === "filipino16";
+
+  const honorRadios =
+    document.querySelectorAll(
+      'input[name="filipinoHonorRadio"]'
+    );
+
+  const honorsEnabledRadio =
+    document.querySelector(
+      'input[name="filipinoHonorRadio"][value="enabled"]'
+    );
+
+  const newsCheck =
+    document.querySelector(
+      'input[name="newsAllowedCheck"]'
+    );
+
+  if (!newsCheck) return;
+
+  if (!isFilipino) {
+    honorRadios.forEach(function(radio) {
+      radio.checked = false;
+      radio.disabled = true;
+    });
+
+    newsCheck.checked = false;
+    newsCheck.disabled = true;
+
+    return;
+  }
+
+  honorRadios.forEach(function(radio) {
+    radio.disabled = false;
+  });
+
+  let selectedHonor =
+    document.querySelector(
+      'input[name="filipinoHonorRadio"]:checked'
+    );
+
+  if (!selectedHonor && honorsEnabledRadio) {
+    honorsEnabledRadio.checked = true;
+    selectedHonor = honorsEnabledRadio;
+  }
+
+  const honorsEnabled =
+    selectedHonor?.value === "enabled";
+
+  if (honorsEnabled) {
+    newsCheck.disabled = false;
+    newsCheck.checked = true;
+  } else {
+    newsCheck.checked = false;
+    newsCheck.disabled = true;
+  }
+}
 function saveRulesDialog() {
   const selected = document.querySelector(
     'input[name="rulesetRadio"]:checked'
   );
 
-  if (selected && selected.value === "taiwan16") {
-    setRuleset("taiwan16");
+  const filipinoHonorsDisabled =
+    selected &&
+    selected.value === "filipino16" &&
+    document.querySelector(
+      'input[name="filipinoHonorRadio"]:checked'
+    )?.value === "disabled";
+
+  const honorTilesEntered =
+    (counts.east || 0) +
+    (counts.south || 0) +
+    (counts.west || 0) +
+    (counts.north || 0) +
+    (counts.red || 0) +
+    (counts.green || 0) +
+    (counts.white || 0);
+
+  if (
+    filipinoHonorsDisabled &&
+    honorTilesEntered > 0
+  ) {
+    showToast(
+      "Remove all Wind and Dragon tiles before disabling Honors."
+    );
+    return;
+  }
+
+  if (selected) {
+    setRuleset(selected.value);
   }
 
   closeDialog("rulesDialog");
