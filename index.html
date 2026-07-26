@@ -252,21 +252,30 @@ V4 = Photo Recognition
     <h2>Ruleset</h2>
 
     <div class="dialog-option">
-      <label><input type="radio" name="rulesetRadio" value="filipino16" onclick="featureComingSoon(this)"> Filipino 16-Tile</label>
+      <label><input type="radio" name="rulesetRadio" value="filipino16" checked onclick="updateFilipinoOptions()"> Filipino 16-Tile</label>
     </div>
     <div class="dialog-option indent">
-      <label><input type="radio" name="filipinoHonorRadio" value="disabled" onclick="featureComingSoon(this)"> Honors Disabled</label>
-    </div>
-    <div class="dialog-option indent">
-      <label><input type="radio" name="filipinoHonorRadio" value="enabled" onclick="featureComingSoon(this)"> Honors Enabled</label>
-    </div>
-    <div class="dialog-option indent">
-      <label><input type="checkbox" name="newsAllowedCheck" onclick="featureComingSoon(this)"> N-E-W-S Allowed</label>
-    </div>
-    <div class="feature-note">Feature Coming Soon</div>
+  <label><input type="radio" name="filipinoHonorRadio" value="enabled" checked onclick="updateFilipinoOptions()"> Honors Enabled</label>
+</div>
+
+<div class="dialog-option indent" style="padding-left: 24px;">
+  <label><input type="checkbox" name="newsAllowedCheck" checked> N-E-W-S Allowed</label>
+</div>
+
+<div class="dialog-option indent">
+  <label><input type="radio" name="filipinoHonorRadio" value="disabled" onclick="updateFilipinoOptions()"> Honors Disabled</label>
+</div>
+    
+<div class="dialog-option indent">
+  <label>
+    <input type="checkbox" name="filipinoJokersCheck" disabled>
+    Joker Allowed
+  </label>
+  <span class="feature-note">Coming Soon</span>
+</div>
 
     <div class="dialog-option">
-      <label><input type="radio" name="rulesetRadio" value="taiwan16" checked> Taiwanese 16-Tile</label>
+      <label><input type="radio" name="rulesetRadio" value="taiwan16" onclick="updateFilipinoOptions()"> Taiwanese 16-Tile</label>
     </div>
 
     <div class="dialog-option">
@@ -322,7 +331,7 @@ V4 = Photo Recognition
 
 <div id="mmrDialog" class="dialog-backdrop hidden">
   <div class="dialog">
-    <h2>Multiple Melds Detected</h2>
+    <h2 id="mmrTitle">Multiple Melds Detected</h2>
 
     <div id="mmrOptions"></div>
   </div>
@@ -332,7 +341,7 @@ V4 = Photo Recognition
   <div class="dialog">
     <h2>About MJC</h2>
     <p>Mahjong Coach (MJC) is a learning tool for beginning and intermediate Mahjong players.</p><p>Using Six Box Theory™, MJC helps players learn, understand, and improve their Mahjong playing skills.</p>
-    <p>Additional coaching features in development.</p>
+    <p>Additional coaching features arrive in Version 2.0.</p>
     <div class="dialog-actions">
       <button class="dialog-button primary" onclick="closeDialog('aboutDialog')">Close</button>
     </div>
@@ -471,10 +480,22 @@ const MJC_STATE = {
     return {
       ruleset: ruleset,
 
+  honorsEnabled:
+    document.querySelector(
+      'input[name="filipinoHonorRadio"]:checked'
+    )?.value === "enabled",
+
       newsAllowed:
-        document.querySelector(
-          'input[name="newsAllowedCheck"]'
-        )?.checked || false,
+  (
+    document.querySelector(
+      'input[name="filipinoHonorRadio"]:checked'
+    )?.value === "enabled"
+  ) &&
+  (
+    document.querySelector(
+      'input[name="newsAllowedCheck"]'
+    )?.checked || false
+  ),
 
       role: role,
       seatWind: seatWind,
@@ -489,24 +510,29 @@ const MJC_STATE = {
       contextLocked: contextLocked
     };
   },
-  getEngineInput: function() {
-    return {
-      counts: this.getHandCounts(),
-      context: this.getContext(),
-      displayOrder: this.getDisplayOrder(),
-      mmrCommittedBoxes:
-    mmrCommittedBoxes.map(function(item) {
-      return {
-        action: item.action,
-        tileKey: item.tileKey,
-        candidate: {
-          type: item.candidate.type,
-          tiles: [...item.candidate.tiles]
-        }
-      };
-    })
-    };
-  }
+ getEngineInput: function() {
+  return {
+    counts: this.getHandCounts(),
+    context: this.getContext(),
+    displayOrder: this.getDisplayOrder(),
+
+    mmrCommittedBoxes:
+      mmrCommittedBoxes.map(function(item) {
+        return {
+          action: item.action,
+          tileKey: item.tileKey,
+          candidate: {
+            type: item.candidate.type,
+            tiles: [...item.candidate.tiles]
+          }
+        };
+      }),
+
+    ignoredKangTileKeys:
+      [...ignoredKangTileKeys],
+    ignoredNEWS: ignoredNEWS
+  };
+}
 };
 
 const MJC_ENGINE = {
@@ -536,7 +562,7 @@ const MJCApp = {
 const counts = {};
 const tileLabels = {};
 
-let ruleset = "taiwan16";
+let ruleset = "filipino16";
 let role = "player";
 let seatWind = "east";
 let prevailingWind = "east";
@@ -546,6 +572,8 @@ let phase = "starting";
 let screenMode = "entry";
 let hdMode = "starting";
 let gameAction = "draw";
+let kangReplacementDraw = false;
+let replacementDrawSource = null;
 let lastDrawnTileKey = null;
 let contextLocked = false;
 
@@ -575,6 +603,8 @@ let lastActionSource = null;
 let lastActionTileKey = null;
 let mmrState = null;
 let mmrCommittedBoxes = [];
+let ignoredKangTileKeys = [];
+let ignoredNEWS = false;
 let correctingLastEntry = false;
 let correctionTargetTileKey = null;
 let correctionActionType = null;
@@ -610,6 +640,24 @@ function startNewGame() {
   screenMode = "entry";
   hdMode = "starting";
   gameAction = "draw";
+  kangReplacementDraw = false;
+  replacementDrawSource = null;
+  ignoredKangTileKeys = [];
+  ignoredNEWS = false;
+  mmrState = null;
+  mmrCommittedBoxes = [];
+canonicalStructureState = {
+  completeBoxes: [],
+  developingBoxes: [],
+  halfEye: [],
+  reserves: [],
+
+  ambition: {
+    active: false,
+    type: null,
+    promptResolved: false
+  }
+};
   lastDrawnTileKey = null;
   contextLocked = false;
   revisionReturnHDMode = "starting";
