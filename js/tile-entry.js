@@ -131,6 +131,25 @@ function buildTiles() {
 }
 
 function cycleTile(key) {
+  const isHonorTile =
+      key === "east" ||
+      key === "south" ||
+      key === "west" ||
+      key === "north" ||
+      key === "red" ||
+      key === "green" ||
+      key === "white";
+
+  const honorsDisabled =
+    ruleset === "filipino16" &&
+    document.querySelector(
+      'input[name="filipinoHonorRadio"]:checked'
+    )?.value === "disabled";
+
+  if (honorsDisabled && isHonorTile) {
+    return;
+  }
+
   if (screenMode === "handCorrection") {
     cycleCorrectionTile(key);
     return;
@@ -203,6 +222,29 @@ function updateDisplay(customMessage) {
 
     document.getElementById("count-" + key).textContent = value === 0 ? "" : value;
     const tileEl = document.getElementById("tile-" + key);
+const isHonorTile =
+  key === "east" ||
+  key === "south" ||
+  key === "west" ||
+  key === "north" ||
+  key === "red" ||
+  key === "green" ||
+  key === "white";
+
+const honorsDisabled =
+  ruleset === "filipino16" &&
+  document.querySelector(
+    'input[name="filipinoHonorRadio"]:checked'
+  )?.value === "disabled";
+
+tileEl.disabled =
+  honorsDisabled && isHonorTile;
+
+tileEl.classList.toggle(
+  "honor-disabled",
+  honorsDisabled && isHonorTile
+);
+
     tileEl.classList.remove("selected", "tcs-original", "tcs-added");
     if (screenMode === "handCorrection") {
       if ((tcsOriginalCounts[key] || 0) > 0) tileEl.classList.add("tcs-original");
