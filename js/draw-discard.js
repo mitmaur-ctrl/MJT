@@ -242,6 +242,30 @@ if (
   }
 }
 
+const isSinglePong =
+  incomingMeldCandidates.length === 1 &&
+  incomingMeldCandidates[0].type === "pong";
+
+if (isSinglePong) {
+  mmrState = {
+    action: gameAction,
+    tileKey: selectedDrawTileKey,
+    candidates: incomingMeldCandidates,
+    recommendedCandidate:
+      incomingMeldCandidates[0],
+    selectedCandidate:
+      incomingMeldCandidates[0]
+  };
+
+  if (shouldProtectOnlyEC()) {
+    showECProtectionDialog();
+    return;
+  }
+
+  // No EC protection needed.
+  // Let the normal single-Pong flow continue.
+  mmrState = null;
+}
 
 if (
   incomingMeldCandidates.length > 1 ||
@@ -333,20 +357,101 @@ if (gameAction === "claim") {
   showHD();
 }
 
+function shouldProtectOnlyEC() {
+  if (
+    !mmrState ||
+    !mmrState.selectedCandidate
+  ) {
+    return false;
+  }
+
+console.log(
+  "EC PROTECTION CHECK:",
+  {
+    selectedCandidate: mmrState.selectedCandidate,
+    completeBoxes:
+      canonicalStructureState.completeBoxes,
+    developingBoxes:
+      canonicalStructureState.developingBoxes
+  }
+);
+
+  const completeBoxCount =
+    canonicalStructureState.completeBoxes.length;
+
+  // EC protection applies only in Completion Phase.
+  if (completeBoxCount < 4) {
+    return false;
+  }
+
+  const eyeCandidates =
+    canonicalStructureState.developingBoxes.filter(
+      function(box) {
+        return box.type === "ec";
+      }
+    );
+
+  // Protection is only needed when there is one EC.
+  if (eyeCandidates.length !== 1) {
+    return false;
+  }
+
+  const ec = eyeCandidates[0];
+  const candidate =
+    mmrState.selectedCandidate;
+
+  // The candidate must consume the tiles
+  // belonging to the only EC.
+  return ec.tiles.every(function(tileKey) {
+    return candidate.tiles.includes(tileKey);
+  });
+}
+
 function resumeMMRAction() {
   if (!mmrState) {
   return;
 }
+
+  if (
+    shouldProtectOnlyEC() &&
+    !mmrState.ecProtectionOverride
+  ) {
+    showECProtectionDialog();
+    return;
+  }
+
+  if (
+    mmrState.selectedCandidate &&
+    !mmrState.skipCommit
+  ) {
+    mmrCommittedBoxes.push({
+      action: mmrState.action,
+      tileKey: mmrState.tileKey,
+      candidate: {
+        type: mmrState.selectedCandidate.type,
+        tiles: [...mmrState.selectedCandidate.tiles]
+      }
+    });
+  }
 
   const selectedTileKey =
     mmrState.tileKey;
 
   counts[selectedTileKey] += 1;
 
-  const result =
-    evaluate17TE(
-      MJC_STATE.getEngineInput()
-    );
+  const protectedInput =
+  MJC_STATE.getEngineInput();
+
+console.log(
+  "PROTECTED EC INPUT:",
+  protectedInput.protectedECTileKey
+);
+
+const result =
+  evaluate17TE(
+    protectedInput
+  );
+
 
   console.log(
     "17TE after MMR selection:",
@@ -506,6 +611,7 @@ function confirmDiscard() {
   lastActionTileKey = selectedDiscardTileKey;
 
   counts[selectedDiscardTileKey] -= 1;
+  protectedECTileKey = null;
   lockHandContext();
 
   phase = "game";
