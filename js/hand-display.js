@@ -106,7 +106,7 @@ if (result.mahjong) {
   gameAction = "mahjong";
 
   if (handInstruction) {
-    handInstruction.textContent = "🀄 Mahjong!";
+    handInstruction.textContent = "That's Mahjong!";
   }
 
   const drawBtn =
@@ -348,17 +348,20 @@ function configureHDMode() {
   handCorrectionBtn.classList.remove("hidden");
 
   const canDraw = gameAction === "draw";
-  const canDiscard = gameAction === "discard";
+const canClaim =
+  gameAction === "draw" &&
+  !kangReplacementDraw;
+const canDiscard = gameAction === "discard";
 
-  drawBtn.disabled = !canDraw;
-  claimBtn.disabled = !canDraw;
-  discardBtn.disabled = !canDiscard;
+drawBtn.disabled = !canDraw;
+claimBtn.disabled = !canClaim;
+discardBtn.disabled = !canDiscard;
 
   drawBtn.classList.toggle("enabled", canDraw);
   drawBtn.classList.toggle("disabled", !canDraw);
 
-  claimBtn.classList.toggle("enabled", canDraw);
-  claimBtn.classList.toggle("disabled", !canDraw);
+  claimBtn.classList.toggle("enabled", canClaim);
+  claimBtn.classList.toggle("disabled", !canClaim);
 
   discardBtn.classList.toggle("enabled", canDiscard);
   discardBtn.classList.toggle("disabled", !canDiscard);
@@ -385,9 +388,18 @@ function configureHDMode() {
           : "Prepare to Discard.<br>Press Discard when ready.");
 } else {
   handInstruction.innerHTML =
-      gameAction === "draw"
+  kangReplacementDraw
+    ? (
+        replacementDrawSource === "news"
+          ? "NEWS declared.<br>Draw replacement tile."
+          : "Kang declared.<br>Draw replacement tile."
+      )
+    : (
+        gameAction === "draw"
           ? "Prepare to Draw or Claim.<br>Press Draw or Claim when ready."
-          : "Prepare to Discard.<br>Press Discard when ready.";
+          : "Prepare to Discard.<br>Press Discard when ready."
+      );
+
 }
     handInstruction.classList.remove("hidden");
     handMeta.textContent =
@@ -401,16 +413,29 @@ function configureHDMode() {
   handTitle.textContent = "Current Hand";
   handMeta.textContent = "";
   handInstruction.innerHTML =
-  gameAction === "draw"
-    ? "Prepare to Draw or Claim.<br>Press Draw or Claim when ready."
-    : "Prepare to Discard.<br>Press Discard when ready.";
+  kangReplacementDraw
+    ? (
+        replacementDrawSource === "news"
+          ? "NEWS declared.<br>Draw replacement tile."
+          : "Kang declared.<br>Draw replacement tile."
+      )
+    : (
+        gameAction === "draw"
+          ? "Prepare to Draw or Claim.<br>Press Draw or Claim when ready."
+          : "Prepare to Discard.<br>Press Discard when ready."
+      );
   handInstruction.classList.remove("hidden");
 
 }
 
-function renderActiveArea(completeBoxes, developingBoxes, halfEye) {
+function renderActiveArea(
+  completeBoxes,
+  developingBoxes,
+  halfEye,
+  highlightState
+) {
   let html = '<div class="engine-title">Developing Boxes</div>';
-  let drawnHighlightUsed = false;
+
   const firstActiveBoxNumber = completeBoxes.length + 1;
 
   developingBoxes.forEach(function(box, index) {
@@ -419,10 +444,10 @@ function renderActiveArea(completeBoxes, developingBoxes, halfEye) {
     const tileHtml = box.tiles.map(function(tileKey) {
   const isLastDrawn =
     tileKey === lastDrawnTileKey &&
-    !drawnHighlightUsed;
+!highlightState.used
 
   if (isLastDrawn) {
-    drawnHighlightUsed = true;
+    highlightState.used = true;
   }
 
   return (
@@ -490,22 +515,25 @@ if (halfEye && halfEye.length > 0) {
   return html;
 }
 
-function renderReserveArea(reserves) {
+function renderReserveArea(
+  reserves,
+  highlightState
+) {
   let html = '<div class="hand-section reserve-area">';
   html += '<div class="hand-section-title">Reserves</div>';
 
   if (!reserves || reserves.length === 0) {
     html += '<span class="empty-note">None</span>';
   } else {
-    let drawnHighlightUsed = false;
+    
 
 html += reserves.map(function(tileKey) {
   const isLastDrawn =
     tileKey === lastDrawnTileKey &&
-    !drawnHighlightUsed;
+!highlightState.used;
 
   if (isLastDrawn) {
-    drawnHighlightUsed = true;
+    highlightState.used = true;
   }
 
   return (
@@ -522,13 +550,16 @@ html += reserves.map(function(tileKey) {
   return html;
 }
 
-function renderCompletedArea(completeBoxes) {
+function renderCompletedArea(
+  completeBoxes,
+  highlightState
+) {
   if (!completeBoxes || completeBoxes.length === 0) {
     return '<div class="engine-placeholder">No Complete Boxes found.</div>';
   }
 
   let html = '<div class="engine-title">Completed Boxes</div>';
-  let drawnHighlightUsed = false;
+
   
   completeBoxes.forEach(function(box, index) {
     
@@ -536,10 +567,10 @@ function renderCompletedArea(completeBoxes) {
 const tileHtml = box.tiles.map(function(tileKey) {
   const isLastDrawn =
     tileKey === lastDrawnTileKey &&
-    !drawnHighlightUsed;
+!highlightState.used
 
   if (isLastDrawn) {
-    drawnHighlightUsed = true;
+    highlightState.used = true;
   }
 
   return (
@@ -553,11 +584,15 @@ const tileHtml = box.tiles.map(function(tileKey) {
 
     html +=
   '<div class="hand-section box-card complete-box">' +
-    '<div class="hand-section-title">CB' + box.boxId + ' — ' +
-      box.type.charAt(0).toUpperCase() + box.type.slice(1) +
-      ' — ' +
-      (box.visibility === "exposed" ? "Exposed" : "Hidden") +
-    '</div>' +
+  '<div class="hand-section-title">CB' + box.boxId + ' — ' +
+    box.type.charAt(0).toUpperCase() + box.type.slice(1) +
+    (
+      box.type === "eye"
+        ? ""
+        : " — " +
+          (box.visibility === "exposed" ? "Exposed" : "Hidden")
+    ) +
+  '</div>' +
     tileHtml +
   '</div>';
   });
@@ -589,7 +624,7 @@ function renderCoachView() {
     handInstruction
   ) {
     handInstruction.textContent =
-      "🀄 Mahjong!";
+      "That's Mahjong!";
   }
 
   const structureState =
@@ -600,21 +635,28 @@ function renderCoachView() {
       structureState
     );
 
+const highlightState = {
+  used: false
+};
+
   enginePanel.innerHTML =
-    '<div class="tih-counter">' +
-      'TIH: ' + tih +
-    '</div>' +
-    renderActiveArea(
-      structureState.completeBoxes,
-      structureState.developingBoxes,
-      structureState.halfEye
-    ) +
-    renderReserveArea(
-      structureState.reserves
-    ) +
-    renderCompletedArea(
-      structureState.completeBoxes
-    );
+  '<div class="tih-counter">' +
+    'TIH: ' + tih +
+  '</div>' +
+  renderActiveArea(
+    structureState.completeBoxes,
+    structureState.developingBoxes,
+    structureState.halfEye,
+    highlightState
+  ) +
+  renderReserveArea(
+    structureState.reserves,
+    highlightState
+  ) +
+  renderCompletedArea(
+    structureState.completeBoxes,
+    highlightState
+  );
 }
 
 
