@@ -554,3 +554,8 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 
   font-size: 0.85rem;
   font-weight: 600;
 }
+
+/* Filipino ruleset — Honors Disabled */
+.tile.honor-disabled {
+  opacity: 0.35;
+}
