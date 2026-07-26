@@ -365,16 +365,6 @@ function shouldProtectOnlyEC() {
     return false;
   }
 
-console.log(
-  "EC PROTECTION CHECK:",
-  {
-    selectedCandidate: mmrState.selectedCandidate,
-    completeBoxes:
-      canonicalStructureState.completeBoxes,
-    developingBoxes:
-      canonicalStructureState.developingBoxes
-  }
-);
 
   const completeBoxCount =
     canonicalStructureState.completeBoxes.length;
