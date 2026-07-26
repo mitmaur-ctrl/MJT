@@ -458,7 +458,8 @@ const completeBoxes =
 const pairCandidates =
   findPairDevelopingBoxes(
     remainingCounts,
-    []
+    [],
+    engineInput.protectedECTileKey
   );
 
 const developingBoxes =
@@ -683,7 +684,13 @@ for (const tileKey in workingCounts) {
 
 // 3. Find Pongs.
 for (const tileKey in workingCounts) {
-  while ((workingCounts[tileKey] || 0) >= 3) {
+  const ecProtected =
+    engineInput.protectedECTileKey === tileKey;
+
+  while (
+    (workingCounts[tileKey] || 0) >= 3 &&
+    !ecProtected
+  ) {
     completeBoxes.push({
       type: "pong",
       tiles: [
@@ -998,7 +1005,8 @@ function findCPCDevelopingBoxes(remainingCounts) {
 
 function findPairDevelopingBoxes(
   remainingCounts,
-  existingDevelopingBoxes = []
+  existingDevelopingBoxes = [],
+  protectedECTileKey = null
 ) {
   const workingCounts = { ...remainingCounts };
   const pairs = [];
@@ -1012,7 +1020,16 @@ function findPairDevelopingBoxes(
   });
 
   for (const tileKey in workingCounts) {
-    if ((workingCounts[tileKey] || 0) === 2) {
+    const tileCount =
+  workingCounts[tileKey] || 0;
+
+if (
+  tileCount === 2 ||
+  (
+    tileKey === protectedECTileKey &&
+    tileCount >= 2
+  )
+) {
       pairs.push({
         type: "pair",
         tiles: [tileKey, tileKey]
@@ -1329,10 +1346,11 @@ function evaluateMMRCandidate(
     );
 
   const pairCandidates =
-    findPairDevelopingBoxes(
-      remainingCounts,
-      []
-    );
+  findPairDevelopingBoxes(
+    remainingCounts,
+    [],
+    engineInput.protectedECTileKey
+  );
 
   const developingBoxes =
     evaluateDBPartitions(
