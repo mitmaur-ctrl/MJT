@@ -337,6 +337,33 @@ V4 = Photo Recognition
   </div>
 </div>
 
+<div id="ecProtectionDialog" class="dialog-backdrop hidden">
+  <div class="dialog">
+    <h2>Eye Alert</h2>
+
+    <p>
+      This is your only Eye Candidate.
+      Completing this meld will leave your hand without an Eye.
+    </p>
+
+     <button
+  type="button"
+  class="dialog-button primary"
+  onclick="keepECProtected()"
+>
+  Keep EC
+</button>
+
+<button
+  type="button"
+  class="dialog-button secondary"
+  onclick="continueWithoutEC()"
+>
+  Continue Anyway
+</button>
+  </div>
+</div>
+
 <div id="aboutDialog" class="dialog-backdrop hidden">
   <div class="dialog">
     <h2>About MJC</h2>
@@ -528,6 +555,9 @@ const MJC_STATE = {
         };
       }),
 
+  protectedECTileKey:
+    protectedECTileKey,
+ 
     ignoredKangTileKeys:
       [...ignoredKangTileKeys],
     ignoredNEWS: ignoredNEWS
@@ -605,6 +635,7 @@ let mmrState = null;
 let mmrCommittedBoxes = [];
 let ignoredKangTileKeys = [];
 let ignoredNEWS = false;
+let protectedECTileKey = null;
 let correctingLastEntry = false;
 let correctionTargetTileKey = null;
 let correctionActionType = null;
