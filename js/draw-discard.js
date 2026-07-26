@@ -24,6 +24,26 @@ function createDrawTile(containerId, label, key) {
   tile.className = "tile draw-tile";
   tile.id = "draw-tile-" + key;
 
+const isHonorTile =
+  key === "east" ||
+  key === "south" ||
+  key === "west" ||
+  key === "north" ||
+  key === "red" ||
+  key === "green" ||
+  key === "white";
+
+const honorsDisabled =
+  ruleset === "filipino16" &&
+  document.querySelector(
+    'input[name="filipinoHonorRadio"]:checked'
+  )?.value === "disabled";
+
+tile.classList.toggle(
+  "honor-disabled",
+  honorsDisabled && isHonorTile
+);
+
   tile.addEventListener("contextmenu", e => e.preventDefault());
 
   tile.addEventListener("click", function(e) {
@@ -36,6 +56,34 @@ function createDrawTile(containerId, label, key) {
     '<div class="tile-count"></div>';
 
   document.getElementById(containerId).appendChild(tile);
+}
+
+function updateDrawHonorAvailability() {
+  const honorsDisabled =
+    ruleset === "filipino16" &&
+    document.querySelector(
+      'input[name="filipinoHonorRadio"]:checked'
+    )?.value === "disabled";
+
+  [
+    "east",
+    "south",
+    "west",
+    "north",
+    "red",
+    "green",
+    "white"
+  ].forEach(function(key) {
+    const tile =
+      document.getElementById("draw-tile-" + key);
+
+    if (!tile) return;
+
+    tile.classList.toggle(
+      "honor-disabled",
+      honorsDisabled
+    );
+  });
 }
 
 function buildDrawTiles() {
@@ -88,10 +136,30 @@ if (gameAction === "draw") {
 } else if (gameAction === "claim") {
   drawMeta.textContent = "Enter the tile you claimed.";
 }
+  updateDrawHonorAvailability();
   applyCorrectionHighlight(gameAction);
 }
 
 function selectDrawTile(key) {
+ const isHonorTile =
+    key === "east" ||
+    key === "south" ||
+    key === "west" ||
+    key === "north" ||
+    key === "red" ||
+    key === "green" ||
+    key === "white";
+
+  const honorsDisabled =
+    ruleset === "filipino16" &&
+    document.querySelector(
+      'input[name="filipinoHonorRadio"]:checked'
+    )?.value === "disabled";
+
+  if (honorsDisabled && isHonorTile) {
+    return;
+  }
+
   if (counts[key] >= 4) {
     showToast("Maximum copies already in hand.");
     return;
@@ -175,7 +243,16 @@ if (
 }
 
 
-if (incomingMeldCandidates.length > 1) {
+if (
+  incomingMeldCandidates.length > 1 ||
+  (
+    incomingMeldCandidates.length === 1 &&
+    (
+      incomingMeldCandidates[0].type === "kang" ||
+      incomingMeldCandidates[0].type === "news"
+    )
+  )
+) {
   mmrState = {
   action: gameAction,
   tileKey: selectedDrawTileKey,
@@ -244,6 +321,8 @@ if (gameAction === "claim") {
   phase = "game";
   hdMode = "current";
   gameAction = "discard";
+  kangReplacementDraw = false;
+  replacementDrawSource = null;
   lastDrawnTileKey = selectedDrawTileKey;
   revisionReturnHDMode = "current";
   revisionTarget = null;  
@@ -255,12 +334,9 @@ if (gameAction === "claim") {
 }
 
 function resumeMMRAction() {
-  if (
-    !mmrState ||
-    !mmrState.selectedCandidate
-  ) {
-    return;
-  }
+  if (!mmrState) {
+  return;
+}
 
   const selectedTileKey =
     mmrState.tileKey;
@@ -303,11 +379,19 @@ if (mmrState.action === "claim") {
 hdMode = "current";
 
 if (
-  mmrState.selectedCandidate.type === "kang"
+  mmrState.selectedCandidate &&
+  (
+    mmrState.selectedCandidate.type === "kang" ||
+    mmrState.selectedCandidate.type === "news"
+  )
 ) {
   gameAction = "draw";
+  kangReplacementDraw = true;
+  replacementDrawSource =
+    mmrState.selectedCandidate.type;
 } else {
   gameAction = "discard";
+  kangReplacementDraw = false;
 }
 
 lastDrawnTileKey =
