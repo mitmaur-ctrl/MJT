@@ -484,14 +484,46 @@ const reserves =
     ]
   );
 
+const mahjongEC =
+  developingBoxes.find(function(box) {
+    return box.type === "ec";
+  });
+
+const mahjong =
+  completeBoxes.length === 5 &&
+  Boolean(mahjongEC) &&
+  reserves.length === 0 &&
+  halfEye.length === 0;
+
+let finalCompleteBoxes =
+  completeBoxes;
+
+let finalDevelopingBoxes =
+  developingBoxes;
+
+if (mahjong) {
+  finalCompleteBoxes = [
+    ...completeBoxes,
+    {
+  boxId: 6,
+  type: "eye",
+  tiles: [...mahjongEC.tiles]
+}
+  ];
+
+  finalDevelopingBoxes =
+    developingBoxes.filter(function(box) {
+      return box !== mahjongEC;
+    });
+}
+
 const structureState =
   updateCanonicalStructureState(
-    completeBoxes,
-    developingBoxes,
+    finalCompleteBoxes,
+    finalDevelopingBoxes,
     halfEye,
     reserves
   );
-
 
 
 /*
@@ -506,17 +538,9 @@ They are NOT stored in Canonical Structure State.
 */
 
 const phase =
-  completeBoxes.length >= 4
+  finalCompleteBoxes.length >= 4
     ? "finishing"
     : "building";
-
-const mahjong =
-  completeBoxes.length === 5 &&
-  developingBoxes.some(
-    box => box.type === "ec"
-  ) &&
-  reserves.length === 0 &&
-  halfEye.length === 0;
 
 // Future derived states:
 //
@@ -531,8 +555,8 @@ const mahjong =
   status: "ready",
   message:
     "17 Tile Evaluation completed.",
-  completeBoxes,
-  developingBoxes,
+  completeBoxes: finalCompleteBoxes,
+  developingBoxes: finalDevelopingBoxes,
   halfEye,
   reserves,
   remainingCounts,
@@ -615,7 +639,10 @@ if (
       return (workingCounts[tileKey] || 0) >= 1;
     });
 
-  if (hasNEWS) {
+  if (
+  hasNEWS &&
+  engineInput.ignoredNEWS !== true
+) {
     completeBoxes.push({
       type: "news",
       tiles: newsTiles
@@ -628,9 +655,17 @@ if (
 }
 
 // 2. Find Kangs.
-// Four identical tiles form one Complete Box.
+// Four identical tiles form one Complete Box
+// unless the player explicitly ignored that Kang.
 for (const tileKey in workingCounts) {
-  while ((workingCounts[tileKey] || 0) >= 4) {
+  const kangIgnored =
+    engineInput.ignoredKangTileKeys &&
+    engineInput.ignoredKangTileKeys.includes(tileKey);
+
+  while (
+    (workingCounts[tileKey] || 0) >= 4 &&
+    !kangIgnored
+  ) {
     completeBoxes.push({
       type: "kang",
       tiles: [
@@ -644,6 +679,7 @@ for (const tileKey in workingCounts) {
     workingCounts[tileKey] -= 4;
   }
 }
+
 
 // 3. Find Pongs.
 for (const tileKey in workingCounts) {
