@@ -195,14 +195,7 @@ function selectMMRCandidate(index) {
   mmrState.selectedCandidate =
     mmrState.candidates[index];
 
-  mmrCommittedBoxes.push({
-    action: mmrState.action,
-    tileKey: mmrState.tileKey,
-    candidate: {
-      type: mmrState.selectedCandidate.type,
-      tiles: [...mmrState.selectedCandidate.tiles]
-    }
-  });
+ 
 
   document
     .getElementById("mmrDialog")
@@ -489,4 +482,59 @@ function saveDisplayDialog() {
   if (!document.getElementById("discardScreen").classList.contains("hidden")) {
     buildDiscardDisplay();
   }
+}
+
+function showECProtectionDialog() {
+  const dialog =
+    document.getElementById("ecProtectionDialog");
+
+  if (!dialog) {
+    return;
+  }
+
+  dialog.classList.remove("hidden");
+}
+
+function keepECProtected() {
+  document
+    .getElementById("ecProtectionDialog")
+    .classList.add("hidden");
+
+  if (!mmrState) {
+    return;
+  }
+
+  const ec =
+    canonicalStructureState.developingBoxes.find(
+      function(box) {
+        return box.type === "ec";
+      }
+    );
+
+  if (!ec || !ec.tiles || ec.tiles.length === 0) {
+    return;
+  }
+
+  protectedECTileKey = ec.tiles[0];
+
+  mmrState.skipCommit = true;
+  mmrState.ecProtectionOverride = true;
+
+  resumeMMRAction();
+}
+
+function continueWithoutEC() {
+  document
+    .getElementById("ecProtectionDialog")
+    .classList.add("hidden");
+
+  if (!mmrState) {
+    return;
+  }
+
+  // Allow this specific MMR action through
+  // the EC protection gate.
+  mmrState.ecProtectionOverride = true;
+
+  resumeMMRAction();
 }
