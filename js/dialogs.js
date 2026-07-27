@@ -538,3 +538,93 @@ function continueWithoutEC() {
 
   resumeMMRAction();
 }
+
+function showBOLOEyesDialog() {
+  document
+    .getElementById("boloEyesDialog")
+    .classList.remove("hidden");
+}
+
+function closeBOLOEyesDialog() {
+  document
+    .getElementById("boloEyesDialog")
+    .classList.add("hidden");
+}
+
+function showOverPairedDialog(pairCount) {
+  const message =
+    document.getElementById("overPairedMessage");
+
+  if (message) {
+    message.textContent =
+      "You now have " +
+      pairCount +
+      " pairs. Are you pursuing Seven Pairs?";
+  }
+
+  document
+    .getElementById("overPairedDialog")
+    .classList.remove("hidden");
+}
+
+function confirmSevenPairs() {
+  sevenPairsMode = true;
+
+  document
+    .getElementById("overPairedDialog")
+    .classList.add("hidden");
+
+  document
+    .getElementById("sevenPairsAcknowledgmentDialog")
+    .classList.remove("hidden");
+}
+
+function closeSevenPairsAcknowledgmentDialog() {
+  document
+    .getElementById("sevenPairsAcknowledgmentDialog")
+    .classList.add("hidden");
+}
+
+function continueSevenPairs() {
+  sevenPairsMode = true;
+
+  document
+    .getElementById("sevenPairsStatusDialog")
+    .classList.add("hidden");
+}
+
+function endSevenPairs() {
+  sevenPairsMode = false;
+
+  document
+    .getElementById("sevenPairsStatusDialog")
+    .classList.add("hidden");
+
+  document
+    .getElementById("sevenPairsCoachingResumeDialog")
+    .classList.remove("hidden");
+} 
+
+function closeSevenPairsCoachingResumeDialog() {
+  document
+    .getElementById("sevenPairsCoachingResumeDialog")
+    .classList.add("hidden");
+}
+
+function declineSevenPairs() {
+  sevenPairsMode = false;
+
+  document
+    .getElementById("overPairedDialog")
+    .classList.add("hidden");
+
+  document
+    .getElementById("overPairedAdviceDialog")
+    .classList.remove("hidden");
+}
+
+function closeOverPairedAdviceDialog() {
+  document
+    .getElementById("overPairedAdviceDialog")
+    .classList.add("hidden");
+}
