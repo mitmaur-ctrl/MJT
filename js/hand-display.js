@@ -128,7 +128,60 @@ if (result.mahjong) {
   const structureState =
     result.structureState || result;
 
-  
+  const eyeCandidates =
+  structureState.developingBoxes.filter(
+    function(box) {
+      return (
+        box.type === "ec" ||
+        box.type === "epc"
+      );
+    }
+  );
+
+const pairCount = eyeCandidates.length;
+const overPairedThreshold = 4;
+
+if (pairCount >= overPairedThreshold) {
+  sevenPairsStatusAsked = false;
+}
+
+if (pairCount < overPairedThreshold) {
+  overPairedActive = false;
+
+  if (
+    sevenPairsMode &&
+    !sevenPairsStatusAsked
+  ) {
+    sevenPairsStatusAsked = true;
+
+    document
+      .getElementById("sevenPairsStatusDialog")
+      .classList.remove("hidden");
+  }
+}
+
+if (
+  handStarted &&
+  pairCount >= overPairedThreshold &&
+  !overPairedActive &&
+  !sevenPairsMode
+) {
+  overPairedActive = true;
+  showOverPairedDialog(pairCount);
+}
+
+
+if (
+  hdMode === "current" &&
+  phase === "game" &&
+  result.phase === "finishing" &&
+  eyeCandidates.length === 0 &&
+  !result.mahjong &&
+  !boloEyesShown
+) {
+  boloEyesShown = true;
+  showBOLOEyesDialog();
+}
 
   /*
   ================================================
