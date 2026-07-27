@@ -364,6 +364,132 @@ V4 = Photo Recognition
   </div>
 </div>
 
+<div id="boloEyesDialog" class="dialog-backdrop hidden">
+  <div class="dialog">
+    <h2>BOLO for Eyes</h2>
+
+    <p>
+      No Eye Candidate detected.
+      BOLO for Eyes.
+    </p>
+
+    <button
+      type="button"
+      class="dialog-button primary"
+      onclick="closeBOLOEyesDialog()"
+    >
+      Got It
+    </button>
+  </div>
+</div>
+
+<div id="overPairedDialog" class="dialog-backdrop hidden">
+  <div class="dialog">
+    <h2>Over-Paired Hand</h2>
+
+    <p id="overPairedMessage">
+      You now have 4 pairs. Are you pursuing Seven Pairs?
+    </p>
+
+    <button
+      type="button"
+      class="dialog-button primary"
+      onclick="confirmSevenPairs()"
+    >
+      Yes
+    </button>
+
+    <button
+      type="button"
+      class="dialog-button"
+      onclick="declineSevenPairs()"
+    >
+      No
+    </button>
+  </div>
+</div>
+
+ <div id="sevenPairsAcknowledgmentDialog" class="dialog-backdrop hidden">
+  <div class="dialog">
+    <h2>Seven Pairs</h2>
+
+    <p>
+  Good luck!<br>
+  Coaching is on hold while you pursue Seven Pairs.
+</p>
+
+    <button
+      type="button"
+      class="dialog-button primary"
+      onclick="closeSevenPairsAcknowledgmentDialog()"
+    >
+      Got It
+    </button>
+  </div>
+</div>
+
+<div id="sevenPairsStatusDialog" class="dialog-backdrop hidden">
+  <div class="dialog">
+    <h2>Seven Pairs</h2>
+
+    <p>
+      Are you still pursuing Seven Pairs?
+    </p>
+
+    <button
+      type="button"
+      class="dialog-button primary"
+      onclick="continueSevenPairs()"
+    >
+      Yes
+    </button>
+
+    <button
+      type="button"
+      class="dialog-button"
+      onclick="endSevenPairs()"
+    >
+      No
+    </button>
+  </div>
+</div>
+
+<div id="sevenPairsCoachingResumeDialog" class="dialog-backdrop hidden">
+  <div class="dialog">
+    <h2>Seven Pairs</h2>
+
+    <p>
+      Coaching is back on.
+    </p>
+
+    <button
+      type="button"
+      class="dialog-button primary"
+      onclick="closeSevenPairsCoachingResumeDialog()"
+    >
+      Got It
+    </button>
+  </div>
+</div>
+
+<div id="overPairedAdviceDialog" class="dialog-backdrop hidden">
+  <div class="dialog">
+    <h2>Over-Paired Hand</h2>
+
+    <p>
+      Consider reducing your pairs to improve your hand’s flexibility.
+    </p>
+
+    <button
+      type="button"
+      class="dialog-button primary"
+      onclick="closeOverPairedAdviceDialog()"
+    >
+      Got It
+    </button>
+  </div>
+</div>
+
 <div id="aboutDialog" class="dialog-backdrop hidden">
   <div class="dialog">
     <h2>About MJC</h2>
@@ -644,8 +770,11 @@ let handCorrectionTarget = null;
 let handCorrectionSnapshot = null;
 let tcsOriginalCounts = {};
 let tcsAddedCounts = {};
-
-
+let boloEyesShown = false;
+let overPairedActive = false;
+let sevenPairsMode = false;
+let handStarted = false;
+let sevenPairsStatusAsked = false;
 
 window.addEventListener("resize", adjustContainerPadding);
 window.addEventListener("load", adjustContainerPadding);
@@ -675,20 +804,48 @@ function startNewGame() {
   replacementDrawSource = null;
   ignoredKangTileKeys = [];
   ignoredNEWS = false;
+  boloEyesShown = false;
+  overPairedActive = false;
+  sevenPairsMode = false;
+  handStarted = false;
+  sevenPairsStatusAsked = false;
+
+  const boloDialog =
+    document.getElementById("boloEyesDialog");
+
+  if (boloDialog) {
+    boloDialog.classList.add("hidden");
+  }
+const overPairedDialogs = [
+  "overPairedDialog",
+  "sevenPairsAcknowledgmentDialog",
+  "sevenPairsStatusDialog",
+  "sevenPairsCoachingResumeDialog",
+  "overPairedAdviceDialog"
+];
+
+overPairedDialogs.forEach(function(dialogId) {
+  const dialog = document.getElementById(dialogId);
+
+  if (dialog) {
+    dialog.classList.add("hidden");
+  }
+});
+
   mmrState = null;
   mmrCommittedBoxes = [];
-canonicalStructureState = {
-  completeBoxes: [],
-  developingBoxes: [],
-  halfEye: [],
-  reserves: [],
+  canonicalStructureState = {
+    completeBoxes: [],
+    developingBoxes: [],
+    halfEye: [],
+    reserves: [],
 
-  ambition: {
-    active: false,
-    type: null,
-    promptResolved: false
-  }
-};
+    ambition: {
+      active: false,
+      type: null,
+      promptResolved: false
+    }
+  };
   lastDrawnTileKey = null;
   contextLocked = false;
   revisionReturnHDMode = "starting";
