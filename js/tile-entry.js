@@ -374,6 +374,7 @@ function startHand() {
   lastDrawnTileKey = null;
   coachingOn = true;
   contextLocked = false;
+  handStarted = true;
   lastActionSnapshot = null;
   lastActionType = null;
   lastActionTileKey = null;
