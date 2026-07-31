@@ -9,7 +9,7 @@ Project:
 Mahjong Coach
 
 Version:
-MJC Beta v2.3
+MJC Beta v2.4
 
 Purpose:
 - Smartphone-optimized tile management vehicle
@@ -135,8 +135,18 @@ V4 = Photo Recognition
 
     <div id="enginePanel" class="engine-panel hidden"></div>
 
+
     <div id="hdActions" class="hd-actions">
   <div id="hdPrimaryRow" class="hd-action-row primary-action-row">
+
+
+    <div id="acquireActionGroup">
+  
+<div class="acquire-action-label">
+    Draw from Wall
+  </div>
+
+  <div class="acquire-draw-row">
     <button
       id="drawBtn"
       class="action-button turn-button primary-turn-button"
@@ -144,23 +154,63 @@ V4 = Photo Recognition
     >
       Draw
     </button>
+  </div>
 
+  <div class="acquire-action-label">
+    Claim a Discard
+  </div>
+
+  <div id="normalAcquireRow" class="acquire-meld-row">
     <button
-      id="claimBtn"
-      class="action-button turn-button primary-turn-button"
-      onclick="claimTile()"
+      id="chowBtn"
+      class="action-button turn-button"
+      type="button"
+      onclick="claimChow()"
     >
-      Claim
+      Chow
     </button>
 
     <button
-      id="discardBtn"
-      class="action-button turn-button primary-turn-button"
-      onclick="openDiscardScreen()"
+      id="pongBtn"
+      class="action-button turn-button"
+      type="button"
+      onclick="claimPong()"
     >
-      Discard
+      Pong
+    </button>
+
+    <button
+  id="kangBtn"
+  class="action-button turn-button"
+  type="button"
+  onclick="claimKang()"
+>
+  Kang
+</button>
+  </div>
+
+  <div id="mahjongAcquireRow" class="acquire-mahjong-row hidden">
+    <button
+      id="mahjongBtn"
+      class="action-button turn-button primary-turn-button"
+      type="button"
+      onclick="claimMahjong()"
+    >
+      Mahjong
     </button>
   </div>
+
+</div>
+
+  <button
+    id="discardBtn"
+    class="action-button turn-button primary-turn-button hidden"
+    onclick="openDiscardScreen()"
+  >
+    Discard
+  </button>
+
+</div>
 
       <div id="startingUtilityRow" class="hd-action-row hidden">
         <button id="coachingBtn" class="action-button coaching-button secondary-hd-button" onclick="toggleCoaching()">Coaching View</button>
@@ -242,7 +292,7 @@ V4 = Photo Recognition
     <button onclick="openFeedbackDialog()">Feedback</button>
     <button onclick="openSupportDialog()">Support MJC</button>
   </div>
-  <div class="footer-version">Beta v2.3</div>
+  <div class="footer-version">Beta v2.4</div>
 </div>
 
 </div>
@@ -566,7 +616,7 @@ V4 = Photo Recognition
     <h2>Feedback</h2>
     <p>Thank you for helping us improve Mahjong Coach.</p>
     <p>We welcome bug reports, suggestions, comments, and feature requests.</p>
-    <p><strong>Email:</strong> <a href="mailto:mjcfeedbackteam@gmail.com?subject=Mahjong%20Coach%20Feedback%20-%20Beta%20v2.3">mjcfeedbackteam@gmail.com</a></p>
+    <p><strong>Email:</strong> <a href="mailto:mjcfeedbackteam@gmail.com?subject=Mahjong%20Coach%20Feedback%20-%20Beta%20v2.4">mjcfeedbackteam@gmail.com</a></p>
     <p><em>Every message is read and appreciated.</em></p>
     <div class="dialog-actions">
       <button class="dialog-button primary" onclick="closeDialog('feedbackDialog')">Close</button>
@@ -603,7 +653,7 @@ Acceptance standard:
 ==================================================
 */
 
-const MJC_VERSION_LABEL = "Beta v2.3";
+const MJC_VERSION_LABEL = "Beta v2.4";
 
 const MJC_RULESET_BASE_HAND_SIZES = Object.freeze({
   filipino16: 16,
@@ -728,6 +778,7 @@ let phase = "starting";
 let screenMode = "entry";
 let hdMode = "starting";
 let gameAction = "draw";
+let claimType = null;
 let kangReplacementDraw = false;
 let replacementDrawSource = null;
 let lastDrawnTileKey = null;
