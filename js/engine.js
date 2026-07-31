@@ -430,7 +430,7 @@ function getClaimedCompleteBoxes(
 }
 
 
-function evaluate17TE(engineInput) {
+function evaluate17TE(engineInput, options = {}) {
   const detectedCompleteBoxes =
   findCompleteBoxes(engineInput);
 
@@ -495,6 +495,94 @@ const mahjong =
   Boolean(mahjongEC) &&
   reserves.length === 0 &&
   halfEye.length === 0;
+
+let mahjongWatch = false;
+let mahjongWatchTiles = [];
+
+if (!options.skipMahjongWatch && !mahjong) {
+  for (const tileKey in engineInput.counts) {
+    const currentCount =
+      engineInput.counts[tileKey] || 0;
+
+    if (currentCount >= 4) {
+      continue;
+    }
+
+    const testInput = {
+      ...engineInput,
+      counts: {
+        ...engineInput.counts,
+        [tileKey]: currentCount + 1
+      }
+    };
+
+    const savedStableCompleteBoxState =
+  stableCompleteBoxState.map(function(box) {
+    return {
+      ...box,
+      tiles: [...box.tiles]
+    };
+  });
+
+const savedCanonicalStructureState = {
+  ...canonicalStructureState,
+
+  completeBoxes:
+    canonicalStructureState.completeBoxes.map(function(box) {
+      return {
+        ...box,
+        tiles: [...box.tiles]
+      };
+    }),
+
+  developingBoxes:
+    canonicalStructureState.developingBoxes.map(function(box) {
+      return {
+        ...box,
+        tiles: [...box.tiles]
+      };
+    }),
+
+  halfEye:
+    canonicalStructureState.halfEye.map(function(box) {
+      return {
+        ...box,
+        tiles: [...box.tiles]
+      };
+    }),
+
+  reserves:
+    [...canonicalStructureState.reserves],
+
+  ambition: {
+    ...canonicalStructureState.ambition
+  }
+};
+
+const testResult =
+  evaluate17TE(
+    testInput,
+    { skipMahjongWatch: true }
+  );
+
+// Hypothetical Mahjong Watch evaluations must not
+// alter the real hand's stable or canonical state.
+stableCompleteBoxState =
+  savedStableCompleteBoxState;
+
+canonicalStructureState =
+  savedCanonicalStructureState;
+
+
+    if (testResult.mahjong) {
+      mahjongWatchTiles.push(tileKey);
+    }
+  }
+
+  mahjongWatch =
+    mahjongWatchTiles.length > 0;
+}
+
 
 let finalCompleteBoxes =
   completeBoxes;
@@ -562,9 +650,11 @@ const phase =
   reserves,
   remainingCounts,
   structureState,
-  phase,
-  mahjong,
-  input: engineInput
+ phase,
+mahjong,
+mahjongWatch,
+mahjongWatchTiles,
+input: engineInput
   };
 }
 
