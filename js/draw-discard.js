@@ -106,6 +106,30 @@ function claimTile() {
   openDrawScreen();
 }
 
+function claimChow() {
+  gameAction = "claim";
+  claimType = "chow";
+  openDrawScreen();
+}
+
+function claimPong() {
+  gameAction = "claim";
+  claimType = "pong";
+  openDrawScreen();
+}
+
+function claimKang() {
+  gameAction = "claim";
+  claimType = "kang";
+  openDrawScreen();
+}
+ 
+function claimMahjong() {
+  gameAction = "claim";
+  claimType = "mahjong";
+  openDrawScreen();
+}
+
 function openDrawScreen() {
   if (gameAction !== "draw" && gameAction !== "claim") return;
 
@@ -124,20 +148,35 @@ const drawMeta = document.getElementById("drawMeta");
 const drawTitle = document.getElementById("drawTitle");
 
 if (drawTitle) {
-  drawTitle.textContent =
-    gameAction === "claim"
-      ? "Claim Tile"
-      : "Draw Tile";
+  if (gameAction === "draw") {
+    drawTitle.textContent = "Draw Tile";
+  } else if (claimType === "chow") {
+    drawTitle.textContent = "Chow Tile";
+  } else if (claimType === "pong") {
+    drawTitle.textContent = "Pong Tile";
+  } else if (claimType === "kang") {
+    drawTitle.textContent = "Kang Tile";
+  } else if (claimType === "mahjong") {
+    drawTitle.textContent = "Mahjong Tile";
+  } else {
+    drawTitle.textContent = "Claim Tile";
+  }
 }
-
 
 if (gameAction === "draw") {
   drawMeta.textContent = "Enter the tile you drew.";
-} else if (gameAction === "claim") {
-  drawMeta.textContent = "Enter the tile you claimed.";
+} else if (claimType === "chow") {
+  drawMeta.textContent = "Enter the tile you chowed.";
+} else if (claimType === "pong") {
+  drawMeta.textContent = "Enter the tile you ponged.";
+} else if (claimType === "kang") {
+  drawMeta.textContent = "Enter the tile that completes the Kang.";
+} else if (claimType === "mahjong") {
+  drawMeta.textContent = "Enter the tile that completes Mahjong.";
 }
-  updateDrawHonorAvailability();
-  applyCorrectionHighlight(gameAction);
+
+updateDrawHonorAvailability();
+applyCorrectionHighlight(gameAction);
 }
 
 function selectDrawTile(key) {
@@ -210,6 +249,83 @@ const incomingMeldCandidates =
     MJC_STATE.getEngineInput(),
     selectedDrawTileKey
   );
+
+if (gameAction === "claim" && claimType === "chow") {
+  const chowCandidates =
+    incomingMeldCandidates.filter(
+      candidate => candidate.type === "chow"
+    );
+
+  if (chowCandidates.length === 0) {
+    showToast(
+      "Chow not valid. This tile does not complete a Chow."
+    );
+    return;
+  }
+
+  incomingMeldCandidates.length = 0;
+  incomingMeldCandidates.push(...chowCandidates);
+}
+
+if (gameAction === "claim" && claimType === "pong") {
+  const pongCandidates =
+    incomingMeldCandidates.filter(
+      candidate => candidate.type === "pong"
+    );
+
+  if (pongCandidates.length === 0) {
+    showToast(
+      "Pong not valid. This tile does not complete a Pong."
+    );
+    return;
+  }
+
+  incomingMeldCandidates.length = 0;
+  incomingMeldCandidates.push(...pongCandidates);
+}
+
+if (gameAction === "claim" && claimType === "kang") {
+  const kangCandidates =
+    incomingMeldCandidates.filter(
+      candidate => candidate.type === "kang"
+    );
+
+  if (kangCandidates.length === 0) {
+    showToast(
+      "Kang not valid. This tile does not complete a Kang."
+    );
+    return;
+  }
+
+  incomingMeldCandidates.length = 0;
+  incomingMeldCandidates.push(...kangCandidates);
+}
+
+
+if (gameAction === "claim" && claimType === "mahjong") {
+  const mahjongInput =
+    MJC_STATE.getEngineInput();
+
+  mahjongInput.counts = {
+    ...mahjongInput.counts,
+    [selectedDrawTileKey]:
+      (mahjongInput.counts[selectedDrawTileKey] || 0) + 1
+  };
+
+  const mahjongResult =
+    evaluate17TE(
+      mahjongInput,
+      { skipMahjongWatch: true }
+    );
+
+  if (!mahjongResult.mahjong) {
+    showToast(
+      "Mahjong not valid. This tile does not complete Mahjong."
+    );
+    return;
+  }
+}
+
 
 console.log(
   "Incoming meld candidates:",
@@ -294,6 +410,11 @@ if (
   mmrState
 );
 
+console.log(
+  "MMR candidate before dialog:",
+  mmrState
+);
+
 openMMRDialog();
 
 return;
@@ -324,6 +445,11 @@ if (gameAction === "claim") {
       currentResult.completeBoxes
     );
 
+console.log(
+  "Claimed Complete Boxes:",
+  claimedBoxes
+);
+
   if (claimedBoxes.length === 1) {
     setCompleteBoxVisibility(
       claimedBoxes[0].boxId,
@@ -337,6 +463,40 @@ if (gameAction === "claim") {
       claimedBoxes
     );
   }
+}
+
+if (
+  gameAction === "draw" &&
+  !kangReplacementDraw
+) {
+  const currentResult =
+    evaluate17TE(
+      MJC_STATE.getEngineInput()
+    );
+
+  const declarableKang =
+    currentResult.completeBoxes.find(function(box) {
+      return (
+        box.type === "kang" &&
+        box.visibility !== "exposed"
+      );
+    });
+
+  
+
+if (declarableKang) {
+  mmrState = {
+    action: "hidden-kang-after-draw",
+    tileKey: declarableKang.tiles[0],
+    candidates: [declarableKang],
+    recommendedCandidate: declarableKang,
+    selectedCandidate: declarableKang,
+    skipCommit: true
+  };
+
+  openMMRDialog();
+  return;
+}
 }
 
 
@@ -402,6 +562,67 @@ function resumeMMRAction() {
   return;
 }
 
+if (mmrState.action === "hidden-kang-after-draw") {
+  const kangBox =
+  mmrState.selectedCandidate;
+
+const kangTileKey =
+  kangBox && kangBox.tiles
+    ? kangBox.tiles[0]
+    : null;
+
+if (kangTileKey) {
+  const declarationResult =
+    evaluate17TE(
+      MJC_STATE.getEngineInput()
+    );
+
+  const declaredKang =
+    declarationResult.completeBoxes.find(function(box) {
+      return (
+        box.type === "kang" &&
+        box.tiles.length === 4 &&
+        box.tiles.every(function(tileKey) {
+          return tileKey === kangTileKey;
+        })
+      );
+    });
+
+  if (declaredKang) {
+    setCompleteBoxVisibility(
+      declaredKang.boxId,
+      "exposed"
+    );
+  }
+}
+
+
+  lockHandContext();
+
+  phase = "game";
+  hdMode = "current";
+  gameAction = "draw";
+  kangReplacementDraw = true;
+  replacementDrawSource = "kang";
+  claimType = null;
+
+  lastDrawnTileKey =
+    selectedDrawTileKey;
+
+  revisionReturnHDMode = "current";
+  revisionTarget = null;
+  correctingLastEntry = false;
+  correctionTargetTileKey = null;
+  correctionActionType = null;
+
+  mmrState = null;
+
+  showHD();
+  return;
+}
+
+
+
   if (
     shouldProtectOnlyEC() &&
     !mmrState.ecProtectionOverride
@@ -425,16 +646,17 @@ function resumeMMRAction() {
   }
 
   const selectedTileKey =
-    mmrState.tileKey;
+  mmrState.tileKey;
 
-  counts[selectedTileKey] += 1;
+counts[selectedTileKey] += 1;
+
 
   const protectedInput =
   MJC_STATE.getEngineInput();
 
 console.log(
-  "PROTECTED EC INPUT:",
-  protectedInput.protectedECTileKey
+  "Protected Input:",
+  protectedInput
 );
 
 const result =
@@ -471,7 +693,7 @@ if (mmrState.action === "claim") {
   lockHandContext();
 
  phase = "game";
-hdMode = "current";
+ hdMode = "current";
 
 if (
   mmrState.selectedCandidate &&
@@ -529,6 +751,8 @@ function cancelDraw() {
     return;
   }
 
+  gameAction = "draw";
+  claimType = null;
   showHD();
 }
 

@@ -374,9 +374,21 @@ function configureHDMode() {
   const handMeta = document.getElementById("handMeta");
   const handInstruction = document.getElementById("handInstruction");
   const reviseBtn = document.getElementById("reviseBtn");
+  
   const drawBtn = document.getElementById("drawBtn");
+  const chowBtn = document.getElementById("chowBtn");
+  const pongBtn = document.getElementById("pongBtn");
+  const kangBtn = document.getElementById("kangBtn");
+  const mahjongBtn = document.getElementById("mahjongBtn");
   const discardBtn = document.getElementById("discardBtn");
-  const claimBtn = document.getElementById("claimBtn");
+  const acquireActionGroup = document.getElementById("acquireActionGroup");
+
+  const normalAcquireRow =
+    document.getElementById("normalAcquireRow");
+
+  const mahjongAcquireRow =
+    document.getElementById("mahjongAcquireRow");
+  
   const coachingBtn = document.getElementById("coachingBtn");
   const correctLastBtn = document.getElementById("correctLastBtn");
   const handCorrectionBtn = document.getElementById("handCorrectionBtn");
@@ -393,31 +405,94 @@ function configureHDMode() {
   enginePanel.classList.toggle("hidden", !coachingOn);
 
   drawBtn.classList.remove("hidden");
-  discardBtn.classList.remove("hidden");
-  claimBtn.classList.remove("hidden");
-  reviseBtn.classList.remove("hidden");
-  coachingBtn.classList.remove("hidden");
-  correctLastBtn.classList.remove("hidden");
-  handCorrectionBtn.classList.remove("hidden");
+chowBtn.classList.remove("hidden");
+pongBtn.classList.remove("hidden");
+kangBtn.classList.remove("hidden");
 
-  const canDraw = gameAction === "draw";
-const canClaim =
-  gameAction === "draw" &&
+
+
+reviseBtn.classList.remove("hidden");
+coachingBtn.classList.remove("hidden");
+correctLastBtn.classList.remove("hidden");
+handCorrectionBtn.classList.remove("hidden");
+
+
+  const canAcquire =
+  gameAction === "draw";
+
+const canDraw =
+  canAcquire;
+
+const canMeld =
+  canAcquire &&
   !kangReplacementDraw;
-const canDiscard = gameAction === "discard";
+
+const canDiscard =
+  gameAction === "discard";
 
 drawBtn.disabled = !canDraw;
-claimBtn.disabled = !canClaim;
+chowBtn.disabled = !canMeld;
+pongBtn.disabled = !canMeld;
+kangBtn.disabled = !canMeld;
 discardBtn.disabled = !canDiscard;
 
-  drawBtn.classList.toggle("enabled", canDraw);
-  drawBtn.classList.toggle("disabled", !canDraw);
+drawBtn.classList.toggle("enabled", canDraw);
+drawBtn.classList.toggle("disabled", !canDraw);
 
-  claimBtn.classList.toggle("enabled", canClaim);
-  claimBtn.classList.toggle("disabled", !canClaim);
+chowBtn.classList.toggle("enabled", canMeld);
+chowBtn.classList.toggle("disabled", !canMeld);
 
-  discardBtn.classList.toggle("enabled", canDiscard);
-  discardBtn.classList.toggle("disabled", !canDiscard);
+pongBtn.classList.toggle("enabled", canMeld);
+pongBtn.classList.toggle("disabled", !canMeld);
+
+kangBtn.classList.toggle("enabled", canMeld);
+kangBtn.classList.toggle("disabled", !canMeld);
+
+discardBtn.classList.toggle("enabled", canDiscard);
+discardBtn.classList.toggle("disabled", !canDiscard);
+
+acquireActionGroup.classList.toggle(
+  "hidden",
+  !canAcquire
+);
+
+discardBtn.classList.toggle(
+  "hidden",
+  !canDiscard
+);
+
+let isMahjongWatch = false;
+
+if (canAcquire) {
+  const currentResult =
+    evaluate17TE(MJC_STATE.getEngineInput());
+
+  isMahjongWatch =
+    currentResult.mahjongWatch === true;
+}
+
+mahjongBtn.disabled = !isMahjongWatch;
+
+mahjongBtn.classList.toggle(
+  "enabled",
+  isMahjongWatch
+);
+
+mahjongBtn.classList.toggle(
+  "disabled",
+  !isMahjongWatch
+);
+
+normalAcquireRow.classList.toggle(
+  "hidden",
+  !canAcquire || isMahjongWatch
+);
+
+mahjongAcquireRow.classList.toggle(
+  "hidden",
+  !canAcquire || !isMahjongWatch
+);
+
 
   startingUtilityRow.classList.remove("hidden");
   reviseBtn.classList.toggle("hidden", hdMode !== "starting");
@@ -682,6 +757,11 @@ function renderCoachView() {
 
   const structureState =
     result.structureState || result;
+
+console.log(
+  "Rendered Complete Boxes:",
+  structureState.completeBoxes
+);
 
   const tih =
     getTilesInHand(

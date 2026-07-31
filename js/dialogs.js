@@ -214,6 +214,36 @@ function ignoreMMRCandidates() {
     return;
   }
 
+if (mmrState.action === "hidden-kang-after-draw") {
+  document
+    .getElementById("mmrDialog")
+    .classList.add("hidden");
+
+  lockHandContext();
+
+  phase = "game";
+  hdMode = "current";
+  gameAction = "discard";
+  kangReplacementDraw = false;
+  replacementDrawSource = null;
+  claimType = null;
+
+  lastDrawnTileKey =
+    selectedDrawTileKey;
+
+  revisionReturnHDMode = "current";
+  revisionTarget = null;
+  correctingLastEntry = false;
+  correctionTargetTileKey = null;
+  correctionActionType = null;
+
+  mmrState = null;
+
+  showHD();
+  return;
+}
+
+
 const isSingleKang =
   mmrState.candidates &&
   mmrState.candidates.length === 1 &&

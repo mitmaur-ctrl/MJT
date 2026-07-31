@@ -285,8 +285,8 @@ tileEl.classList.toggle(
     suggestion.textContent = "The tiles in your MJC hand are highlighted in green.";
   } else if (isStartingTileSelectionMode() && total === 0) {
     suggestion.textContent = screenMode === "revision"
-      ? "Review and revise your hand. Press Play On! when ready."
-      : "Verify your settings and tiles. Then press Play On!";
+      ? "Review and revise your hand. \nPress Play On! when ready."
+      : "Verify your settings and tile selection. \nThen press Play On!";
   } else if (isStartingTileSelectionMode() && total === 1 && screenMode === "entry") {
     suggestion.textContent = "Your hand will be organized using Six Box Theory™ (6BT), which may differ from your normal arrangement.";
   } else if (total < target) {
