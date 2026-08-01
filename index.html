@@ -213,20 +213,62 @@ V4 = Photo Recognition
 </div>
 
       <div id="startingUtilityRow" class="hd-action-row hidden">
-        <button id="coachingBtn" class="action-button coaching-button secondary-hd-button" onclick="toggleCoaching()">Coaching View</button>
-        <button id="correctLastBtn" class="action-button correct-button secondary-hd-button hidden" onclick="correctLastEntry()">Correct Last Entry</button>
-        <button id="reviseBtn" class="action-button secondary-hd-button" onclick="reviseHand()">Revise</button>
-      </div>
+  <button
+    id="coachingBtn"
+    class="action-button coaching-button secondary-hd-button"
+    onclick="toggleCoaching()"
+  >
+    Coaching View
+  </button>
 
-      <div id="currentCorrectionRow" class="hd-action-row restart-row hidden">
-        <button id="newGameBtn" class="action-button new-game-button secondary-hd-button" onclick="confirmNewGame()">New Game</button>
-        <button id="handCorrectionBtn" class="action-button secondary-hd-button" onclick="openHandCorrectionScreen()">Fix Hand</button>
-      </div>
+  <button
+  id="pathwaysBtn"
+  class="action-button coaching-button secondary-hd-button"
+  onclick="showToast('Pathways — Coming Soon!')"
+>
+  Pathways: Off
+</button>
+</div>
 
-      <div id="newGameRow" class="hd-action-row restart-row hidden"></div>
-    </div>
+<div id="currentCorrectionRow" class="hd-action-row hidden">
+
+  <button
+    id="reviseBtn"
+    class="action-button secondary-hd-button hidden"
+    onclick="reviseHand()"
+  >
+    Revise
+  </button>
+
+  <button
+    id="handCorrectionBtn"
+    class="action-button secondary-hd-button hidden"
+    onclick="openHandCorrectionScreen()"
+  >
+    Fix Hand
+  </button>
+
+  <button
+    id="correctLastBtn"
+    class="action-button correct-button secondary-hd-button hidden"
+    onclick="correctLastEntry()"
+  >
+    Correct Last Entry
+  </button>
+
+</div>
+
+<div id="newGameRow" class="hd-action-row restart-row hidden">
+  <button
+    id="newGameBtn"
+    class="action-button new-game-button secondary-hd-button"
+    onclick="confirmNewGame()"
+  >
+    New Game
+  </button>
+</div>
   </div>
-
+</div>
   <div id="drawScreen" class="hidden draw-compact">
     <div id="drawTitle" class="draw-title">Draw Tile</div>
     <div id="drawMeta" class="draw-meta">Enter the tile you drew or claimed.</div>
