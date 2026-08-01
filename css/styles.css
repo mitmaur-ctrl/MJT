@@ -137,7 +137,11 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 
 
 .accept-button.enabled { background: #0057b8; }
 .undo-button { background: #0057b8; color: white; }
-.correct-button { background: #5b3f8c; color: white; }
+.correct-button {
+  background: #efefef;
+  color: #333;
+  border: 1px solid #bbb;
+}
 .correct-button.disabled, .action-button.disabled { background: #bbb; color: #666; }
 
 .start-button.disabled,
@@ -163,6 +167,7 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 
   font-weight: bold;
   margin-top: 5px;
   color: #0057b8;
+  white-space: pre-line;
 }
 
 .header-controls.correction-header .top-control-row,
@@ -304,9 +309,68 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 
   margin-top: 16px;
 }
 
+#acquireActionGroup {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.acquire-draw-row {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.acquire-draw-row #drawBtn {
+  width: 100%;
+  min-width: 0;
+}
+
+.acquire-meld-row {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.acquire-action-label {
+  width: 100%;
+  text-align: left;
+  margin-bottom: -4px;
+}
+
+.acquire-meld-row .turn-button {
+  flex: 1;
+  min-width: 0;
+  min-height: 50px;
+  padding: 12px 6px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+#discardBtn {
+  width: 100%;
+  max-width: 420px;
+  min-width: 0;
+}
+
 .hd-action-row.primary-action-row {
   margin-top: 18px;
   margin-bottom: 26px;
+}
+
+.acquire-mahjong-row {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.acquire-mahjong-row #mahjongBtn {
+  width: 100%;
+  min-width: 0;
 }
 
 .hd-action-row.restart-row {
@@ -332,6 +396,9 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 
 .secondary-hd-button {
   min-height: 40px;
   padding: 9px 10px;
+  background: #efefef;
+  border: 1px solid #bbb;
+  color: #333;
 }
 
 .insight-button {
