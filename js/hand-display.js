@@ -495,13 +495,28 @@ mahjongAcquireRow.classList.toggle(
 
 
   startingUtilityRow.classList.remove("hidden");
-  reviseBtn.classList.toggle("hidden", hdMode !== "starting");
-  correctLastBtn.classList.toggle("hidden", hdMode !== "current");
-  currentCorrectionRow.classList.toggle("hidden", hdMode !== "current");
+currentCorrectionRow.classList.remove("hidden");
+
+reviseBtn.classList.toggle(
+  "hidden",
+  hdMode !== "starting"
+);
+
+handCorrectionBtn.classList.toggle(
+  "hidden",
+  hdMode !== "current"
+);
+
+correctLastBtn.classList.toggle(
+  "hidden",
+  hdMode !== "current"
+);
+  
+
   correctLastBtn.disabled = !(hdMode === "current" && lastActionSnapshot);
   correctLastBtn.classList.toggle("disabled", !(hdMode === "current" && lastActionSnapshot));
   handCorrectionBtn.disabled = hdMode !== "current";
-  newGameRow.classList.add("hidden");
+  newGameRow.classList.toggle("hidden", hdMode !== "current");
 
   coachingBtn.textContent = coachingOn ? "Standard View" : "Coaching View";
 
