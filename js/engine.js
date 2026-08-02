@@ -730,10 +730,7 @@ if (
       return (workingCounts[tileKey] || 0) >= 1;
     });
 
-  if (
-  hasNEWS &&
-  engineInput.ignoredNEWS !== true
-) {
+  if (hasNEWS) {
     completeBoxes.push({
       type: "news",
       tiles: newsTiles

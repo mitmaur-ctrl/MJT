@@ -85,6 +85,18 @@ function getTilesInHand(structureState) {
   return tih;
 }
 
+function getMahjongResultMessage() {
+  if (
+    ruleset === "filipino16" &&
+    lastActionSource === "draw"
+  ) {
+    return "Bunot!";
+  }
+
+  return "That's Mahjong!";
+}
+
+
 function buildCurrentHandDisplay() {
   const groups = getTileGroups();
 
@@ -106,7 +118,8 @@ if (result.mahjong) {
   gameAction = "mahjong";
 
   if (handInstruction) {
-    handInstruction.textContent = "That's Mahjong!";
+    handInstruction.textContent =
+  getMahjongResultMessage();
   }
 
   const drawBtn =
@@ -154,9 +167,33 @@ if (pairCount < overPairedThreshold) {
   ) {
     sevenPairsStatusAsked = true;
 
-    document
-      .getElementById("sevenPairsStatusDialog")
-      .classList.remove("hidden");
+    const statusTitle =
+  document.querySelector(
+    "#sevenPairsStatusDialog h2"
+  );
+
+const statusMessage =
+  document.querySelector(
+    "#sevenPairsStatusDialog p"
+  );
+
+if (ruleset === "filipino16") {
+  statusTitle.textContent =
+    "Siete Pares";
+
+  statusMessage.textContent =
+    "Are you still pursuing Siete Pares (Seven Pairs)?";
+} else {
+  statusTitle.textContent =
+    "Seven Pairs";
+
+  statusMessage.textContent =
+    "Are you still pursuing Seven Pairs?";
+}
+
+document
+  .getElementById("sevenPairsStatusDialog")
+  .classList.remove("hidden");
   }
 }
 
@@ -168,6 +205,74 @@ if (
 ) {
   overPairedActive = true;
   showOverPairedDialog(pairCount);
+}
+
+const escaleraSuitCounts = {
+  chars: 0,
+  bams: 0,
+  dots: 0
+};
+
+["chars", "bams", "dots"].forEach(function(suitName) {
+  const suitGroup =
+    MJC_TILE_GROUP_DEFINITIONS[suitName];
+
+  suitGroup.keys.forEach(function(tileKey) {
+    if ((counts[tileKey] || 0) > 0) {
+      escaleraSuitCounts[suitName] += 1;
+    }
+  });
+});
+
+const escaleraThreshold = 7;
+
+const escaleraSuit =
+  Object.keys(escaleraSuitCounts).find(
+    function(suitName) {
+      return (
+        escaleraSuitCounts[suitName] >=
+        escaleraThreshold
+      );
+    }
+  );
+
+if (
+  handStarted &&
+  escaleraSuit &&
+  !escaleraPromptAsked &&
+  !escaleraMode
+) {
+  escaleraPromptAsked = true;
+
+const escaleraTitle =
+  document.querySelector(
+    "#escaleraDialog h2"
+  );
+
+const escaleraMessage =
+  document.querySelector(
+    "#escaleraDialog p"
+  );
+
+if (ruleset === "filipino16") {
+  escaleraTitle.textContent =
+    "Escalera";
+
+  escaleraMessage.textContent =
+    "You now have 7 distinct numbered tiles in one suit. " +
+    "Are you pursuing Escalera (a Straight)?";
+} else {
+  escaleraTitle.textContent =
+    "Straight";
+
+  escaleraMessage.textContent =
+    "You now have 7 distinct numbered tiles in one suit. " +
+    "Are you pursuing a Straight?";
+}
+
+  document
+    .getElementById("escaleraDialog")
+    .classList.remove("hidden");
 }
 
 
@@ -747,10 +852,45 @@ function renderCoachView() {
   const enginePanel =
     document.getElementById("enginePanel");
 
+  if (escaleraMode) {
+    let reserveHtml = "";
+
+    getTileGroups().forEach(function(group) {
+      group.keys.forEach(function(tileKey) {
+        for (
+          let i = 0;
+          i < (counts[tileKey] || 0);
+          i++
+        ) {
+          reserveHtml +=
+            '<span class="hand-tile">' +
+            tileLabels[tileKey] +
+            '</span>';
+        }
+      });
+    });
+
+    enginePanel.innerHTML =
+      '<div class="engine-title">' +
+        'Coaching Suspended — Escalera' +
+      '</div>' +
+      '<div class="hand-section reserve-area">' +
+        '<div class="hand-section-title">' +
+          'Reserves' +
+        '</div>' +
+        reserveHtml +
+      '</div>';
+
+    return;
+  }
+
   const result =
     evaluate17TE(
       MJC_STATE.getEngineInput()
     );
+
+
+
 
   console.log(
     "17TE result:",
@@ -767,7 +907,7 @@ function renderCoachView() {
     handInstruction
   ) {
     handInstruction.textContent =
-      "That's Mahjong!";
+  getMahjongResultMessage();
   }
 
   const structureState =

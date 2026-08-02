@@ -55,7 +55,79 @@ function closeDialog(id) {
   document.getElementById(id).classList.add("hidden");
 }
 
+
+function getDeclarationPrimaryLabel(
+  meldType,
+  actionType
+) {
+
+console.log(
+    "Ruleset:",
+    ruleset,
+    "Action:",
+    actionType,
+    "Meld:",
+    meldType
+  );
+
+  /*
+  ================================================
+  Filipino 16-Tile Vocabulary
+  ================================================
+  */
+
+  if (ruleset === "filipino16") {
+
+  if (actionType === "sagasa-after-draw") {
+    return "Declare Sagasa";
+  }
+
+    if (
+  actionType === "draw" ||
+  actionType === "hidden-kang-after-draw" ||
+  actionType === "hidden-news-after-draw"
+) {
+  return "Declare Secret";
+}
+
+    if (actionType === "claimed-kang") {
+      return "Commit Kang";
+    }
+
+    if (actionType === "claimed-news") {
+      return "Commit NEWS";
+    }
+
+    if (actionType === "claimed-kang") {
+      return "Commit Kang";
+    }
+  }
+
+  /*
+  ================================================
+  Universal Fallback Vocabulary
+  ================================================
+  */
+
+  if (meldType === "kang") {
+    return "Declare Kang";
+  }
+
+  if (meldType === "news") {
+    return "Declare NEWS";
+  }
+
+  return "Select Meld";
+}
+
+
 function openMMRDialog() {
+
+console.log(
+    "Dialog received:",
+    mmrState
+  );
+
   if (!mmrState || !mmrState.candidates) {
     return;
   }
@@ -72,16 +144,25 @@ const specialMeldType =
     ? mmrState.candidates[0].type
     : null;
 
+console.log(
+  "MMR:",
+  mmrState
+);
+
   const title =
       document.getElementById("mmrTitle");
 
     title.textContent =
-  specialMeldType === "kang"
-    ? "Kang Available"
+  mmrState.action === "sagasa-after-draw"
+    ? "Sagasa Available"
     : (
-        specialMeldType === "news"
-          ? "NEWS Available"
-          : "Multiple Melds Detected"
+        specialMeldType === "kang"
+          ? "Kang Available"
+          : (
+              specialMeldType === "news"
+                ? "NEWS Available"
+                : "Multiple Melds Detected"
+            )
       );
 
 
@@ -89,6 +170,39 @@ const specialMeldType =
     document.getElementById("mmrOptions");
 
   optionsContainer.innerHTML = "";
+
+if ( specialMeldType === "kang" ||
+  specialMeldType === "news") {
+  const detectedTile =
+    mmrState.candidates[0].tiles[0];
+
+  const detectedMessage =
+    document.createElement("div");
+
+  detectedMessage.textContent =
+  specialMeldType === "kang"
+    ? (
+        tileLabels[detectedTile] ||
+        detectedTile
+      )
+    : mmrState.candidates[0].tiles
+        .map(function(tileKey) {
+          return (
+            tileLabels[tileKey] ||
+            tileKey
+          );
+        })
+        .join(" · ");
+
+  detectedMessage.style.fontWeight = "bold";
+  detectedMessage.style.fontSize = "18px";
+  detectedMessage.style.textAlign = "center";
+  detectedMessage.style.marginBottom = "14px";
+
+  optionsContainer.appendChild(
+    detectedMessage
+  );
+}
 
 if (
   !isSingleSpecialMeld &&
@@ -126,23 +240,23 @@ if (
         mmrState.recommendedCandidate
       );
 
+
    button.textContent =
-    specialMeldType === "kang"
-      ? "Declare Kang"
-      : (
-          specialMeldType === "news"
-            ? "Declare NEWS"
-            : (
-                candidate.type.toUpperCase() +
-                ": " +
-                candidate.tiles.join(", ") +
-                (
-                  isRecommended
-                    ? " — MJC Recommended"
-                    : ""
-                )
-              )
-        );
+  isSingleSpecialMeld
+    ? getDeclarationPrimaryLabel(
+        specialMeldType,
+        mmrState.action
+      )
+    : (
+        candidate.type.toUpperCase() +
+        ": " +
+        candidate.tiles.join(", ") +
+        (
+          isRecommended
+            ? " — MJC Recommended"
+            : ""
+        )
+      );
 
 
     button.onclick = function() {
@@ -152,31 +266,65 @@ if (
     optionsContainer.appendChild(button);
   });
 
-   const ignoreButton =
-     document.createElement("button");
+if (
+  specialMeldType === "kang" ||
+  specialMeldType === "news"
+) {
+  const deferButton =
+    document.createElement("button");
 
-   ignoreButton.className =
-  "dialog-button secondary";
+  deferButton.className =
+    "dialog-button secondary";
 
-   ignoreButton.style.display = "block";
-   ignoreButton.style.width = "100%";
-   ignoreButton.style.marginTop = "6px";
+  deferButton.style.display = "block";
+  deferButton.style.width = "100%";
+  deferButton.style.marginBottom = "10px";
 
-   ignoreButton.textContent =
-    specialMeldType === "kang"
-      ? "Ignore Kang"
-      : (
-          specialMeldType === "news"
-            ? "Ignore NEWS"
-            : "Ignore Melds"
-        );
+  deferButton.textContent =
+  mmrState.action === "sagasa-after-draw"
+    ? "Defer Sagasa"
+    : (
+        specialMeldType === "kang"
+          ? "Defer Kang"
+          : "Defer NEWS"
+      );
 
-   ignoreButton.onclick =
-     ignoreMMRCandidates;
+  deferButton.onclick =
+    deferKangDeclaration;
 
-   optionsContainer.appendChild(
-     ignoreButton
-   );
+  optionsContainer.appendChild(
+    deferButton
+  );
+}
+
+
+   if (specialMeldType !== "news") {
+  const ignoreButton =
+    document.createElement("button");
+
+  ignoreButton.className =
+    "dialog-button secondary";
+
+  ignoreButton.style.display = "block";
+  ignoreButton.style.width = "100%";
+  ignoreButton.style.marginTop = "6px";
+
+  ignoreButton.textContent =
+  mmrState.action === "sagasa-after-draw"
+    ? "Ignore Sagasa"
+    : (
+        specialMeldType === "kang"
+          ? "Ignore Kang"
+          : "Ignore Melds"
+      );
+
+  ignoreButton.onclick =
+    ignoreMMRCandidates;
+
+  optionsContainer.appendChild(
+    ignoreButton
+  );
+}
 
   document
     .getElementById("mmrDialog")
@@ -209,12 +357,98 @@ function selectMMRCandidate(index) {
   resumeMMRAction();
 }
 
+function deferKangDeclaration() {
+  if (!mmrState) {
+    return;
+  }
+
+  if (
+  mmrState.action !== "hidden-kang-after-draw" &&
+  mmrState.action !== "hidden-news-after-draw"
+) {
+  return;
+}
+
+  document
+    .getElementById("mmrDialog")
+    .classList.add("hidden");
+
+  lockHandContext();
+
+  phase = "game";
+  hdMode = "current";
+  gameAction = "discard";
+  kangReplacementDraw = false;
+  replacementDrawSource = null;
+  claimType = null;
+
+  lastDrawnTileKey =
+    selectedDrawTileKey;
+
+  revisionReturnHDMode = "current";
+  revisionTarget = null;
+  correctingLastEntry = false;
+  correctionTargetTileKey = null;
+  correctionActionType = null;
+
+  mmrState = null;
+
+  showHD();
+}
+
+
 function ignoreMMRCandidates() {
   if (!mmrState) {
     return;
   }
 
 if (mmrState.action === "hidden-kang-after-draw") {
+
+ const ignoredTileKey =
+    mmrState.candidates &&
+    mmrState.candidates[0] &&
+    mmrState.candidates[0].tiles
+      ? mmrState.candidates[0].tiles[0]
+      : mmrState.tileKey;
+
+  if (
+    ignoredTileKey &&
+    !ignoredKangTileKeys.includes(ignoredTileKey)
+  ) {
+    ignoredKangTileKeys.push(ignoredTileKey);
+  }
+
+  document
+    .getElementById("mmrDialog")
+    .classList.add("hidden");
+
+  lockHandContext();
+
+  phase = "game";
+  hdMode = "current";
+  gameAction = "discard";
+  kangReplacementDraw = false;
+  replacementDrawSource = null;
+  claimType = null;
+
+  lastDrawnTileKey =
+    selectedDrawTileKey;
+
+  revisionReturnHDMode = "current";
+  revisionTarget = null;
+  correctingLastEntry = false;
+  correctionTargetTileKey = null;
+  correctionActionType = null;
+
+  mmrState = null;
+
+  showHD();
+  return;
+}
+
+if (mmrState.action === "hidden-news-after-draw") {
+  ignoredNEWS = true;
+
   document
     .getElementById("mmrDialog")
     .classList.add("hidden");
@@ -589,7 +823,7 @@ function showOverPairedDialog(pairCount) {
     message.textContent =
       "You now have " +
       pairCount +
-      " pairs. Are you pursuing Seven Pairs?";
+      " pairs. Are you pursuing Siete Pares (Seven Pairs)?";
   }
 
   document
@@ -600,6 +834,30 @@ function showOverPairedDialog(pairCount) {
 function confirmSevenPairs() {
   sevenPairsMode = true;
 
+  const title =
+    document.querySelector(
+      "#sevenPairsAcknowledgmentDialog h2"
+    );
+
+  const message =
+    document.querySelector(
+      "#sevenPairsAcknowledgmentDialog p"
+    );
+
+  if (ruleset === "filipino16") {
+    title.textContent = "Siete Pares Selected";
+
+    message.innerHTML =
+      "Coaching has been suspended while you pursue<br>" +
+      "Siete Pares (Seven Pairs).";
+  } else {
+    title.textContent = "Seven Pairs Selected";
+
+    message.innerHTML =
+      "Coaching has been suspended while you pursue<br>" +
+      "Seven Pairs.";
+  }
+
   document
     .getElementById("overPairedDialog")
     .classList.add("hidden");
@@ -608,6 +866,122 @@ function confirmSevenPairs() {
     .getElementById("sevenPairsAcknowledgmentDialog")
     .classList.remove("hidden");
 }
+
+
+
+function confirmEscalera() {
+  escaleraMode = true;
+
+  const isFilipino =
+    ruleset === "filipino16";
+
+  const title =
+    document.querySelector(
+      "#escaleraAcknowledgmentDialog h2"
+    );
+
+  const message =
+    document.querySelector(
+      "#escaleraAcknowledgmentDialog p"
+    );
+
+  if (title && message) {
+    if (isFilipino) {
+      title.textContent =
+        "Escalera Selected";
+
+      message.textContent =
+        "Coaching has been suspended while you pursue Escalera (a Straight).";
+    } else {
+      title.textContent =
+        "Straight Selected";
+
+      message.textContent =
+        "Coaching has been suspended while you pursue a Straight.";
+    }
+  }
+
+  document
+    .getElementById("escaleraDialog")
+    .classList.add("hidden");
+
+  document
+    .getElementById("escaleraAcknowledgmentDialog")
+    .classList.remove("hidden");
+}
+
+
+function declineEscalera() {
+  escaleraMode = false;
+
+  document
+    .getElementById("escaleraDialog")
+    .classList.add("hidden");
+}
+
+function closeEscaleraAcknowledgmentDialog() {
+  document
+    .getElementById("escaleraAcknowledgmentDialog")
+    .classList.add("hidden");
+
+  buildHandDisplay();
+
+  if (coachingOn) {
+    renderCoachView();
+  }
+}
+
+function continueEscalera() {
+  escaleraMode = true;
+
+  document
+    .getElementById("escaleraStatusDialog")
+    .classList.add("hidden");
+}
+
+function endEscalera() {
+  escaleraMode = false;
+
+  const isFilipino =
+    ruleset === "filipino16";
+
+  const title =
+    document.querySelector(
+      "#escaleraCoachingResumeDialog h2"
+    );
+
+  const message =
+    document.querySelector(
+      "#escaleraCoachingResumeDialog p"
+    );
+
+  if (title && message) {
+    if (isFilipino) {
+      title.textContent =
+        "Escalera Ended";
+
+      message.textContent =
+        "Coaching has resumed.";
+    } else {
+      title.textContent =
+        "Straight Ended";
+
+      message.textContent =
+        "Coaching has resumed.";
+    }
+  }
+
+  document
+    .getElementById("escaleraStatusDialog")
+    .classList.add("hidden");
+
+  document
+    .getElementById("escaleraCoachingResumeDialog")
+    .classList.remove("hidden");
+}
+
+
+
 
 function closeSevenPairsAcknowledgmentDialog() {
   document
@@ -630,6 +1004,32 @@ function endSevenPairs() {
     .getElementById("sevenPairsStatusDialog")
     .classList.add("hidden");
 
+  // Set ruleset-aware wording
+  const resumeTitle =
+    document.querySelector(
+      "#sevenPairsCoachingResumeDialog h2"
+    );
+
+  const resumeMessage =
+    document.querySelector(
+      "#sevenPairsCoachingResumeDialog p"
+    );
+
+  if (ruleset === "filipino16") {
+    resumeTitle.textContent =
+      "Siete Pares Ended";
+
+    resumeMessage.textContent =
+      "Coaching has resumed.";
+  } else {
+    resumeTitle.textContent =
+      "Seven Pairs Ended";
+
+    resumeMessage.textContent =
+      "Coaching has resumed.";
+  }
+
+  // Show the dialog
   document
     .getElementById("sevenPairsCoachingResumeDialog")
     .classList.remove("hidden");

@@ -302,6 +302,8 @@ if (gameAction === "claim" && claimType === "kang") {
 }
 
 
+
+
 if (gameAction === "claim" && claimType === "mahjong") {
   const mahjongInput =
     MJC_STATE.getEngineInput();
@@ -386,6 +388,7 @@ if (isSinglePong) {
 if (
   incomingMeldCandidates.length > 1 ||
   (
+    gameAction === "claim" &&
     incomingMeldCandidates.length === 1 &&
     (
       incomingMeldCandidates[0].type === "kang" ||
@@ -431,6 +434,25 @@ if (gameAction === "claim") {
     previousResult.completeBoxes;
 }
 
+const preDrawSagasaPong =
+  gameAction === "draw"
+    ? canonicalStructureState.completeBoxes.find(
+        function(box) {
+          return (
+            box.type === "pong" &&
+            box.visibility === "exposed" &&
+            box.tiles &&
+            box.tiles.length === 3 &&
+            box.tiles.every(function(tileKey) {
+              return tileKey === selectedDrawTileKey;
+            })
+          );
+        }
+      )
+    : null;
+
+
+
 counts[selectedDrawTileKey] += 1;
 
 if (gameAction === "claim") {
@@ -474,23 +496,122 @@ if (
       MJC_STATE.getEngineInput()
     );
 
-  const declarableKang =
-    currentResult.completeBoxes.find(function(box) {
-      return (
-        box.type === "kang" &&
-        box.visibility !== "exposed"
-      );
-    });
+const sagasaPong =
+  preDrawSagasaPong;
 
-  
+if (sagasaPong) {
+  const sagasaKang =
+    currentResult.structureState.completeBoxes.find(
+      function(box) {
+        return (
+          box.type === "kang" &&
+          box.tiles &&
+          box.tiles.length === 4 &&
+          box.tiles.every(function(tileKey) {
+            return tileKey === selectedDrawTileKey;
+          })
+        );
+      }
+    );
+
+  if (sagasaKang) {
+    mmrState = {
+      action: "sagasa-after-draw",
+      tileKey: selectedDrawTileKey,
+      candidates: [sagasaKang],
+      recommendedCandidate: sagasaKang,
+      selectedCandidate: sagasaKang,
+      sourceBoxId: sagasaPong.boxId,
+      skipCommit: true
+    };
+
+    openMMRDialog();
+    return;
+  }
+}
+
+
+
+  const declarableKang =
+  currentResult.structureState.completeBoxes.find(function(box) {
+    return (
+      box.type === "kang" &&
+      box.visibility !== "exposed"
+    );
+  });
+
 
 if (declarableKang) {
+  const kangTileKey =
+    declarableKang.tiles[0];
+
+  const exposedPong =
+    canonicalStructureState.completeBoxes.find(
+      function(box) {
+        return (
+          box.type === "pong" &&
+          box.visibility === "exposed" &&
+          box.tiles &&
+          box.tiles.length === 3 &&
+          box.tiles.every(function(tileKey) {
+            return tileKey === kangTileKey;
+          })
+        );
+      }
+    );
+
+console.log(
+  "Sagasa check:",
+  {
+    kangTileKey: kangTileKey,
+    completeBoxes:
+      canonicalStructureState.completeBoxes,
+    exposedPong: exposedPong
+  }
+);
+
+
+  const isSagasa =
+    Boolean(exposedPong);
+
   mmrState = {
-    action: "hidden-kang-after-draw",
-    tileKey: declarableKang.tiles[0],
+    action: isSagasa
+      ? "sagasa-after-draw"
+      : "hidden-kang-after-draw",
+
+    tileKey: kangTileKey,
     candidates: [declarableKang],
     recommendedCandidate: declarableKang,
     selectedCandidate: declarableKang,
+    sourceBoxId: exposedPong
+      ? exposedPong.boxId
+      : null,
+    skipCommit: true
+  };
+
+  openMMRDialog();
+  return;
+}
+
+
+const declarableNEWS =
+  currentResult.structureState.completeBoxes.find(function(box) {
+    return (
+      box.type === "news" &&
+      box.visibility !== "exposed"
+    );
+  });
+
+if (
+  declarableNEWS &&
+  ignoredNEWS !== true
+) {
+  mmrState = {
+    action: "hidden-news-after-draw",
+    tileKey: "news",
+    candidates: [declarableNEWS],
+    recommendedCandidate: declarableNEWS,
+    selectedCandidate: declarableNEWS,
     skipCommit: true
   };
 
@@ -498,8 +619,6 @@ if (declarableKang) {
   return;
 }
 }
-
-
   lockHandContext();
 
   phase = "game";
@@ -621,7 +740,49 @@ if (kangTileKey) {
   return;
 }
 
+if (mmrState.action === "hidden-news-after-draw") {
+  const declarationResult =
+    evaluate17TE(
+      MJC_STATE.getEngineInput()
+    );
 
+  const declaredNEWS =
+    declarationResult.structureState.completeBoxes.find(
+      function(box) {
+        return box.type === "news";
+      }
+    );
+
+  if (declaredNEWS) {
+    setCompleteBoxVisibility(
+      declaredNEWS.boxId,
+      "exposed"
+    );
+  }
+
+  lockHandContext();
+
+  phase = "game";
+  hdMode = "current";
+  gameAction = "draw";
+  kangReplacementDraw = true;
+  replacementDrawSource = "news";
+  claimType = null;
+
+  lastDrawnTileKey =
+    selectedDrawTileKey;
+
+  revisionReturnHDMode = "current";
+  revisionTarget = null;
+  correctingLastEntry = false;
+  correctionTargetTileKey = null;
+  correctionActionType = null;
+
+  mmrState = null;
+
+  showHD();
+  return;
+}
 
   if (
     shouldProtectOnlyEC() &&
