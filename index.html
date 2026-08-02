@@ -9,7 +9,7 @@ Project:
 Mahjong Coach
 
 Version:
-MJC Beta v2.4
+MJC Beta v2.5
 
 Purpose:
 - Smartphone-optimized tile management vehicle
@@ -334,7 +334,7 @@ V4 = Photo Recognition
     <button onclick="openFeedbackDialog()">Feedback</button>
     <button onclick="openSupportDialog()">Support MJC</button>
   </div>
-  <div class="footer-version">Beta v2.4</div>
+  <div class="footer-version">Beta v2.5</div>
 </div>
 
 </div>
@@ -582,6 +582,102 @@ V4 = Photo Recognition
   </div>
 </div>
 
+ <div id="escaleraDialog" class="dialog-backdrop hidden">
+  <div class="dialog">
+    <h2>Escalera</h2>
+
+    <p id="escaleraMessage">
+      You now have 7 distinct numbers in one suit.
+      Are you pursuing Escalera (a Straight)?
+    </p>
+
+    <button
+      type="button"
+      class="dialog-button primary"
+      onclick="confirmEscalera()"
+    >
+      Yes
+    </button>
+
+    <button
+      type="button"
+      class="dialog-button"
+      onclick="declineEscalera()"
+    >
+      No
+    </button>
+  </div>
+</div>
+
+
+
+<div id="escaleraAcknowledgmentDialog" class="dialog-backdrop hidden">
+  <div class="dialog">
+    <h2>Escalera Selected</h2>
+
+    <p>
+      Coaching has been suspended while you pursue
+      Escalera (a Straight).
+    </p>
+
+    <button
+      type="button"
+      class="dialog-button primary"
+      onclick="closeEscaleraAcknowledgmentDialog()"
+    >
+      Got It
+    </button>
+  </div>
+</div>
+
+<div id="escaleraStatusDialog" class="dialog-backdrop hidden">
+  <div class="dialog">
+    <h2>Escalera</h2>
+
+    <p>
+      Are you still pursuing Escalera (a Straight)?
+    </p>
+
+    <button
+      type="button"
+      class="dialog-button primary"
+      onclick="continueEscalera()"
+    >
+      Yes
+    </button>
+
+    <button
+      type="button"
+      class="dialog-button"
+      onclick="endEscalera()"
+    >
+      No
+    </button>
+  </div>
+</div>
+
+<div id="escaleraCoachingResumeDialog" class="dialog-backdrop hidden">
+  <div class="dialog">
+    <h2>Escalera Ended</h2>
+
+    <p>
+      Coaching has resumed.
+    </p>
+
+    <button
+      type="button"
+      class="dialog-button primary"
+      onclick="closeEscaleraCoachingResumeDialog()"
+    >
+      Got It
+    </button>
+  </div>
+</div>
+
+
+
+
+
 <div id="aboutDialog" class="dialog-backdrop hidden">
   <div class="dialog">
     <h2>About MJC</h2>
@@ -658,7 +754,7 @@ V4 = Photo Recognition
     <h2>Feedback</h2>
     <p>Thank you for helping us improve Mahjong Coach.</p>
     <p>We welcome bug reports, suggestions, comments, and feature requests.</p>
-    <p><strong>Email:</strong> <a href="mailto:mjcfeedbackteam@gmail.com?subject=Mahjong%20Coach%20Feedback%20-%20Beta%20v2.4">mjcfeedbackteam@gmail.com</a></p>
+    <p><strong>Email:</strong> <a href="mailto:mjcfeedbackteam@gmail.com?subject=Mahjong%20Coach%20Feedback%20-%20Beta%20v2.5">mjcfeedbackteam@gmail.com</a></p>
     <p><em>Every message is read and appreciated.</em></p>
     <div class="dialog-actions">
       <button class="dialog-button primary" onclick="closeDialog('feedbackDialog')">Close</button>
@@ -695,7 +791,7 @@ Acceptance standard:
 ==================================================
 */
 
-const MJC_VERSION_LABEL = "Beta v2.4";
+const MJC_VERSION_LABEL = "Beta v2.5";
 
 const MJC_RULESET_BASE_HAND_SIZES = Object.freeze({
   filipino16: 16,
@@ -868,6 +964,10 @@ let overPairedActive = false;
 let sevenPairsMode = false;
 let handStarted = false;
 let sevenPairsStatusAsked = false;
+let escaleraMode = false;
+let escaleraStatusAsked = false;
+let escaleraPromptAsked = false;
+
 
 window.addEventListener("resize", adjustContainerPadding);
 window.addEventListener("load", adjustContainerPadding);
@@ -902,6 +1002,11 @@ function startNewGame() {
   sevenPairsMode = false;
   handStarted = false;
   sevenPairsStatusAsked = false;
+  escaleraMode = false;
+  escaleraStatusAsked = false;
+  escaleraPromptAsked = false;
+
+
 
   const boloDialog =
     document.getElementById("boloEyesDialog");
