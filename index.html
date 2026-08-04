@@ -546,6 +546,33 @@ V4 = Photo Recognition
   </div>
 </div>
 
+ <div id="turnCycleDialog" class="dialog-backdrop hidden">
+  <div class="dialog">
+    <h2>Turn Cycle</h2>
+
+    <p>
+      What's your next action?
+    </p>
+
+    <button
+      type="button"
+      class="dialog-button primary"
+      onclick="confirmTurnCycle('draw')"
+    >
+      Draw
+    </button>
+
+    <button
+      type="button"
+      class="dialog-button"
+      onclick="confirmTurnCycle('discard')"
+    >
+      Discard
+    </button>
+  </div>
+</div>
+
+
 <div id="sevenPairsCoachingResumeDialog" class="dialog-backdrop hidden">
   <div class="dialog">
     <h2>Seven Pairs</h2>
@@ -776,6 +803,7 @@ V4 = Photo Recognition
 <div id="toast" class="toast hidden"></div>
 
 <script src="js/ui-utils.js"></script>
+<script src="js/tile-renderer.js"></script>
 <script>
 /*
 ==================================================
