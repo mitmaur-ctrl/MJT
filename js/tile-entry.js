@@ -109,8 +109,8 @@ function createTile(containerId, label, key) {
   });
 
   tile.innerHTML =
-    '<div class="tile-name">' + label + '</div>' +
-    '<div class="tile-count" id="count-' + key + '"></div>';
+  '<div class="tile-name">' + label + '</div>' +
+  '<div class="tile-count" id="count-' + key + '"></div>';
 
   document.getElementById(containerId).appendChild(tile);
 }
@@ -397,8 +397,7 @@ function acceptRevision() {
     handCorrectionSnapshot = null;
     clearCorrectionState();
     lastDrawnTileKey = null;
-    showToast("Hand correction accepted.");
-    showHD();
+    showTurnCycleConfirmation();
     return;
   }
 

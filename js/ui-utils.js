@@ -47,3 +47,22 @@ function showStartingHeader(show) {
 
 function showUndo() { document.getElementById("undoRow").classList.remove("hidden"); }
 function hideUndo() { document.getElementById("undoRow").classList.add("hidden"); }
+
+function showTurnCycleConfirmation() {
+  document
+    .getElementById("turnCycleDialog")
+    .classList.remove("hidden");
+}
+
+function confirmTurnCycle(action) {
+
+  document
+    .getElementById("turnCycleDialog")
+    .classList.add("hidden");
+
+  gameAction = action;
+
+  showHD();
+}
+
+
