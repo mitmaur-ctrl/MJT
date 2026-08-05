@@ -27,6 +27,82 @@ function getTileGroups() {
   return suitGroups.concat(honorGroups);
 }
 
+function getBoxTypeLabel(boxType) {
+  const boxLabels = {
+    ec: {
+      full: "Eye Candidate",
+      abbreviated: "EC"
+    },
+    epc: {
+      full: "Eye-Pong Candidate",
+      abbreviated: "EPC"
+    },
+    cpc: {
+      full: "Chow-Pong Candidate",
+      abbreviated: "CPC"
+    },
+    cc: {
+      full: "Chow Candidate",
+      abbreviated: "CC"
+    },
+    dsw: {
+      full: "Double-Sided Wait",
+      abbreviated: "DSW"
+    },
+    mw: {
+      full: "Middle Wait",
+      abbreviated: "MW"
+    },
+    ew: {
+      full: "Edge Wait",
+      abbreviated: "EW"
+    },
+    he: {
+      full: "Half Eye",
+      abbreviated: "HE"
+    }
+  };
+
+  const labels = boxLabels[boxType];
+
+  if (!labels) {
+    return boxType.toUpperCase();
+  }
+
+  return window.useFullBoxLabels !== false
+  ? labels.full
+  : labels.abbreviated;;
+}
+
+function toggleBoxLabels() {
+
+  window.useFullBoxLabels =
+    !window.useFullBoxLabels;
+
+  if (coachingOn) {
+    renderCoachView();
+  }
+}
+
+function getBoxLabelToggleHtml() {
+  const fullActive =
+    window.useFullBoxLabels !== false;
+
+ return (
+  '<button ' +
+    'type="button" ' +
+    'class="box-label-toggle-button" ' +
+    'onclick="toggleBoxLabels()">' +
+    (fullActive ? 'Labels: Full' : 'Labels: Short') +
+  '</button>'
+);
+}
+
+
+
+
+
+
 function buildStartingHandDisplay() {
   const groups = getTileGroups();
   let html = "";
@@ -682,7 +758,9 @@ function renderActiveArea(
   halfEye,
   highlightState
 ) {
-  let html = '<div class="engine-title">Developing Boxes</div>';
+  let html =
+  '<div class="developing-area">' +
+    '<div class="engine-title">Developing Boxes</div>';
 
   const firstActiveBoxNumber = completeBoxes.length + 1;
 
@@ -698,19 +776,17 @@ function renderActiveArea(
     highlightState.used = true;
   }
 
-  return (
-    '<span class="hand-tile' +
-    (isLastDrawn ? ' last-drawn' : '') +
-    '">' +
-    tileLabels[tileKey] +
-    '</span>'
-  );
+  return renderCoachTile(tileKey, {
+  extraClass: isLastDrawn ? "last-drawn" : ""
+});
+
+
 }).join("");
 
     html +=
   '<div class="hand-section box-card developing-box">' +
     '<div class="hand-section-title">DB' + boxNumber + ' — ' +
-      box.type.toUpperCase() +
+      getBoxTypeLabel(box.type) +
     '</div>' +
     tileHtml +
   '</div>';
@@ -760,43 +836,46 @@ if (halfEye && halfEye.length > 0) {
     '</div>';
 }
 
-  return html;
+  html += '</div>';
+
+return html;
 }
+
 
 function renderReserveArea(
   reserves,
   highlightState
 ) {
-  let html = '<div class="hand-section reserve-area">';
-  html += '<div class="hand-section-title">Reserves</div>';
+  let html =
+    '<div class="hand-section reserves-area">' +
+      '<div class="hand-section-title">Reserves</div>' +
+      '<div class="reserves-holding-area">';
 
   if (!reserves || reserves.length === 0) {
     html += '<span class="empty-note">None</span>';
   } else {
-    
+    html += reserves.map(function(tileKey) {
+      const isLastDrawn =
+        tileKey === lastDrawnTileKey &&
+        !highlightState.used;
 
-html += reserves.map(function(tileKey) {
-  const isLastDrawn =
-    tileKey === lastDrawnTileKey &&
-!highlightState.used;
+      if (isLastDrawn) {
+        highlightState.used = true;
+      }
 
-  if (isLastDrawn) {
-    highlightState.used = true;
+      return renderCoachTile(tileKey, {
+        extraClass: isLastDrawn ? "last-drawn" : ""
+      });
+    }).join("");
   }
 
-  return (
-    '<span class="hand-tile' +
-    (isLastDrawn ? ' last-drawn' : '') +
-    '">' +
-    tileLabels[tileKey] +
-    '</span>'
-  );
-}).join("");
-  }
+  html +=
+      '</div>' +
+    '</div>';
 
-  html += '</div>';
   return html;
 }
+
 
 function renderCompletedArea(
   completeBoxes,
@@ -806,7 +885,9 @@ function renderCompletedArea(
     return '<div class="engine-placeholder">No Complete Boxes found.</div>';
   }
 
-  let html = '<div class="engine-title">Completed Boxes</div>';
+  let html =
+  '<div class="completed-area">' +
+    '<div class="engine-title">Completed Boxes</div>';
 
   
   completeBoxes.forEach(function(box, index) {
@@ -821,13 +902,10 @@ const tileHtml = box.tiles.map(function(tileKey) {
     highlightState.used = true;
   }
 
-  return (
-    '<span class="hand-tile' +
-    (isLastDrawn ? ' last-drawn' : '') +
-    '">' +
-    tileLabels[tileKey] +
-    '</span>'
-  );
+  return renderCoachTile(tileKey, {
+  extraClass: isLastDrawn ? "last-drawn" : ""
+});
+
 }).join("");
 
     html +=
@@ -845,7 +923,9 @@ const tileHtml = box.tiles.map(function(tileKey) {
   '</div>';
   });
 
-  return html;
+  html += '</div>';
+
+return html;
 }
 
 function renderCoachView() {
@@ -928,9 +1008,17 @@ const highlightState = {
 };
 
   enginePanel.innerHTML =
-  '<div class="tih-counter">' +
-    'TIH: ' + tih +
+  '<div class="coach-top-row">' +
+    '<div id="coachMessageArea" class="coach-message-area"></div>' +
+
+    '<div class="coach-top-right">' +
+      getBoxLabelToggleHtml() +
+      '<div class="tih-counter">' +
+        'TIH: ' + tih +
+      '</div>' +
+    '</div>' +
   '</div>' +
+
   renderActiveArea(
     structureState.completeBoxes,
     structureState.developingBoxes,
