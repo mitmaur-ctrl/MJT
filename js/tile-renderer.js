@@ -23,18 +23,18 @@ renderCoachTile(tileKey)
 
 function getTileImagePath(tileKey) {
   if (tileKey.startsWith("char")) {
-    return "assets/tiles/char/" + tileKey + ".png";
+    return "assets/tiles/char/" + tileKey + ".PNG";
   }
 
   if (tileKey.startsWith("bam")) {
-    return "assets/tiles/bam/" + tileKey + ".png";
+    return "assets/tiles/bam/" + tileKey + ".PNG";
   }
 
   if (tileKey.startsWith("dot")) {
-    return "assets/tiles/dot/" + tileKey + ".png";
+    return "assets/tiles/dot/" + tileKey + ".PNG";
   }
 
-  return "assets/tiles/honor/" + tileKey + ".png";
+  return "assets/tiles/honor/" + tileKey + ".PNG";
 }
 
 function renderCoachTile(tileKey, options = {}) {
