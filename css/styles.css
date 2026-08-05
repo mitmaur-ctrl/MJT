@@ -492,7 +492,7 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 
 .discard-tile.action-selected { background: #fff3a3; color: #0057b8; border-color: #0057b8; }
 .discard-tile.correction-target { background: #ffd6d6; color: #9b0000; border-color: #c40000; box-shadow: 0 0 0 2px rgba(196,0,0,.18); }
 
-.engine-panel { background: #fff3a3; border-radius: 10px; padding: 10px; margin-top: 12px; text-align: center; }
+.engine-panel { background: #f5f6f8; border-radius: 10px; padding: 10px; margin-top: 12px; text-align: center; }
 .engine-title { font-weight: bold; margin-bottom: 4px; }
 .engine-placeholder { color: #0047ab; font-weight: bold; }
 
@@ -594,12 +594,29 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 
 
 /* Developing Boxes: still active and evolving */
 .developing-box {
-  border: 2px dotted #333;
+  background: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
 }
 
 /* Complete Boxes: structurally finished */
 .complete-box {
-  border: 2px solid #333;
+  background: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.15);
+}
+
+/* ===== Coaching View Completed Area ===== */
+
+.completed-area {
+  background: #eaf7ea;
+  border-radius: 10px;
+  padding: 16px 10px 6px;
+  margin-top: 12px;
 }
 
 /* Empty Progress Indicators: not yet a structure */
@@ -622,7 +639,93 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 
   font-weight: 600;
 }
 
+.coach-top-right .tih-counter {
+  width: auto;
+  text-align: right;
+  padding-right: 0;
+  margin-bottom: 0;
+}
+
 /* Filipino ruleset — Honors Disabled */
 .tile.honor-disabled {
   opacity: 0.35;
+}
+
+/* ==================================================
+   Coaching View Tile Renderer
+   ================================================== */
+
+.coach-tile {
+  display: inline-block;
+  width: 48px;
+  height: 64px;
+  margin: 2px;
+  vertical-align: middle;
+}
+
+.coach-tile-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* ===== Coaching View Top Row ===== */
+
+.coach-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.coach-message-area {
+  flex: 1;
+}
+
+.coach-top-right {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.box-label-toggle-button {
+  width: 100%;
+}
+
+.coach-top-right .tih-counter {
+  width: auto;
+  text-align: right;
+  padding-right: 0;
+  margin-top: 2px;
+  margin-bottom: 0;
+}
+
+/* ===== Coaching View Developing Area ===== */
+
+.developing-area {
+  background: #fff7c7;
+  border-radius: 10px;
+  padding: 16px 10px 6px;
+}
+
+/* ===== Coaching View Reserves Area ===== */
+
+.reserves-area {
+  background: #fff;
+  border-radius: 10px;
+  padding: 14px 10px 10px;
+  margin-top: 12px;
+}
+
+.reserves-holding-area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  min-height: 76px;
+  padding: 12px 10px;
+  border: 2px dashed #c8c8c8;
+  border-radius: 8px;
+  background: #fff;
 }
