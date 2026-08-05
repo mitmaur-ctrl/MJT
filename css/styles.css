@@ -670,6 +670,16 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 
   object-fit: contain;
 }
 
+.coach-tile.last-drawn {
+  background: #d8f5d0;
+  border: 2px solid #2e8b57;
+  border-radius: 8px;
+  padding: 2px;
+  box-sizing: border-box;
+  box-shadow: 0 0 0 2px rgba(46,139,87,.16);
+}
+
+
 /* ===== Coaching View Top Row ===== */
 
 .coach-top-row {
