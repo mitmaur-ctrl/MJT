@@ -217,152 +217,14 @@ if (result.mahjong) {
   const structureState =
     result.structureState || result;
 
-  const eyeCandidates =
-  structureState.developingBoxes.filter(
-    function(box) {
-      return (
-        box.type === "ec" ||
-        box.type === "epc"
-      );
-    }
-  );
 
-const pairCount = eyeCandidates.length;
-const overPairedThreshold = 4;
-
-if (pairCount >= overPairedThreshold) {
-  sevenPairsStatusAsked = false;
-}
-
-if (pairCount < overPairedThreshold) {
-  overPairedActive = false;
-
-  if (
-    sevenPairsMode &&
-    !sevenPairsStatusAsked
-  ) {
-    sevenPairsStatusAsked = true;
-
-    const statusTitle =
-  document.querySelector(
-    "#sevenPairsStatusDialog h2"
-  );
-
-const statusMessage =
-  document.querySelector(
-    "#sevenPairsStatusDialog p"
-  );
-
-if (ruleset === "filipino16") {
-  statusTitle.textContent =
-    "Siete Pares";
-
-  statusMessage.textContent =
-    "Are you still pursuing Siete Pares (Seven Pairs)?";
-} else {
-  statusTitle.textContent =
-    "Seven Pairs";
-
-  statusMessage.textContent =
-    "Are you still pursuing Seven Pairs?";
-}
-
-document
-  .getElementById("sevenPairsStatusDialog")
-  .classList.remove("hidden");
-  }
-}
-
-if (
-  handStarted &&
-  pairCount >= overPairedThreshold &&
-  !overPairedActive &&
-  !sevenPairsMode
-) {
-  overPairedActive = true;
-  showOverPairedDialog(pairCount);
-}
-
-const escaleraSuitCounts = {
-  chars: 0,
-  bams: 0,
-  dots: 0
-};
-
-["chars", "bams", "dots"].forEach(function(suitName) {
-  const suitGroup =
-    MJC_TILE_GROUP_DEFINITIONS[suitName];
-
-  suitGroup.keys.forEach(function(tileKey) {
-    if ((counts[tileKey] || 0) > 0) {
-      escaleraSuitCounts[suitName] += 1;
-    }
-  });
-});
-
-const escaleraThreshold = 7;
-
-const escaleraSuit =
-  Object.keys(escaleraSuitCounts).find(
-    function(suitName) {
-      return (
-        escaleraSuitCounts[suitName] >=
-        escaleraThreshold
-      );
-    }
-  );
-
-if (
-  handStarted &&
-  escaleraSuit &&
-  !escaleraPromptAsked &&
-  !escaleraMode
-) {
-  escaleraPromptAsked = true;
-
-const escaleraTitle =
-  document.querySelector(
-    "#escaleraDialog h2"
-  );
-
-const escaleraMessage =
-  document.querySelector(
-    "#escaleraDialog p"
-  );
-
-if (ruleset === "filipino16") {
-  escaleraTitle.textContent =
-    "Escalera";
-
-  escaleraMessage.textContent =
-    "You now have 7 distinct numbered tiles in one suit. " +
-    "Are you pursuing Escalera (a Straight)?";
-} else {
-  escaleraTitle.textContent =
-    "Straight";
-
-  escaleraMessage.textContent =
-    "You now have 7 distinct numbered tiles in one suit. " +
-    "Are you pursuing a Straight?";
-}
-
-  document
-    .getElementById("escaleraDialog")
-    .classList.remove("hidden");
-}
+ const eyeCandidates =
+  checkSevenPairsOpportunity(structureState);
 
 
-if (
-  hdMode === "current" &&
-  phase === "game" &&
-  result.phase === "finishing" &&
-  eyeCandidates.length === 0 &&
-  !result.mahjong &&
-  !boloEyesShown
-) {
-  boloEyesShown = true;
-  showBOLOEyesDialog();
-}
+checkEscaleraOpportunity(counts);
+
+checkBOLOEyesOpportunity(result, eyeCandidates);
 
   /*
   ================================================
@@ -706,7 +568,8 @@ correctLastBtn.classList.toggle(
   
   if (coachingOn) {
   handInstruction.innerHTML =
-      "Here's your hand organized using Six Box Theory™.<br>" +
+      "Here's your hand organized using " +
+'<button type="button" class="six-box-link" onclick="openUnderstandingBoxesDialog()">Six Box Theory™</button>.<br>' +
       (gameAction === "draw"
           ? "Prepare to Draw or Claim.<br>Press Draw or Claim when ready."
           : "Prepare to Discard.<br>Press Discard when ready.");

@@ -627,6 +627,9 @@ if (
   kangReplacementDraw = false;
   replacementDrawSource = null;
   lastDrawnTileKey = selectedDrawTileKey;
+  if (lastActionType === "draw") {
+    escaleraDrawCount++;
+  }
   revisionReturnHDMode = "current";
   revisionTarget = null;  
   correctingLastEntry = false;
@@ -1016,7 +1019,9 @@ function buildCoachingDiscardDisplay() {
   ================================================
   */
 
-  html += '<div class="engine-title">Active Area</div>';
+  html +=
+  '<div class="developing-area">' +
+  '<div class="engine-title">Developing Boxes</div>';
 
   const activeBoxes = [
     ...result.developingBoxes,
@@ -1046,7 +1051,7 @@ function buildCoachingDiscardDisplay() {
     html +=
       '<div class="hand-section box-card developing-box">' +
         '<div class="hand-section-title">' +
-          'Box ' +
+          'DB' +
           boxNumber +
           ' — ' +
           box.type.toUpperCase() +
@@ -1073,6 +1078,8 @@ function buildCoachingDiscardDisplay() {
       '</div>';
   }
 
+html += '</div>';
+
   /*
   ================================================
   Reserves
@@ -1080,7 +1087,8 @@ function buildCoachingDiscardDisplay() {
   */
 
   html +=
-    '<div class="hand-section reserve-area">' +
+    '<div class="reserves-area">' +
+'<div class="hand-section">' +
       '<div class="hand-section-title">Reserves</div>';
 
   if (
@@ -1102,7 +1110,7 @@ function buildCoachingDiscardDisplay() {
 });
   }
 
-  html += '</div>';
+  html += '</div></div>';
 
   /*
   ================================================
@@ -1111,7 +1119,8 @@ function buildCoachingDiscardDisplay() {
   */
 
   html +=
-    '<div class="engine-title">Completed Area</div>';
+  '<div class="completed-area">' +
+  '<div class="engine-title">Completed Boxes</div>';
 
   result.completeBoxes.forEach(
     function(box, index) {
@@ -1131,7 +1140,7 @@ function buildCoachingDiscardDisplay() {
       html +=
         '<div class="hand-section box-card complete-box">' +
           '<div class="hand-section-title">' +
-            'Box ' +
+            'CB' +
             (index + 1) +
             ' — ' +
             box.type.charAt(0).toUpperCase() +
@@ -1141,6 +1150,8 @@ function buildCoachingDiscardDisplay() {
         '</div>';
     }
   );
+
+html += '</div>';
 
   document.getElementById(
     "discardDisplay"
