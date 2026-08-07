@@ -569,10 +569,21 @@ correctLastBtn.classList.toggle(
   if (coachingOn) {
   handInstruction.innerHTML =
       "Here's your hand organized using " +
-'<button type="button" class="six-box-link" onclick="openUnderstandingBoxesDialog()">Six Box Theory™</button>.<br>' +
+'<button type="button" id="sixBoxTheoryLink" class="six-box-link">Six Box Theory™</button>.<br>' +
       (gameAction === "draw"
           ? "Prepare to Draw or Claim.<br>Press Draw or Claim when ready."
           : "Prepare to Discard.<br>Press Discard when ready.");
+
+const sixBoxTheoryLink =
+  document.getElementById("sixBoxTheoryLink");
+
+if (sixBoxTheoryLink) {
+  sixBoxTheoryLink.addEventListener(
+    "click",
+    openUnderstandingBoxesDialog
+  );
+}
+
 } else {
   handInstruction.innerHTML =
   kangReplacementDraw
