@@ -358,13 +358,6 @@ V4 = Photo Recognition
   <label><input type="radio" name="filipinoHonorRadio" value="disabled" onclick="updateFilipinoOptions()"> Honors Disabled</label>
 </div>
     
-<div class="dialog-option indent">
-  <label>
-    <input type="checkbox" name="filipinoJokersCheck" disabled>
-    Joker Allowed
-  </label>
-  <span class="feature-note">Coming Soon</span>
-</div>
 
     <div class="dialog-option">
       <label><input type="radio" name="rulesetRadio" value="taiwan16" onclick="updateFilipinoOptions()"> Taiwanese 16-Tile</label>
@@ -755,6 +748,52 @@ V4 = Photo Recognition
   </div>
 </div>
 
+<div id="understandingBoxesDialog" class="dialog-backdrop hidden">
+  <div class="dialog">
+    <h2>Understanding the Boxes</h2>
+
+    <p><strong>Complete Boxes (CB)</strong><br>
+    Completed melds that require no additional tiles. These appear at the bottom of the screen.</p>
+
+    <p>
+  <strong>Developing Boxes (DB)</strong><br>
+  Groups of tiles that are working toward becoming Complete Boxes.
+  These appear at the top of the screen.
+</p>
+
+<p>
+  Developing Boxes may include:
+</p>
+
+<div class="box-list">
+  <strong>EC</strong> — Eye Candidate<br>
+<em>A potential Eye (pair).</em><br><br>
+
+<strong>EPC</strong> — Eye-Pong Candidate<br>
+<em>A pair that may form either an Eye or a Pong.</em><br><br>
+
+<strong>CPC</strong> — Chow-Pong Candidate<br>
+<em>Three or four tiles that may form either a Chow or a Pong.</em>
+</div>
+
+    <p><strong>Reserves (R)</strong><br>
+    Tiles not currently assigned to a CB or DB. These appear in the middle of the screen between the DB and CB sections.</p>
+
+<p style="text-align:center; margin-top:18px;">
+  <strong>
+    Complete six boxes—five melds and one Eye—
+    and That's Mahjong!
+  </strong>
+</p>
+
+    <div class="dialog-actions">
+      <button class="dialog-button primary" onclick="closeDialog('understandingBoxesDialog')">Close</button>
+    </div>
+  </div>
+</div>
+
+
+
 <div id="userGuideDialog" class="dialog-backdrop hidden">
   <div class="dialog">
     <h2>User Guide</h2>
@@ -940,6 +979,7 @@ let seatWind = "east";
 let prevailingWind = "east";
 let coachingOn = true;
 window.useFullBoxLabels = true;
+let escaleraDrawCount = 0;
 
 let phase = "starting";
 let screenMode = "entry";
@@ -1129,6 +1169,7 @@ document.addEventListener("touchend", function(e) {
 <script src="js/tile-entry.js"></script>
 <script src="js/draw-discard.js"></script>
 <script src="js/engine.js"></script>
+<script src="js/special-hands.js"></script>
 <script src="js/hand-display.js"></script>
 <script src="js/dialogs.js"></script>
 <script>
