@@ -517,8 +517,16 @@ function openGettingStartedDialog() {
   openDialog("gettingStartedDialog");
 }
 
+
 function openAbout6BTDialog() {
   openDialog("about6BTDialog");
+}
+
+
+function openUnderstandingBoxesDialog() {
+  document
+    .getElementById("understandingBoxesDialog")
+    .classList.remove("hidden");
 }
 
 function openUserGuideDialog() {
