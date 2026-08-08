@@ -880,6 +880,49 @@ function confirmSevenPairs() {
 function confirmEscalera() {
   escaleraMode = true;
 
+  const result =
+    evaluate17TE(
+      MJC_STATE.getEngineInput()
+    );
+
+  const structureState =
+    result.structureState || result;
+
+  const candidatesBySuit =
+    getEscaleraCandidates(
+      counts,
+      structureState.completeBoxes
+    );
+
+  escaleraBoxState.active = true;
+
+  escaleraBoxState.candidateTileKeys =
+    candidatesBySuit[
+      escaleraBoxState.suit
+    ] || [];
+
+  escaleraBoxState.distinctCount =
+    escaleraBoxState.candidateTileKeys.length;
+
+  escaleraBoxState.complete =
+    escaleraBoxState.distinctCount === 9;
+
+  escaleraBoxState.completedMeldCount =
+    escaleraBoxState.complete ? 3 : 0;
+
+  const escaleraResult =
+  evaluate17TE(
+    MJC_STATE.getEngineInput()
+  );
+
+const escaleraStructureState =
+  escaleraResult.structureState ||
+  escaleraResult;
+
+updateEscaleraRequirements(
+  escaleraStructureState
+);
+
   const isFilipino =
     ruleset === "filipino16";
 
@@ -896,16 +939,16 @@ function confirmEscalera() {
   if (title && message) {
     if (isFilipino) {
       title.textContent =
-        "Escalera Selected";
+        "Escalera Mode On";
 
       message.textContent =
-        "Coaching has been suspended while you pursue Escalera (a Straight).";
+        "MJC will continue coaching while you pursue Escalera (a Straight).";
     } else {
       title.textContent =
-        "Straight Selected";
+        "Straight Mode On";
 
       message.textContent =
-        "Coaching has been suspended while you pursue a Straight.";
+        "MJC will continue coaching while you pursue a Straight.";
     }
   }
 
@@ -988,7 +1031,19 @@ function endEscalera() {
     .classList.remove("hidden");
 }
 
+function closeEscaleraCoachingResumeDialog() {
+  document
+    .getElementById("escaleraCoachingResumeDialog")
+    .classList.add("hidden");
 
+  resetEscaleraBoxState();
+
+  buildHandDisplay();
+
+  if (coachingOn) {
+    renderCoachView();
+  }
+}
 
 
 function closeSevenPairsAcknowledgmentDialog() {

@@ -429,10 +429,36 @@ function getClaimedCompleteBoxes(
   );
 }
 
+function getStructuralEngineInput(engineInput) {
+  const structuralCounts = {
+    ...engineInput.counts
+  };
+
+  const escaleraProtectedTileKeys =
+    engineInput.escaleraProtectedTileKeys || [];
+
+  escaleraProtectedTileKeys.forEach(
+    function(tileKey) {
+      if ((structuralCounts[tileKey] || 0) > 0) {
+        structuralCounts[tileKey] -= 1;
+      }
+    }
+  );
+
+  return {
+    ...engineInput,
+    counts: structuralCounts
+  };
+}
+
+
 
 function evaluate17TE(engineInput, options = {}) {
+  const structuralInput =
+    getStructuralEngineInput(engineInput);
+
   const detectedCompleteBoxes =
-  findCompleteBoxes(engineInput);
+    findCompleteBoxes(structuralInput);
 
 const completeBoxes =
   assignStableCompleteBoxIds(
@@ -445,10 +471,10 @@ const completeBoxes =
 );
 
   const remainingCounts =
-    getRemainingCounts(
-      engineInput.counts,
-      completeBoxes
-    );
+  getRemainingCounts(
+    structuralInput.counts,
+    completeBoxes
+  );
 
   const cpcCandidates =
   findCPCDevelopingBoxes(

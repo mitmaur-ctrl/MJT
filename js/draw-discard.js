@@ -454,6 +454,7 @@ const preDrawSagasaPong =
 
 
 counts[selectedDrawTileKey] += 1;
+syncEscaleraAfterHandChange();
 
 if (gameAction === "claim") {
   const currentResult = evaluate17TE(
@@ -989,7 +990,12 @@ function confirmDiscard() {
   lastActionTileKey = selectedDiscardTileKey;
 
   counts[selectedDiscardTileKey] -= 1;
+  syncEscaleraAfterHandChange();
   protectedECTileKey = null;
+
+
+  syncEscaleraAfterHandChange();
+
   lockHandContext();
 
   phase = "game";
@@ -1022,6 +1028,41 @@ function buildCoachingDiscardDisplay() {
   html +=
   '<div class="developing-area">' +
   '<div class="engine-title">Developing Boxes</div>';
+
+if (
+  escaleraMode &&
+  escaleraBoxState.active &&
+  escaleraBoxState.candidateTileKeys.length > 0
+) {
+
+  const escaleraBoxLabel =
+    escaleraBoxState.complete
+      ? "Escalera Box — Complete"
+      : "Escalera Box";
+
+  const escaleraTileHtml =
+    escaleraBoxState.candidateTileKeys
+      .map(function(tileKey) {
+        return (
+          '<button class="discard-tile" ' +
+          'data-key="' + tileKey + '" ' +
+          'onclick="selectDiscardTile(\'' +
+          tileKey +
+          '\', this)">' +
+          tileLabels[tileKey] +
+          '</button>'
+        );
+      })
+      .join("");
+
+  html +=
+    '<div class="hand-section box-card developing-box escalera-box">' +
+      '<div class="hand-section-title">' +
+        escaleraBoxLabel +
+      '</div>' +
+      escaleraTileHtml +
+    '</div>';
+}
 
   const activeBoxes = [
     ...result.developingBoxes,
@@ -1064,15 +1105,18 @@ function buildCoachingDiscardDisplay() {
     result.completeBoxes.length +
     activeBoxes.length;
 
+const targetBoxCount =
+  escaleraMode ? 3 : 6;
+
   for (
     let boxNumber = totalBoxes + 1;
-    boxNumber <= 6;
+    boxNumber <= targetBoxCount;
     boxNumber++
   ) {
     html +=
       '<div class="hand-section box-card empty-box">' +
         '<div class="hand-section-title">' +
-          'Box ' + boxNumber +
+          'DB' + boxNumber +
         '</div>' +
         '<span class="empty-note">Empty</span>' +
       '</div>';

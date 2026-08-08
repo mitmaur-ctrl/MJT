@@ -99,7 +99,30 @@ function getBoxLabelToggleHtml() {
 }
 
 
+window.showTileIndices = true;
 
+function toggleTileIndices() {
+  window.showTileIndices =
+    !window.showTileIndices;
+
+  if (coachingOn) {
+    renderCoachView();
+  }
+}
+
+function getTileIndexToggleHtml() {
+  const indicesOn =
+    window.showTileIndices !== false;
+
+  return (
+    '<button ' +
+      'type="button" ' +
+      'class="box-label-toggle-button" ' +
+      'onclick="toggleTileIndices()">' +
+      (indicesOn ? 'Indices: On' : 'Indices: Off') +
+    '</button>'
+  );
+}
 
 
 
@@ -122,7 +145,21 @@ function buildStartingHandDisplay() {
       html += groupHtml;
       html += '</div>';
     }
-  }
+}
+ const startingResult =
+  evaluate17TE(
+    MJC_STATE.getEngineInput()
+  );
+
+ const startingStructureState =
+  startingResult.structureState ||
+  startingResult;
+
+ checkEscaleraOpportunity(
+  counts,
+  startingStructureState.completeBoxes
+ );
+
 
   const handDisplay =
   document.getElementById("handDisplay");
@@ -190,12 +227,18 @@ function buildCurrentHandDisplay() {
   const handInstruction =
   document.getElementById("handInstruction");
 
-if (result.mahjong) {
+  const escaleraMahjong =
+    isEscaleraMahjong();
+
+if (
+  result.mahjong ||
+  escaleraMahjong
+) {
   gameAction = "mahjong";
 
   if (handInstruction) {
     handInstruction.textContent =
-  getMahjongResultMessage();
+      getMahjongResultMessage();
   }
 
   const drawBtn =
@@ -212,6 +255,25 @@ if (result.mahjong) {
     button.classList.remove("enabled");
     button.classList.add("disabled");
   });
+
+  // Mahjong end-state controls.
+  const hdPrimaryRow =
+    document.getElementById("hdPrimaryRow");
+
+  const startingUtilityRow =
+    document.getElementById("startingUtilityRow");
+
+  const currentCorrectionRow =
+    document.getElementById("currentCorrectionRow");
+
+  const newGameRow =
+    document.getElementById("newGameRow");
+
+  hdPrimaryRow.classList.add("hidden");
+  startingUtilityRow.classList.add("hidden");
+  currentCorrectionRow.classList.add("hidden");
+
+  newGameRow.classList.remove("hidden");
 }
 
   const structureState =
@@ -222,7 +284,12 @@ if (result.mahjong) {
   checkSevenPairsOpportunity(structureState);
 
 
-checkEscaleraOpportunity(counts);
+if (!escaleraMode) {
+  checkEscaleraOpportunity(
+    counts,
+    structureState.completeBoxes
+  );
+}
 
 checkBOLOEyesOpportunity(result, eyeCandidates);
 
@@ -417,6 +484,9 @@ function configureHDMode() {
   const handMeta = document.getElementById("handMeta");
   const handInstruction = document.getElementById("handInstruction");
   const reviseBtn = document.getElementById("reviseBtn");
+
+  const hdPrimaryRow =
+    document.getElementById("hdPrimaryRow");
   
   const drawBtn = document.getElementById("drawBtn");
   const chowBtn = document.getElementById("chowBtn");
@@ -561,6 +631,14 @@ correctLastBtn.classList.toggle(
   handCorrectionBtn.disabled = hdMode !== "current";
   newGameRow.classList.toggle("hidden", hdMode !== "current");
 
+if (gameAction === "mahjong") {
+  hdPrimaryRow.classList.add("hidden");
+  startingUtilityRow.classList.add("hidden");
+  currentCorrectionRow.classList.add("hidden");
+
+  newGameRow.classList.remove("hidden");
+}
+
   coachingBtn.textContent = coachingOn ? "Standard View" : "Coaching View";
 
   if (hdMode === "starting") {
@@ -626,6 +704,50 @@ if (sixBoxTheoryLink) {
 
 }
 
+function renderEscaleraBox(highlightState) {
+  if (
+    !escaleraMode ||
+    !escaleraBoxState.active ||
+    !escaleraBoxState.candidateTileKeys.length
+  ) {
+    return "";
+  }
+
+  const tileHtml =
+    escaleraBoxState.candidateTileKeys
+      .map(function(tileKey) {
+        const isLastDrawn =
+          tileKey === lastDrawnTileKey &&
+          !highlightState.used;
+
+        if (isLastDrawn) {
+          highlightState.used = true;
+        }
+
+        return renderCoachTile(tileKey, {
+          extraClass:
+            isLastDrawn ? "last-drawn" : ""
+        });
+      })
+      .join("");
+
+  const escaleraBoxLabel =
+    escaleraBoxState.complete
+      ? "Escalera Box — Complete"
+      : "Escalera Box";
+
+  return (
+    '<div class="hand-section box-card developing-box escalera-box">' +
+      '<div class="hand-section-title">' +
+        escaleraBoxLabel +
+      '</div>' +
+      tileHtml +
+    '</div>'
+  );
+}
+
+
+
 function renderActiveArea(
   completeBoxes,
   developingBoxes,
@@ -635,6 +757,8 @@ function renderActiveArea(
   let html =
   '<div class="developing-area">' +
     '<div class="engine-title">Developing Boxes</div>';
+
+  html += renderEscaleraBox(highlightState);
 
   const firstActiveBoxNumber = completeBoxes.length + 1;
 
@@ -670,23 +794,21 @@ if (halfEye && halfEye.length > 0) {
     const boxNumber =
       firstActiveBoxNumber + developingBoxes.length;
 
-    const tileHtml = halfEye[0].tiles.map(function(tileKey) {
-  const isLastDrawn =
-    tileKey === lastDrawnTileKey &&
-    !drawnHighlightUsed;
+    const tileHtml =
+  halfEye[0].tiles.map(function(tileKey) {
+    const isLastDrawn =
+      tileKey === lastDrawnTileKey &&
+      !highlightState.used;
 
-  if (isLastDrawn) {
-    drawnHighlightUsed = true;
-  }
+    if (isLastDrawn) {
+      highlightState.used = true;
+    }
 
-  return (
-    '<span class="hand-tile' +
-    (isLastDrawn ? ' last-drawn' : '') +
-    '">' +
-    tileLabels[tileKey] +
-    '</span>'
-  );
-}).join("");
+    return renderCoachTile(tileKey, {
+      extraClass:
+        isLastDrawn ? "last-drawn" : ""
+    });
+  }).join("");
 
     html +=
       '<div class="hand-section box-card developing-box">' +
@@ -702,7 +824,14 @@ if (halfEye && halfEye.length > 0) {
   developingBoxes.length +
   (halfEye ? halfEye.length : 0);
 
-  for (let boxNumber = totalBoxes + 1; boxNumber <= 6; boxNumber++) {
+const targetBoxCount =
+  escaleraMode ? 3 : 6;
+
+for (
+  let boxNumber = totalBoxes + 1;
+  boxNumber <= targetBoxCount;
+  boxNumber++
+) {
   html +=
     '<div class="hand-section box-card empty-box">' +
       '<div class="hand-section-title">DB' + boxNumber + '</div>' +
@@ -806,43 +935,11 @@ function renderCoachView() {
   const enginePanel =
     document.getElementById("enginePanel");
 
-  if (escaleraMode) {
-    let reserveHtml = "";
-
-    getTileGroups().forEach(function(group) {
-      group.keys.forEach(function(tileKey) {
-        for (
-          let i = 0;
-          i < (counts[tileKey] || 0);
-          i++
-        ) {
-          reserveHtml +=
-            '<span class="hand-tile">' +
-            tileLabels[tileKey] +
-            '</span>';
-        }
-      });
-    });
-
-    enginePanel.innerHTML =
-      '<div class="engine-title">' +
-        'Coaching Suspended — Escalera' +
-      '</div>' +
-      '<div class="hand-section reserve-area">' +
-        '<div class="hand-section-title">' +
-          'Reserves' +
-        '</div>' +
-        reserveHtml +
-      '</div>';
-
-    return;
-  }
 
   const result =
     evaluate17TE(
       MJC_STATE.getEngineInput()
     );
-
 
 
 
@@ -857,12 +954,15 @@ function renderCoachView() {
     );
 
   if (
-    result.mahjong &&
-    handInstruction
-  ) {
-    handInstruction.textContent =
-  getMahjongResultMessage();
-  }
+  (
+    result.mahjong ||
+    isEscaleraMahjong()
+  ) &&
+  handInstruction
+) {
+  handInstruction.textContent =
+    getMahjongResultMessage();
+}
 
   const structureState =
     result.structureState || result;
@@ -886,8 +986,9 @@ const highlightState = {
     '<div id="coachMessageArea" class="coach-message-area"></div>' +
 
     '<div class="coach-top-right">' +
-      getBoxLabelToggleHtml() +
-      '<div class="tih-counter">' +
+  getBoxLabelToggleHtml() +
+  getTileIndexToggleHtml() +
+  '<div class="tih-counter">' +
         'TIH: ' + tih +
       '</div>' +
     '</div>' +
