@@ -9,7 +9,7 @@ Project:
 Mahjong Coach
 
 Version:
-MJC Beta v3.1
+MJC Beta v3.2
 
 Purpose:
 - Smartphone-optimized tile management vehicle
@@ -348,8 +348,7 @@ V4 = Photo Recognition
 
     <div class="actions">
       <button class="action-button" onclick="cancelDiscard()">Cancel</button>
-      <button id="insightBtn" class="action-button insight-button" onclick="showInsightPlaceholder()">Insight</button>
-      <button id="confirmDiscardBtn" class="action-button confirm-button disabled" onclick="confirmDiscard()" disabled>Confirm</button>
+      <button id="insightBtn" class="action-button insight-button" onclick="showInsightPlaceholder()">Insight</button>      
     </div>
   </div>
 
@@ -364,7 +363,7 @@ V4 = Photo Recognition
     <button onclick="openFeedbackDialog()">Feedback</button>
     <button onclick="openSupportDialog()">Support MJC</button>
   </div>
-  <div class="footer-version">Beta v3.1</div>
+  <div class="footer-version">Beta v3.2</div>
 </div>
 
 </div>
@@ -888,7 +887,7 @@ Acceptance standard:
 ==================================================
 */
 
-const MJC_VERSION_LABEL = "Beta v3.1";
+const MJC_VERSION_LABEL = "Beta v3.2";
 
 const MJC_RULESET_BASE_HAND_SIZES = Object.freeze({
   filipino16: 16,
@@ -954,17 +953,19 @@ const MJC_STATE = {
     context: this.getContext(),
     displayOrder: this.getDisplayOrder(),
 
-    mmrCommittedBoxes:
-      mmrCommittedBoxes.map(function(item) {
-        return {
-          action: item.action,
-          tileKey: item.tileKey,
-          candidate: {
-            type: item.candidate.type,
-            tiles: [...item.candidate.tiles]
-          }
-        };
-      }),
+   mmrCommittedBoxes:
+  mmrCommittedBoxes.map(function(item) {
+    return {
+      action: item.action,
+      tileKey: item.tileKey,
+      candidate: {
+        type: item.candidate.type,
+        tiles: [...item.candidate.tiles],
+        visibility: item.candidate.visibility
+      }
+    };
+  }),
+
 
   protectedECTileKey:
   protectedECTileKey,
@@ -976,7 +977,11 @@ escaleraProtectedTileKeys:
 
 ignoredKangTileKeys:
   [...ignoredKangTileKeys],
-    ignoredNEWS: ignoredNEWS
+
+deferredKangTileKeys:
+  [...deferredKangTileKeys],
+
+ignoredNEWS: ignoredNEWS
   };
 }
 };
@@ -1053,6 +1058,7 @@ let lastActionTileKey = null;
 let mmrState = null;
 let mmrCommittedBoxes = [];
 let ignoredKangTileKeys = [];
+let deferredKangTileKeys = [];
 let ignoredNEWS = false;
 let protectedECTileKey = null;
 let correctingLastEntry = false;
@@ -1100,6 +1106,7 @@ function startNewGame() {
   kangReplacementDraw = false;
   replacementDrawSource = null;
   ignoredKangTileKeys = [];
+  deferredKangTileKeys = [];
   ignoredNEWS = false;
   boloEyesShown = false;
   overPairedActive = false;
