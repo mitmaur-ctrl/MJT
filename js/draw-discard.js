@@ -208,8 +208,17 @@ function openDrawScreen() {
   rapidDrawNumber = null;
 
   const choices = document.getElementById("drawTileChoices");
-if (choices) {
-  choices.innerHTML = "";
+  if (choices) {
+    choices.innerHTML = "";
+  }
+
+const honorChoice = document.getElementById("drawHonorChoice");
+if (honorChoice) {
+  honorChoice.innerHTML = "";
+}
+
+if (document.activeElement) {
+  document.activeElement.blur();
 }
 
   selectedDrawSource = null;
