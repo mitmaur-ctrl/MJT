@@ -19,6 +19,68 @@ No Mahjong coaching or engine logic belongs in this file.
 ==================================================
 */
 
+/* ==================================================
+   Rapid Draw Entry
+   ================================================== */
+
+let rapidDrawNumber = null;
+
+function selectRapidDrawNumber(number) {
+  rapidDrawNumber = number;
+
+  const honorChoice = document.getElementById("drawHonorChoice");
+  if (honorChoice) {
+    honorChoice.innerHTML = "";
+  }
+
+  const choices = document.getElementById("drawTileChoices");
+  if (!choices) return;
+
+  const suitKeyMap = {
+    chars: "char",
+    bams: "bam",
+    dots: "dot"
+  };
+
+  const orderedSuits = [
+    displayOrder.firstSuit,
+    displayOrder.secondSuit,
+    displayOrder.thirdSuit
+  ];
+
+  choices.innerHTML = orderedSuits.map(function(suitName) {
+    const tileKey = suitKeyMap[suitName] + number;
+
+    return (
+      '<button class="rapid-tile-choice" onclick="chooseRapidDrawTile(\'' +
+      tileKey +
+      '\')">' +
+      renderCoachTile(tileKey) +
+      '</button>'
+    );
+  }).join("");
+}
+
+function selectRapidDrawHonor(key) {
+  const suitChoices = document.getElementById("drawTileChoices");
+  if (suitChoices) {
+    suitChoices.innerHTML = "";
+  }
+
+  const choices = document.getElementById("drawHonorChoice");
+  if (!choices) return;
+
+  choices.innerHTML =
+    '<button class="rapid-tile-choice" onclick="chooseRapidDrawTile(\'' + key + '\')">' +
+      renderCoachTile(key) +
+    '</button>';
+}
+
+function chooseRapidDrawTile(key) {
+  selectedDrawTileKey = key;
+  confirmDraw();
+}
+
 function createDrawTile(containerId, label, key) {
   const tile = document.createElement("div");
   tile.className = "tile draw-tile";
@@ -87,19 +149,20 @@ function updateDrawHonorAvailability() {
 }
 
 function buildDrawTiles() {
-  for (let i = 1; i <= 9; i++) createDrawTile("drawCharacters", i + " Char", "char" + i);
-  for (let i = 1; i <= 9; i++) createDrawTile("drawBams", i + " Bam", "bam" + i);
-  for (let i = 1; i <= 9; i++) createDrawTile("drawDots", i + " Dot", "dot" + i);
+  document.querySelectorAll(".rapid-draw-key").forEach(function(button) {
+    button.addEventListener("click", function() {
+      selectRapidDrawNumber(button.dataset.number);
+    });
+  });
 
-  createDrawTile("drawWinds", "East", "east");
-  createDrawTile("drawWinds", "South", "south");
-  createDrawTile("drawWinds", "West", "west");
-  createDrawTile("drawWinds", "North", "north");
-
-  createDrawTile("drawDragons", "Red", "red");
-  createDrawTile("drawDragons", "Green", "green");
-  createDrawTile("drawDragons", "White", "white");
+  document.querySelectorAll(".rapid-honor-key").forEach(function(button) {
+    button.addEventListener("click", function() {
+      selectRapidDrawHonor(button.dataset.key);
+    });
+  });
 }
+
+
 
 function claimTile() {
   gameAction = "claim";
@@ -142,7 +205,14 @@ function openDrawScreen() {
   applyDisplayOrderToScreens();
   scrollToTopForScreen();
   clearDrawSelection();
-selectedDrawSource = null;
+  rapidDrawNumber = null;
+
+  const choices = document.getElementById("drawTileChoices");
+if (choices) {
+  choices.innerHTML = "";
+}
+
+  selectedDrawSource = null;
 
 const drawMeta = document.getElementById("drawMeta");
 const drawTitle = document.getElementById("drawTitle");
