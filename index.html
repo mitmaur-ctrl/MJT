@@ -9,7 +9,7 @@ Project:
 Mahjong Coach
 
 Version:
-MJC Beta v3.0
+MJC Beta v3.1
 
 Purpose:
 - Smartphone-optimized tile management vehicle
@@ -269,46 +269,75 @@ V4 = Photo Recognition
 </div>
   </div>
 </div>
-  <div id="drawScreen" class="hidden draw-compact">
-    <div id="drawTitle" class="draw-title">Draw Tile</div>
-    <div id="drawMeta" class="draw-meta">Enter the tile you drew or claimed.</div>
 
-<!--
-  <div class="draw-source-selector">
-    <label>
-      <input
-        type="radio"
-        name="drawSource"
-        value="draw"
-        checked
-        onchange="selectedDrawSource = 'draw'"
-      >
-      Draw
-    </label>
 
-    <label>
-      <input
-        type="radio"
-        name="drawSource"
-        value="claim"
-        onchange="selectedDrawSource = 'claim'"
-      >
-      Claim
-    </label>
+
+<div id="drawScreen" class="hidden draw-compact">
+  <div id="drawTitle" class="draw-title">Draw Tile</div>
+
+  <div id="drawMeta" class="draw-meta">
+    Select the tile you drew.
   </div>
--->
 
-    <div id="draw-section-chars" class="section"><h2>Chars</h2><div class="tile-grid" id="drawCharacters"></div></div>
-    <div id="draw-section-bams" class="section"><h2>Bams</h2><div class="tile-grid" id="drawBams"></div></div>
-    <div id="draw-section-dots" class="section"><h2>Dots</h2><div class="tile-grid" id="drawDots"></div></div>
-    <div id="draw-section-winds" class="section"><h2>Winds</h2><div class="wind-grid" id="drawWinds"></div></div>
-    <div id="draw-section-dragons" class="section"><h2>Dragons</h2><div class="dragon-grid" id="drawDragons"></div></div>
+  <div class="rapid-draw-layout">
 
-    <div class="actions">
-      <button class="action-button" onclick="cancelDraw()">Cancel</button>
-      <button id="confirmDrawBtn" class="action-button confirm-button disabled" onclick="confirmDraw()" disabled>Confirm</button>
+    <div class="rapid-draw-main">
+
+      <div class="rapid-number-pad">
+        <button type="button" class="rapid-draw-key" data-number="1">1</button>
+        <button type="button" class="rapid-draw-key" data-number="2">2</button>
+        <button type="button" class="rapid-draw-key" data-number="3">3</button>
+
+        <button type="button" class="rapid-draw-key" data-number="4">4</button>
+        <button type="button" class="rapid-draw-key" data-number="5">5</button>
+        <button type="button" class="rapid-draw-key" data-number="6">6</button>
+
+        <button type="button" class="rapid-draw-key" data-number="7">7</button>
+        <button type="button" class="rapid-draw-key" data-number="8">8</button>
+        <button type="button" class="rapid-draw-key" data-number="9">9</button>
+      </div>
+
+      <div id="drawTileChoices" class="rapid-draw-choices"></div>
+
+</div>
+
+<div id="rapidDrawPrompt" class="rapid-draw-prompt">
+  Select a number or honor.
+</div>
+
+
+
+<div class="rapid-honor-section">
+
+  <div class="rapid-honor-pad">
+
+    <div class="rapid-honor-row">
+      <button type="button" class="rapid-honor-key" data-key="east">E</button>
+      <button type="button" class="rapid-honor-key" data-key="south">S</button>
+      <button type="button" class="rapid-honor-key" data-key="west">W</button>
+      <button type="button" class="rapid-honor-key" data-key="north">N</button>
     </div>
+
+    <div class="rapid-honor-row dragons">
+      <button type="button" class="rapid-honor-key" data-key="red">R</button>
+      <button type="button" class="rapid-honor-key" data-key="green">G</button>
+      <button type="button" class="rapid-honor-key" data-key="white">W</button>
+    </div>
+
   </div>
+
+  <div id="drawHonorChoice" class="rapid-honor-choice"></div>
+
+  </div>
+
+</div>
+
+
+  <div class="actions">
+    <button class="action-button" onclick="cancelDraw()">Cancel</button>
+  </div>
+</div>
+
 
   <div id="discardScreen" class="hidden">
     <div class="discard-title">Discard Tile</div>
@@ -334,7 +363,7 @@ V4 = Photo Recognition
     <button onclick="openFeedbackDialog()">Feedback</button>
     <button onclick="openSupportDialog()">Support MJC</button>
   </div>
-  <div class="footer-version">Beta v3.0</div>
+  <div class="footer-version">Beta v3.1</div>
 </div>
 
 </div>
@@ -820,7 +849,7 @@ V4 = Photo Recognition
     <h2>Feedback</h2>
     <p>Thank you for helping us improve Mahjong Coach.</p>
     <p>We welcome bug reports, suggestions, comments, and feature requests.</p>
-    <p><strong>Email:</strong> <a href="mailto:mjcfeedbackteam@gmail.com?subject=Mahjong%20Coach%20Feedback%20-%20Beta%20v3.0">mjcfeedbackteam@gmail.com</a></p>
+    <p><strong>Email:</strong> <a href="mailto:mjcfeedbackteam@gmail.com?subject=Mahjong%20Coach%20Feedback%20-%20Beta%20v3.1">mjcfeedbackteam@gmail.com</a></p>
     <p><em>Every message is read and appreciated.</em></p>
     <div class="dialog-actions">
       <button class="dialog-button primary" onclick="closeDialog('feedbackDialog')">Close</button>
@@ -858,7 +887,7 @@ Acceptance standard:
 ==================================================
 */
 
-const MJC_VERSION_LABEL = "Beta v3.0";
+const MJC_VERSION_LABEL = "Beta v3.1";
 
 const MJC_RULESET_BASE_HAND_SIZES = Object.freeze({
   filipino16: 16,
