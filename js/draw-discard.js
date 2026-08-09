@@ -793,7 +793,7 @@ if (kangTileKey) {
   if (declaredKang) {
     setCompleteBoxVisibility(
       declaredKang.boxId,
-      "exposed"
+      "hidden"
     );
   }
 }
