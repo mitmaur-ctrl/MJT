@@ -876,7 +876,6 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 
 .rapid-honor-choice {
   width: 92px;
   min-height: 112px;
-  margin-left: 12px;
 
   display: flex;
   align-items: center;
