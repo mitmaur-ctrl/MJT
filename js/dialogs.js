@@ -362,12 +362,24 @@ function deferKangDeclaration() {
     return;
   }
 
+const deferredTileKey =
+  mmrState.tileKey;
+
+if (
+  deferredTileKey &&
+  !deferredKangTileKeys.includes(deferredTileKey)
+) {
+  deferredKangTileKeys.push(deferredTileKey);
+}
+
   if (
   mmrState.action !== "hidden-kang-after-draw" &&
-  mmrState.action !== "hidden-news-after-draw"
+  mmrState.action !== "hidden-news-after-draw" &&
+  mmrState.action !== "sagasa-after-draw"
 ) {
   return;
 }
+
 
   document
     .getElementById("mmrDialog")
@@ -401,6 +413,46 @@ function ignoreMMRCandidates() {
   if (!mmrState) {
     return;
   }
+
+if (mmrState.action === "sagasa-after-draw") {
+
+  const ignoredTileKey =
+    mmrState.tileKey;
+
+  if (
+    ignoredTileKey &&
+    !ignoredKangTileKeys.includes(ignoredTileKey)
+  ) {
+    ignoredKangTileKeys.push(ignoredTileKey);
+  }
+
+  document
+    .getElementById("mmrDialog")
+    .classList.add("hidden");
+
+  lockHandContext();
+
+  phase = "game";
+  hdMode = "current";
+  gameAction = "discard";
+  kangReplacementDraw = false;
+  replacementDrawSource = null;
+  claimType = null;
+
+  lastDrawnTileKey =
+    selectedDrawTileKey;
+
+  revisionReturnHDMode = "current";
+  revisionTarget = null;
+  correctingLastEntry = false;
+  correctionTargetTileKey = null;
+  correctionActionType = null;
+
+  mmrState = null;
+
+  showHD();
+  return;
+}
 
 if (mmrState.action === "hidden-kang-after-draw") {
 

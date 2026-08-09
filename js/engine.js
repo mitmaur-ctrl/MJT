@@ -181,6 +181,23 @@ function assignStableCompleteBoxIds(
       return true;
     }
 
+// Kang -> Pong fallback
+// Preserve the existing Complete Box position.
+if (
+  previousBox.type === "kang" &&
+  box.type === "pong" &&
+  previousBox.tiles.length === 4 &&
+  box.tiles.length === 3 &&
+  previousBox.tiles.every(function(tileKey) {
+    return tileKey === box.tiles[0];
+  }) &&
+  box.tiles.every(function(tileKey) {
+    return tileKey === previousBox.tiles[0];
+  })
+) {
+  return true;
+}
+
     return false;
   });
 
@@ -321,6 +338,25 @@ function updateCanonicalStructureState(
       ) {
         return true;
       }
+
+// Kang -> Pong fallback
+// Preserve existing visibility when a Kang
+// opportunity is declined or ignored.
+if (
+  previousBox.type === "kang" &&
+  box.type === "pong" &&
+  previousBox.tiles.length === 4 &&
+  box.tiles.length === 3 &&
+  previousBox.tiles.every(function(tileKey) {
+    return tileKey === box.tiles[0];
+  }) &&
+  box.tiles.every(function(tileKey) {
+    return tileKey === previousBox.tiles[0];
+  })
+) {
+  return true;
+}
+
 
       return false;
     }
@@ -718,9 +754,10 @@ if (
 
       if (canCommitSelectedBox) {
         completeBoxes.push({
-          type: selectedBox.type,
-          tiles: [...selectedBox.tiles]
-        });
+  type: selectedBox.type,
+  tiles: [...selectedBox.tiles],
+  visibility: selectedBox.visibility
+});
 
         selectedBox.tiles.forEach(
           function(tileKey) {
@@ -771,15 +808,22 @@ if (
 // 2. Find Kangs.
 // Four identical tiles form one Complete Box
 // unless the player explicitly ignored that Kang.
+
 for (const tileKey in workingCounts) {
   const kangIgnored =
     engineInput.ignoredKangTileKeys &&
     engineInput.ignoredKangTileKeys.includes(tileKey);
 
+  const kangDeferred =
+    engineInput.deferredKangTileKeys &&
+    engineInput.deferredKangTileKeys.includes(tileKey);
+
   while (
-    (workingCounts[tileKey] || 0) >= 4 &&
-    !kangIgnored
-  ) {
+  (workingCounts[tileKey] || 0) >= 4 &&
+  !kangIgnored &&
+  !kangDeferred
+) {
+
     completeBoxes.push({
       type: "kang",
       tiles: [

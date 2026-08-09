@@ -1038,6 +1038,35 @@ function toggleCoaching() {
   }
 }
 
+function focusLastDrawDestination() {
+  if (
+    hdMode !== "current" ||
+    !coachingOn ||
+    !lastDrawnTileKey
+  ) {
+    return;
+  }
+
+  const drawnTile =
+    document.querySelector(
+      "#enginePanel .last-drawn"
+    );
+
+  if (!drawnTile) return;
+
+  const destination =
+    drawnTile.closest(
+      ".developing-box, .reserves-area, .complete-box"
+    );
+
+  if (!destination) return;
+
+  destination.scrollIntoView({
+    behavior: "smooth",
+    block: "center"
+  });
+}
+
 function showHD() {
   document.getElementById("tdScreen").classList.add("hidden");
   document.getElementById("drawScreen").classList.add("hidden");
@@ -1062,6 +1091,16 @@ if (coachingOn) {
   renderCoachView();
 }
 
-scrollToTopForScreen();
+if (
+  hdMode === "current" &&
+  coachingOn &&
+  lastDrawnTileKey
+) {
+  requestAnimationFrame(function() {
+    focusLastDrawDestination();
+  });
+} else {
+  scrollToTopForScreen();
+}
 }
 

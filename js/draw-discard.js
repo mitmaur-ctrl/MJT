@@ -61,6 +61,91 @@ function selectRapidDrawNumber(number) {
   }).join("");
 }
 
+function restoreRapidDrawCorrection() {
+  if (
+    !correctingLastEntry ||
+    correctionActionType !== "draw" ||
+    !correctionTargetTileKey
+  ) {
+    return;
+  }
+
+  const suitedMatch =
+    correctionTargetTileKey.match(/^(char|bam|dot)([1-9])$/);
+
+  if (suitedMatch) {
+    const number = suitedMatch[2];
+
+    // Show all three same-number suit choices.
+    selectRapidDrawNumber(number);
+
+    const choices =
+      document.getElementById("drawTileChoices");
+
+    if (!choices) return;
+
+    const buttons =
+      choices.querySelectorAll(".rapid-tile-choice");
+
+    buttons.forEach(function(button) {
+      const onclickText =
+        button.getAttribute("onclick") || "";
+
+      if (
+        onclickText.includes(
+          "'" + correctionTargetTileKey + "'"
+        )
+      ) {
+        button.classList.add("rapid-correction-target");
+      }
+    });
+
+    return;
+  }
+
+  const honorKeys = [
+    "east",
+    "south",
+    "west",
+    "north",
+    "red",
+    "green",
+    "white"
+  ];
+
+  if (!honorKeys.includes(correctionTargetTileKey)) {
+    return;
+  }
+
+  // Restore the previous honor tile.
+  selectRapidDrawHonor(correctionTargetTileKey);
+
+  const honorChoice =
+    document.getElementById("drawHonorChoice");
+
+  if (!honorChoice) return;
+
+  const tileButton =
+    honorChoice.querySelector(".rapid-tile-choice");
+
+  if (tileButton) {
+    tileButton.classList.add("rapid-correction-target");
+  }
+
+  // Highlight the corresponding honor key too.
+  const honorKey =
+    document.querySelector(
+      '.rapid-honor-key[data-key="' +
+      correctionTargetTileKey +
+      '"]'
+    );
+
+  if (honorKey) {
+    honorKey.classList.add("correction-target");
+  }
+}
+
+
 function selectRapidDrawHonor(key) {
   const suitChoices = document.getElementById("drawTileChoices");
   if (suitChoices) {
@@ -256,6 +341,7 @@ if (gameAction === "draw") {
 
 updateDrawHonorAvailability();
 applyCorrectionHighlight(gameAction);
+restoreRapidDrawCorrection();
 }
 
 function selectDrawTile(key) {
@@ -779,6 +865,7 @@ if (kangTileKey) {
       MJC_STATE.getEngineInput()
     );
 
+
   const declaredKang =
     declarationResult.completeBoxes.find(function(box) {
       return (
@@ -1022,6 +1109,7 @@ function openDiscardScreen() {
   applyCorrectionHighlight("discard");
 }
 
+
 function selectDiscardTile(key, tileElement = null) {
   if (counts[key] <= 0) return;
 
@@ -1044,16 +1132,7 @@ function selectDiscardTile(key, tileElement = null) {
     target.classList.add("action-selected");
   }
 
-  const btn =
-    document.getElementById("confirmDiscardBtn");
-
-  btn.disabled = false;
-  btn.classList.add("enabled");
-  btn.classList.remove("disabled");
-
-  document.getElementById("discardMeta").textContent =
-    tileLabels[key] +
-    " selected. Press Confirm.";
+  confirmDiscard();
 }
 
 
@@ -1090,163 +1169,111 @@ function confirmDiscard() {
   showHD();
 }
 
+
 function buildCoachingDiscardDisplay() {
   const result =
-    evaluate17TE(
-      MJC_STATE.getEngineInput()
-    );
+  evaluate17TE(
+    MJC_STATE.getEngineInput()
+  );
 
-  let html = "";
+const structureState =
+  result.structureState || result;
+
+let html = "";
 
   /*
   ================================================
-  Active Area
+  Reserves — first
   ================================================
   */
 
   html +=
-  '<div class="developing-area">' +
-  '<div class="engine-title">Developing Boxes</div>';
-
-if (
-  escaleraMode &&
-  escaleraBoxState.active &&
-  escaleraBoxState.candidateTileKeys.length > 0
-) {
-
-  const escaleraBoxLabel =
-    escaleraBoxState.complete
-      ? "Escalera Box — Complete"
-      : "Escalera Box";
-
-  const escaleraTileHtml =
-    escaleraBoxState.candidateTileKeys
-      .map(function(tileKey) {
-        return (
-          '<button class="discard-tile" ' +
-          'data-key="' + tileKey + '" ' +
-          'onclick="selectDiscardTile(\'' +
-          tileKey +
-          '\', this)">' +
-          tileLabels[tileKey] +
-          '</button>'
-        );
-      })
-      .join("");
-
-  html +=
-    '<div class="hand-section box-card developing-box escalera-box">' +
-      '<div class="hand-section-title">' +
-        escaleraBoxLabel +
-      '</div>' +
-      escaleraTileHtml +
-    '</div>';
-}
-
-  const activeBoxes = [
-    ...result.developingBoxes,
-    ...(result.halfEye || [])
-  ];
-
-  const firstActiveBoxNumber =
-    result.completeBoxes.length + 1;
-
-  activeBoxes.forEach(function(box, index) {
-    const boxNumber =
-      firstActiveBoxNumber + index;
-
-    const tileHtml =
-      box.tiles.map(function(tileKey) {
-        return (
-          '<button class="discard-tile" ' +
-          'data-key="' + tileKey + '" ' +
-          'onclick="selectDiscardTile(\'' +
-          tileKey +
-          '\', this)">' +
-          tileLabels[tileKey] +
-          '</button>'
-        );
-      }).join("");
-
-    html +=
-      '<div class="hand-section box-card developing-box">' +
-        '<div class="hand-section-title">' +
-          'DB' +
-          boxNumber +
-          ' — ' +
-          box.type.toUpperCase() +
-        '</div>' +
-        tileHtml +
-      '</div>';
-  });
-
-  const totalBoxes =
-    result.completeBoxes.length +
-    activeBoxes.length;
-
-const targetBoxCount =
-  escaleraMode ? 3 : 6;
-
-  for (
-    let boxNumber = totalBoxes + 1;
-    boxNumber <= targetBoxCount;
-    boxNumber++
-  ) {
-    html +=
-      '<div class="hand-section box-card empty-box">' +
-        '<div class="hand-section-title">' +
-          'DB' + boxNumber +
-        '</div>' +
-        '<span class="empty-note">Empty</span>' +
-      '</div>';
-  }
-
-html += '</div>';
-
-  /*
-  ================================================
-  Reserves
-  ================================================
-  */
-
-  html +=
-    '<div class="reserves-area">' +
-'<div class="hand-section">' +
-      '<div class="hand-section-title">Reserves</div>';
+    '<div class="reserves-area">';
 
   if (
-    !result.reserves ||
-    result.reserves.length === 0
-  ) {
-    html +=
-      '<span class="empty-note">None</span>';
-  } else {
-    result.reserves.forEach(function(tileKey) {
+  !structureState.reserves ||
+  structureState.reserves.length === 0
+) {
   html +=
-    '<button class="discard-tile" ' +
-    'data-key="' + tileKey + '" ' +
-    'onclick="selectDiscardTile(\'' +
-    tileKey +
-    '\', this)">' +
-    tileLabels[tileKey] +
-    '</button>';
-});
+    '<span class="empty-note">None</span>';
+} else {
+  structureState.reserves.forEach(function(tileKey) {
+
+
+      html +=
+        '<button class="discard-tile" ' +
+        'data-key="' + tileKey + '" ' +
+        'onclick="selectDiscardTile(\'' +
+        tileKey +
+        '\', this)">' +
+          renderCoachTile(tileKey) +
+        '</button>';
+    });
   }
 
-  html += '</div></div>';
+  html += '</div>';
 
   /*
   ================================================
-  Completed Area
+  Developing Boxes — actual boxes only
   ================================================
   */
 
-  html +=
-  '<div class="completed-area">' +
-  '<div class="engine-title">Completed Boxes</div>';
+  const activeBoxes = [
+  ...structureState.developingBoxes,
+  ...(structureState.halfEye || [])
+];
 
-  result.completeBoxes.forEach(
-    function(box, index) {
+  if (
+    (escaleraMode &&
+      escaleraBoxState.active &&
+      escaleraBoxState.candidateTileKeys.length > 0) ||
+    activeBoxes.length > 0
+  ) {
+    html +=
+      '<div class="developing-area">';
+
+    if (
+      escaleraMode &&
+      escaleraBoxState.active &&
+      escaleraBoxState.candidateTileKeys.length > 0
+    ) {
+      const escaleraBoxLabel =
+        escaleraBoxState.complete
+          ? "Escalera Box — Complete"
+          : "Escalera Box";
+
+      const escaleraTileHtml =
+        escaleraBoxState.candidateTileKeys
+          .map(function(tileKey) {
+            return (
+              '<button class="discard-tile" ' +
+              'data-key="' + tileKey + '" ' +
+              'onclick="selectDiscardTile(\'' +
+              tileKey +
+              '\', this)">' +
+                renderCoachTile(tileKey) +
+              '</button>'
+            );
+          })
+          .join("");
+
+      html +=
+        '<div class="hand-section box-card developing-box escalera-box">' +
+          '<div class="hand-section-title">' +
+            escaleraBoxLabel +
+          '</div>' +
+          escaleraTileHtml +
+        '</div>';
+    }
+
+    const firstActiveBoxNumber =
+  structureState.completeBoxes.length + 1;
+
+    activeBoxes.forEach(function(box, index) {
+      const boxNumber =
+        firstActiveBoxNumber + index;
+
       const tileHtml =
         box.tiles.map(function(tileKey) {
           return (
@@ -1255,26 +1282,95 @@ html += '</div>';
             'onclick="selectDiscardTile(\'' +
             tileKey +
             '\', this)">' +
-            tileLabels[tileKey] +
+              renderCoachTile(tileKey) +
             '</button>'
           );
         }).join("");
 
       html +=
-        '<div class="hand-section box-card complete-box">' +
+        '<div class="hand-section box-card developing-box">' +
           '<div class="hand-section-title">' +
-            'CB' +
-            (index + 1) +
+            'DB' +
+            boxNumber +
             ' — ' +
-            box.type.charAt(0).toUpperCase() +
-            box.type.slice(1) +
+            getBoxTypeLabel(box.type) +
           '</div>' +
           tileHtml +
         '</div>';
-    }
-  );
+    });
 
-html += '</div>';
+    html += '</div>';
+  }
+
+  /*
+  ================================================
+  Complete Boxes — last
+  ================================================
+  */
+
+  if (
+  structureState.completeBoxes &&
+  structureState.completeBoxes.length > 0
+) {
+
+    html +=
+      '<div class="completed-area">';
+
+structureState.completeBoxes.forEach(
+  function(box) {
+
+    const tileHtml =
+  box.tiles.map(function(tileKey) {
+
+    // Exposed Complete Boxes are locked.
+    // Their tiles are visible but cannot be discarded.
+    if (box.visibility === "exposed") {
+      return (
+        '<span class="discard-tile exposed-locked">' +
+          renderCoachTile(tileKey) +
+        '</span>'
+      );
+    }
+
+    // Hidden Complete Box tiles remain discardable.
+    return (
+      '<button class="discard-tile" ' +
+      'data-key="' + tileKey + '" ' +
+      'onclick="selectDiscardTile(\'' +
+      tileKey +
+      '\', this)">' +
+        renderCoachTile(tileKey) +
+      '</button>'
+    );
+  }).join("");
+
+
+        html +=
+          '<div class="hand-section box-card complete-box">' +
+            '<div class="hand-section-title">' +
+              'CB' +
+              box.boxId +
+              ' — ' +
+              box.type.charAt(0).toUpperCase() +
+              box.type.slice(1) +
+              (
+                box.type === "eye"
+                  ? ""
+                  : " — " +
+                    (
+                      box.visibility === "exposed"
+                        ? "Exposed"
+                        : "Hidden"
+                    )
+              ) +
+            '</div>' +
+            tileHtml +
+          '</div>';
+      }
+    );
+
+    html += '</div>';
+  }
 
   document.getElementById(
     "discardDisplay"
@@ -1282,20 +1378,13 @@ html += '</div>';
 
   selectedDiscardTileKey = null;
 
-  const btn =
-    document.getElementById(
-      "confirmDiscardBtn"
-    );
-
-  btn.disabled = true;
-  btn.classList.remove("enabled");
-  btn.classList.add("disabled");
 
   document.getElementById(
     "discardMeta"
   ).textContent =
     "Select the tile you want to discard.";
 }
+
 
 function buildDiscardDisplay() {
   // v1.19.6 retained hot-fix:
@@ -1344,22 +1433,19 @@ function buildDiscardDisplay() {
     html || '<span class="empty-note">No tiles available to discard.</span>';
 
   selectedDiscardTileKey = null;
-  const btn = document.getElementById("confirmDiscardBtn");
-  btn.disabled = true;
-  btn.classList.remove("enabled");
-  btn.classList.add("disabled");
-  document.getElementById("discardMeta").textContent = "Enter the tile you discarded.";
+  
+  document.getElementById("discardMeta").textContent =
+  "Select the tile you want to discard.";
 }
 
 function cancelDiscard() { showHD(); }
 
 function showInsightPlaceholder() {
-  window.alert("Insight will provide discard recommendations in v2.0.\n\nFor now, continue selecting and confirming your discard.");
+  window.alert(
+    "Insight is coming soon.\n\nIt will provide discard recommendations based on your current hand structure."
+  );
 }
 
-function showInsightPlaceholder() {
-  window.alert("Insight will provide discard recommendations in v2.0.\n\nFor now, continue selecting and confirming your discard.");
-}
 
 function correctLastEntry() {
   if (!lastActionSnapshot || !lastActionType) return;
