@@ -1004,3 +1004,13 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 
   flex: 0 0 auto;
   margin: 1px;
 }
+
+/* Rapid Discard — Safari mobile DB tile fit */
+@media (max-width: 480px) {
+  #discardDisplay .discard-db-tile-row .discard-tile {
+    width: auto;
+    min-width: 0;
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+}
