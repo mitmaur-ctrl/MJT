@@ -1014,3 +1014,13 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 
     padding-right: 4px;
   }
 }
+
+/* Rapid Discard — align DB tile rows */
+@media (max-width: 480px) {
+  #discardDisplay .developing-area .developing-box .hand-section-title {
+    min-height: 2.4em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
