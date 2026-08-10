@@ -989,3 +989,18 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 
   line-height: 1.2;
 }
 
+/* Rapid Discard — keep tiles within each DB side by side and close together */
+#discardDisplay .discard-db-tile-row {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0;
+}
+
+#discardDisplay .discard-db-tile-row .discard-tile {
+  flex: 0 0 auto;
+  margin: 1px;
+}
