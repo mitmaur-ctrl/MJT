@@ -1288,15 +1288,17 @@ let html = "";
         }).join("");
 
       html +=
-        '<div class="hand-section box-card developing-box">' +
-          '<div class="hand-section-title">' +
-            'DB' +
-            boxNumber +
-            ' — ' +
-            getBoxTypeLabel(box.type) +
-          '</div>' +
-          tileHtml +
-        '</div>';
+  '<div class="hand-section box-card developing-box">' +
+    '<div class="hand-section-title">' +
+      'DB' +
+      boxNumber +
+      ' — ' +
+      getBoxTypeLabel(box.type) +
+    '</div>' +
+    '<div class="discard-db-tile-row">' +
+      tileHtml +
+    '</div>' +
+  '</div>';
     });
 
     html += '</div>';
