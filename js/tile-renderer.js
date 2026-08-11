@@ -67,10 +67,11 @@ function renderCoachTile(tileKey, options = {}) {
     ? (indexMap[tileKey] || "")
     : "";
 
-  return (
-    '<span class="coach-tile' +
-      (extraClass ? " " + extraClass : "") +
-    '">' +
+ return (
+  '<span class="coach-tile' +
+  (extraClass ? " " + extraClass : "") +
+  '" data-key="' + tileKey + '">' +
+
 
       '<img class="coach-tile-image" ' +
         'src="' + getTileImagePath(tileKey) + '" ' +

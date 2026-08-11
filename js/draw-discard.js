@@ -620,6 +620,7 @@ const preDrawSagasaPong =
 
 counts[selectedDrawTileKey] += 1;
 syncEscaleraAfterHandChange();
+syncSevenPairsAfterHandChange();
 
 if (gameAction === "claim") {
   const currentResult = evaluate17TE(
@@ -980,6 +981,8 @@ if (mmrState.action === "hidden-news-after-draw") {
   mmrState.tileKey;
 
 counts[selectedTileKey] += 1;
+syncEscaleraAfterHandChange();
+syncSevenPairsAfterHandChange();
 
 
   const protectedInput =
@@ -1135,6 +1138,44 @@ function selectDiscardTile(key, tileElement = null) {
   confirmDiscard();
 }
 
+function requestCHDDiscardConfirmation() {
+  if (gameAction !== "discard") return;
+
+  if (!selectedDiscardTileKey) {
+    showToast("Select a tile to discard.");
+    return;
+  }
+
+  const tileName =
+  tileLabels[selectedDiscardTileKey] ||
+  selectedDiscardTileKey;
+
+document
+  .getElementById("chdDiscardConfirmMessage")
+  .innerHTML =  
+    '<div class="discard-confirm-tile">' +
+      renderCoachTile(selectedDiscardTileKey) +
+    '</div>' +
+    '<div>' + tileName + '</div>';
+
+  document
+    .getElementById("chdDiscardConfirmDialog")
+    .classList.remove("hidden");
+}
+
+function cancelCHDDiscardConfirmation() {
+  document
+    .getElementById("chdDiscardConfirmDialog")
+    .classList.add("hidden");
+}
+
+function confirmCHDDiscardSelection() {
+  document
+    .getElementById("chdDiscardConfirmDialog")
+    .classList.add("hidden");
+
+  confirmDiscard();
+}
 
 function confirmDiscard() {
   if (!selectedDiscardTileKey) {
@@ -1149,10 +1190,8 @@ function confirmDiscard() {
 
   counts[selectedDiscardTileKey] -= 1;
   syncEscaleraAfterHandChange();
+  syncSevenPairsAfterHandChange();
   protectedECTileKey = null;
-
-
-  syncEscaleraAfterHandChange();
 
   lockHandContext();
 
@@ -1225,11 +1264,14 @@ let html = "";
 ];
 
   if (
-    (escaleraMode &&
-      escaleraBoxState.active &&
-      escaleraBoxState.candidateTileKeys.length > 0) ||
-    activeBoxes.length > 0
-  ) {
+  (escaleraMode &&
+    escaleraBoxState.active &&
+    escaleraBoxState.candidateTileKeys.length > 0) ||
+  (sevenPairsMode &&
+    sevenPairsBoxState.active &&
+    sevenPairsBoxState.pairTileKeys.length > 0) ||
+  activeBoxes.length > 0
+) {
     html +=
       '<div class="developing-area">';
 
@@ -1266,6 +1308,51 @@ let html = "";
           escaleraTileHtml +
         '</div>';
     }
+
+if (
+  sevenPairsMode &&
+  sevenPairsBoxState.active &&
+  sevenPairsBoxState.pairTileKeys.length > 0
+) {
+  const sevenPairsBoxLabel =
+    sevenPairsBoxState.complete
+      ? (
+          ruleset === "filipino16"
+            ? "Siete Pares Box — Complete"
+            : "Seven Pairs Box — Complete"
+        )
+      : (
+          ruleset === "filipino16"
+            ? "Siete Pares Box"
+            : "Seven Pairs Box"
+        );
+
+  const sevenPairsTileHtml =
+  sevenPairsBoxState.pairTileKeys
+    .map(function(tileKey) {
+      const tileHtml =
+        '<button class="discard-tile" ' +
+        'data-key="' + tileKey + '" ' +
+        'onclick="selectDiscardTile(\'' +
+        tileKey +
+        '\', this)">' +
+          renderCoachTile(tileKey) +
+        '</button>';
+
+      return tileHtml + tileHtml;
+    })
+    .join("");
+
+  html +=
+    '<div class="hand-section box-card developing-box seven-pairs-box">' +
+      '<div class="hand-section-title">' +
+        sevenPairsBoxLabel +
+      '</div>' +
+      '<div class="discard-db-tile-row">' +
+        sevenPairsTileHtml +
+      '</div>' +
+    '</div>';
+}
 
     const firstActiveBoxNumber =
   structureState.completeBoxes.length + 1;

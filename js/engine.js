@@ -535,7 +535,8 @@ const halfEye =
   findHalfEye(
     remainingCounts,
     developingBoxes,
-    completeBoxes
+    completeBoxes,
+    engineInput
   );
 
 const reserves =
@@ -560,6 +561,13 @@ const mahjong =
 
 let mahjongWatch = false;
 let mahjongWatchTiles = [];
+
+const escaleraMahjongWatch =
+  engineInput.escaleraProtectedTileKeys &&
+  engineInput.escaleraProtectedTileKeys.length === 9 &&
+  completeBoxes.length === 2 &&
+  halfEye.length === 1 &&
+  reserves.length === 0;
 
 if (!options.skipMahjongWatch && !mahjong) {
   for (const tileKey in engineInput.counts) {
@@ -642,7 +650,8 @@ canonicalStructureState =
   }
 
   mahjongWatch =
-    mahjongWatchTiles.length > 0;
+  escaleraMahjongWatch ||
+  mahjongWatchTiles.length > 0;
 }
 
 
@@ -896,7 +905,12 @@ function findIncomingTileMeldCandidates(
   engineInput,
   incomingTileKey
 ) {
-  const counts = engineInput.counts;
+  const structuralInput =
+    getStructuralEngineInput(engineInput);
+
+  const counts =
+    structuralInput.counts;
+
   const candidates = [];
 
   // 1. NEWS candidate.
@@ -1844,13 +1858,32 @@ function findEWDevelopingBoxes(
 function findHalfEye(
   remainingCounts,
   developingBoxes,
-  completeBoxes
+  completeBoxes,
+  engineInput
 ) {
-  // HE exists only when exactly 5 Complete Boxes
-  // have already been formed.
-  if (completeBoxes.length !== 5) {
-    return [];
-  }
+  // Normal 6BT:
+// HE exists after 5 Complete Boxes.
+//
+// Escalera 6BT:
+// A completed Escalera is protected outside the
+// ordinary Complete Box array, so HE exists after
+// 2 ordinary Complete Boxes + the completed Escalera.
+
+const completedEscalera =
+  engineInput &&
+  engineInput.escaleraProtectedTileKeys &&
+  engineInput.escaleraProtectedTileKeys.length === 9;
+
+const halfEyeEligible =
+  completeBoxes.length === 5 ||
+  (
+    completedEscalera &&
+    completeBoxes.length === 2
+  );
+
+if (!halfEyeEligible) {
+  return [];
+}
 
   const workingCounts = { ...remainingCounts };
 

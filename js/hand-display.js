@@ -16,6 +16,12 @@ No game engine logic belongs in this file.
 ==================================================
 */
 
+// Coaching View presentation form.
+// "short" = compact live-play layout.
+// "long" = expanded Pathways / teaching layout.
+window.coachViewForm = "short";
+
+
 function getTileGroups() {
   const groupMap = MJC_TILE_GROUP_DEFINITIONS;
 
@@ -160,6 +166,9 @@ function buildStartingHandDisplay() {
   startingStructureState.completeBoxes
  );
 
+  checkSevenPairsOpportunity(
+    startingStructureState
+  );
 
   const handDisplay =
   document.getElementById("handDisplay");
@@ -208,6 +217,32 @@ function getMahjongResultMessage() {
 
   return "That's Mahjong!";
 }
+
+function selectSVDiscardTile(tileKey, tileElement) {
+  if (
+    hdMode !== "current" ||
+    gameAction !== "discard"
+  ) {
+    return;
+  }
+
+  if (!tileKey || counts[tileKey] <= 0) {
+    return;
+  }
+
+  selectedDiscardTileKey = tileKey;
+
+  document
+    .querySelectorAll("#handDisplay .hand-tile.discard-selected")
+    .forEach(function(tile) {
+      tile.classList.remove("discard-selected");
+    });
+
+  if (tileElement) {
+    tileElement.classList.add("discard-selected");
+  }
+}
+
 
 
 function buildCurrentHandDisplay() {
@@ -338,11 +373,12 @@ checkBOLOEyesOpportunity(result, eyeCandidates);
           !drawnHighlightUsed;
 
         groupHtml +=
-          '<span class="hand-tile' +
-          (isLastDrawn ? ' last-drawn' : '') +
-          '">' +
-          tileLabels[key] +
-          '</span>';
+  '<span class="hand-tile' +
+  (isLastDrawn ? ' last-drawn' : '') +
+  '" data-key="' + key + '">' +
+  tileLabels[key] +
+  '</span>';
+
 
         if (isLastDrawn) {
           drawnHighlightUsed = true;
@@ -471,8 +507,39 @@ if (coachingOn) {
 } else {
   handDisplay.innerHTML = html;
   handDisplay.classList.remove("hidden");
+
+  if (
+    hdMode === "current" &&
+    gameAction === "discard"
+  ) {
+    handDisplay
+      .querySelectorAll(".hand-tile[data-key]")
+      .forEach(function(tile) {
+        tile.addEventListener("click", function() {
+          selectSVDiscardTile(
+            tile.dataset.key,
+            tile
+          );
+        });
+      });
+
+    if (selectedDiscardTileKey) {
+      const selectedTile =
+        handDisplay.querySelector(
+          '.hand-tile[data-key="' +
+          selectedDiscardTileKey +
+          '"]'
+        );
+
+      if (selectedTile) {
+        selectedTile.classList.add("discard-selected");
+      }
+    }
+  }
 }
 }
+
+
 
 function buildHandDisplay() {
   if (hdMode === "current") buildCurrentHandDisplay();
@@ -650,7 +717,7 @@ if (gameAction === "mahjong") {
 '<button type="button" id="sixBoxTheoryLink" class="six-box-link">Six Box Theory™</button>.<br>' +
       (gameAction === "draw"
           ? "Prepare to Draw or Claim.<br>Press Draw or Claim when ready."
-          : "Prepare to Discard.<br>Press Discard when ready.");
+          : "Select a tile to discard.<br>Press Discard when ready.");
 
 const sixBoxTheoryLink =
   document.getElementById("sixBoxTheoryLink");
@@ -673,7 +740,7 @@ if (sixBoxTheoryLink) {
     : (
         gameAction === "draw"
           ? "Prepare to Draw or Claim.<br>Press Draw or Claim when ready."
-          : "Prepare to Discard.<br>Press Discard when ready."
+          : "Select a tile to discard.<br>Press Discard when ready."
       );
 
 }
@@ -698,7 +765,7 @@ if (sixBoxTheoryLink) {
     : (
         gameAction === "draw"
           ? "Prepare to Draw or Claim.<br>Press Draw or Claim when ready."
-          : "Prepare to Discard.<br>Press Discard when ready."
+          : "Select a tile to discard.<br>Press Discard when ready."
       );
   handInstruction.classList.remove("hidden");
 
@@ -747,6 +814,417 @@ function renderEscaleraBox(highlightState) {
 }
 
 
+function renderEscaleraShortForm(
+  completeBoxes,
+  developingBoxes,
+  halfEye,
+  reserves,
+  highlightState
+) {
+  let html = "";
+
+  /*
+  ================================================
+  ESCALERA SHORT-FORM STRUCTURE
+
+  Escalera target = 4 structural boxes total.
+
+  The Escalera itself occupies one box:
+  - incomplete = Developing Box
+  - complete   = Complete Box
+
+  Remaining structures fill the other positions.
+  ================================================
+  */
+
+  const supportCounts = { ...counts };
+
+  /*
+  Reserve one copy of every tile currently assigned
+  to the Escalera.
+  */
+
+  escaleraBoxState.candidateTileKeys.forEach(function(tileKey) {
+    supportCounts[tileKey] =
+      Math.max(
+        0,
+        (supportCounts[tileKey] || 0) - 1
+      );
+  });
+
+  function canUseSupportTiles(tileKeys) {
+    const needed = {};
+
+    tileKeys.forEach(function(tileKey) {
+      needed[tileKey] =
+        (needed[tileKey] || 0) + 1;
+    });
+
+    return Object.keys(needed).every(function(tileKey) {
+      return (
+        (supportCounts[tileKey] || 0) >=
+        needed[tileKey]
+      );
+    });
+  }
+
+  function consumeSupportTiles(tileKeys) {
+    tileKeys.forEach(function(tileKey) {
+      supportCounts[tileKey] -= 1;
+    });
+  }
+
+  /*
+  ================================================
+  Find supporting Complete Boxes first.
+  ================================================
+  */
+
+  const supportingCBs = [];
+
+  completeBoxes.forEach(function(box) {
+    if (
+      supportingCBs.length < 3 &&
+      canUseSupportTiles(box.tiles)
+    ) {
+      supportingCBs.push(box);
+      consumeSupportTiles(box.tiles);
+    }
+  });
+
+  /*
+  Escalera's structural position comes after any
+  supporting CBs already complete.
+  */
+
+  const escaleraBoxNumber =
+    supportingCBs.length + 1;
+
+  /*
+  ================================================
+  Find remaining Developing Boxes.
+
+  Total structural target is always 4, including
+  the Escalera itself.
+  ================================================
+  */
+
+  const supportingDBs = [];
+
+  const maxSupportingDBs =
+    Math.max(
+      0,
+      3 - supportingCBs.length
+    );
+
+  developingBoxes.forEach(function(box) {
+    if (
+      supportingDBs.length < maxSupportingDBs &&
+      canUseSupportTiles(box.tiles)
+    ) {
+      supportingDBs.push({
+        kind: "developing",
+        box: box
+      });
+
+      consumeSupportTiles(box.tiles);
+    }
+  });
+
+  if (
+    supportingDBs.length < maxSupportingDBs &&
+    halfEye &&
+    halfEye.length > 0 &&
+    canUseSupportTiles(halfEye[0].tiles)
+  ) {
+    supportingDBs.push({
+      kind: "halfEye",
+      box: halfEye[0]
+    });
+
+    consumeSupportTiles(halfEye[0].tiles);
+  }
+
+  /*
+  ================================================
+  Reserves
+  ================================================
+  */
+
+  html += renderReserveArea(
+    reserves,
+    highlightState
+  );
+
+  /*
+  ================================================
+  Developing Boxes
+  ================================================
+  */
+
+  html +=
+    '<div class="developing-area">' +
+      '<div class="engine-title">Developing Boxes</div>';
+
+  /*
+  Incomplete Escalera = DB.
+  */
+
+  if (!escaleraBoxState.complete) {
+    const tileHtml =
+      escaleraBoxState.candidateTileKeys
+        .map(function(tileKey) {
+          const isLastDrawn =
+            tileKey === lastDrawnTileKey &&
+            !highlightState.used;
+
+          if (isLastDrawn) {
+            highlightState.used = true;
+          }
+
+          return renderCoachTile(tileKey, {
+            extraClass:
+              isLastDrawn ? "last-drawn" : ""
+          });
+        })
+        .join("");
+
+    html +=
+      '<div class="hand-section box-card developing-box escalera-box">' +
+        '<div class="hand-section-title">DB' +
+          escaleraBoxNumber +
+          ' — Escalera Candidate</div>' +
+        tileHtml +
+      '</div>';
+  }
+
+  /*
+  Supporting DB numbering begins after:
+  supporting CBs + Escalera position.
+  */
+
+  supportingDBs.forEach(function(item, index) {
+    const box = item.box;
+
+    const dbNumber =
+      supportingCBs.length +
+      2 +
+      index;
+
+    const tileHtml =
+      box.tiles.map(function(tileKey) {
+        const isLastDrawn =
+          tileKey === lastDrawnTileKey &&
+          !highlightState.used;
+
+        if (isLastDrawn) {
+          highlightState.used = true;
+        }
+
+        return renderCoachTile(tileKey, {
+          extraClass:
+            isLastDrawn ? "last-drawn" : ""
+        });
+      }).join("");
+
+    const label =
+      item.kind === "halfEye"
+        ? "Half Eye"
+        : getBoxTypeLabel(box.type);
+
+    html +=
+      '<div class="hand-section box-card developing-box">' +
+        '<div class="hand-section-title">DB' +
+          dbNumber + ' — ' +
+          label +
+        '</div>' +
+        tileHtml +
+      '</div>';
+  });
+
+  /*
+  Empty DB positions preserve the four-box model.
+  */
+
+  const occupiedBoxCount =
+    supportingCBs.length +
+    1 +
+    supportingDBs.length;
+
+  for (
+    let boxNumber = occupiedBoxCount + 1;
+    boxNumber <= 4;
+    boxNumber++
+  ) {
+    html +=
+      '<div class="hand-section box-card empty-box">' +
+        '<div class="hand-section-title">DB' +
+          boxNumber +
+        '</div>' +
+        '<span class="empty-note">Empty</span>' +
+      '</div>';
+  }
+
+  html += '</div>';
+
+  /*
+  ================================================
+  Completed Boxes
+  ================================================
+  */
+
+  const hasCompletedEscalera =
+    escaleraBoxState.complete === true;
+
+  if (
+    supportingCBs.length > 0 ||
+    hasCompletedEscalera
+  ) {
+    html +=
+      '<div class="completed-area">' +
+        '<div class="engine-title">Completed Boxes</div>';
+
+    supportingCBs.forEach(function(box, index) {
+      const cbNumber = index + 1;
+
+      const tileHtml =
+        box.tiles.map(function(tileKey) {
+          const isLastDrawn =
+            tileKey === lastDrawnTileKey &&
+            !highlightState.used;
+
+          if (isLastDrawn) {
+            highlightState.used = true;
+          }
+
+          return renderCoachTile(tileKey, {
+            extraClass:
+              isLastDrawn ? "last-drawn" : ""
+          });
+        }).join("");
+
+      const cbExtraClass =
+        box.type === "kang"
+          ? " wide-box"
+          : "";
+
+      html +=
+        '<div class="hand-section box-card complete-box' +
+          cbExtraClass +
+        '">' +
+          '<div class="hand-section-title">CB' +
+            cbNumber + ' — ' +
+            box.type.charAt(0).toUpperCase() +
+            box.type.slice(1) +
+            (
+              box.type === "eye"
+                ? ""
+                : " — " +
+                  (
+                    box.visibility === "exposed"
+                      ? "Exposed"
+                      : "Hidden"
+                  )
+            ) +
+          '</div>' +
+          tileHtml +
+        '</div>';
+    });
+
+    /*
+    Complete Escalera becomes a CB in the same
+    structural position it occupied as a DB.
+    */
+
+    if (hasCompletedEscalera) {
+      const tileHtml =
+        escaleraBoxState.candidateTileKeys
+          .map(function(tileKey) {
+            const isLastDrawn =
+              tileKey === lastDrawnTileKey &&
+              !highlightState.used;
+
+            if (isLastDrawn) {
+              highlightState.used = true;
+            }
+
+            return renderCoachTile(tileKey, {
+              extraClass:
+                isLastDrawn ? "last-drawn" : ""
+            });
+          })
+          .join("");
+
+      html +=
+        '<div class="hand-section box-card complete-box escalera-box">' +
+          '<div class="hand-section-title">CB' +
+            escaleraBoxNumber +
+            ' — Escalera</div>' +
+          tileHtml +
+        '</div>';
+    }
+
+    html += '</div>';
+  }
+
+  return html;
+}
+
+function renderSevenPairsBox(highlightState) {
+  if (
+    !sevenPairsMode ||
+    !sevenPairsBoxState.active ||
+    !sevenPairsBoxState.pairTileKeys.length
+  ) {
+    return "";
+  }
+
+  const tileHtml =
+    sevenPairsBoxState.pairTileKeys
+      .map(function(tileKey) {
+        let pairHtml = "";
+
+        for (let i = 0; i < 2; i++) {
+          const isLastDrawn =
+            tileKey === lastDrawnTileKey &&
+            !highlightState.used;
+
+          if (isLastDrawn) {
+            highlightState.used = true;
+          }
+
+          pairHtml += renderCoachTile(tileKey, {
+            extraClass:
+              isLastDrawn ? "last-drawn" : ""
+          });
+        }
+
+        return pairHtml;
+      })
+      .join("");
+
+  const sevenPairsBoxLabel =
+    sevenPairsBoxState.complete
+      ? (
+          ruleset === "filipino16"
+            ? "Siete Pares Box — Complete"
+            : "Seven Pairs Box — Complete"
+        )
+      : (
+          ruleset === "filipino16"
+            ? "Siete Pares Box"
+            : "Seven Pairs Box"
+        );
+
+  return (
+    '<div class="hand-section box-card developing-box seven-pairs-box">' +
+      '<div class="hand-section-title">' +
+        sevenPairsBoxLabel +
+      '</div>' +
+      tileHtml +
+    '</div>'
+  );
+}
 
 function renderActiveArea(
   completeBoxes,
@@ -759,6 +1237,7 @@ function renderActiveArea(
     '<div class="engine-title">Developing Boxes</div>';
 
   html += renderEscaleraBox(highlightState);
+  html += renderSevenPairsBox(highlightState);
 
   const firstActiveBoxNumber = completeBoxes.length + 1;
 
@@ -781,13 +1260,21 @@ function renderActiveArea(
 
 }).join("");
 
-    html +=
-  '<div class="hand-section box-card developing-box">' +
+    const dbExtraClass =
+  box.type === "cpc"
+    ? " wide-box"
+    : "";
+
+html +=
+  '<div class="hand-section box-card developing-box' +
+    dbExtraClass +
+  '">' +
     '<div class="hand-section-title">DB' + boxNumber + ' — ' +
       getBoxTypeLabel(box.type) +
     '</div>' +
     tileHtml +
   '</div>';
+
   });
 
 if (halfEye && halfEye.length > 0) {
@@ -911,8 +1398,15 @@ const tileHtml = box.tiles.map(function(tileKey) {
 
 }).join("");
 
+  const cbExtraClass =
+    box.type === "kang"
+      ? " wide-box"
+      : "";
+
     html +=
-  '<div class="hand-section box-card complete-box">' +
+  '<div class="hand-section box-card complete-box' +
+    cbExtraClass +
+  '">' +
   '<div class="hand-section-title">CB' + box.boxId + ' — ' +
     box.type.charAt(0).toUpperCase() + box.type.slice(1) +
     (
@@ -931,10 +1425,45 @@ const tileHtml = box.tiles.map(function(tileKey) {
 return html;
 }
 
+function selectCHDDiscardTile(tileKey, tileElement) {
+  if (
+    hdMode !== "current" ||
+    gameAction !== "discard"
+  ) {
+    return;
+  }
+
+  if (!tileKey || counts[tileKey] <= 0) {
+    return;
+  }
+
+  selectedDiscardTileKey = tileKey;
+
+  document
+    .querySelectorAll("#enginePanel .coach-tile.discard-selected")
+    .forEach(function(tile) {
+      tile.classList.remove("discard-selected");
+    });
+
+  if (tileElement) {
+    tileElement.classList.add("discard-selected");
+  }
+}
+
+
 function renderCoachView() {
   const enginePanel =
     document.getElementById("enginePanel");
 
+enginePanel.classList.toggle(
+  "coach-short-form",
+  window.coachViewForm === "short"
+);
+
+enginePanel.classList.toggle(
+  "coach-long-form",
+  window.coachViewForm === "long"
+);
 
   const result =
     evaluate17TE(
@@ -994,24 +1523,68 @@ const highlightState = {
     '</div>' +
   '</div>' +
 
-  renderActiveArea(
-    structureState.completeBoxes,
-    structureState.developingBoxes,
-    structureState.halfEye,
-    highlightState
-  ) +
-  renderReserveArea(
-    structureState.reserves,
-    highlightState
-  ) +
-  renderCompletedArea(
-    structureState.completeBoxes,
-    highlightState
-  );
+  (
+  window.coachViewForm === "short" &&
+  escaleraMode &&
+  escaleraBoxState.active
+    ? renderEscaleraShortForm(
+        structureState.completeBoxes,
+        structureState.developingBoxes,
+        structureState.halfEye,
+        structureState.reserves,
+        highlightState
+      )
+    : (
+        renderActiveArea(
+          structureState.completeBoxes,
+          structureState.developingBoxes,
+          structureState.halfEye,
+          highlightState
+        ) +
+        renderReserveArea(
+          structureState.reserves,
+          highlightState
+        ) +
+        renderCompletedArea(
+          structureState.completeBoxes,
+          highlightState
+        )
+      )
+)
+
+if (
+  hdMode === "current" &&
+  gameAction === "discard"
+) {
+  enginePanel
+    .querySelectorAll(".coach-tile[data-key]")
+    .forEach(function(tile) {
+      tile.addEventListener("click", function() {
+        selectCHDDiscardTile(
+          tile.dataset.key,
+          tile
+        );
+      });
+    });
+
+  if (selectedDiscardTileKey) {
+    const selectedTile =
+      enginePanel.querySelector(
+        '.coach-tile[data-key="' +
+        selectedDiscardTileKey +
+        '"]'
+      );
+
+    if (selectedTile) {
+      selectedTile.classList.add("discard-selected");
+    }
+  }
 }
 
+}
 
 function toggleCoaching() {
+
   coachingOn = !coachingOn;
 
   const coachingBtn =
