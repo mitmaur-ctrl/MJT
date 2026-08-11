@@ -29,6 +29,77 @@ let escaleraBoxState = {
   eyeNeeded: true
 };
 
+let sevenPairsBoxState = {
+  active: false,
+  pairTileKeys: [],
+  pairCount: 0,
+  complete: false
+};
+
+function resetSevenPairsBoxState() {
+  sevenPairsBoxState.active = false;
+  sevenPairsBoxState.pairTileKeys = [];
+  sevenPairsBoxState.pairCount = 0;
+  sevenPairsBoxState.complete = false;
+}
+
+
+function getSevenPairsCandidates(tileCounts) {
+  const pairTileKeys = [];
+
+  Object.keys(tileCounts).forEach(function(tileKey) {
+    const tileCount = tileCounts[tileKey] || 0;
+
+    const pairCopies =
+      Math.floor(tileCount / 2);
+
+    for (let i = 0; i < pairCopies; i++) {
+      pairTileKeys.push(tileKey);
+    }
+  });
+
+  return pairTileKeys;
+}
+
+
+function updateSevenPairsBoxState(tileCounts) {
+  if (
+    !sevenPairsMode ||
+    !sevenPairsBoxState.active
+  ) {
+    return false;
+  }
+
+  const previousTileKeys =
+    [...sevenPairsBoxState.pairTileKeys];
+
+  const previousCount =
+    sevenPairsBoxState.pairCount;
+
+  const nextTileKeys =
+    getSevenPairsCandidates(tileCounts);
+
+  const nextCount =
+    nextTileKeys.length;
+
+  sevenPairsBoxState.pairTileKeys =
+    [...nextTileKeys];
+
+  sevenPairsBoxState.pairCount =
+    nextCount;
+
+  sevenPairsBoxState.complete =
+    nextCount >= 7;
+
+  const changed =
+    previousCount !== nextCount ||
+    previousTileKeys.join("|") !==
+    nextTileKeys.join("|");
+
+  return changed;
+}
+
+
 function resetEscaleraBoxState() {
   escaleraBoxState.active = false;
   escaleraBoxState.suit = null;
@@ -158,6 +229,38 @@ function updateEscaleraBoxState(
 
   return changed;
 }
+
+function syncSevenPairsAfterHandChange() {
+  if (
+    !sevenPairsMode ||
+    !sevenPairsBoxState.active
+  ) {
+    return;
+  }
+
+  updateSevenPairsBoxState(counts);
+}
+
+function isSevenPairsMahjong(structureState) {
+  if (
+    !sevenPairsMode ||
+    !sevenPairsBoxState.active ||
+    !sevenPairsBoxState.complete
+  ) {
+    return false;
+  }
+
+  const hasRequiredMeld =
+    structureState.completeBoxes.some(function(box) {
+      return (
+        box.type === "chow" ||
+        box.type === "pong"
+      );
+    });
+
+  return hasRequiredMeld;
+}
+
 
 function syncEscaleraAfterHandChange() {
   if (
@@ -323,7 +426,8 @@ function checkSevenPairsOpportunity(structureState) {
       }
     );
 
-  const pairCount = eyeCandidates.length;
+  const pairCount =
+  getSevenPairsCandidates(counts).length;
   const overPairedThreshold = 4;
 
   if (pairCount >= overPairedThreshold) {

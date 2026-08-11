@@ -893,6 +893,8 @@ function showOverPairedDialog(pairCount) {
 
 function confirmSevenPairs() {
   sevenPairsMode = true;
+  sevenPairsBoxState.active = true;
+  updateSevenPairsBoxState(counts);
 
   const title =
     document.querySelector(
@@ -908,18 +910,18 @@ function confirmSevenPairs() {
     title.textContent = "Siete Pares Selected";
 
     message.innerHTML =
-      "Coaching has been suspended while you pursue<br>" +
-      "Siete Pares (Seven Pairs).";
+  "MJC will continue coaching while you pursue<br>" +
+  "Siete Pares (Seven Pairs).";
   } else {
     title.textContent = "Seven Pairs Selected";
 
     message.innerHTML =
-      "Coaching has been suspended while you pursue<br>" +
+      "MJC will continue coaching while you pursue<br>" +
       "Seven Pairs.";
-  }
+}
 
   document
-    .getElementById("overPairedDialog")
+    .getElementById("overPairedDialog") 
     .classList.add("hidden");
 
   document
@@ -1102,6 +1104,12 @@ function closeSevenPairsAcknowledgmentDialog() {
   document
     .getElementById("sevenPairsAcknowledgmentDialog")
     .classList.add("hidden");
+
+  buildHandDisplay();
+
+  if (coachingOn) {
+    renderCoachView();
+  }
 }
 
 function continueSevenPairs() {
@@ -1114,6 +1122,7 @@ function continueSevenPairs() {
 
 function endSevenPairs() {
   sevenPairsMode = false;
+  resetSevenPairsBoxState();
 
   document
     .getElementById("sevenPairsStatusDialog")
