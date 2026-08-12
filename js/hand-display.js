@@ -1127,8 +1127,10 @@ function renderEscaleraShortForm(
                   )
             ) +
           '</div>' +
-          tileHtml +
-        '</div>';
+  '<div class="cb-tile-row">' +
+    tileHtml +
+  '</div>' +
+'</div>';
     });
 
     /*
@@ -1416,8 +1418,10 @@ const tileHtml = box.tiles.map(function(tileKey) {
           (box.visibility === "exposed" ? "Exposed" : "Hidden")
     ) +
   '</div>' +
+  '<div class="cb-tile-row">' +
     tileHtml +
-  '</div>';
+  '</div>' +
+'</div>';
   });
 
   html += '</div>';
