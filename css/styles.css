@@ -351,6 +351,10 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 
   font-weight: bold;
 }
 
+.hd-action-row {
+  margin-top: 8px;
+}
+
 #discardBtn {
   width: 100%;
   max-width: 420px;
@@ -2315,6 +2319,30 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 
    ========================================= */
 
 @media (max-width: 768px) {
+#acquire-four-row,
+#acquire-four-row .turn-button {
+  box-sizing: border-box;
+}
+
+#acquire-four-row {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 6px;
+}
+
+#acquire-four-row .turn-button {
+  flex: 1 1 0;
+  width: auto;
+  min-width: 0;
+  min-height: 52px;
+  padding: 10px 4px;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+
   #acquireActionGroup {
     position: fixed;
     left: 50%;
@@ -2333,7 +2361,7 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 
     box-shadow: 0 -3px 14px rgba(0,0,0,.18);
 
     z-index: 1200;
-    gap: 4px;
+    gap: 0;
   }
 
   #acquireActionGroup .acquire-action-label {
@@ -2342,6 +2370,7 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 
     margin: 0 0 2px;
   }
 
+
   #acquireActionGroup .acquire-draw-row,
   #acquireActionGroup .acquire-meld-row {
     margin: 0;
@@ -2349,5 +2378,24 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 
 
   #acquireActionGroup .action-button {
     min-height: 48px;
+  }
+}
+
+@media (max-width: 768px) {
+  .hd-action-row {
+    margin-top: 6px;
+  }
+}
+
+@media (max-width: 768px) {
+  .footer {
+    padding-bottom: 110px;
+  }
+}
+
+@media (max-width: 768px) {
+  #acquireActionGroup {
+    width: 330px;
+    max-width: calc(100% - 24px);
   }
 }
