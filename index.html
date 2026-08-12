@@ -9,7 +9,7 @@ Project:
 Mahjong Coach
 
 Version:
-MJC Beta v4.0
+MJC Beta v4.1
 
 Purpose:
 - Smartphone-optimized tile management vehicle
@@ -141,26 +141,18 @@ V4 = Photo Recognition
 
 
     <div id="acquireActionGroup">
-  
-<div class="acquire-action-label">
-    Draw from Wall
-  </div>
+ 
 
-  <div class="acquire-draw-row">
-    <button
+  <div id="normalAcquireRow" class="acquire-four-row">
+
+   <button
       id="drawBtn"
-      class="action-button turn-button primary-turn-button"
+      class="action-button turn-button"
       onclick="openDrawScreen()"
     >
       Draw
     </button>
-  </div>
 
-  <div class="acquire-action-label">
-    Claim a Discard
-  </div>
-
-  <div id="normalAcquireRow" class="acquire-meld-row">
     <button
       id="chowBtn"
       class="action-button turn-button"
@@ -363,7 +355,7 @@ V4 = Photo Recognition
     <button onclick="openFeedbackDialog()">Feedback</button>
     <button onclick="openSupportDialog()">Support MJC</button>
   </div>
-  <div class="footer-version">Beta v4.0</div>
+  <div class="footer-version">Beta v4.1</div>
 </div>
 
 </div>
@@ -849,7 +841,7 @@ V4 = Photo Recognition
     <h2>Feedback</h2>
     <p>Thank you for helping us improve Mahjong Coach.</p>
     <p>We welcome bug reports, suggestions, comments, and feature requests.</p>
-    <p><strong>Email:</strong> <a href="mailto:mjcfeedbackteam@gmail.com?subject=Mahjong%20Coach%20Feedback%20-%20Beta%20v4.0">mjcfeedbackteam@gmail.com</a></p>
+    <p><strong>Email:</strong> <a href="mailto:mjcfeedbackteam@gmail.com?subject=Mahjong%20Coach%20Feedback%20-%20Beta%20v4.1">mjcfeedbackteam@gmail.com</a></p>
     <p><em>Every message is read and appreciated.</em></p>
     <div class="dialog-actions">
       <button class="dialog-button primary" onclick="closeDialog('feedbackDialog')">Close</button>
@@ -887,7 +879,7 @@ Acceptance standard:
 ==================================================
 */
 
-const MJC_VERSION_LABEL = "Beta v4.0";
+const MJC_VERSION_LABEL = "Beta v4.1";
 
 const MJC_RULESET_BASE_HAND_SIZES = Object.freeze({
   filipino16: 16,
