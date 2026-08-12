@@ -2293,3 +2293,29 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 
 .coach-short-form .box-card .hand-section-title {
   margin-bottom: 4px;
 }
+
+/* =========================================
+   MOBILE SHORT-FORM — 3-TILE CBs STAY ACROSS
+   ========================================= */
+
+@media (max-width: 480px) {
+  .coach-short-form .completed-area .complete-box:not(.wide-box) {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 2px;
+  }
+
+  .coach-short-form .completed-area .complete-box:not(.wide-box)
+  .hand-section-title {
+    width: 100%;
+    flex: 0 0 100%;
+  }
+
+  .coach-short-form .completed-area .complete-box:not(.wide-box)
+  .coach-tile {
+    flex: 0 0 auto;
+    margin: 1px;
+  }
+}
