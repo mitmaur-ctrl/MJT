@@ -9,7 +9,7 @@ Project:
 Mahjong Coach
 
 Version:
-MJC Beta v4.1
+MJC Beta v4.2
 
 Purpose:
 - Smartphone-optimized tile management vehicle
@@ -181,27 +181,31 @@ V4 = Photo Recognition
 </button>
   </div>
 
-  <div id="mahjongAcquireRow" class="acquire-mahjong-row hidden">
-    <button
-      id="mahjongBtn"
-      class="action-button turn-button primary-turn-button"
-      type="button"
-      onclick="claimMahjong()"
-    >
-      Mahjong
-    </button>
-  </div>
+  <div id="mahjongAcquireRow" class="acquire-four-row hidden">
+
+  <button
+    id="mahjongDrawBtn"
+    class="action-button turn-button"
+    type="button"
+    onclick="openDrawScreen()"
+  >
+    Draw
+  </button>
+
+  <button
+    id="mahjongBtn"
+    class="action-button turn-button"
+    type="button"
+    onclick="claimMahjong()"
+  >
+    Mahjong
+  </button>
 
 </div>
 
-  <button
-    id="discardBtn"
-    class="action-button turn-button primary-turn-button hidden"
-    onclick="requestCHDDiscardConfirmation()"
-  >
-    Discard
-  </button>
+</div>
 
+ 
 </div>
 
       <div id="startingUtilityRow" class="hd-action-row hidden">
@@ -355,7 +359,7 @@ V4 = Photo Recognition
     <button onclick="openFeedbackDialog()">Feedback</button>
     <button onclick="openSupportDialog()">Support MJC</button>
   </div>
-  <div class="footer-version">Beta v4.1</div>
+  <div class="footer-version">Beta v4.2</div>
 </div>
 
 </div>
@@ -841,7 +845,7 @@ V4 = Photo Recognition
     <h2>Feedback</h2>
     <p>Thank you for helping us improve Mahjong Coach.</p>
     <p>We welcome bug reports, suggestions, comments, and feature requests.</p>
-    <p><strong>Email:</strong> <a href="mailto:mjcfeedbackteam@gmail.com?subject=Mahjong%20Coach%20Feedback%20-%20Beta%20v4.1">mjcfeedbackteam@gmail.com</a></p>
+    <p><strong>Email:</strong> <a href="mailto:mjcfeedbackteam@gmail.com?subject=Mahjong%20Coach%20Feedback%20-%20Beta%20v4.2">mjcfeedbackteam@gmail.com</a></p>
     <p><em>Every message is read and appreciated.</em></p>
     <div class="dialog-actions">
       <button class="dialog-button primary" onclick="closeDialog('feedbackDialog')">Close</button>
@@ -879,7 +883,7 @@ Acceptance standard:
 ==================================================
 */
 
-const MJC_VERSION_LABEL = "Beta v4.1";
+const MJC_VERSION_LABEL = "Beta v4.2";
 
 const MJC_RULESET_BASE_HAND_SIZES = Object.freeze({
   filipino16: 16,
