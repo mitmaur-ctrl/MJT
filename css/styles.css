@@ -2319,3 +2319,12 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 
     margin: 1px;
   }
 }
+
+/* Mobile Short-Form — compact tiles inside ordinary 3-tile CBs */
+@media (max-width: 480px) {
+  .coach-short-form .completed-area .complete-box:not(.wide-box)
+  .coach-tile {
+    width: 48px;
+    height: 64px;
+  }
+}
