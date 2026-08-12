@@ -2314,7 +2314,7 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 
    MOBILE — FLOATING ACQUIRE ACTION PANEL
    ========================================= */
 
-@media (max-width: 480px) {
+@media (max-width: 768px) {
   #acquireActionGroup {
     position: fixed;
     left: 50%;
