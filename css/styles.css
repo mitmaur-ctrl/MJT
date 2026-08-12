@@ -2325,7 +2325,7 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 
     max-width: 420px;
 
     box-sizing: border-box;
-    padding: 10px;
+    padding: 6px 10px 8px;
 
     background: rgba(255, 255, 255, 0.96);
     border: 1px solid #d0d0d0;
@@ -2333,5 +2333,13 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 
     box-shadow: 0 -3px 14px rgba(0,0,0,.18);
 
     z-index: 1200;
+  }
+
+  #acquireActionGroup p {
+    margin: 3px 0;
+  }
+
+  #acquireActionGroup .action-button {
+    min-height: 48px;
   }
 }
