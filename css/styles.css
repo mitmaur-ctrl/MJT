@@ -2294,28 +2294,18 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 
   margin-bottom: 4px;
 }
 
-/* =========================================
-   MOBILE SHORT-FORM — 3-TILE CBs STAY ACROSS
-   ========================================= */
-
+/* Mobile Short-Form — keep 3-tile CB rows horizontal */
 @media (max-width: 480px) {
-  .coach-short-form .completed-area .complete-box:not(.wide-box) {
-    display: grid;
-    grid-template-columns: repeat(3, auto);
+  .coach-short-form .completed-area .cb-tile-row {
+    display: flex;
+    flex-wrap: nowrap;
     justify-content: center;
-    align-items: end;
-    column-gap: 2px;
+    align-items: flex-end;
+    gap: 2px;
   }
 
-  .coach-short-form .completed-area .complete-box:not(.wide-box)
-  .hand-section-title {
-    grid-column: 1 / -1;
-    width: 100%;
-  }
-
-  .coach-short-form .completed-area .complete-box:not(.wide-box)
-  .coach-tile {
+  .coach-short-form .completed-area .cb-tile-row .coach-tile {
+    flex: 0 0 auto;
     margin: 1px;
   }
 }
-
