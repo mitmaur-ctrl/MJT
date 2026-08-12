@@ -241,6 +241,9 @@ function selectSVDiscardTile(tileKey, tileElement) {
   if (tileElement) {
     tileElement.classList.add("discard-selected");
   }
+
+requestCHDDiscardConfirmation();
+
 }
 
 
@@ -280,10 +283,9 @@ if (
     document.getElementById("drawBtn");
   const claimBtn =
     document.getElementById("claimBtn");
-  const discardBtn =
-    document.getElementById("discardBtn");
 
-  [drawBtn, claimBtn, discardBtn].forEach(function(button) {
+
+  [drawBtn, claimBtn].forEach(function(button) {
     if (!button) return;
 
     button.disabled = true;
@@ -560,7 +562,8 @@ function configureHDMode() {
   const pongBtn = document.getElementById("pongBtn");
   const kangBtn = document.getElementById("kangBtn");
   const mahjongBtn = document.getElementById("mahjongBtn");
-  const discardBtn = document.getElementById("discardBtn");
+  const mahjongDrawBtn = document.getElementById("mahjongDrawBtn");
+  
   const acquireActionGroup = document.getElementById("acquireActionGroup");
 
   const normalAcquireRow =
@@ -585,9 +588,9 @@ function configureHDMode() {
   enginePanel.classList.toggle("hidden", !coachingOn);
 
   drawBtn.classList.remove("hidden");
-chowBtn.classList.remove("hidden");
-pongBtn.classList.remove("hidden");
-kangBtn.classList.remove("hidden");
+  chowBtn.classList.remove("hidden");
+  pongBtn.classList.remove("hidden");
+  kangBtn.classList.remove("hidden");
 
 
 
@@ -614,10 +617,18 @@ drawBtn.disabled = !canDraw;
 chowBtn.disabled = !canMeld;
 pongBtn.disabled = !canMeld;
 kangBtn.disabled = !canMeld;
-discardBtn.disabled = !canDiscard;
+if (mahjongDrawBtn) {
+  mahjongDrawBtn.disabled = !canDraw;
+}
 
 drawBtn.classList.toggle("enabled", canDraw);
 drawBtn.classList.toggle("disabled", !canDraw);
+
+if (mahjongDrawBtn) {
+  mahjongDrawBtn.classList.toggle("enabled", canDraw);
+  mahjongDrawBtn.classList.toggle("disabled", !canDraw);
+}
+
 
 chowBtn.classList.toggle("enabled", canMeld);
 chowBtn.classList.toggle("disabled", !canMeld);
@@ -628,18 +639,14 @@ pongBtn.classList.toggle("disabled", !canMeld);
 kangBtn.classList.toggle("enabled", canMeld);
 kangBtn.classList.toggle("disabled", !canMeld);
 
-discardBtn.classList.toggle("enabled", canDiscard);
-discardBtn.classList.toggle("disabled", !canDiscard);
+
 
 acquireActionGroup.classList.toggle(
   "hidden",
   !canAcquire
 );
 
-discardBtn.classList.toggle(
-  "hidden",
-  !canDiscard
-);
+
 
 let isMahjongWatch = false;
 
@@ -1452,6 +1459,9 @@ function selectCHDDiscardTile(tileKey, tileElement) {
   if (tileElement) {
     tileElement.classList.add("discard-selected");
   }
+
+requestCHDDiscardConfirmation();
+
 }
 
 
