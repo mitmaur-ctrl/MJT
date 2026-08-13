@@ -300,19 +300,29 @@ if (
   const startingUtilityRow =
     document.getElementById("startingUtilityRow");
 
+
   const currentCorrectionRow =
-    document.getElementById("currentCorrectionRow");
+  document.getElementById("currentCorrectionRow");
 
-  const newGameRow =
-    document.getElementById("newGameRow");
+const correctLastBtn =
+  document.getElementById("correctLastBtn");
 
-  hdPrimaryRow.classList.add("hidden");
-  startingUtilityRow.classList.add("hidden");
-  currentCorrectionRow.classList.add("hidden");
+const handCorrectionBtn =
+  document.getElementById("handCorrectionBtn");
 
-  newGameRow.classList.remove("hidden");
+const newGameRow =
+  document.getElementById("newGameRow");
+
+hdPrimaryRow.classList.add("hidden");
+startingUtilityRow.classList.add("hidden");
+
+currentCorrectionRow.classList.remove("hidden");
+
+handCorrectionBtn.classList.add("hidden");
+correctLastBtn.classList.remove("hidden");
+
+newGameRow.classList.remove("hidden");
 }
-
   const structureState =
     result.structureState || result;
 
@@ -708,7 +718,10 @@ correctLastBtn.classList.toggle(
 if (gameAction === "mahjong") {
   hdPrimaryRow.classList.add("hidden");
   startingUtilityRow.classList.add("hidden");
-  currentCorrectionRow.classList.add("hidden");
+
+  currentCorrectionRow.classList.remove("hidden");
+  handCorrectionBtn.classList.add("hidden");
+  correctLastBtn.classList.remove("hidden");
 
   newGameRow.classList.remove("hidden");
 }
@@ -720,11 +733,11 @@ if (gameAction === "mahjong") {
   
   if (coachingOn) {
   handInstruction.innerHTML =
-      "Here's your hand organized using " +
-'<button type="button" id="sixBoxTheoryLink" class="six-box-link">Six Box Theory™</button>.<br>' +
-      (gameAction === "draw"
-          ? "Prepare to Draw or Claim.<br>Press Draw or Claim when ready."
-          : "Select a tile to discard.<br>Press Discard when ready.");
+  "Here's your hand organized using " +
+  '<button type="button" id="sixBoxTheoryLink" class="six-box-link">Six Box Theory™</button>.<br>' +
+  (gameAction === "draw"
+      ? "Prepare to Draw or Claim a tile."
+      : "Select a tile to discard.");
 
 const sixBoxTheoryLink =
   document.getElementById("sixBoxTheoryLink");
@@ -761,7 +774,7 @@ if (sixBoxTheoryLink) {
   }
 
   handTitle.textContent = "Current Hand";
-  handMeta.textContent = "";
+  handMeta.textContent = setupContext;
   handInstruction.innerHTML =
   kangReplacementDraw
     ? (
@@ -771,8 +784,8 @@ if (sixBoxTheoryLink) {
       )
     : (
         gameAction === "draw"
-          ? "Prepare to Draw or Claim.<br>Press Draw or Claim when ready."
-          : "Select a tile to discard.<br>Press Discard when ready."
+  ? "Prepare to Draw or Claim a tile."
+  : "Select a tile to discard."
       );
   handInstruction.classList.remove("hidden");
 
@@ -1438,11 +1451,14 @@ return html;
 
 function selectCHDDiscardTile(tileKey, tileElement) {
   if (
-    hdMode !== "current" ||
-    gameAction !== "discard"
-  ) {
-    return;
-  }
+  gameAction !== "discard" ||
+  (
+    hdMode !== "current" &&
+    !(hdMode === "starting" && role === "dealer")
+  )
+) {
+  return;
+}
 
   if (!tileKey || counts[tileKey] <= 0) {
     return;
@@ -1567,9 +1583,13 @@ const highlightState = {
 )
 
 if (
-  hdMode === "current" &&
-  gameAction === "discard"
+  gameAction === "discard" &&
+  (
+    hdMode === "current" ||
+    (hdMode === "starting" && role === "dealer")
+  )
 ) {
+
   enginePanel
     .querySelectorAll(".coach-tile[data-key]")
     .forEach(function(tile) {

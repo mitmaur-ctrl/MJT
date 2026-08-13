@@ -63,12 +63,15 @@ function selectRapidDrawNumber(number) {
 
 function restoreRapidDrawCorrection() {
   if (
-    !correctingLastEntry ||
-    correctionActionType !== "draw" ||
-    !correctionTargetTileKey
-  ) {
-    return;
-  }
+  !correctingLastEntry ||
+  (
+    correctionActionType !== "draw" &&
+    correctionActionType !== "claim"
+  ) ||
+  !correctionTargetTileKey
+) {
+  return;
+}
 
   const suitedMatch =
     correctionTargetTileKey.match(/^(char|bam|dot)([1-9])$/);
@@ -327,7 +330,9 @@ if (drawTitle) {
   }
 }
 
-if (gameAction === "draw") {
+if (correctingLastEntry) {
+  drawMeta.textContent = "Enter the correct tile.";
+} else if (gameAction === "draw") {
   drawMeta.textContent = "Enter the tile you drew.";
 } else if (claimType === "chow") {
   drawMeta.textContent = "Enter the tile you chowed.";
@@ -469,7 +474,11 @@ if (gameAction === "claim" && claimType === "kang") {
 
 
 
-if (gameAction === "claim" && claimType === "mahjong") {
+if (
+  gameAction === "claim" &&
+  claimType === "mahjong" &&
+  !correctingLastEntry
+) {
   const mahjongInput =
     MJC_STATE.getEngineInput();
 
@@ -551,13 +560,16 @@ if (isSinglePong) {
 }
 
 if (
-  incomingMeldCandidates.length > 1 ||
+  claimType !== "mahjong" &&
   (
-    gameAction === "claim" &&
-    incomingMeldCandidates.length === 1 &&
+    incomingMeldCandidates.length > 1 ||
     (
-      incomingMeldCandidates[0].type === "kang" ||
-      incomingMeldCandidates[0].type === "news"
+      gameAction === "claim" &&
+      incomingMeldCandidates.length === 1 &&
+      (
+        incomingMeldCandidates[0].type === "kang" ||
+        incomingMeldCandidates[0].type === "news"
+      )
     )
   )
 ) {
