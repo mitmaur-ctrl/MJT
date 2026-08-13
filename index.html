@@ -9,7 +9,7 @@ Project:
 Mahjong Coach
 
 Version:
-MJC Beta v4.2
+MJC Beta v4.3
 
 Purpose:
 - Smartphone-optimized tile management vehicle
@@ -128,15 +128,19 @@ V4 = Photo Recognition
   </div>
 
   <div id="hdScreen" class="hidden">
-    <div id="handTitle" class="hand-title">Starting Hand</div>
-    <div id="handMeta" class="hand-meta"></div>
-    <div id="handInstruction" class="hand-instruction hidden"></div>
-    <div id="handDisplay" class="hand-display"></div>
 
-    <div id="enginePanel" class="engine-panel hidden"></div>
+  
+  <div id="handStickyHeader" class="hand-sticky-header">
+  <div id="handTitle" class="hand-title">Starting Hand</div>
+  <div id="handMeta" class="hand-meta"></div>
+  <div id="handInstruction" class="hand-instruction hidden"></div>
+</div>
 
+<div id="handDisplay" class="hand-display"></div>
+<div id="enginePanel" class="engine-panel hidden"></div>
 
-    <div id="hdActions" class="hd-actions">
+  <div id="hdActions" class="hd-actions">
+
   <div id="hdPrimaryRow" class="hd-action-row primary-action-row">
 
 
@@ -359,7 +363,7 @@ V4 = Photo Recognition
     <button onclick="openFeedbackDialog()">Feedback</button>
     <button onclick="openSupportDialog()">Support MJC</button>
   </div>
-  <div class="footer-version">Beta v4.2</div>
+  <div class="footer-version">Beta v4.3</div>
 </div>
 
 </div>
@@ -777,39 +781,46 @@ V4 = Photo Recognition
   <div class="dialog">
     <h2>Understanding the Boxes</h2>
 
-    <p><strong>Complete Boxes (CB)</strong><br>
-    Completed melds that require no additional tiles. These appear at the bottom of the screen.</p>
+    <p>
+      <strong><u>Complete Boxes (CB)</u></strong><br>
+      Completed melds that require no additional tiles.
+      <em>These appear at the bottom of the screen.</em>
+    </p>
 
     <p>
-  <strong>Developing Boxes (DB)</strong><br>
-  Groups of tiles that are working toward becoming Complete Boxes.
-  These appear at the top of the screen.
-</p>
+      <strong><u>Developing Boxes (DB)</u></strong><br>
+      Groups of tiles that are working toward becoming Complete Boxes.
+      <em>These appear at the top of the screen.</em>
+    </p>
 
-<p>
-  Developing Boxes may include:
-</p>
+    <p>
+      Developing Boxes may include:
+    </p>
 
-<div class="box-list">
-  <strong>EC</strong> — Eye Candidate<br>
-<em>A potential Eye (pair).</em><br><br>
+    <div class="box-list">
+      <strong>EC</strong> — Eye Candidate<br>
+      <em>A potential Eye (pair).</em><br><br>
 
-<strong>EPC</strong> — Eye-Pong Candidate<br>
-<em>A pair that may form either an Eye or a Pong.</em><br><br>
+      <strong>EPC</strong> — Eye-Pong Candidate<br>
+      <em>A pair that may form either an Eye or a Pong.</em><br><br>
 
-<strong>CPC</strong> — Chow-Pong Candidate<br>
-<em>Three or four tiles that may form either a Chow or a Pong.</em>
-</div>
+      <strong>CPC</strong> — Chow-Pong Candidate<br>
+      <em>Three or four tiles that may form either a Chow or a Pong.</em>
+    </div>
 
-    <p><strong>Reserves (R)</strong><br>
-    Tiles not currently assigned to a CB or DB. These appear in the middle of the screen between the DB and CB sections.</p>
+    <p>
+      <strong><u>Reserves (R)</u></strong><br>
+      Tiles not currently assigned to a CB or DB.
+      <em>These appear in the middle of the screen between the DB and CB sections.</em>
+    </p>
 
-<p style="text-align:center; margin-top:18px;">
-  <strong>
-    Complete six boxes—five melds and one Eye—
-    and That's Mahjong!
-  </strong>
-</p>
+    <p style="text-align:center; margin-top:18px;">
+      <strong>
+        Complete six boxes—five melds and one Eye—
+        and That's Mahjong!
+      </strong>
+    </p>
+
 
     <div class="dialog-actions">
       <button class="dialog-button primary" onclick="closeDialog('understandingBoxesDialog')">Close</button>
@@ -845,7 +856,7 @@ V4 = Photo Recognition
     <h2>Feedback</h2>
     <p>Thank you for helping us improve Mahjong Coach.</p>
     <p>We welcome bug reports, suggestions, comments, and feature requests.</p>
-    <p><strong>Email:</strong> <a href="mailto:mjcfeedbackteam@gmail.com?subject=Mahjong%20Coach%20Feedback%20-%20Beta%20v4.2">mjcfeedbackteam@gmail.com</a></p>
+    <p><strong>Email:</strong> <a href="mailto:mjcfeedbackteam@gmail.com?subject=Mahjong%20Coach%20Feedback%20-%20Beta%20v4.3">mjcfeedbackteam@gmail.com</a></p>
     <p><em>Every message is read and appreciated.</em></p>
     <div class="dialog-actions">
       <button class="dialog-button primary" onclick="closeDialog('feedbackDialog')">Close</button>
@@ -883,7 +894,7 @@ Acceptance standard:
 ==================================================
 */
 
-const MJC_VERSION_LABEL = "Beta v4.2";
+const MJC_VERSION_LABEL = "Beta v4.3";
 
 const MJC_RULESET_BASE_HAND_SIZES = Object.freeze({
   filipino16: 16,
