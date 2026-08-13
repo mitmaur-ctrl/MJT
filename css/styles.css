@@ -2425,3 +2425,27 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 
 #mahjongAcquireRow {
   grid-template-columns: repeat(2, 1fr);
 }
+
+/* =========================================
+   SHD / CHD — STICKY HAND HEADER
+   ========================================= */
+
+.hand-sticky-header {
+  position: sticky;
+  top: var(--header-height);
+  z-index: 850;
+  background: white;
+  margin-top: -22px;
+  padding: 8px 0 0;
+  
+}
+
+#enginePanel {
+  margin-top: 4px;
+}
+
+#startingUtilityRow,
+#currentCorrectionRow,
+#newGameRow {
+  margin-top: 8px;
+}
