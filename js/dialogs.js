@@ -895,6 +895,7 @@ function confirmSevenPairs() {
   sevenPairsMode = true;
   sevenPairsBoxState.active = true;
   updateSevenPairsBoxState(counts);
+  syncSevenPairsCompletionOrder();
 
   const title =
     document.querySelector(
@@ -1167,14 +1168,11 @@ function closeSevenPairsCoachingResumeDialog() {
 
 function declineSevenPairs() {
   sevenPairsMode = false;
+  overPairedDelayOneEvaluation = true;
 
   document
     .getElementById("overPairedDialog")
     .classList.add("hidden");
-
-  document
-    .getElementById("overPairedAdviceDialog")
-    .classList.remove("hidden");
 }
 
 function closeOverPairedAdviceDialog() {

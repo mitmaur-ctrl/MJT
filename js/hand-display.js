@@ -266,12 +266,17 @@ function buildCurrentHandDisplay() {
   document.getElementById("handInstruction");
 
   const escaleraMahjong =
-    isEscaleraMahjong();
+  isEscaleraMahjong();
+
+const sevenPairsMahjong =
+  isSevenPairsMahjong();
 
 if (
   result.mahjong ||
-  escaleraMahjong
+  escaleraMahjong ||
+  sevenPairsMahjong
 ) {
+
   gameAction = "mahjong";
 
   if (handInstruction) {
@@ -597,6 +602,8 @@ function configureHDMode() {
   
   enginePanel.classList.toggle("hidden", !coachingOn);
 
+
+
   drawBtn.classList.remove("hidden");
   chowBtn.classList.remove("hidden");
   pongBtn.classList.remove("hidden");
@@ -726,6 +733,9 @@ if (gameAction === "mahjong") {
   newGameRow.classList.remove("hidden");
 }
 
+if (gameAction !== "mahjong") {
+  hdPrimaryRow.classList.remove("hidden");
+}
   coachingBtn.textContent = coachingOn ? "Standard View" : "Coaching View";
 
   if (hdMode === "starting") {
@@ -1192,21 +1202,90 @@ function renderEscaleraShortForm(
   return html;
 }
 
-function renderSevenPairsBox(highlightState) {
-  if (
-    !sevenPairsMode ||
-    !sevenPairsBoxState.active ||
-    !sevenPairsBoxState.pairTileKeys.length
-  ) {
-    return "";
+
+function renderSevenPairsShortForm(
+  highlightState
+) {
+  const meldState =
+    getSevenPairsMeldState();
+
+  let html = "";
+
+  const completionOrder =
+    sevenPairsBoxState.completionOrder || [];
+
+  const sevenPairsComplete =
+    sevenPairsBoxState.complete === true;
+
+  const meldComplete =
+    Boolean(meldState.completeBox);
+
+  /*
+  ================================================
+  RESERVES
+  ================================================
+  */
+
+  html += renderReserveArea(
+    meldState.reserves,
+    highlightState
+  );
+
+  /*
+  ================================================
+  DEVELOPING BOXES
+  ================================================
+  */
+
+  html +=
+    '<div class="developing-area">' +
+      '<div class="engine-title">Developing Boxes</div>';
+
+  if (!sevenPairsComplete) {
+    const pairHtml =
+      sevenPairsBoxState.pairTileKeys
+        .map(function(tileKey) {
+          let html = "";
+
+          for (let i = 0; i < 2; i++) {
+            const isLastDrawn =
+              tileKey === lastDrawnTileKey &&
+              !highlightState.used;
+
+            if (isLastDrawn) {
+              highlightState.used = true;
+            }
+
+            html += renderCoachTile(tileKey, {
+              extraClass:
+                isLastDrawn ? "last-drawn" : ""
+            });
+          }
+
+          return html;
+        })
+        .join("");
+
+    html +=
+      '<div class="hand-section box-card developing-box seven-pairs-box">' +
+        '<div class="hand-section-title">DB1 — ' +
+          (
+            ruleset === "filipino16"
+              ? "Siete Pares Box"
+              : "Seven Pairs Box"
+          ) +
+        '</div>' +
+        pairHtml +
+      '</div>';
   }
 
-  const tileHtml =
-    sevenPairsBoxState.pairTileKeys
-      .map(function(tileKey) {
-        let pairHtml = "";
+  if (!meldComplete) {
+    if (meldState.developingBox) {
+      const box =
+        meldState.developingBox;
 
-        for (let i = 0; i < 2; i++) {
+      const tileHtml =
+        box.tiles.map(function(tileKey) {
           const isLastDrawn =
             tileKey === lastDrawnTileKey &&
             !highlightState.used;
@@ -1215,38 +1294,153 @@ function renderSevenPairsBox(highlightState) {
             highlightState.used = true;
           }
 
-          pairHtml += renderCoachTile(tileKey, {
+          return renderCoachTile(tileKey, {
             extraClass:
               isLastDrawn ? "last-drawn" : ""
           });
+        }).join("");
+
+      const dbNumber =
+        sevenPairsComplete ? 1 : 2;
+
+      html +=
+        '<div class="hand-section box-card developing-box">' +
+          '<div class="hand-section-title">DB' +
+            dbNumber +
+            ' — ' +
+            getBoxTypeLabel(box.type) +
+          '</div>' +
+          tileHtml +
+        '</div>';
+    } else {
+      const dbNumber =
+        sevenPairsComplete ? 1 : 2;
+
+      html +=
+        '<div class="hand-section box-card empty-box">' +
+          '<div class="hand-section-title">DB' +
+            dbNumber +
+          '</div>' +
+          '<span class="empty-note">Empty</span>' +
+        '</div>';
+    }
+  }
+
+  html += '</div>';
+
+  /*
+  ================================================
+  COMPLETED BOXES
+  ================================================
+  */
+
+  if (
+    sevenPairsComplete ||
+    meldComplete
+  ) {
+    html +=
+      '<div class="completed-area">' +
+        '<div class="engine-title">Completed Boxes</div>';
+
+    completionOrder.forEach(
+      function(boxType, index) {
+        const cbNumber =
+          index + 1;
+
+        if (boxType === "sevenPairs") {
+          const pairHtml =
+            sevenPairsBoxState.pairTileKeys
+              .map(function(tileKey) {
+                let html = "";
+
+                for (let i = 0; i < 2; i++) {
+                  const isLastDrawn =
+                    tileKey === lastDrawnTileKey &&
+                    !highlightState.used;
+
+                  if (isLastDrawn) {
+                    highlightState.used = true;
+                  }
+
+                  html += renderCoachTile(tileKey, {
+                    extraClass:
+                      isLastDrawn
+                        ? "last-drawn"
+                        : ""
+                  });
+                }
+
+                return html;
+              })
+              .join("");
+
+          html +=
+            '<div class="hand-section box-card complete-box seven-pairs-box">' +
+              '<div class="hand-section-title">CB' +
+                cbNumber +
+                ' — ' +
+                (
+                  ruleset === "filipino16"
+                    ? "Siete Pares"
+                    : "Seven Pairs"
+                ) +
+              '</div>' +
+              pairHtml +
+            '</div>';
         }
 
-        return pairHtml;
-      })
-      .join("");
+        if (
+          boxType === "meld" &&
+          meldState.completeBox
+        ) {
+          const box =
+            meldState.completeBox;
 
-  const sevenPairsBoxLabel =
-    sevenPairsBoxState.complete
-      ? (
-          ruleset === "filipino16"
-            ? "Siete Pares Box — Complete"
-            : "Seven Pairs Box — Complete"
-        )
-      : (
-          ruleset === "filipino16"
-            ? "Siete Pares Box"
-            : "Seven Pairs Box"
-        );
+          const tileHtml =
+            box.tiles.map(function(tileKey) {
+              const isLastDrawn =
+                tileKey === lastDrawnTileKey &&
+                !highlightState.used;
 
-  return (
-    '<div class="hand-section box-card developing-box seven-pairs-box">' +
-      '<div class="hand-section-title">' +
-        sevenPairsBoxLabel +
-      '</div>' +
-      tileHtml +
-    '</div>'
-  );
+              if (isLastDrawn) {
+                highlightState.used = true;
+              }
+
+              return renderCoachTile(tileKey, {
+                extraClass:
+                  isLastDrawn ? "last-drawn" : ""
+              });
+            }).join("");
+
+          const cbExtraClass =
+            box.type === "kang"
+              ? " wide-box"
+              : "";
+
+          html +=
+            '<div class="hand-section box-card complete-box' +
+              cbExtraClass +
+            '">' +
+              '<div class="hand-section-title">CB' +
+                cbNumber +
+                ' — ' +
+                box.type.charAt(0).toUpperCase() +
+                box.type.slice(1) +
+              '</div>' +
+              '<div class="cb-tile-row">' +
+                tileHtml +
+              '</div>' +
+            '</div>';
+        }
+      }
+    );
+
+    html += '</div>';
+  }
+
+  return html;
 }
+
 
 function renderActiveArea(
   completeBoxes,
@@ -1421,9 +1615,10 @@ const tileHtml = box.tiles.map(function(tileKey) {
 }).join("");
 
   const cbExtraClass =
-    box.type === "kang"
-      ? " wide-box"
-      : "";
+  box.type === "kang" ||
+  box.type === "news"
+    ? " wide-box"
+    : "";
 
     html +=
   '<div class="hand-section box-card complete-box' +
@@ -1553,6 +1748,7 @@ const highlightState = {
     '</div>' +
   '</div>' +
 
+
   (
   window.coachViewForm === "short" &&
   escaleraMode &&
@@ -1565,22 +1761,31 @@ const highlightState = {
         highlightState
       )
     : (
-        renderActiveArea(
-          structureState.completeBoxes,
-          structureState.developingBoxes,
-          structureState.halfEye,
-          highlightState
-        ) +
-        renderReserveArea(
-          structureState.reserves,
-          highlightState
-        ) +
-        renderCompletedArea(
-          structureState.completeBoxes,
-          highlightState
-        )
+        window.coachViewForm === "short" &&
+        sevenPairsMode &&
+        sevenPairsBoxState.active
+          ? renderSevenPairsShortForm(
+              highlightState
+            )
+          : (
+              renderActiveArea(
+                structureState.completeBoxes,
+                structureState.developingBoxes,
+                structureState.halfEye,
+                highlightState
+              ) +
+              renderReserveArea(
+                structureState.reserves,
+                highlightState
+              ) +
+              renderCompletedArea(
+                structureState.completeBoxes,
+                highlightState
+              )
+            )
       )
 )
+
 
 if (
   gameAction === "discard" &&
