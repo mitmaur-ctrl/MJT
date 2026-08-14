@@ -457,12 +457,14 @@ if (gameAction === "claim" && claimType === "pong") {
 if (gameAction === "claim" && claimType === "kang") {
   const kangCandidates =
     incomingMeldCandidates.filter(
-      candidate => candidate.type === "kang"
+      candidate =>
+  candidate.type === "kang" ||
+  candidate.type === "news"
     );
 
   if (kangCandidates.length === 0) {
     showToast(
-      "Kang not valid. This tile does not complete a Kang."
+      "Kang not valid. This tile does not complete a Kang or NEWS."
     );
     return;
   }
@@ -969,7 +971,7 @@ if (mmrState.action === "hidden-news-after-draw") {
   if (declaredNEWS) {
     setCompleteBoxVisibility(
       declaredNEWS.boxId,
-      "exposed"
+      "hidden"
     );
   }
 

@@ -102,7 +102,10 @@ function getSevenPairsExcludedCounts() {
 }
 
 
-function updateSevenPairsBoxState(tileCounts) {
+function updateSevenPairsBoxState(
+  tileCounts,
+  completeBoxes = null
+) {
   if (
     !sevenPairsMode ||
     !sevenPairsBoxState.active
@@ -116,10 +119,30 @@ function updateSevenPairsBoxState(tileCounts) {
   const previousCount =
     sevenPairsBoxState.pairCount;
 
-  const nextTileKeys =
+  const excludedCounts =
+  getSevenPairsExcludedCounts();
+
+if (completeBoxes) {
+  completeBoxes.forEach(function(box) {
+    if (
+      box.type !== "chow" &&
+      box.type !== "pong" &&
+      box.type !== "kang"
+    ) {
+      return;
+    }
+
+    box.tiles.forEach(function(tileKey) {
+      excludedCounts[tileKey] =
+        (excludedCounts[tileKey] || 0) + 1;
+    });
+  });
+}
+
+const nextTileKeys =
   getSevenPairsCandidates(
     tileCounts,
-    getSevenPairsExcludedCounts()
+    excludedCounts
   );
 
   const nextCount =
@@ -780,9 +803,22 @@ function checkSevenPairsOpportunity(structureState) {
       }
     );
 
-  const pairCount =
-  getSevenPairsCandidates(counts).length;
-  const overPairedThreshold = 4;
+  const excludedCounts = {};
+
+structureState.completeBoxes.forEach(function(box) {
+  box.tiles.forEach(function(tileKey) {
+    excludedCounts[tileKey] =
+      (excludedCounts[tileKey] || 0) + 1;
+  });
+});
+
+const pairCount =
+  getSevenPairsCandidates(
+    counts,
+    excludedCounts
+  ).length;
+
+const overPairedThreshold = 4;
 
   if (pairCount >= overPairedThreshold) {
     sevenPairsStatusAsked = false;
