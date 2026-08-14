@@ -1453,7 +1453,9 @@ function renderActiveArea(
     '<div class="engine-title">Developing Boxes</div>';
 
   html += renderEscaleraBox(highlightState);
+if (typeof renderSevenPairsBox === "function") {
   html += renderSevenPairsBox(highlightState);
+}
 
   const firstActiveBoxNumber = completeBoxes.length + 1;
 
