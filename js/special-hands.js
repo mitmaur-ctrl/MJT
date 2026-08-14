@@ -33,7 +33,8 @@ let sevenPairsBoxState = {
   active: false,
   pairTileKeys: [],
   pairCount: 0,
-  complete: false
+  complete: false,
+  completionOrder: []
 };
 
 function resetSevenPairsBoxState() {
@@ -41,17 +42,26 @@ function resetSevenPairsBoxState() {
   sevenPairsBoxState.pairTileKeys = [];
   sevenPairsBoxState.pairCount = 0;
   sevenPairsBoxState.complete = false;
+  sevenPairsBoxState.completionOrder = [];
 }
 
 
-function getSevenPairsCandidates(tileCounts) {
+function getSevenPairsCandidates(
+  tileCounts,
+  excludedCounts = {}
+) {
   const pairTileKeys = [];
 
   Object.keys(tileCounts).forEach(function(tileKey) {
-    const tileCount = tileCounts[tileKey] || 0;
+    const availableCount =
+  Math.max(
+    0,
+    (tileCounts[tileKey] || 0) -
+    (excludedCounts[tileKey] || 0)
+  );
 
-    const pairCopies =
-      Math.floor(tileCount / 2);
+const pairCopies =
+  Math.floor(availableCount / 2);
 
     for (let i = 0; i < pairCopies; i++) {
       pairTileKeys.push(tileKey);
@@ -59,6 +69,36 @@ function getSevenPairsCandidates(tileCounts) {
   });
 
   return pairTileKeys;
+}
+
+function getSevenPairsExcludedCounts() {
+  const excludedCounts = {};
+
+  (mmrCommittedBoxes || []).forEach(
+    function(commitment) {
+      const candidate =
+        commitment && commitment.candidate;
+
+      if (
+        !candidate ||
+        !candidate.tiles ||
+        (
+          candidate.type !== "chow" &&
+          candidate.type !== "pong" &&
+          candidate.type !== "kang"
+        )
+      ) {
+        return;
+      }
+
+      candidate.tiles.forEach(function(tileKey) {
+        excludedCounts[tileKey] =
+          (excludedCounts[tileKey] || 0) + 1;
+      });
+    }
+  );
+
+  return excludedCounts;
 }
 
 
@@ -77,7 +117,10 @@ function updateSevenPairsBoxState(tileCounts) {
     sevenPairsBoxState.pairCount;
 
   const nextTileKeys =
-    getSevenPairsCandidates(tileCounts);
+  getSevenPairsCandidates(
+    tileCounts,
+    getSevenPairsExcludedCounts()
+  );
 
   const nextCount =
     nextTileKeys.length;
@@ -230,6 +273,66 @@ function updateEscaleraBoxState(
   return changed;
 }
 
+function syncSevenPairsCompletionOrder() {
+  if (
+    !sevenPairsMode ||
+    !sevenPairsBoxState.active
+  ) {
+    return;
+  }
+
+  const meldState =
+    getSevenPairsMeldState();
+
+  const sevenPairsComplete =
+    sevenPairsBoxState.complete === true;
+
+  const meldComplete =
+    Boolean(meldState.completeBox);
+
+  /*
+  Remove any box that is no longer complete.
+  If it later completes again, it will be added
+  back at the end of the order.
+  */
+  sevenPairsBoxState.completionOrder =
+    sevenPairsBoxState.completionOrder.filter(
+      function(boxType) {
+        if (boxType === "sevenPairs") {
+          return sevenPairsComplete;
+        }
+
+        if (boxType === "meld") {
+          return meldComplete;
+        }
+
+        return false;
+      }
+    );
+
+  if (
+    sevenPairsComplete &&
+    !sevenPairsBoxState.completionOrder.includes(
+      "sevenPairs"
+    )
+  ) {
+    sevenPairsBoxState.completionOrder.push(
+      "sevenPairs"
+    );
+  }
+
+  if (
+    meldComplete &&
+    !sevenPairsBoxState.completionOrder.includes(
+      "meld"
+    )
+  ) {
+    sevenPairsBoxState.completionOrder.push(
+      "meld"
+    );
+  }
+}
+
 function syncSevenPairsAfterHandChange() {
   if (
     !sevenPairsMode ||
@@ -239,9 +342,261 @@ function syncSevenPairsAfterHandChange() {
   }
 
   updateSevenPairsBoxState(counts);
+  syncSevenPairsCompletionOrder();
 }
 
-function isSevenPairsMahjong(structureState) {
+
+function getSevenPairsMeldState() {
+  if (
+    !sevenPairsMode ||
+    !sevenPairsBoxState.active
+  ) {
+    return {
+      completeBox: null,
+      developingBox: null,
+      reserves: []
+    };
+  }
+
+  /*
+  ================================================
+  Siete Pares Two-Box Structure
+
+  Pair copies committed to the Siete Pares Box
+  are removed first.
+
+  Only the remaining tiles may form the single
+  required meld box.
+  ================================================
+  */
+
+  const workingCounts = { ...counts };
+
+const committedMeld =
+  (mmrCommittedBoxes || [])
+    .map(function(commitment) {
+      return commitment && commitment.candidate;
+    })
+    .find(function(candidate) {
+      return (
+        candidate &&
+        candidate.tiles &&
+        (
+          candidate.type === "chow" ||
+          candidate.type === "pong" ||
+          candidate.type === "kang"
+        )
+      );
+    });
+
+if (committedMeld) {
+  const committedCounts = {};
+
+  committedMeld.tiles.forEach(function(tileKey) {
+    committedCounts[tileKey] =
+      (committedCounts[tileKey] || 0) + 1;
+  });
+
+  const pairTileKeys =
+    getSevenPairsCandidates(
+      counts,
+      committedCounts
+    );
+
+  const reserveCounts = { ...counts };
+
+  committedMeld.tiles.forEach(function(tileKey) {
+    reserveCounts[tileKey] =
+      Math.max(
+        0,
+        (reserveCounts[tileKey] || 0) - 1
+      );
+  });
+
+  pairTileKeys.forEach(function(tileKey) {
+    reserveCounts[tileKey] =
+      Math.max(
+        0,
+        (reserveCounts[tileKey] || 0) - 2
+      );
+  });
+
+  sevenPairsBoxState.pairTileKeys =
+    [...pairTileKeys];
+
+  sevenPairsBoxState.pairCount =
+    pairTileKeys.length;
+
+  sevenPairsBoxState.complete =
+    pairTileKeys.length >= 7;
+
+  return {
+    completeBox: {
+      type: committedMeld.type,
+      tiles: [...committedMeld.tiles],
+      visibility: "exposed"
+    },
+    developingBox: null,
+    reserves:
+      findReserves(
+        reserveCounts,
+        []
+      )
+  };
+}
+
+  sevenPairsBoxState.pairTileKeys.forEach(
+    function(tileKey) {
+      workingCounts[tileKey] =
+        Math.max(
+          0,
+          (workingCounts[tileKey] || 0) - 2
+        );
+    }
+  );
+
+  /*
+  ================================================
+  Look first for a completed ordinary meld.
+
+  NEWS is not the required Siete Pares meld.
+  Valid completed melds:
+  - Chow
+  - Pong
+  - Kang
+  ================================================
+  */
+
+  const meldInput = {
+    ...MJC_STATE.getEngineInput(),
+    counts: workingCounts,
+    context: {
+      ...MJC_STATE.getEngineInput().context,
+      newsAllowed: false
+    }
+  };
+
+  const completedMelds =
+    findCompleteBoxes(meldInput).filter(
+      function(box) {
+        return (
+          box.type === "chow" ||
+          box.type === "pong" ||
+          box.type === "kang"
+        );
+      }
+    );
+
+  if (completedMelds.length > 0) {
+    const completeBox = completedMelds[0];
+
+    return {
+      completeBox: completeBox,
+      developingBox: null,
+      reserves:
+        findReserves(
+          getRemainingCounts(
+            workingCounts,
+            [completeBox]
+          ),
+          []
+        )
+    };
+  }
+
+  /*
+  ================================================
+  No completed meld yet.
+
+  Select only the strongest available developing
+  meld candidate using the established hierarchy:
+
+  CPC > DSW > MW > EW
+  ================================================
+  */
+
+  const cpcCandidates =
+    findCPCDevelopingBoxes(workingCounts);
+
+  if (cpcCandidates.length > 0) {
+    return {
+      completeBox: null,
+      developingBox: cpcCandidates[0],
+      reserves:
+        findReserves(
+          workingCounts,
+          [cpcCandidates[0]]
+        )
+    };
+  }
+
+  const dswCandidates =
+    findDSWDevelopingBoxes(
+      workingCounts,
+      []
+    );
+
+  if (dswCandidates.length > 0) {
+    return {
+      completeBox: null,
+      developingBox: dswCandidates[0],
+      reserves:
+        findReserves(
+          workingCounts,
+          [dswCandidates[0]]
+        )
+    };
+  }
+
+  const mwCandidates =
+    findMWDevelopingBoxes(
+      workingCounts,
+      []
+    );
+
+  if (mwCandidates.length > 0) {
+    return {
+      completeBox: null,
+      developingBox: mwCandidates[0],
+      reserves:
+        findReserves(
+          workingCounts,
+          [mwCandidates[0]]
+        )
+    };
+  }
+
+  const ewCandidates =
+    findEWDevelopingBoxes(
+      workingCounts,
+      []
+    );
+
+  if (ewCandidates.length > 0) {
+    return {
+      completeBox: null,
+      developingBox: ewCandidates[0],
+      reserves:
+        findReserves(
+          workingCounts,
+          [ewCandidates[0]]
+        )
+    };
+  }
+
+  return {
+    completeBox: null,
+    developingBox: null,
+    reserves:
+      findReserves(
+        workingCounts,
+        []
+      )
+  };
+}
+
+
+function isSevenPairsMahjong() {
   if (
     !sevenPairsMode ||
     !sevenPairsBoxState.active ||
@@ -250,16 +605,15 @@ function isSevenPairsMahjong(structureState) {
     return false;
   }
 
-  const hasRequiredMeld =
-    structureState.completeBoxes.some(function(box) {
-      return (
-        box.type === "chow" ||
-        box.type === "pong"
-      );
-    });
+  const meldState =
+    getSevenPairsMeldState();
 
-  return hasRequiredMeld;
+  return Boolean(
+    meldState.completeBox
+  );
 }
+
+
 
 
 function syncEscaleraAfterHandChange() {
@@ -435,7 +789,8 @@ function checkSevenPairsOpportunity(structureState) {
   }
 
   if (pairCount < overPairedThreshold) {
-    overPairedActive = false;
+  overPairedActive = false;
+  overPairedDelayOneEvaluation = false;
 
     if (
       sevenPairsMode &&
@@ -472,6 +827,19 @@ function checkSevenPairsOpportunity(structureState) {
         .classList.remove("hidden");
     }
   }
+
+if (
+  handStarted &&
+  pairCount >= overPairedThreshold &&
+  overPairedDelayOneEvaluation &&
+  !sevenPairsMode
+) {
+  overPairedDelayOneEvaluation = false;
+
+  document
+    .getElementById("overPairedAdviceDialog")
+    .classList.remove("hidden");
+}
 
   if (
   handStarted &&

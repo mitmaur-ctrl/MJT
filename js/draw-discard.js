@@ -474,10 +474,11 @@ if (gameAction === "claim" && claimType === "kang") {
 
 
 
+let correctedMahjongClaimIsNonWinning = false;
+
 if (
   gameAction === "claim" &&
-  claimType === "mahjong" &&
-  !correctingLastEntry
+  claimType === "mahjong"
 ) {
   const mahjongInput =
     MJC_STATE.getEngineInput();
@@ -495,10 +496,17 @@ if (
     );
 
   if (!mahjongResult.mahjong) {
-    showToast(
-      "Mahjong not valid. This tile does not complete Mahjong."
-    );
-    return;
+    if (
+      correctingLastEntry &&
+      correctionActionType === "claim"
+    ) {
+      correctedMahjongClaimIsNonWinning = true;
+    } else {
+      showToast(
+        "Mahjong not valid. This tile does not complete Mahjong."
+      );
+      return;
+    }
   }
 }
 
@@ -512,7 +520,8 @@ console.log(
 
 if (
   gameAction === "claim" &&
-  incomingMeldCandidates.length === 0
+  incomingMeldCandidates.length === 0 &&
+  !correctedMahjongClaimIsNonWinning
 ) {
   const mahjongInput =
     MJC_STATE.getEngineInput();
@@ -533,6 +542,7 @@ if (
     return;
   }
 }
+
 
 const isSinglePong =
   incomingMeldCandidates.length === 1 &&
@@ -555,7 +565,17 @@ if (isSinglePong) {
   }
 
   // No EC protection needed.
-  // Let the normal single-Pong flow continue.
+  // Commit the unambiguous Pong before
+  // continuing through the normal claim flow.
+  mmrCommittedBoxes.push({
+    action: mmrState.action,
+    tileKey: mmrState.tileKey,
+    candidate: {
+      type: mmrState.selectedCandidate.type,
+      tiles: [...mmrState.selectedCandidate.tiles]
+    }
+  });
+
   mmrState = null;
 }
 
@@ -628,7 +648,14 @@ const preDrawSagasaPong =
       )
     : null;
 
-
+const preDrawKangSignatures =
+  canonicalStructureState.completeBoxes
+    .filter(function(box) {
+      return box.type === "kang";
+    })
+    .map(function(box) {
+      return getCompleteBoxSignature(box);
+    });
 
 counts[selectedDrawTileKey] += 1;
 syncEscaleraAfterHandChange();
@@ -715,7 +742,10 @@ if (sagasaPong) {
   currentResult.structureState.completeBoxes.find(function(box) {
     return (
       box.type === "kang" &&
-      box.visibility !== "exposed"
+      box.visibility !== "exposed" &&
+      !preDrawKangSignatures.includes(
+        getCompleteBoxSignature(box)
+      )
     );
   });
 
