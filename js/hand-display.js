@@ -1723,6 +1723,18 @@ enginePanel.classList.toggle(
   const structureState =
     result.structureState || result;
 
+const targetBoxCount =
+  escaleraMode &&
+  escaleraBoxState.active
+    ? 4
+    : (
+        sevenPairsMode &&
+        sevenPairsBoxState.active
+          ? 2
+          : 6
+      );
+
+
 console.log(
   "Rendered Complete Boxes:",
   structureState.completeBoxes
@@ -1739,7 +1751,12 @@ const highlightState = {
 
   enginePanel.innerHTML =
   '<div class="coach-top-row">' +
-    '<div id="coachMessageArea" class="coach-message-area"></div>' +
+        '<div id="coachMessageArea" class="coach-message-area">' +
+      'Boxes Complete: ' +
+structureState.completeBoxes.length +
+' of ' +
+targetBoxCount +
+    '</div>' +
 
     '<div class="coach-top-right">' +
   getBoxLabelToggleHtml() +
