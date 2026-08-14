@@ -975,6 +975,8 @@ if (mmrState.action === "hidden-news-after-draw") {
     );
   }
 
+ignoredNEWS = true;
+
   lockHandContext();
 
   phase = "game";
