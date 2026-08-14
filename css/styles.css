@@ -920,7 +920,12 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 
   justify-content: center;
 }
 
-
+.rapid-section-label {
+  text-align: left;
+  font-size: 12px;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+}
 
 #drawScreen .actions {
   margin-top: 16px;
