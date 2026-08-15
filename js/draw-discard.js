@@ -581,20 +581,35 @@ if (isSinglePong) {
   mmrState = null;
 }
 
+const isSingleClaimedSpecialMeld =
+  gameAction === "claim" &&
+  claimType === "kang" &&
+  incomingMeldCandidates.length === 1 &&
+  (
+    incomingMeldCandidates[0].type === "kang" ||
+    incomingMeldCandidates[0].type === "news"
+  );
+
+if (isSingleClaimedSpecialMeld) {
+  mmrState = {
+    action: "claim",
+    tileKey: selectedDrawTileKey,
+    candidates: incomingMeldCandidates,
+    recommendedCandidate:
+      incomingMeldCandidates[0],
+    selectedCandidate:
+      incomingMeldCandidates[0]
+  };
+
+  resumeMMRAction();
+  return;
+}
+
 if (
   claimType !== "mahjong" &&
-  (
-    incomingMeldCandidates.length > 1 ||
-    (
-      gameAction === "claim" &&
-      incomingMeldCandidates.length === 1 &&
-      (
-        incomingMeldCandidates[0].type === "kang" ||
-        incomingMeldCandidates[0].type === "news"
-      )
-    )
-  )
+  incomingMeldCandidates.length > 1
 ) {
+
   mmrState = {
   action: gameAction,
   tileKey: selectedDrawTileKey,
@@ -640,6 +655,23 @@ const preDrawSagasaPong =
           return (
             box.type === "pong" &&
             box.visibility === "exposed" &&
+            box.tiles &&
+            box.tiles.length === 3 &&
+            box.tiles.every(function(tileKey) {
+              return tileKey === selectedDrawTileKey;
+            })
+          );
+        }
+      )
+    : null;
+
+const preDrawHiddenPong =
+  gameAction === "draw"
+    ? canonicalStructureState.completeBoxes.find(
+        function(box) {
+          return (
+            box.type === "pong" &&
+            box.visibility !== "exposed" &&
             box.tiles &&
             box.tiles.length === 3 &&
             box.tiles.every(function(tileKey) {
@@ -703,6 +735,33 @@ if (
     evaluate17TE(
       MJC_STATE.getEngineInput()
     );
+
+if (preDrawHiddenPong) {
+  const hiddenPongKang = {
+    type: "kang",
+    tiles: [
+      selectedDrawTileKey,
+      selectedDrawTileKey,
+      selectedDrawTileKey,
+      selectedDrawTileKey
+    ],
+    visibility: "hidden",
+    boxId: preDrawHiddenPong.boxId
+  };
+
+  mmrState = {
+    action: "hidden-kang-after-draw",
+    tileKey: selectedDrawTileKey,
+    candidates: [hiddenPongKang],
+    recommendedCandidate: hiddenPongKang,
+    selectedCandidate: hiddenPongKang,
+    sourceBoxId: preDrawHiddenPong.boxId,
+    skipCommit: true
+  };
+
+  openMMRDialog();
+  return;
+}
 
 const sagasaPong =
   preDrawSagasaPong;
@@ -905,6 +964,40 @@ const kangTileKey =
     : null;
 
 if (kangTileKey) {
+  // Promote an existing committed Pong
+  // into this newly declared Hidden Kang.
+  mmrCommittedBoxes =
+    mmrCommittedBoxes.filter(function(commitment) {
+      const candidate =
+        commitment.candidate;
+
+      const isMatchingPong =
+        candidate &&
+        candidate.type === "pong" &&
+        candidate.tiles &&
+        candidate.tiles.length === 3 &&
+        candidate.tiles.every(function(tileKey) {
+          return tileKey === kangTileKey;
+        });
+
+      return !isMatchingPong;
+    });
+
+  mmrCommittedBoxes.push({
+    action: "hidden-kang-after-draw",
+    tileKey: kangTileKey,
+    candidate: {
+      type: "kang",
+      tiles: [
+        kangTileKey,
+        kangTileKey,
+        kangTileKey,
+        kangTileKey
+      ],
+      visibility: "hidden"
+    }
+  });
+
   const declarationResult =
     evaluate17TE(
       MJC_STATE.getEngineInput()
@@ -1010,18 +1103,49 @@ ignoredNEWS = true;
   }
 
   if (
-    mmrState.selectedCandidate &&
-    !mmrState.skipCommit
+  mmrState.selectedCandidate &&
+  !mmrState.skipCommit
+) {
+  const selectedCandidate =
+    mmrState.selectedCandidate;
+
+  // If a Pong is being promoted to a Kang,
+  // remove the old Pong commitment first.
+  if (
+    selectedCandidate.type === "kang" &&
+    selectedCandidate.tiles &&
+    selectedCandidate.tiles.length === 4
   ) {
-    mmrCommittedBoxes.push({
-      action: mmrState.action,
-      tileKey: mmrState.tileKey,
-      candidate: {
-        type: mmrState.selectedCandidate.type,
-        tiles: [...mmrState.selectedCandidate.tiles]
-      }
-    });
+    const kangTileKey =
+      selectedCandidate.tiles[0];
+
+    mmrCommittedBoxes =
+      mmrCommittedBoxes.filter(function(commitment) {
+        const candidate =
+          commitment.candidate;
+
+        const isMatchingPong =
+          candidate &&
+          candidate.type === "pong" &&
+          candidate.tiles &&
+          candidate.tiles.length === 3 &&
+          candidate.tiles.every(function(tileKey) {
+            return tileKey === kangTileKey;
+          });
+
+        return !isMatchingPong;
+      });
   }
+
+  mmrCommittedBoxes.push({
+    action: mmrState.action,
+    tileKey: mmrState.tileKey,
+    candidate: {
+      type: selectedCandidate.type,
+      tiles: [...selectedCandidate.tiles]
+    }
+  });
+}
 
   const selectedTileKey =
   mmrState.tileKey;
