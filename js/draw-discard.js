@@ -1235,6 +1235,26 @@ function confirmDiscard() {
   lastActionTileKey = selectedDiscardTileKey;
 
   counts[selectedDiscardTileKey] -= 1;
+    deferredKangTileKeys =
+      deferredKangTileKeys.filter(function(deferredKey) {
+
+      // Deferred NEWS remains deferred only while
+      // all four winds are still present.
+      if (deferredKey === "news") {
+      return [
+        "north",
+        "east",
+        "west",
+        "south"
+      ].every(function(tileKey) {
+        return (counts[tileKey] || 0) >= 1;
+      });
+    }
+
+    // A deferred Kang remains deferred only while
+    // all four matching tiles are still present.
+    return (counts[deferredKey] || 0) >= 4;
+  });
   syncEscaleraAfterHandChange();
   syncSevenPairsAfterHandChange();
   protectedECTileKey = null;

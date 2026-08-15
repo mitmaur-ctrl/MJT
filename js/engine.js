@@ -798,11 +798,18 @@ if (
   ];
 
   const hasNEWS =
-    newsTiles.every(function(tileKey) {
-      return (workingCounts[tileKey] || 0) >= 1;
-    });
+  newsTiles.every(function(tileKey) {
+    return (workingCounts[tileKey] || 0) >= 1;
+  });
 
-  if (hasNEWS) {
+const newsDeferred =
+  engineInput.deferredKangTileKeys &&
+  engineInput.deferredKangTileKeys.includes("news");
+
+if (
+  hasNEWS &&
+  !newsDeferred
+) {
     completeBoxes.push({
       type: "news",
       tiles: newsTiles
