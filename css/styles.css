@@ -927,6 +927,10 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 
   margin: 0 0 4px 0;
 }
 
+#drawScreen:not(.hidden) ~ .footer {
+  display: none;
+}
+
 #drawScreen .actions {
   margin-top: 16px;
 }
