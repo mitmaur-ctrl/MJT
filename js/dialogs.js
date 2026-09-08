@@ -267,9 +267,14 @@ if (
   });
 
 if (
-  specialMeldType === "kang" ||
-  specialMeldType === "news"
+  mmrState.action !== "sagasa-after-draw" &&
+  (
+    specialMeldType === "kang" ||
+    specialMeldType === "news"
+  )
 ) {
+
+
   const deferButton =
     document.createElement("button");
 
@@ -298,7 +303,7 @@ if (
 }
 
 
-   if (specialMeldType !== "news") {
+  {
   const ignoreButton =
     document.createElement("button");
 
@@ -310,13 +315,17 @@ if (
   ignoreButton.style.marginTop = "6px";
 
   ignoreButton.textContent =
-  mmrState.action === "sagasa-after-draw"
-    ? "Ignore Sagasa"
-    : (
-        specialMeldType === "kang"
-          ? "Ignore Kang"
-          : "Ignore Melds"
-      );
+    mmrState.action === "sagasa-after-draw"
+      ? "Ignore Sagasa"
+      : (
+          specialMeldType === "kang"
+            ? "Ignore Kang"
+            : (
+                specialMeldType === "news"
+                  ? "Ignore NEWS"
+                  : "Ignore Melds"
+              )
+        );
 
   ignoreButton.onclick =
     ignoreMMRCandidates;
@@ -325,6 +334,9 @@ if (
     ignoreButton
   );
 }
+
+
+
 
   document
     .getElementById("mmrDialog")
@@ -456,19 +468,38 @@ if (mmrState.action === "sagasa-after-draw") {
 
 if (mmrState.action === "hidden-kang-after-draw") {
 
- const ignoredTileKey =
-    mmrState.candidates &&
-    mmrState.candidates[0] &&
-    mmrState.candidates[0].tiles
-      ? mmrState.candidates[0].tiles[0]
-      : mmrState.tileKey;
+ const isNewsPKC =
+  mmrState.candidates &&
+  mmrState.candidates[0] &&
+  mmrState.candidates[0].type === "news";
 
-  if (
-    ignoredTileKey &&
-    !ignoredKangTileKeys.includes(ignoredTileKey)
-  ) {
-    ignoredKangTileKeys.push(ignoredTileKey);
-  }
+const ignoredTileKey =
+  isNewsPKC
+    ? "news"
+    : (
+        mmrState.candidates &&
+        mmrState.candidates[0] &&
+        mmrState.candidates[0].tiles
+          ? mmrState.candidates[0].tiles[0]
+          : mmrState.tileKey
+      );
+
+if (mmrState.fromPKC && ignoredTileKey) {
+  deferredKangTileKeys =
+    deferredKangTileKeys.filter(function(tileKey) {
+      return tileKey !== ignoredTileKey;
+    });
+}
+
+if (isNewsPKC) {
+  ignoredNEWS = true;
+} else if (
+  ignoredTileKey &&
+  !ignoredKangTileKeys.includes(ignoredTileKey)
+) {
+  ignoredKangTileKeys.push(ignoredTileKey);
+}
+
 
   document
     .getElementById("mmrDialog")
@@ -863,6 +894,35 @@ function continueWithoutEC() {
   resumeMMRAction();
 }
 
+function showMahjongWatchECDialog() {
+  const dialog =
+    document.getElementById("mahjongWatchECDialog");
+
+  if (!dialog) {
+    return;
+  }
+
+  dialog.classList.remove("hidden");
+}
+
+function keepMahjongWatchEC() {
+  document
+    .getElementById("mahjongWatchECDialog")
+    .classList.add("hidden");
+
+  mahjongWatchECDiscardOverride = false;
+}
+
+function discardMahjongWatchECAnyway() {
+  document
+    .getElementById("mahjongWatchECDialog")
+    .classList.add("hidden");
+
+  mahjongWatchECDiscardOverride = true;
+
+  confirmDiscard();
+}
+
 function showBOLOEyesDialog() {
   document
     .getElementById("boloEyesDialog")
@@ -894,7 +954,20 @@ function showOverPairedDialog(pairCount) {
 function confirmSevenPairs() {
   sevenPairsMode = true;
   sevenPairsBoxState.active = true;
-  updateSevenPairsBoxState(counts);
+
+  const result =
+    evaluate17TE(
+      MJC_STATE.getEngineInput()
+    );
+
+  const structureState =
+    result.structureState || result;
+
+  updateSevenPairsBoxState(
+    counts,
+    structureState.completeBoxes
+  );
+
   syncSevenPairsCompletionOrder();
 
   const title =

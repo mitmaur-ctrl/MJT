@@ -691,7 +691,22 @@ const preDrawKangSignatures =
       return getCompleteBoxSignature(box);
     });
 
+const preDrawResult =
+  gameAction === "draw"
+    ? evaluate17TE(
+        MJC_STATE.getEngineInput()
+      )
+    : null;
+
+mahjongWatchBeforeDraw =
+  Boolean(
+    preDrawResult &&
+    preDrawResult.mahjongWatch === true
+  );
+
 counts[selectedDrawTileKey] += 1;
+
+
 syncEscaleraAfterHandChange();
 syncSevenPairsAfterHandChange();
 
@@ -749,54 +764,112 @@ if (preDrawHiddenPong) {
     boxId: preDrawHiddenPong.boxId
   };
 
+ mmrState = {
+  action: "hidden-kang-after-draw",
+  tileKey: selectedDrawTileKey,
+  candidates: [hiddenPongKang],
+  recommendedCandidate: hiddenPongKang,
+  selectedCandidate: hiddenPongKang,
+  sourceBoxId: preDrawHiddenPong.boxId,
+  skipCommit: true
+};
+
+  openMMRDialog();
+  return;
+}
+
+const deferredPKC =
+  currentResult.structureState.developingBoxes.find(
+    function(box) {
+      return box.type === "pkc";
+    }
+  );
+
+if (deferredPKC) {
+  const isNewsPKC =
+    deferredPKC.candidateType === "news";
+
+  if (isNewsPKC) {
+    const deferredNEWS = {
+      type: "news",
+      tiles: [
+        "north",
+        "east",
+        "west",
+        "south"
+      ],
+      visibility: "hidden"
+    };
+
+    mmrState = {
+      action: "hidden-kang-after-draw",
+      tileKey: "news",
+      candidates: [deferredNEWS],
+      recommendedCandidate: deferredNEWS,
+      selectedCandidate: deferredNEWS,
+      fromPKC: true,
+      skipCommit: true
+    };
+  } else {
+    const pkcTileKey =
+      deferredPKC.tiles[0];
+
+    const deferredPKCKang = {
+      type: "kang",
+      tiles: [
+        pkcTileKey,
+        pkcTileKey,
+        pkcTileKey,
+        pkcTileKey
+      ],
+      visibility: "hidden"
+    };
+
+    mmrState = {
+      action: "hidden-kang-after-draw",
+      tileKey: pkcTileKey,
+      candidates: [deferredPKCKang],
+      recommendedCandidate: deferredPKCKang,
+      selectedCandidate: deferredPKCKang,
+      fromPKC: true,
+      skipCommit: true
+    };
+  }
+
+  openMMRDialog();
+  return;
+}
+
+
+const sagasaPong =
+  preDrawSagasaPong;
+
+if (sagasaPong) {
+  const sagasaKang = {
+    type: "kang",
+    tiles: [
+      selectedDrawTileKey,
+      selectedDrawTileKey,
+      selectedDrawTileKey,
+      selectedDrawTileKey
+    ],
+    visibility: "exposed",
+    boxId: sagasaPong.boxId
+  };
+
   mmrState = {
-    action: "hidden-kang-after-draw",
+    action: "sagasa-after-draw",
     tileKey: selectedDrawTileKey,
-    candidates: [hiddenPongKang],
-    recommendedCandidate: hiddenPongKang,
-    selectedCandidate: hiddenPongKang,
-    sourceBoxId: preDrawHiddenPong.boxId,
+    candidates: [sagasaKang],
+    recommendedCandidate: sagasaKang,
+    selectedCandidate: sagasaKang,
+    sourceBoxId: sagasaPong.boxId,
     skipCommit: true
   };
 
   openMMRDialog();
   return;
 }
-
-const sagasaPong =
-  preDrawSagasaPong;
-
-if (sagasaPong) {
-  const sagasaKang =
-    currentResult.structureState.completeBoxes.find(
-      function(box) {
-        return (
-          box.type === "kang" &&
-          box.tiles &&
-          box.tiles.length === 4 &&
-          box.tiles.every(function(tileKey) {
-            return tileKey === selectedDrawTileKey;
-          })
-        );
-      }
-    );
-
-  if (sagasaKang) {
-    mmrState = {
-      action: "sagasa-after-draw",
-      tileKey: selectedDrawTileKey,
-      candidates: [sagasaKang],
-      recommendedCandidate: sagasaKang,
-      selectedCandidate: sagasaKang,
-      sourceBoxId: sagasaPong.boxId,
-      skipCommit: true
-    };
-
-    openMMRDialog();
-    return;
-  }
-}
-
 
 
   const declarableKang =
@@ -954,6 +1027,102 @@ function resumeMMRAction() {
   return;
 }
 
+if (mmrState.action === "sagasa-after-draw") {
+  const sagasaBox =
+    mmrState.selectedCandidate;
+
+  const sagasaTileKey =
+    sagasaBox && sagasaBox.tiles
+      ? sagasaBox.tiles[0]
+      : null;
+
+  if (sagasaTileKey) {
+
+    // Promote the existing Exposed Pong
+    // into an Exposed Kang.
+    mmrCommittedBoxes =
+      mmrCommittedBoxes.filter(function(commitment) {
+        const candidate =
+          commitment.candidate;
+
+        const isMatchingPong =
+          candidate &&
+          candidate.type === "pong" &&
+          candidate.tiles &&
+          candidate.tiles.length === 3 &&
+          candidate.tiles.every(function(tileKey) {
+            return tileKey === sagasaTileKey;
+          });
+
+        return !isMatchingPong;
+      });
+
+    mmrCommittedBoxes.push({
+      action: "sagasa-after-draw",
+      tileKey: sagasaTileKey,
+      candidate: {
+        type: "kang",
+        tiles: [
+          sagasaTileKey,
+          sagasaTileKey,
+          sagasaTileKey,
+          sagasaTileKey
+        ],
+        visibility: "exposed"
+      }
+    });
+
+    const declarationResult =
+      evaluate17TE(
+        MJC_STATE.getEngineInput()
+      );
+
+    const declaredKang =
+      declarationResult.completeBoxes.find(function(box) {
+        return (
+          box.type === "kang" &&
+          box.tiles &&
+          box.tiles.length === 4 &&
+          box.tiles.every(function(tileKey) {
+            return tileKey === sagasaTileKey;
+          })
+        );
+      });
+
+    if (declaredKang) {
+      setCompleteBoxVisibility(
+        declaredKang.boxId,
+        "exposed"
+      );
+    }
+  }
+
+  lockHandContext();
+
+  phase = "game";
+  hdMode = "current";
+  gameAction = "draw";
+  kangReplacementDraw = true;
+  replacementDrawSource = "sagasa";
+  claimType = null;
+
+  lastDrawnTileKey =
+    selectedDrawTileKey;
+
+  revisionReturnHDMode = "current";
+  revisionTarget = null;
+  correctingLastEntry = false;
+  correctionTargetTileKey = null;
+  correctionActionType = null;
+
+  mmrState = null;
+
+  showHD();
+  return;
+}
+
+
+
 if (mmrState.action === "hidden-kang-after-draw") {
   const kangBox =
   mmrState.selectedCandidate;
@@ -964,6 +1133,12 @@ const kangTileKey =
     : null;
 
 if (kangTileKey) {
+
+deferredKangTileKeys =
+  deferredKangTileKeys.filter(function(tileKey) {
+    return tileKey !== kangTileKey;
+  });
+
   // Promote an existing committed Pong
   // into this newly declared Hidden Kang.
   mmrCommittedBoxes =
@@ -1030,7 +1205,11 @@ if (kangTileKey) {
   hdMode = "current";
   gameAction = "draw";
   kangReplacementDraw = true;
-  replacementDrawSource = "kang";
+  replacementDrawSource =
+  mmrState.selectedCandidate &&
+  mmrState.selectedCandidate.type === "news"
+    ? "news"
+    : "kang";
   claimType = null;
 
   lastDrawnTileKey =
@@ -1354,6 +1533,46 @@ function confirmDiscard() {
   }
   if (counts[selectedDiscardTileKey] <= 0) return;
 
+  if (!mahjongWatchECDiscardOverride) {
+    const currentResult =
+      evaluate17TE(
+        MJC_STATE.getEngineInput()
+      );
+
+    const structureState =
+      currentResult.structureState ||
+      currentResult;
+
+    const eyeCandidates =
+      structureState.developingBoxes.filter(
+        function(box) {
+          return box.type === "ec";
+        }
+      );
+
+    const onlyEye =
+      eyeCandidates.length === 1
+        ? eyeCandidates[0]
+        : null;
+
+    const discardingOnlyEye =
+  mahjongWatchBeforeDraw === true &&
+  onlyEye &&
+  onlyEye.tiles.includes(
+    selectedDiscardTileKey
+  );
+
+
+
+    if (discardingOnlyEye) {
+      showMahjongWatchECDialog();
+      return;
+    }
+  }
+
+  mahjongWatchECDiscardOverride = false;
+
+
   lastActionSnapshot = makeSnapshot();
   lastActionType = "discard";
   lastActionTileKey = selectedDiscardTileKey;
@@ -1387,9 +1606,12 @@ function confirmDiscard() {
 
   phase = "game";
   hdMode = "current";
-  gameAction = "draw";
-  lastDrawnTileKey = null;
-  revisionReturnHDMode = "current";
+
+ gameAction = "draw";
+ mahjongWatchBeforeDraw = false;
+ lastDrawnTileKey = null;
+ revisionReturnHDMode = "current";
+
   revisionTarget = null;
   correctingLastEntry = false;
   correctionTargetTileKey = null;

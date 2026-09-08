@@ -763,9 +763,15 @@ if (sixBoxTheoryLink) {
   handInstruction.innerHTML =
   kangReplacementDraw
     ? (
+
         replacementDrawSource === "news"
-          ? "NEWS declared.<br>Draw replacement tile."
-          : "Kang declared.<br>Draw replacement tile."
+  ? "NEWS declared.<br>Draw replacement tile."
+  : (
+      replacementDrawSource === "sagasa"
+        ? "Sagasa declared.<br>Draw replacement tile."
+        : "Kang declared.<br>Draw replacement tile."
+    )
+
       )
     : (
         gameAction === "draw"
@@ -788,9 +794,15 @@ if (sixBoxTheoryLink) {
   handInstruction.innerHTML =
   kangReplacementDraw
     ? (
-        replacementDrawSource === "news"
-          ? "NEWS declared.<br>Draw replacement tile."
-          : "Kang declared.<br>Draw replacement tile."
+ 
+       replacementDrawSource === "news"
+  ? "NEWS declared.<br>Draw replacement tile."
+  : (
+      replacementDrawSource === "sagasa"
+        ? "Sagasa declared.<br>Draw replacement tile."
+        : "Kang declared.<br>Draw replacement tile."
+    )
+
       )
     : (
         gameAction === "draw"

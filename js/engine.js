@@ -512,24 +512,51 @@ const completeBoxes =
     completeBoxes
   );
 
-  const cpcCandidates =
-  findCPCDevelopingBoxes(
-    remainingCounts
+const pkcCandidates =
+  findPKCDevelopingBoxes(
+    remainingCounts,
+    engineInput.deferredKangTileKeys || [],
+    engineInput.context &&
+      engineInput.context.phase === "starting"
   );
+
+const pkcAdjustedCounts = {
+  ...remainingCounts
+};
+
+pkcCandidates.forEach(function(box) {
+  box.tiles.forEach(function(tileKey) {
+    pkcAdjustedCounts[tileKey] -= 1;
+  });
+});
+
+const cpcCandidates =
+  findCPCDevelopingBoxes(
+    pkcAdjustedCounts
+  );
+
+
 
 const pairCandidates =
   findPairDevelopingBoxes(
-    remainingCounts,
+    pkcAdjustedCounts,
     [],
     engineInput.protectedECTileKey
   );
 
-const developingBoxes =
+const ordinaryDevelopingBoxes =
   evaluateDBPartitions(
-    remainingCounts,
+    pkcAdjustedCounts,
     cpcCandidates,
     pairCandidates
   );
+
+const developingBoxes = [
+  ...pkcCandidates,
+  ...ordinaryDevelopingBoxes
+];
+
+
 
 const halfEye =
   findHalfEye(
@@ -734,6 +761,11 @@ function findCompleteBoxes(engineInput) {
   const workingCounts = { ...engineInput.counts };
   const completeBoxes = [];
 
+const isStartingHand =
+  engineInput.context &&
+  engineInput.context.phase === "starting";
+
+
 // MMR-committed Complete Boxes get first priority.
 if (
   engineInput.mmrCommittedBoxes &&
@@ -806,24 +838,30 @@ const newsDeferred =
   engineInput.deferredKangTileKeys &&
   engineInput.deferredKangTileKeys.includes("news");
 
+const newsIgnored =
+  engineInput.ignoredNEWS === true;
+
 if (
   hasNEWS &&
-  !newsDeferred
+  !newsDeferred &&
+  !newsIgnored &&
+  !isStartingHand
 ) {
-    completeBoxes.push({
-      type: "news",
-      tiles: newsTiles
-    });
+  completeBoxes.push({
+    type: "news",
+    tiles: newsTiles
+  });
 
-    newsTiles.forEach(function(tileKey) {
-      workingCounts[tileKey] -= 1;
-    });
-  }
+  newsTiles.forEach(function(tileKey) {
+    workingCounts[tileKey] -= 1;
+  });
 }
+}    
 
 // 2. Find Kangs.
 // Four identical tiles form one Complete Box
 // unless the player explicitly ignored that Kang.
+
 
 for (const tileKey in workingCounts) {
   const kangIgnored =
@@ -834,10 +872,11 @@ for (const tileKey in workingCounts) {
     engineInput.deferredKangTileKeys &&
     engineInput.deferredKangTileKeys.includes(tileKey);
 
-  while (
+ while (
   (workingCounts[tileKey] || 0) >= 4 &&
   !kangIgnored &&
-  !kangDeferred
+  !kangDeferred &&
+  !isStartingHand
 ) {
 
     completeBoxes.push({
@@ -860,9 +899,20 @@ for (const tileKey in workingCounts) {
   const ecProtected =
     engineInput.protectedECTileKey === tileKey;
 
+  const deferredKang =
+  (
+    engineInput.deferredKangTileKeys &&
+    engineInput.deferredKangTileKeys.includes(tileKey)
+  ) ||
+  (
+    isStartingHand &&
+    (workingCounts[tileKey] || 0) >= 4
+  );
+
   while (
     (workingCounts[tileKey] || 0) >= 3 &&
-    !ecProtected
+    !ecProtected &&
+    !deferredKang
   ) {
     completeBoxes.push({
       type: "pong",
@@ -1038,6 +1088,78 @@ function getRemainingCounts(originalCounts, completeBoxes) {
 
   return remainingCounts;
 }
+
+function findPKCDevelopingBoxes(
+  remainingCounts,
+  deferredKangTileKeys = [],
+  isStartingHand = false
+) {
+
+  const pkcBoxes = [];
+
+const hasDeferredNEWS =
+  deferredKangTileKeys.includes("news");
+
+const hasNEWS =
+  (remainingCounts.north || 0) >= 1 &&
+  (remainingCounts.east || 0) >= 1 &&
+  (remainingCounts.west || 0) >= 1 &&
+  (remainingCounts.south || 0) >= 1;
+
+const shouldCreateNEWSPKC =
+  hasNEWS &&
+  (
+    isStartingHand ||
+    hasDeferredNEWS
+  );
+
+if (shouldCreateNEWSPKC) {
+
+  pkcBoxes.push({
+    type: "pkc",
+    tiles: [
+      "north",
+      "east",
+      "west",
+      "south"
+    ],
+    candidateType: "news"
+  });
+}
+
+  for (const tileKey in remainingCounts) {
+  const isDeferredKang =
+    deferredKangTileKeys.includes(tileKey);
+
+  const isStartingPKC =
+    isStartingHand &&
+    (remainingCounts[tileKey] || 0) >= 4;
+
+  if (
+    tileKey !== "news" &&
+    (remainingCounts[tileKey] || 0) >= 4 &&
+    (isDeferredKang || isStartingPKC)
+  ) {
+    pkcBoxes.push({
+      type: "pkc",
+      tiles: [
+        tileKey,
+        tileKey,
+        tileKey,
+        tileKey
+      ]
+    });
+  }
+}
+
+  console.log(
+    "PKC Developing Boxes found:",
+    pkcBoxes
+  );
+
+  return pkcBoxes;
+}
+
 
 function findCPCDevelopingBoxes(remainingCounts) {
   const workingCounts = { ...remainingCounts };
