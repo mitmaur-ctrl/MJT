@@ -140,10 +140,10 @@ function buildStartingHandDisplay() {
     let groupHtml = "";
 
     for (const key of group.keys) {
-      for (let i = 0; i < counts[key]; i++) {
-        groupHtml += '<span class="hand-tile">' + tileLabels[key] + '</span>';
-      }
-    }
+  for (let i = 0; i < counts[key]; i++) {
+    groupHtml += renderCoachTile(key);
+  }
+}
 
     if (groupHtml !== "") {
       html += '<div class="hand-section">';
@@ -390,11 +390,11 @@ checkBOLOEyesOpportunity(result, eyeCandidates);
           !drawnHighlightUsed;
 
         groupHtml +=
-  '<span class="hand-tile' +
-  (isLastDrawn ? ' last-drawn' : '') +
-  '" data-key="' + key + '">' +
-  tileLabels[key] +
-  '</span>';
+  renderCoachTile(key, {
+    extraClass:
+      'hand-tile' +
+      (isLastDrawn ? ' last-drawn' : '')
+  });
 
 
         if (isLastDrawn) {
@@ -442,13 +442,13 @@ checkBOLOEyesOpportunity(result, eyeCandidates);
             drawnHighlightUsed = true;
           }
 
-          return (
-            '<span class="hand-tile' +
-            (isLastDrawn ? ' last-drawn' : '') +
-            '">' +
-            tileLabels[tileKey] +
-            '</span>'
-          );
+          return renderCoachTile(tileKey, {
+  extraClass:
+    'hand-tile' +
+    (isLastDrawn ? ' last-drawn' : '')
+});
+
+
         }).join("");
 
       const meldHtml =

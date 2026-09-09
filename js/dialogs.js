@@ -171,38 +171,45 @@ console.log(
 
   optionsContainer.innerHTML = "";
 
-if ( specialMeldType === "kang" ||
-  specialMeldType === "news") {
-  const detectedTile =
-    mmrState.candidates[0].tiles[0];
+
+if (
+  specialMeldType === "kang" ||
+  specialMeldType === "news"
+) {
+  const detectedTiles =
+    mmrState.candidates[0].tiles;
 
   const detectedMessage =
     document.createElement("div");
 
-  detectedMessage.textContent =
-  specialMeldType === "kang"
-    ? (
-        tileLabels[detectedTile] ||
-        detectedTile
-      )
-    : mmrState.candidates[0].tiles
-        .map(function(tileKey) {
-          return (
-            tileLabels[tileKey] ||
-            tileKey
-          );
-        })
-        .join(" · ");
+  detectedMessage.className =
+    "mmr-special-tiles";
 
-  detectedMessage.style.fontWeight = "bold";
-  detectedMessage.style.fontSize = "18px";
-  detectedMessage.style.textAlign = "center";
-  detectedMessage.style.marginBottom = "14px";
+  detectedMessage.innerHTML =
+    detectedTiles
+      .map(function(tileKey, index) {
+
+        const isKeyTile =
+          specialMeldType === "kang" &&
+          tileKey === mmrState.tileKey &&
+          index === detectedTiles.length - 1;
+
+        return (
+          '<span class="mmr-candidate-tile' +
+          (isKeyTile ? " mmr-key-tile" : "") +
+          '">' +
+            renderCoachTile(tileKey) +
+          '</span>'
+        );
+      })
+      .join("");
 
   optionsContainer.appendChild(
     detectedMessage
   );
 }
+
+
 
 if (
   !isSingleSpecialMeld &&
