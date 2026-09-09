@@ -1127,6 +1127,40 @@ if (mmrState.action === "hidden-kang-after-draw") {
   const kangBox =
   mmrState.selectedCandidate;
 
+const isNewsDeclaration =
+  kangBox &&
+  kangBox.type === "news";
+
+if (isNewsDeclaration) {
+
+  deferredKangTileKeys =
+    deferredKangTileKeys.filter(function(tileKey) {
+      return tileKey !== "news";
+    });
+
+  ignoredNEWS = false;
+
+  const declarationResult =
+    evaluate17TE(
+      MJC_STATE.getEngineInput()
+    );
+
+  const declaredNEWS =
+    declarationResult.structureState.completeBoxes.find(
+      function(box) {
+        return box.type === "news";
+      }
+    );
+
+  if (declaredNEWS) {
+    setCompleteBoxVisibility(
+      declaredNEWS.boxId,
+      "hidden"
+    );
+  }
+
+} else {
+
 const kangTileKey =
   kangBox && kangBox.tiles
     ? kangBox.tiles[0]
@@ -1198,8 +1232,9 @@ deferredKangTileKeys =
   }
 }
 
-
+}
   lockHandContext();
+
 
   phase = "game";
   hdMode = "current";
