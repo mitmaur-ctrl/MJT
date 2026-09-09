@@ -241,22 +241,54 @@ if (
       );
 
 
-   button.textContent =
-  isSingleSpecialMeld
-    ? getDeclarationPrimaryLabel(
-        specialMeldType,
-        mmrState.action
-      )
-    : (
-        candidate.type.toUpperCase() +
-        ": " +
-        candidate.tiles.join(", ") +
-        (
-          isRecommended
-            ? " — MJC Recommended"
-            : ""
-        )
-      );
+
+   if (isSingleSpecialMeld) {
+
+  button.textContent =
+    getDeclarationPrimaryLabel(
+      specialMeldType,
+      mmrState.action
+    );
+
+} else {
+
+  const candidateTileHtml =
+    candidate.tiles
+      .map(function(tileKey) {
+
+        const keyTileClass =
+          tileKey === mmrState.tileKey
+            ? " mmr-key-tile"
+            : "";
+
+        return (
+          '<span class="mmr-candidate-tile' +
+          keyTileClass +
+          '">' +
+            renderCoachTile(tileKey) +
+          '</span>'
+        );
+      })
+      .join("");
+
+  button.innerHTML =
+    '<span class="mmr-candidate-label">' +
+      candidate.type.toUpperCase() +
+      ':' +
+    '</span>' +
+
+    '<span class="mmr-candidate-tiles">' +
+      candidateTileHtml +
+    '</span>' +
+
+    (
+      isRecommended
+        ? '<span class="mmr-recommended">' +
+            'MJC Recommended' +
+          '</span>'
+        : ""
+    );
+}
 
 
     button.onclick = function() {
