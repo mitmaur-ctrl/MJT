@@ -113,6 +113,8 @@ function toggleTileIndices() {
 
   if (coachingOn) {
     renderCoachView();
+  } else {
+    buildHandDisplay();
   }
 }
 
@@ -134,7 +136,13 @@ function getTileIndexToggleHtml() {
 
 function buildStartingHandDisplay() {
   const groups = getTileGroups();
-  let html = "";
+  let html =
+  '<div class="coach-top-row">' +
+    '<div></div>' +
+    '<div class="coach-top-right">' +
+      getTileIndexToggleHtml() +
+    '</div>' +
+  '</div>';
 
   for (const group of groups) {
     let groupHtml = "";
@@ -392,8 +400,7 @@ checkBOLOEyesOpportunity(result, eyeCandidates);
         groupHtml +=
   renderCoachTile(key, {
     extraClass:
-      'hand-tile' +
-      (isLastDrawn ? ' last-drawn' : '')
+      isLastDrawn ? 'last-drawn' : ''
   });
 
 
@@ -442,10 +449,9 @@ checkBOLOEyesOpportunity(result, eyeCandidates);
             drawnHighlightUsed = true;
           }
 
-          return renderCoachTile(tileKey, {
+         return renderCoachTile(tileKey, {
   extraClass:
-    'hand-tile' +
-    (isLastDrawn ? ' last-drawn' : '')
+    isLastDrawn ? 'last-drawn' : ''
 });
 
 
@@ -473,7 +479,13 @@ if (box.visibility === "exposed") {
   ================================================
   */
 
-  let html = "";
+  let html =
+  '<div class="coach-top-row">' +
+    '<div></div>' +
+    '<div class="coach-top-right">' +
+      getTileIndexToggleHtml() +
+    '</div>' +
+  '</div>';
 
   html += '<div class="hand-section">';
   html +=
@@ -530,7 +542,7 @@ if (coachingOn) {
     gameAction === "discard"
   ) {
     handDisplay
-      .querySelectorAll(".hand-tile[data-key]")
+      .querySelectorAll(".coach-tile[data-key]")
       .forEach(function(tile) {
         tile.addEventListener("click", function() {
           selectSVDiscardTile(
@@ -543,7 +555,7 @@ if (coachingOn) {
     if (selectedDiscardTileKey) {
       const selectedTile =
         handDisplay.querySelector(
-          '.hand-tile[data-key="' +
+          '.coach-tile[data-key="' +
           selectedDiscardTileKey +
           '"]'
         );

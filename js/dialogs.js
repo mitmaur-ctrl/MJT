@@ -651,6 +651,16 @@ function openUnderstandingBoxesDialog() {
     .classList.remove("hidden");
 }
 
+function openMeetCandidatesDialog() {
+  closeDialog("understandingBoxesDialog");
+  openDialog("meetCandidatesDialog");
+}
+
+function closeMeetCandidatesDialog() {
+  closeDialog("meetCandidatesDialog");
+  openDialog("understandingBoxesDialog");
+}
+
 function openUserGuideDialog() {
   openDialog("userGuideDialog");
 }
