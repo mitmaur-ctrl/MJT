@@ -811,32 +811,25 @@ V4 = Photo Recognition
   <div class="dialog">
     <h2>Understanding the Boxes</h2>
 
+<p>
+  To help you better see the relationships between the tiles in your hand,
+  Six Box Theory™ organizes your hand into boxes.
+</p>
+
     <p>
       <strong><u>Complete Boxes (CB)</u></strong><br>
       Completed melds that require no additional tiles.
       <em>These appear at the bottom of the display.</em>
     </p>
 
-    <p>
-      <strong><u>Developing Boxes (DB)</u></strong><br>
-      Groups of tiles that are working toward becoming Complete Boxes.
-      <em>These appear in the middle of the display.</em>
-    </p>
 
     <p>
-      Developing Boxes may include:
-    </p>
+  <strong><u>Developing Boxes (DB)</u></strong><br>
+  Groups of tiles that are working toward becoming Complete Boxes.
+  <strong>These tile groups are called Candidates.</strong>
+  <em>These appear in the middle of the display.</em>
+</p>
 
-    <div class="box-list">
-      <strong>EC</strong> — Eye Candidate<br>
-      <em>A potential Eye (pair).</em><br><br>
-
-      <strong>EPC</strong> — Eye-Pong Candidate<br>
-      <em>A pair that may form either an Eye or a Pong.</em><br><br>
-
-      <strong>CPC</strong> — Chow-Pong Candidate<br>
-      <em>Three or four tiles that may form either a Chow or a Pong.</em>
-    </div>
 
     <p>
       <strong><u>Reserves (R)</u></strong><br>
@@ -851,6 +844,17 @@ V4 = Photo Recognition
       </strong>
     </p>
 
+<p style="text-align:center; margin-top:14px;">
+  <button
+    type="button"
+    class="dialog-button"
+    onclick="openMeetCandidatesDialog()"
+  >
+    Meet the Candidates
+  </button>
+</p>
+
+
     <div class="dialog-actions">
       <button
         class="dialog-button primary"
@@ -862,7 +866,73 @@ V4 = Photo Recognition
   </div>
 </div>
 
-    
+<div id="meetCandidatesDialog" class="dialog-backdrop hidden">
+  <div class="dialog">
+    <h2>Meet the Candidates</h2>
+
+<p>
+  They're called Candidates because each represents a possible path toward
+  becoming a Complete Box. As the hand develops, some Candidates will become
+  Complete Boxes while others may change or be replaced.
+</p>
+
+    <p>
+      <strong>Pong-Kang Candidate (PKC)</strong><br>
+      <em>A four-tile Developing Box that can be declared as a Kang or NEWS.</em>
+    </p>
+
+    <p>
+      <strong>Chow-Pong Candidate (CPC)</strong><br>
+      <em>Two matching suited tiles that can develop into either a Chow or a Pong.</em>
+    </p>
+
+    <p>
+      <strong>Eye-Pong Candidate (EPC)</strong><br>
+      <em>Two matching tiles that can serve as the Eye or develop into a Pong.</em>
+    </p>
+
+    <p>
+      <strong>Eye Candidate (EC)</strong><br>
+      <em>Two matching tiles being held as the Eye.</em>
+    </p>
+
+    <p>
+      <strong>Chow Candidates</strong><br>
+      <em>Two suited tiles that are working toward becoming a Chow.</em>
+    </p>
+
+    <div style="margin-left:20px;">
+      <p>
+        <strong>Double-Sided Wait (DSW)</strong><br>
+        <em>Two consecutive suited tiles that can complete a Chow from either end.</em>
+      </p>
+
+      <p>
+        <strong>Middle Wait (MW)</strong><br>
+        <em>Two suited tiles with one number between them, waiting for the middle tile to complete the Chow.</em>
+      </p>
+
+      <p>
+        <strong>Edge Wait (EW)</strong><br>
+        <em>A 1–2 or 8–9 combination waiting for the single tile that completes the Chow.</em>
+      </p>
+    </div>
+
+    <p>
+      <strong>Half-Eye (HE)</strong><br>
+      <em>A single tile being held as a possible half of a pair for the Eye.</em>
+    </p>
+
+    <div class="dialog-actions">
+      <button
+        class="dialog-button primary"
+        onclick="closeMeetCandidatesDialog()"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+</div>    
 
 <div id="userGuideDialog" class="dialog-backdrop hidden">
   <div class="dialog">
