@@ -1701,6 +1701,135 @@ requestCHDDiscardConfirmation();
 
 }
 
+function getCoachAlertMessages(
+  result,
+  structureState
+) {
+  const messages = [];
+
+if (
+  hdMode !== "current" ||
+  phase !== "game"
+) {
+  return messages;
+}
+
+  const eyeCandidates =
+    structureState.developingBoxes.filter(
+      function(box) {
+        return (
+          box.type === "ec" ||
+          box.type === "epc"
+        );
+      }
+    );
+
+  const completeBoxCount =
+    structureState.completeBoxes.length;
+
+  /*
+  ================================================
+  Special-Hand Pursuits
+  ================================================
+  */
+
+  if (
+    sevenPairsMode &&
+    sevenPairsBoxState.active
+  ) {
+    messages.push(
+      ruleset === "filipino16"
+        ? "Pursuing Siete Pares"
+        : "Pursuing Seven Pairs"
+    );
+  }
+
+  if (
+    escaleraMode &&
+    escaleraBoxState.active
+  ) {
+    messages.push(
+      ruleset === "filipino16"
+        ? "Pursuing Escalera"
+        : "Pursuing Straight"
+    );
+  }
+
+  /*
+  ================================================
+  Eye Coaching
+
+  Siete Pares does not require an Eye.
+  Escalera does, so Eye coaching remains active.
+  ================================================
+  */
+
+  const escaleraBOLOReady =
+  escaleraMode &&
+  escaleraBoxState.active &&
+  escaleraBoxState.complete &&
+  escaleraBoxState.remainingMeldCount === 0 &&
+  escaleraBoxState.eyeNeeded === true;
+
+const escaleraProtectEyeReady =
+  escaleraMode &&
+  escaleraBoxState.active &&
+  escaleraBoxState.complete &&
+  eyeCandidates.length === 1;
+
+if (!sevenPairsMode) {
+  if (
+    eyeCandidates.length === 0 &&
+    (
+      completeBoxCount >= 4 ||
+      escaleraBOLOReady
+    )
+  ) {
+    messages.push("BOLO for Eyes");
+  } else if (
+    eyeCandidates.length === 1 &&
+    (
+      completeBoxCount >= 4 ||
+      escaleraProtectEyeReady
+    )
+  ) {
+    messages.push("Protect Your Only Eye");
+  }
+}
+
+  /*
+  ================================================
+  Over-Paired
+
+  Existing special-hands logic determines whether
+  the normal hand is currently Over-Paired.
+  ================================================
+  */
+
+  if (
+    overPairedActive &&
+    !sevenPairsMode
+  ) {
+    messages.push("Over-Paired");
+  }
+
+  /*
+  ================================================
+  Kang Deferred
+  ================================================
+  */
+
+  if (
+    deferredKangTileKeys.some(function(tileKey) {
+      return tileKey !== "news";
+    })
+  ) {
+    messages.push("Kang Deferred");
+  }
+
+
+  return messages;
+}
 
 function renderCoachView() {
   const enginePanel =
@@ -1773,24 +1902,52 @@ const highlightState = {
   used: false
 };
 
+const coachAlertMessages =
+  getCoachAlertMessages(
+    result,
+    structureState
+  );
+
+const coachAlertHtml =
+  coachAlertMessages.length > 0
+    ? (
+        '<div id="coachAlertArea" class="coach-alert-area">' +
+          coachAlertMessages
+            .map(function(message) {
+              return (
+                '<div class="coach-alert-message">' +
+                  message +
+                '</div>'
+              );
+            })
+            .join("") +
+        '</div>'
+      )
+    : "";
+
+
   enginePanel.innerHTML =
   '<div class="coach-top-row">' +
-        '<div id="coachMessageArea" class="coach-message-area">' +
-      'Boxes Complete: ' +
-structureState.completeBoxes.length +
-' of ' +
-targetBoxCount +
-    '</div>' +
 
-    '<div class="coach-top-right">' +
-  getBoxLabelToggleHtml() +
-  getTileIndexToggleHtml() +
-  '<div class="tih-counter">' +
-        'TIH: ' + tih +
-      '</div>' +
+  '<div class="coach-status-left">' +
+    '<div id="coachMessageArea" class="coach-message-area">' +
+      'Boxes Complete: ' +
+      structureState.completeBoxes.length +
+      ' of ' +
+      targetBoxCount +
+    '</div>' +
+    coachAlertHtml +
+  '</div>' +
+
+  '<div class="coach-top-right">' +
+    getBoxLabelToggleHtml() +
+    getTileIndexToggleHtml() +
+    '<div class="tih-counter">' +
+      'TIH: ' + tih +
     '</div>' +
   '</div>' +
 
+'</div>' +
 
   (
   window.coachViewForm === "short" &&
