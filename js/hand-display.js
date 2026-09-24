@@ -1576,6 +1576,10 @@ const isCPC =
 
 const showCPCPathways =
   isCPC && window.pathwaysOn;
+if (isCPC) console.log("CPC BOX:", box);
+const isCPCMirror =
+  isCPC &&
+  box.fp.structuralPossibilities[0].keyTile.endsWith("7");
 
 html +=
   '<div class="hand-section box-card developing-box' +
@@ -1687,32 +1691,62 @@ html +=
         ? '<div class="pathway-dsw-display">' +
             '<div class="pathway-tile-row">' +
 
-              renderCoachTile(box.tiles[0]) +
-              renderCoachTile(box.tiles[1]) +
+             renderCoachTile(box.tiles[0]) +
+(isCPCMirror
+  ? '<div class="pathway-indicator">' +
+      '<div class="pathway-ea">' +
+        box.fp.structuralPossibilities[0].effectiveAcceptance +
+      '</div>' +
+      '<div class="pathway-arrow pathway-arrow-left">↓</div>' +
+    '</div>' +
+'<div class="pathway-indicator">' +
+  '<div class="pathway-ea">' +
+    box.fp.structuralPossibilities[2].effectiveAcceptance +
+  '</div>' +
+  '<div class="pathway-arrow pathway-arrow-left pathway-complex">↓</div>' +
+'</div>' +
+renderCoachTile(box.tiles[1])
+  : renderCoachTile(box.tiles[1])) +
 
-              '<div class="pathway-indicator">' +
-                '<div class="pathway-ea">' +
-                  box.fp.structuralPossibilities[0].effectiveAcceptance +
-                '</div>' +
-                '<div class="pathway-arrow pathway-arrow-left">↓</div>' +
-              '</div>' +
+              (isCPCMirror
+  ? ''
+  : '<div class="pathway-indicator">' +
+      '<div class="pathway-ea">' +
+        box.fp.structuralPossibilities[0].effectiveAcceptance +
+      '</div>' +
+      '<div class="pathway-arrow pathway-arrow-left">↓</div>' +
+    '</div>') +
+
+              (isCPCMirror
+  ? '<div class="pathway-indicator">' +
+      '<div class="pathway-ea">' +
+        box.fp.structuralPossibilities[1].effectiveAcceptance +
+      '</div>' +
+      '<div class="pathway-arrow pathway-arrow-left">↓</div>' +
+    '</div>'
+  : '') +
 
               renderCoachTile(box.tiles[2]) +
 
-              '<div class="pathway-indicator">' +
-                '<div class="pathway-ea">' +
-                  box.fp.structuralPossibilities[2].effectiveAcceptance +
-                '</div>' +
-                '<div class="pathway-arrow pathway-arrow-left pathway-complex">↓</div>' +
-              '</div>' +
+              (isCPCMirror
+  ? ''
+  : '<div class="pathway-indicator">' +
+      '<div class="pathway-ea">' +
+        box.fp.structuralPossibilities[2].effectiveAcceptance +
+      '</div>' +
+      '<div class="pathway-arrow pathway-arrow-left pathway-complex">↓</div>' +
+    '</div>') +
 
-              '<div class="pathway-indicator">' +
-                '<div class="pathway-ea">' +
-                  box.fp.structuralPossibilities[1].effectiveAcceptance +
-                '</div>' +
-                '<div class="pathway-arrow pathway-arrow-left">↓</div>' +
-              '</div>' +
 
+
+(isCPCMirror
+  ? ''
+  : '<div class="pathway-indicator">' +
+      '<div class="pathway-ea">' +
+        box.fp.structuralPossibilities[1].effectiveAcceptance +
+      '</div>' +
+      '<div class="pathway-arrow pathway-arrow-left">↓</div>' +
+    '</div>') +
               renderCoachTile(box.tiles[3]) +
 
 '</div>' +
