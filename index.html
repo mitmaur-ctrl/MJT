@@ -9,7 +9,7 @@ Project:
 Mahjong Coach
 
 Version:
-MJC Beta v4.6
+MJC Beta v5.0
 
 Purpose:
 - Smartphone-optimized tile management vehicle
@@ -224,9 +224,9 @@ V4 = Photo Recognition
   <button
   id="pathwaysBtn"
   class="action-button coaching-button secondary-hd-button"
-  onclick="showToast('Pathways — Coming Soon!')"
+  onclick="togglePathways()"
 >
-  Pathways: Off
+  Pathways: On
 </button>
 </div>
 
@@ -365,7 +365,7 @@ V4 = Photo Recognition
     <button onclick="openFeedbackDialog()">Feedback</button>
     <button onclick="openSupportDialog()">Support MJC</button>
   </div>
-  <div class="footer-version">Beta v4.6</div>
+  <div class="footer-version">Beta v5.0</div>
 </div>
 
 </div>
@@ -871,8 +871,7 @@ V4 = Photo Recognition
     <h2>Meet the Candidates</h2>
 
 <p>
-  They're called Candidates because each represents a possible path toward
-  becoming a Complete Box. As the hand develops, some Candidates will become
+  They're called Candidates because each holds the potential to become a Complete Box. As the hand develops, some Candidates will become
   Complete Boxes while others may change or be replaced.
 </p>
 
@@ -960,7 +959,7 @@ V4 = Photo Recognition
     <h2>Feedback</h2>
     <p>Thank you for helping us improve Mahjong Coach.</p>
     <p>We welcome bug reports, suggestions, comments, and feature requests.</p>
-    <p><strong>Email:</strong> <a href="mailto:mjcfeedbackteam@gmail.com?subject=Mahjong%20Coach%20Feedback%20-%20Beta%20v4.6">mjcfeedbackteam@gmail.com</a></p>
+    <p><strong>Email:</strong> <a href="mailto:mjcfeedbackteam@gmail.com?subject=Mahjong%20Coach%20Feedback%20-%20Beta%20v5.0">mjcfeedbackteam@gmail.com</a></p>
     <p><em>Every message is read and appreciated.</em></p>
     <div class="dialog-actions">
       <button class="dialog-button primary" onclick="closeDialog('feedbackDialog')">Close</button>
@@ -998,7 +997,7 @@ Acceptance standard:
 ==================================================
 */
 
-const MJC_VERSION_LABEL = "Beta v4.6";
+const MJC_VERSION_LABEL = "Beta v5.0";
 
 const MJC_RULESET_BASE_HAND_SIZES = Object.freeze({
   filipino16: 16,
@@ -1054,6 +1053,7 @@ const MJC_STATE = {
       screenMode: screenMode,
       hdMode: hdMode,
       gameAction: gameAction,
+      playerDiscardCount: playerDiscardCount,
       lastDrawnTileKey: lastDrawnTileKey,
       contextLocked: contextLocked
     };
@@ -1227,6 +1227,7 @@ function startNewGame() {
   overPairedActive = false;
   sevenPairsMode = false;
   handStarted = false;
+  playerDiscardCount = 0;
   sevenPairsStatusAsked = false;
   overPairedDelayOneEvaluation = false;
   escaleraMode = false;
