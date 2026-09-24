@@ -2589,6 +2589,10 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 
   color: #d97706;
 }
 
+.pathway-indicator:has(.pathway-arrow.pathway-complex) .pathway-ea {
+  color: #d97706;
+}
+
 .pathway-dsw-display .pathway-arrow-left {
   margin-right: 1px;
 }
@@ -2606,9 +2610,9 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 
 .pathway-ea {
   height: 18px;
   font-size: 15px;
-  font-weight: bold;
+  font-weight: 500;
   line-height: 18px;
-  color: #111;
+  color: #2e8b57;
   text-align: center;
 }
 
