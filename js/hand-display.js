@@ -1715,10 +1715,30 @@ html +=
 
               renderCoachTile(box.tiles[3]) +
 
-            '</div>' +
-          '</div>'
+'</div>' +
+'</div>' +
+'<div class="pathway-fp-summary pathway-cpc-summary">' +
+  '<span>Chow</span>' +
+  '<span>Acceptance: ' +
+    box.fp.structuralPossibilities[0].acceptance +
+  '</span>' +
+  '<span>Sources: ' +
+    box.fp.structuralPossibilities[0].currentSources +
+  '</span>' +
+'</div>'
 
-        : tileHtml) +
++
+'<div class="pathway-fp-summary pathway-cpc-summary">' +
+  '<span>Pong</span>' +
+  '<span>Acceptance: ' +
+    box.fp.structuralPossibilities[2].acceptance +
+  '</span>' +
+  '<span>Sources: ' +
+    box.fp.structuralPossibilities[2].currentSources +
+  '</span>' +
+'</div>'
+
+: tileHtml) +
 
   '</div>';
 
