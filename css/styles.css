@@ -2558,3 +2558,61 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 
   color: #b00020;
   font-weight: 600;
 }
+
+/* =========================================
+   PATHWAYS — DSW PROTOTYPE
+   ========================================= */
+
+.pathway-dsw-display {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.pathway-dsw-display .pathway-tile-row {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.pathway-dsw-display .pathway-arrow {
+  color: #2e8b57;
+  font-size: 34px;
+  font-weight: bold;
+  line-height: 1;
+  padding-top: 8px;
+}
+
+.pathway-dsw-display .pathway-arrow-left {
+  margin-right: 1px;
+}
+
+.pathway-dsw-display .pathway-arrow-right {
+  margin-left: 1px;
+}
+
+.pathway-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pathway-ea {
+  height: 18px;
+  font-size: 15px;
+  font-weight: bold;
+  line-height: 18px;
+  color: #111;
+  text-align: center;
+}
+
+.pathway-fp-summary {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  margin-top: 3px;
+  font-size: 13px;
+  line-height: 16px;
+  color: #111;
+}
