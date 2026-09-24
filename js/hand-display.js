@@ -1565,6 +1565,18 @@ const isEW =
 const showEWPathways =
   isEW && window.pathwaysOn;
 
+const isEPC =
+  box.type === "epc";
+
+const showEPCPathways =
+  isEPC && window.pathwaysOn;
+
+const isCPC =
+  box.type === "cpc";
+
+const showCPCPathways =
+  isCPC && window.pathwaysOn;
+
 html +=
   '<div class="hand-section box-card developing-box' +
     dbExtraClass +
@@ -1587,7 +1599,7 @@ html +=
         '<div class="pathway-ea">' +
           box.fp.pathways[1].effectiveAcceptance +
         '</div>' +
-        '<div class="pathway-arrow pathway-arrow-right">↓</div>' +
+        '<div class="pathway-arrow pathway-arrow-left">↓</div>' +
       '</div>' +
     '</div>' +
     '<div class="pathway-fp-summary">' +
@@ -1603,9 +1615,10 @@ html +=
             '<div class="pathway-ea">' +
               box.fp.pathways[0].effectiveAcceptance +
             '</div>' +
-            '<div class="pathway-arrow">↓</div>' +
-          '</div>' +
+            '<div class="pathway-arrow pathway-arrow-left">↓</div>' +
+'</div>' +
           renderCoachTile(box.tiles[1]) +
+
         '</div>' +
       '</div>' +
       '<div class="pathway-fp-summary">' +
@@ -1627,7 +1640,7 @@ html +=
     '<div class="pathway-ea">' +
       box.fp.pathways[0].effectiveAcceptance +
     '</div>' +
-    '<div class="pathway-arrow pathway-arrow-right">↓</div>' +
+    '<div class="pathway-arrow pathway-arrow-left">↓</div>' +
   '</div>'
 
 : '<div class="pathway-indicator">' +
@@ -1649,7 +1662,63 @@ html +=
       '</span>' +
     '</div>'
 
-    : tileHtml) +
+        : showEPCPathways
+      ? '<div class="pathway-dsw-display">' +
+          '<div class="pathway-tile-row">' +
+            tileHtml +
+          '</div>' +
+          '<div class="pathway-indicator">' +
+            '<div class="pathway-ea">' +
+              box.fp.pathways[0].effectiveAcceptance +
+            '</div>' +
+            '<div class="pathway-arrow pathway-arrow-left pathway-complex">↓</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="pathway-fp-summary">' +
+          '<span>Acceptance: ' +
+            box.fp.pathways[0].acceptance +
+          '</span>' +
+          '<span>Sources: ' +
+            box.fp.pathways[0].currentSources +
+          '</span>' +
+        '</div>'
+
+                    : showCPCPathways
+        ? '<div class="pathway-dsw-display">' +
+            '<div class="pathway-tile-row">' +
+
+              renderCoachTile(box.tiles[0]) +
+              renderCoachTile(box.tiles[1]) +
+
+              '<div class="pathway-indicator">' +
+                '<div class="pathway-ea">' +
+                  box.fp.structuralPossibilities[0].effectiveAcceptance +
+                '</div>' +
+                '<div class="pathway-arrow pathway-arrow-left">↓</div>' +
+              '</div>' +
+
+              renderCoachTile(box.tiles[2]) +
+
+              '<div class="pathway-indicator">' +
+                '<div class="pathway-ea">' +
+                  box.fp.structuralPossibilities[2].effectiveAcceptance +
+                '</div>' +
+                '<div class="pathway-arrow pathway-arrow-left pathway-complex">↓</div>' +
+              '</div>' +
+
+              '<div class="pathway-indicator">' +
+                '<div class="pathway-ea">' +
+                  box.fp.structuralPossibilities[1].effectiveAcceptance +
+                '</div>' +
+                '<div class="pathway-arrow pathway-arrow-left">↓</div>' +
+              '</div>' +
+
+              renderCoachTile(box.tiles[3]) +
+
+            '</div>' +
+          '</div>'
+
+        : tileHtml) +
 
   '</div>';
 
