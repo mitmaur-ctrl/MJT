@@ -487,11 +487,53 @@ function getStructuralEngineInput(engineInput) {
   };
 }
 
+/*
+==================================================
+Continuous Game Timing Ramp
+==================================================
 
+Timing is represented as one continuous progression
+from the beginning of the game to its theoretical end.
+
+0.0 = beginning
+1.0 = theoretical end
+
+There are no Timing periods, steps, or switches.
+==================================================
+*/
+
+function getGameTimingProgress(
+  discardCount,
+  role
+) {
+  const theoreticalRotations = 18;
+
+  // The dealer's opening discard establishes
+  // the beginning of the Timing ramp.
+  const elapsedRotations =
+    role === "dealer"
+      ? Math.max(0, (discardCount || 0) - 1)
+      : Math.max(0, discardCount || 0);
+
+  const normalizedRotations =
+    Math.min(
+      elapsedRotations,
+      theoreticalRotations
+    );
+
+  return normalizedRotations / theoreticalRotations;
+}
 
 function evaluate17TE(engineInput, options = {}) {
   const structuralInput =
     getStructuralEngineInput(engineInput);
+
+  const gameTimingProgress =
+    getGameTimingProgress(
+      engineInput.context?.playerDiscardCount || 0,
+      engineInput.context?.role
+    );
+
 
   const detectedCompleteBoxes =
     findCompleteBoxes(structuralInput);
@@ -532,7 +574,8 @@ pkcCandidates.forEach(function(box) {
 
 const cpcCandidates =
   findCPCDevelopingBoxes(
-    pkcAdjustedCounts
+    pkcAdjustedCounts,
+    structuralInput.counts
   );
 
 
@@ -548,7 +591,9 @@ const ordinaryDevelopingBoxes =
   evaluateDBPartitions(
     pkcAdjustedCounts,
     cpcCandidates,
-    pairCandidates
+    pairCandidates,
+    completeBoxes,
+    structuralInput.counts
   );
 
 const developingBoxes = [
@@ -572,7 +617,8 @@ const reserves =
     [
       ...developingBoxes,
       ...halfEye
-    ]
+    ],
+    engineInput.counts
   );
 
 const mahjongEC =
@@ -679,7 +725,99 @@ canonicalStructureState =
   mahjongWatch =
   escaleraMahjongWatch ||
   mahjongWatchTiles.length > 0;
+
+developingBoxes.forEach(function(box) {
+  if (
+    box.type !== "mw" ||
+    !box.fp ||
+    !box.fp.pathways
+  ) {
+    return;
+  }
+
+
+
+  const hasMahjongPathway =
+  box.fp.pathways.some(function(pathway) {
+    return mahjongWatchTiles.includes(
+      pathway.completingTile
+    );
+  });
+
+
+  if (hasMahjongPathway) {
+  box.fp.currentSources = 4;
+
+  box.fp.pathways.forEach(function(pathway) {
+    if (
+      mahjongWatchTiles.includes(
+        pathway.completingTile
+      )
+    ) {
+      pathway.currentSources = 4;
+    }
+  });
 }
+
+
+});
+}
+
+
+developingBoxes.forEach(function(box) {
+  if (
+    box.type !== "ew" ||
+    !box.fp ||
+    !box.fp.pathways
+  ) {
+    return;
+  }
+
+
+  const hasMahjongPathway =
+    box.fp.pathways.some(function(pathway) {
+      return mahjongWatchTiles.includes(
+        pathway.completingTile
+      );
+    });
+
+  if (hasMahjongPathway) {
+  box.fp.currentSources = 4;
+
+  box.fp.pathways.forEach(function(pathway) {
+    if (
+      mahjongWatchTiles.includes(
+        pathway.completingTile
+      )
+    ) {
+      pathway.currentSources = 4;
+    }
+  });
+}
+
+
+});
+
+developingBoxes.forEach(function(box) {
+  if (
+    box.type !== "dsw" ||
+    !box.fp ||
+    !box.fp.pathways
+  ) {
+    return;
+  }
+
+
+  box.fp.pathways.forEach(function(pathway) {
+    if (
+      mahjongWatchTiles.includes(
+        pathway.completingTile
+      )
+    ) {
+      pathway.currentSources = 4;
+    }
+  });
+});
 
 
 let finalCompleteBoxes =
@@ -729,6 +867,48 @@ const phase =
     ? "finishing"
     : "building";
 
+const eyeStatus =
+  finalCompleteBoxes.some(function(box) {
+    return box.type === "eye";
+  }) ||
+  finalDevelopingBoxes.some(function(box) {
+    return box.type === "ec";
+  })
+    ? "secured"
+    : finalDevelopingBoxes.some(function(box) {
+        return box.type === "epc";
+      })
+      ? "developing"
+      : "missing";
+
+
+const structuralContext = {
+  completeBoxCount:
+    completeBoxes.length,
+
+  hasEC:
+    finalDevelopingBoxes.some(function(box) {
+      return box.type === "ec";
+    }),
+
+  hasEPC:
+    finalDevelopingBoxes.some(function(box) {
+      return box.type === "epc";
+    }),
+
+  eyeStatus,
+
+completeBoxesNeeded:
+  Math.max(0, 5 - completeBoxes.length),
+
+eyeNeed:
+  eyeStatus === "secured"
+    ? "none"
+    : eyeStatus === "developing"
+      ? "resolve"
+      : "establish"
+  };
+
 // Future derived states:
 //
 // const mahjongWatch = ...
@@ -748,14 +928,14 @@ const phase =
   reserves,
   remainingCounts,
   structureState,
- phase,
-mahjong,
-mahjongWatch,
-mahjongWatchTiles,
-input: engineInput
-  };
-}
-
+  structuralContext,
+  phase,
+  mahjong,
+  mahjongWatch,
+  mahjongWatchTiles,
+  input: engineInput
+    };
+  }
 
 function findCompleteBoxes(engineInput) {
   const workingCounts = { ...engineInput.counts };
@@ -1161,7 +1341,12 @@ if (shouldCreateNEWSPKC) {
 }
 
 
-function findCPCDevelopingBoxes(remainingCounts) {
+function findCPCDevelopingBoxes(
+  remainingCounts,
+  originalCounts = {}
+) {
+
+
   const workingCounts = { ...remainingCounts };
   const cpcBoxes = [];
   const suits = ["char", "bam", "dot"];
@@ -1295,6 +1480,21 @@ function findCPCDevelopingBoxes(remainingCounts) {
     }
   }
 
+cpcBoxes.forEach(function(box) {
+  const structuralPossibilities =
+    getCPCStructuralPossibilities(box);
+
+  box.fp = {
+    structuralPossibilities:
+      analyzeCPCCondition(
+        structuralPossibilities,
+        originalCounts
+      )
+  };
+});
+
+
+
   console.log(
     "CPC Developing Boxes found:",
     cpcBoxes
@@ -1302,6 +1502,288 @@ function findCPCDevelopingBoxes(remainingCounts) {
 
   return cpcBoxes;
 }
+
+
+function getCPCStructuralPossibilities(box) {
+  if (
+    !box ||
+    !box.tiles ||
+    (box.tiles.length !== 3 &&
+      box.tiles.length !== 4)
+  ) {
+    return null;
+  }
+
+  const matches =
+    box.tiles.map(function(tileKey) {
+      return tileKey.match(
+        /^(char|bam|dot)([1-9])$/
+      );
+    });
+
+  if (
+    matches.some(function(match) {
+      return !match;
+    })
+  ) {
+    return null;
+  }
+
+  const suit = matches[0][1];
+
+  if (
+    matches.some(function(match) {
+      return match[1] !== suit;
+    })
+  ) {
+    return null;
+  }
+
+  const ranks =
+    matches
+      .map(function(match) {
+        return Number(match[2]);
+      })
+      .sort(function(a, b) {
+        return a - b;
+      });
+
+  const possibilities = [];
+
+  /*
+  ================================================
+  3-tile CPC
+
+  x,x,x+2
+  x,x+2,x+2
+  ================================================
+  */
+
+  if (ranks.length === 3) {
+    const low = ranks[0];
+    const middle = ranks[1];
+    const high = ranks[2];
+
+    if (
+      low === middle &&
+      high === low + 2
+    ) {
+      possibilities.push({
+        structureType: "chow",
+        tiles: [
+          suit + low,
+          suit + (low + 1),
+          suit + high
+        ],
+        keyTile: suit + (low + 1),
+        acceptance: 4,
+        baselineSources: 2
+      });
+
+      possibilities.push({
+        structureType: "pong",
+        tiles: [
+          suit + low,
+          suit + low,
+          suit + low
+        ],
+        keyTile: suit + low,
+        acceptance: 2,
+        baselineSources: 4
+      });
+
+      return possibilities;
+    }
+
+    if (
+      middle === high &&
+      high === low + 2
+    ) {
+      possibilities.push({
+        structureType: "chow",
+        tiles: [
+          suit + low,
+          suit + (low + 1),
+          suit + high
+        ],
+        keyTile: suit + (low + 1),
+        acceptance: 4,
+        baselineSources: 2
+      });
+
+      possibilities.push({
+        structureType: "pong",
+        tiles: [
+          suit + high,
+          suit + high,
+          suit + high
+        ],
+        keyTile: suit + high,
+        acceptance: 2,
+        baselineSources: 4
+      });
+
+      return possibilities;
+    }
+  }
+
+  /*
+  ================================================
+  4-tile CPC
+
+  Pattern A:
+  x,x+1,x+1,x+3
+
+  Pattern B:
+  x,x+2,x+2,x+3
+  ================================================
+  */
+
+  if (ranks.length === 4) {
+    const first = ranks[0];
+    const second = ranks[1];
+    const third = ranks[2];
+    const fourth = ranks[3];
+
+    // Pattern A: x,x+1,x+1,x+3
+    if (
+      second === first + 1 &&
+      third === second &&
+      fourth === first + 3
+    ) {
+      const sharedKey =
+        suit + (first + 2);
+
+      possibilities.push({
+        structureType: "chow",
+        tiles: [
+          suit + first,
+          suit + (first + 1),
+          sharedKey
+        ],
+        keyTile: sharedKey,
+        acceptance: 4,
+        baselineSources: 2
+      });
+
+      possibilities.push({
+        structureType: "chow",
+        tiles: [
+          suit + (first + 1),
+          sharedKey,
+          suit + (first + 3)
+        ],
+        keyTile: sharedKey,
+        acceptance: 4,
+        baselineSources: 2
+      });
+
+      possibilities.push({
+        structureType: "pong",
+        tiles: [
+          suit + (first + 1),
+          suit + (first + 1),
+          suit + (first + 1)
+        ],
+        keyTile: suit + (first + 1),
+        acceptance: 2,
+        baselineSources: 4
+      });
+
+      return possibilities;
+    }
+
+    // Pattern B: x,x+2,x+2,x+3
+    if (
+      second === first + 2 &&
+      third === second &&
+      fourth === first + 3
+    ) {
+      const sharedKey =
+        suit + (first + 1);
+
+      possibilities.push({
+        structureType: "chow",
+        tiles: [
+          suit + first,
+          sharedKey,
+          suit + (first + 2)
+        ],
+        keyTile: sharedKey,
+        acceptance: 4,
+        baselineSources: 2
+      });
+
+      possibilities.push({
+        structureType: "chow",
+        tiles: [
+          sharedKey,
+          suit + (first + 2),
+          suit + (first + 3)
+        ],
+        keyTile: sharedKey,
+        acceptance: 4,
+        baselineSources: 2
+      });
+
+      possibilities.push({
+        structureType: "pong",
+        tiles: [
+          suit + (first + 2),
+          suit + (first + 2),
+          suit + (first + 2)
+        ],
+        keyTile: suit + (first + 2),
+        acceptance: 2,
+        baselineSources: 4
+      });
+
+      return possibilities;
+    }
+  }
+
+  return null;
+}
+
+function analyzeCPCCondition(
+  structuralPossibilities,
+  originalCounts
+) {
+  if (!structuralPossibilities) {
+    return null;
+  }
+
+  return structuralPossibilities.map(
+    function(possibility) {
+ 
+     const availability =
+        getKnownTileAvailability(
+          possibility.keyTile,
+          originalCounts
+        );
+
+      return {
+  ...possibility,
+
+  availability,
+
+  effectiveAcceptance: availability,
+
+  pathwayCondition:
+    availability > 0
+      ? "open"
+      : "closed",
+
+currentSources: possibility.baselineSources,
+
+};
+
+    }
+  );
+}
+
+
+
 
 function findPairDevelopingBoxes(
   remainingCounts,
@@ -1458,11 +1940,62 @@ function countTilesInBoxes(boxes) {
   }, 0);
 }
 
+function getPartitionEyeStatus(boxes) {
+  if (
+    boxes.some(function(box) {
+      return box.type === "ec";
+    })
+  ) {
+    return "secured";
+  }
+
+  if (
+    boxes.some(function(box) {
+      return box.type === "epc";
+    })
+  ) {
+    return "developing";
+  }
+
+  return "missing";
+}
+
+function normalizePartitionPairTypes(
+  pairBoxes,
+  originalCounts = {}
+) {
+  const pairType =
+    pairBoxes.length === 1
+      ? "ec"
+      : "epc";
+
+  return pairBoxes.map(function(box) {
+  const normalizedBox = {
+    ...box,
+    type: pairType
+  };
+
+  if (pairType === "epc") {
+    normalizedBox.fp =
+      analyzeEPCPongPathways(
+        normalizedBox,
+        originalCounts
+      );
+  }
+
+  return normalizedBox;
+});
+}
+
+
 function evaluateDBPartitions(
   remainingCounts,
   cpcCandidates,
-  pairCandidates
+  pairCandidates,
+  completeBoxes = [],
+  originalCounts = {}
 ) {
+
   /*
   ================================================
   Partition A — CPC-first interpretation
@@ -1480,13 +2013,17 @@ function evaluateDBPartitions(
     cpcPairResult.cpcBoxes;
 
   const cpcFirstPairs =
-    cpcPairResult.pairBoxes;
+  normalizePartitionPairTypes(
+    cpcPairResult.pairBoxes,
+    originalCounts
+  );
 
   const cpcFirstDSWCandidates =
-    findDSWDevelopingBoxes(
-      remainingCounts,
-      cpcFirstPairs
-    );
+  findDSWDevelopingBoxes(
+    remainingCounts,
+    cpcFirstPairs,
+    originalCounts
+  );
 
   const cpcFirstMWCandidates =
     findMWDevelopingBoxes(
@@ -1494,7 +2031,8 @@ function evaluateDBPartitions(
       [
         ...cpcFirstPairs,
         ...cpcFirstDSWCandidates
-      ]
+      ],
+      originalCounts	
     );
 
   const cpcFirstEWCandidates =
@@ -1504,7 +2042,8 @@ function evaluateDBPartitions(
         ...cpcFirstPairs,
         ...cpcFirstDSWCandidates,
         ...cpcFirstMWCandidates
-      ]
+      ],
+      originalCounts
     );
 
   const cpcFirstCCResult =
@@ -1539,13 +2078,17 @@ function evaluateDBPartitions(
   */
 
   const pairFirstPairs =
-    pairCandidates;
+  normalizePartitionPairTypes(
+    pairCandidates,
+    originalCounts
+  );
 
   const pairFirstDSWs =
-    findDSWDevelopingBoxes(
-      remainingCounts,
-      pairFirstPairs
-    );
+  findDSWDevelopingBoxes(
+    remainingCounts,
+    pairFirstPairs,
+    originalCounts
+  );
 
   const pairFirstMWs =
     findMWDevelopingBoxes(
@@ -1553,7 +2096,8 @@ function evaluateDBPartitions(
       [
         ...pairFirstPairs,
         ...pairFirstDSWs
-      ]
+      ],
+      originalCounts
     );
 
   const pairFirstEWs =
@@ -1563,7 +2107,8 @@ function evaluateDBPartitions(
         ...pairFirstPairs,
         ...pairFirstDSWs,
         ...pairFirstMWs
-      ]
+      ],
+      originalCounts
     );
 
   const pairFirstBoxes = [
@@ -1575,11 +2120,125 @@ function evaluateDBPartitions(
 
   /*
   ================================================
+  Partition C — Chow-first interpretation
+
+  Accepted CPCs keep priority.
+
+  After CPC ownership is established, Chow
+  Candidates are allowed to compete with pairs.
+
+  This allows:
+  3,4,4
+  ->
+  DSW 3,4 + Reserve 4
+
+  without changing pair detection itself.
+  ================================================
+  */
+
+  const chowFirstDSWs =
+  findDSWDevelopingBoxes(
+    remainingCounts,
+    cpcFirstCPCs,
+    originalCounts
+  );
+
+  const chowFirstMWs =
+    findMWDevelopingBoxes(
+      remainingCounts,
+      [
+        ...cpcFirstCPCs,
+        ...chowFirstDSWs
+      ],
+      originalCounts
+    );
+
+  const chowFirstEWs =
+    findEWDevelopingBoxes(
+      remainingCounts,
+      [
+        ...cpcFirstCPCs,
+        ...chowFirstDSWs,
+        ...chowFirstMWs
+      ],
+      originalCounts
+    );
+
+  const chowFirstWorkingCounts = {
+    ...remainingCounts
+  };
+
+  [
+    ...cpcFirstCPCs,
+    ...chowFirstDSWs,
+    ...chowFirstMWs,
+    ...chowFirstEWs
+  ].forEach(function(box) {
+    box.tiles.forEach(function(tileKey) {
+      chowFirstWorkingCounts[tileKey] -= 1;
+    });
+  });
+
+  const chowFirstPairs = [];
+
+  pairCandidates.forEach(function(box) {
+    const tileKey = box.tiles[0];
+
+    if (
+      (chowFirstWorkingCounts[tileKey] || 0) >= 2
+    ) {
+      chowFirstPairs.push(box);
+      chowFirstWorkingCounts[tileKey] -= 2;
+    }
+  });
+
+const normalizedChowFirstPairs =
+  normalizePartitionPairTypes(
+    chowFirstPairs,
+    originalCounts
+  );
+
+  const chowFirstBoxes = [
+    ...cpcFirstCPCs,
+    ...chowFirstDSWs,
+    ...chowFirstMWs,
+    ...chowFirstEWs,
+    ...normalizedChowFirstPairs
+  ];
+
+const cpcFirstEyeStatus =
+  getPartitionEyeStatus(cpcFirstBoxes);
+
+const pairFirstEyeStatus =
+  getPartitionEyeStatus(pairFirstBoxes);
+
+const chowFirstEyeStatus =
+  getPartitionEyeStatus(chowFirstBoxes);
+
+
+
+  /*
+  ================================================
   Compare useful tile participation.
 
   More tiles participating in DBs wins.
 
   If tied, preserve CPC flexibility.
+  ================================================
+  */
+
+
+    /*
+  ================================================
+  Compare useful tile participation.
+
+  1. More tiles participating in DBs wins.
+
+  2. If tile participation ties, a structure
+     containing more DSWs wins.
+
+  3. Otherwise preserve the existing CPC-first
+     interpretation.
   ================================================
   */
 
@@ -1593,15 +2252,75 @@ function evaluateDBPartitions(
       pairFirstBoxes
     );
 
+  const chowFirstTileCount =
+    countTilesInBoxes(
+      chowFirstBoxes
+    );
+
+  let bestBoxes = cpcFirstBoxes;
+  let bestTileCount = cpcFirstTileCount;
+
   if (
     pairFirstTileCount >
-    cpcFirstTileCount
+    bestTileCount
   ) {
-    return pairFirstBoxes;
+    bestBoxes = pairFirstBoxes;
+    bestTileCount = pairFirstTileCount;
   }
 
-  return cpcFirstBoxes;
+/*
+================================================
+Structural Eye protection — 4 CB Completion
+
+At 4 Complete Boxes, if the existing best
+partition secures the Eye and the Chow-first
+partition would leave the Eye missing, preserve
+the Eye-secured structure.
+
+Structure takes priority over DB Opportunity.
+================================================
+*/
+
+if (
+  completeBoxes.length === 4 &&
+  getPartitionEyeStatus(bestBoxes) === "secured" &&
+  chowFirstEyeStatus === "missing"
+) {
+  return bestBoxes;
 }
+
+  if (
+    chowFirstTileCount >
+    bestTileCount
+  ) {
+    return chowFirstBoxes;
+  }
+
+  if (
+    chowFirstTileCount ===
+    bestTileCount
+  ) {
+    const chowFirstDSWCount =
+      chowFirstBoxes.filter(function(box) {
+        return box.type === "dsw";
+      }).length;
+
+    const bestDSWCount =
+      bestBoxes.filter(function(box) {
+        return box.type === "dsw";
+      }).length;
+
+    if (
+      chowFirstDSWCount >
+      bestDSWCount
+    ) {
+      return chowFirstBoxes;
+    }
+  }
+
+  return bestBoxes;
+}
+
 
 function evaluateMMRCandidate(
   engineInput,
@@ -1653,11 +2372,13 @@ function evaluateMMRCandidate(
   );
 
   const developingBoxes =
-    evaluateDBPartitions(
-      remainingCounts,
-      cpcCandidates,
-      pairCandidates
-    );
+  evaluateDBPartitions(
+    remainingCounts,
+    cpcCandidates,
+    pairCandidates,
+    completeBoxes,
+    testCounts
+  );
 
   const halfEye =
     findHalfEye(
@@ -1667,13 +2388,14 @@ function evaluateMMRCandidate(
     );
 
   const reserves =
-    findReserves(
-      remainingCounts,
-      [
-        ...developingBoxes,
-        ...halfEye
-      ]
-    );
+  findReserves(
+    remainingCounts,
+    [
+      ...developingBoxes,
+      ...halfEye
+    ],
+    testCounts
+  );
 
   return {
     candidate,
@@ -1851,11 +2573,434 @@ function getTileCentricityScore(tileKey) {
   return 5 - Math.abs(5 - rank);
 }
 
+function getReserveDevelopmentPotential(
+  tileKey,
+  remainingCounts
+) {
+  const suitedMatch =
+    tileKey.match(/^(char|bam|dot)([1-9])$/);
+
+  // Honors have no Chow-family relationships.
+  if (!suitedMatch) {
+    return 0;
+  }
+
+  const suit = suitedMatch[1];
+  const rank = Number(suitedMatch[2]);
+
+  let richness = 0;
+
+  [-2, -1, 1, 2].forEach(function(offset) {
+    const familyRank = rank + offset;
+
+    if (
+      familyRank < 1 ||
+      familyRank > 9
+    ) {
+      return;
+    }
+
+    const familyKey =
+      suit + familyRank;
+
+    richness +=
+      remainingCounts[familyKey] || 0;
+  });
+
+  return richness;
+}
+
+function getDSWPathwayStructure(box) {
+  const firstMatch =
+    box.tiles[0].match(/^(char|bam|dot)([1-9])$/);
+
+  const secondMatch =
+    box.tiles[1].match(/^(char|bam|dot)([1-9])$/);
+
+  if (!firstMatch || !secondMatch) {
+    return null;
+  }
+
+  const suit = firstMatch[1];
+  const firstRank = Number(firstMatch[2]);
+  const secondRank = Number(secondMatch[2]);
+
+  return {
+    structuralPathways: 2,
+    acceptance: 8,
+
+    completingTiles: [
+      suit + (firstRank - 1),
+      suit + (secondRank + 1)
+    ]
+  };
+}
+
+
+function getMWPathwayStructure(box) {
+  const firstMatch =
+    box.tiles[0].match(/^(char|bam|dot)([1-9])$/);
+
+  const secondMatch =
+    box.tiles[1].match(/^(char|bam|dot)([1-9])$/);
+
+  if (!firstMatch || !secondMatch) {
+    return null;
+  }
+
+  const suit = firstMatch[1];
+  const firstRank = Number(firstMatch[2]);
+  const secondRank = Number(secondMatch[2]);
+
+  return {
+    structuralPathways: 1,
+    acceptance: 4,
+
+    completingTiles: [
+      suit + (firstRank + 1)
+    ]
+  };
+}
+
+function getEWPathwayStructure(box) {
+  const firstMatch =
+    box.tiles[0].match(/^(char|bam|dot)([1-9])$/);
+
+  const secondMatch =
+    box.tiles[1].match(/^(char|bam|dot)([1-9])$/);
+
+  if (!firstMatch || !secondMatch) {
+    return null;
+  }
+
+  const suit = firstMatch[1];
+  const firstRank = Number(firstMatch[2]);
+  const secondRank = Number(secondMatch[2]);
+
+  let completingTile = null;
+
+  if (firstRank === 1 && secondRank === 2) {
+    completingTile = suit + "3";
+  }
+
+  if (firstRank === 8 && secondRank === 9) {
+    completingTile = suit + "7";
+  }
+
+  if (!completingTile) {
+    return null;
+  }
+
+  return {
+    structuralPathways: 1,
+    acceptance: 4,
+
+    completingTiles: [
+      completingTile
+    ]
+  };
+}
+
+function getEPCPongPathwayStructure(box) {
+  if (!box || !box.tiles || box.tiles.length !== 2) {
+    return null;
+  }
+
+  const first = box.tiles[0];
+  const second = box.tiles[1];
+
+  if (first !== second) {
+    return null;
+  }
+
+  return {
+    structuralPathways: 1,
+    acceptance: 2,
+    completingTiles: [first]
+  };
+}
+
+function analyzeEPCPongPathways(
+  box,
+  originalCounts
+) {
+  const structure =
+    getEPCPongPathwayStructure(box);
+
+  if (!structure) {
+    return null;
+  }
+
+  const pathways =
+    structure.completingTiles.map(
+      function(tileKey) {
+        const knownAvailability =
+          getKnownTileAvailability(
+            tileKey,
+            originalCounts
+          );
+
+        return {
+  completingTile: tileKey,
+  acceptance: 2,
+  knownAvailability,
+  effectiveAcceptance: knownAvailability,
+  effective:
+    knownAvailability > 0,
+  baselineSources: 4,
+  currentSources: 4
+};
+      }
+    );
+
+console.log(
+  "EPC PATHWAY TRACE",
+  pathways
+);
+
+
+
+  return {
+    structuralPathways:
+      structure.structuralPathways,
+
+    acceptance:
+      structure.acceptance,
+
+    pathways,
+
+    effectivePathways:
+      pathways.filter(function(pathway) {
+        return pathway.effective;
+      }).length,
+
+    effectiveAcceptance:
+      pathways.map(function(pathway) {
+        return pathway.knownAvailability;
+      }),
+
+    totalKnownAvailability:
+      pathways.reduce(function(total, pathway) {
+        return total + pathway.knownAvailability;
+      }, 0),
+
+    sources: 4
+  };
+}
+
+
+
+
+function getKnownTileAvailability(
+  tileKey,
+  originalCounts
+) {
+  return Math.max(
+    0,
+    4 - (originalCounts[tileKey] || 0)
+  );
+}
+
+function analyzeDSWPathways(
+  box,
+  originalCounts
+) {
+  const structure =
+    getDSWPathwayStructure(box);
+
+  if (!structure) {
+    return null;
+  }
+
+  const pathways =
+    structure.completingTiles.map(
+      function(tileKey) {
+        const knownAvailability =
+          getKnownTileAvailability(
+            tileKey,
+            originalCounts
+          );
+
+        return {
+  completingTile: tileKey,
+  acceptance: 4,
+  effectiveAcceptance: knownAvailability,
+  knownAvailability,
+  effective:
+    knownAvailability > 0,
+  baselineSources: 2,
+  currentSources: 2
+}; 
+    }
+    );
+
+  return {
+  structuralPathways:
+    structure.structuralPathways,
+
+  acceptance:
+    structure.acceptance,
+
+  pathways,
+
+  effectivePathways:
+    pathways.filter(function(pathway) {
+      return pathway.effective;
+    }).length,
+
+  effectiveAcceptance:
+  pathways.map(function(pathway) {
+    return pathway.knownAvailability;
+  }),
+
+totalKnownAvailability:
+  pathways.reduce(function(total, pathway) {
+    return total + pathway.knownAvailability;
+  }, 0),
+
+sources: 2,
+currentSources: 2
+
+  };
+}
+
+function analyzeMWPathways(
+  box,
+  originalCounts
+) {
+  const structure =
+    getMWPathwayStructure(box);
+
+  if (!structure) {
+    return null;
+  }
+
+  const pathways =
+    structure.completingTiles.map(
+      function(tileKey) {
+        const knownAvailability =
+          getKnownTileAvailability(
+            tileKey,
+            originalCounts
+          );
+
+  return {
+    completingTile: tileKey,
+    acceptance: 4,
+    effectiveAcceptance: knownAvailability,
+    knownAvailability,
+    effective:
+    knownAvailability > 0,
+    baselineSources: 2,
+    currentSources: 2
+  };
+ 
+
+     }
+    );
+
+  return {
+    structuralPathways:
+      structure.structuralPathways,
+
+    acceptance:
+      structure.acceptance,
+
+    pathways,
+
+    effectivePathways:
+      pathways.filter(function(pathway) {
+        return pathway.effective;
+      }).length,
+
+    effectiveAcceptance:
+      pathways.map(function(pathway) {
+        return pathway.knownAvailability;
+      }),
+
+    totalKnownAvailability:
+      pathways.reduce(function(total, pathway) {
+        return total + pathway.knownAvailability;
+      }, 0),
+
+    sources: 2,
+    currentSources: 2
+  };
+}
+
+function analyzeEWPathways(
+  box,
+  originalCounts
+) {
+  const structure =
+    getEWPathwayStructure(box);
+
+  if (!structure) {
+    return null;
+  }
+
+  const pathways =
+    structure.completingTiles.map(
+      function(tileKey) {
+        const knownAvailability =
+          getKnownTileAvailability(
+            tileKey,
+            originalCounts
+          );
+
+        return {
+  completingTile: tileKey,
+  acceptance: 4,
+  knownAvailability,
+  effectiveAcceptance: knownAvailability,
+  effective:
+    knownAvailability > 0,
+  baselineSources: 2,
+  currentSources: 2
+};
+
+
+      }
+    );
+
+  return {
+    structuralPathways:
+      structure.structuralPathways,
+
+    acceptance:
+      structure.acceptance,
+
+    pathways,
+
+    effectivePathways:
+      pathways.filter(function(pathway) {
+        return pathway.effective;
+      }).length,
+
+    effectiveAcceptance:
+      pathways.map(function(pathway) {
+        return pathway.knownAvailability;
+      }),
+
+    totalKnownAvailability:
+      pathways.reduce(function(total, pathway) {
+        return total + pathway.knownAvailability;
+      }, 0),
+
+    sources: 2,
+    currentSources: 2
+  };
+}
+
+
 
 function findDSWDevelopingBoxes(
   remainingCounts,
-  existingDevelopingBoxes
+  existingDevelopingBoxes,
+  originalCounts = {}
 ) {
+
+
   const workingCounts = { ...remainingCounts };
   const dswBoxes = [];
 
@@ -1879,10 +3024,19 @@ function findDSWDevelopingBoxes(
         (workingCounts[first] || 0) > 0 &&
         (workingCounts[second] || 0) > 0
       ) {
-        dswBoxes.push({
-          type: "dsw",
-          tiles: [first, second]
-        });
+
+        const dswBox = {
+  type: "dsw",
+  tiles: [first, second]
+};
+
+dswBox.fp =
+  analyzeDSWPathways(
+    dswBox,
+    originalCounts
+  );
+
+dswBoxes.push(dswBox);
 
         workingCounts[first] -= 1;
         workingCounts[second] -= 1;
@@ -1897,8 +3051,10 @@ function findDSWDevelopingBoxes(
 
 function findMWDevelopingBoxes(
   remainingCounts,
-  existingDevelopingBoxes
+  existingDevelopingBoxes,
+  originalCounts = {}
 ) {
+
   const workingCounts = { ...remainingCounts };
   const mwBoxes = [];
 
@@ -1922,10 +3078,19 @@ function findMWDevelopingBoxes(
         (workingCounts[first] || 0) > 0 &&
         (workingCounts[second] || 0) > 0
       ) {
-        mwBoxes.push({
-          type: "mw",
-          tiles: [first, second]
-        });
+ 
+       const mwBox = {
+  type: "mw",
+  tiles: [first, second]
+};
+
+mwBox.fp =
+  analyzeMWPathways(
+    mwBox,
+    originalCounts
+  );
+
+mwBoxes.push(mwBox);
 
         workingCounts[first] -= 1;
         workingCounts[second] -= 1;
@@ -1940,7 +3105,8 @@ function findMWDevelopingBoxes(
 
 function findEWDevelopingBoxes(
   remainingCounts,
-  existingDevelopingBoxes
+  existingDevelopingBoxes,
+  originalCounts = {}
 ) {
   const workingCounts = { ...remainingCounts };
   const ewBoxes = [];
@@ -1968,10 +3134,19 @@ function findEWDevelopingBoxes(
         (workingCounts[first] || 0) > 0 &&
         (workingCounts[second] || 0) > 0
       ) {
-        ewBoxes.push({
-          type: "ew",
-          tiles: [first, second]
-        });
+ 
+       const ewBox = {
+  type: "ew",
+  tiles: [first, second]
+};
+
+ewBox.fp =
+  analyzeEWPathways(
+    ewBox,
+    originalCounts
+  );
+
+ewBoxes.push(ewBox);
 
         workingCounts[first] -= 1;
         workingCounts[second] -= 1;
@@ -2050,7 +3225,11 @@ if (!halfEyeEligible) {
   ];
 }
 
-function findReserves(remainingCounts, developingBoxes) {
+function findReserves(
+  remainingCounts,
+  developingBoxes,
+  knownCounts
+) {
   const reserveCounts = { ...remainingCounts };
 
   developingBoxes.forEach(function(box) {
@@ -2061,11 +3240,34 @@ function findReserves(remainingCounts, developingBoxes) {
 
   const reserves = [];
 
-  for (const tileKey in reserveCounts) {
+    for (const tileKey in reserveCounts) {
     for (let i = 0; i < (reserveCounts[tileKey] || 0); i++) {
       reserves.push(tileKey);
     }
   }
+
+  reserves.sort(function(tileA, tileB) {
+  const rdpA =
+    getReserveDevelopmentPotential(
+      tileA,
+      remainingCounts
+    );
+
+  const rdpB =
+    getReserveDevelopmentPotential(
+      tileB,
+      remainingCounts
+    );
+
+  if (rdpA !== rdpB) {
+    return rdpB - rdpA;
+  }
+
+  return (
+    getTileCentricityScore(tileB) -
+    getTileCentricityScore(tileA)
+  );
+});
 
   return reserves;
 }

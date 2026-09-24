@@ -20,7 +20,27 @@ No game engine logic belongs in this file.
 // "short" = compact live-play layout.
 // "long" = expanded Pathways / teaching layout.
 window.coachViewForm = "short";
+window.pathwaysOn = false;
 
+
+function togglePathways() {
+  window.pathwaysOn =
+    !window.pathwaysOn;
+
+  const pathwaysBtn =
+    document.getElementById("pathwaysBtn");
+
+  if (pathwaysBtn) {
+    pathwaysBtn.textContent =
+      window.pathwaysOn
+        ? "Pathways: Off"
+        : "Pathways: On";
+  }
+
+  if (coachingOn) {
+    renderCoachView();
+  }
+}
 
 function getTileGroups() {
   const groupMap = MJC_TILE_GROUP_DEFINITIONS;
@@ -66,7 +86,11 @@ function getBoxTypeLabel(boxType) {
     he: {
       full: "Half Eye",
       abbreviated: "HE"
-    }
+    },
+    pc: {
+      full: "Pong Candidate",
+      abbreviated: "PC"
+  }
   };
 
   const labels = boxLabels[boxType];
@@ -177,6 +201,8 @@ function buildStartingHandDisplay() {
   checkSevenPairsOpportunity(
     startingStructureState
   );
+
+  configureHDMode();
 
   const handDisplay =
   document.getElementById("handDisplay");
@@ -675,7 +701,20 @@ acquireActionGroup.classList.toggle(
   !canAcquire
 );
 
+if (hdMode === "starting") {
+  const startingResult =
+    evaluate17TE(
+      MJC_STATE.getEngineInput()
+    );
 
+  const startingStructureState =
+    startingResult.structureState ||
+    startingResult;
+
+  checkSevenPairsOpportunity(
+    startingStructureState
+  );
+}
 
 let isMahjongWatch = false;
 
@@ -684,7 +723,8 @@ if (canAcquire) {
     evaluate17TE(MJC_STATE.getEngineInput());
 
   isMahjongWatch =
-    currentResult.mahjongWatch === true;
+    currentResult.mahjongWatch === true ||
+    isSevenPairsMahjongWatch();
 }
 
 mahjongBtn.disabled = !isMahjongWatch;
@@ -1507,15 +1547,112 @@ if (typeof renderSevenPairsBox === "function") {
     ? " wide-box"
     : "";
 
+const isDSW =
+  box.type === "dsw";
+
+const showDSWPathways =
+    isDSW && window.pathwaysOn;
+
+const isMW =
+  box.type === "mw";
+
+const showMWPathways =
+  isMW && window.pathwaysOn;
+
+const isEW =
+  box.type === "ew";
+
+const showEWPathways =
+  isEW && window.pathwaysOn;
+
 html +=
   '<div class="hand-section box-card developing-box' +
     dbExtraClass +
+    (showDSWPathways ? ' pathway-dsw' : '') +
   '">' +
     '<div class="hand-section-title">DB' + boxNumber + ' — ' +
       getBoxTypeLabel(box.type) +
     '</div>' +
+
+    (showDSWPathways
+  ? '<div class="pathway-dsw-display">' +
+      '<div class="pathway-indicator">' +
+        '<div class="pathway-ea">' +
+          box.fp.pathways[0].effectiveAcceptance +
+        '</div>' +
+        '<div class="pathway-arrow pathway-arrow-left">↓</div>' +
+      '</div>' +
+      '<div class="pathway-tile-row">' + tileHtml + '</div>' +
+      '<div class="pathway-indicator">' +
+        '<div class="pathway-ea">' +
+          box.fp.pathways[1].effectiveAcceptance +
+        '</div>' +
+        '<div class="pathway-arrow pathway-arrow-right">↓</div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="pathway-fp-summary">' +
+      '<span>Acceptance: ' + box.fp.acceptance + '</span>' +
+      '<span>Sources: ' + box.fp.currentSources + '</span>' +
+    '</div>'
+
+  : showMWPathways
+    ? '<div class="pathway-dsw-display">' +
+        '<div class="pathway-tile-row">' +
+          renderCoachTile(box.tiles[0]) +
+          '<div class="pathway-indicator">' +
+            '<div class="pathway-ea">' +
+              box.fp.pathways[0].effectiveAcceptance +
+            '</div>' +
+            '<div class="pathway-arrow">↓</div>' +
+          '</div>' +
+          renderCoachTile(box.tiles[1]) +
+        '</div>' +
+      '</div>' +
+      '<div class="pathway-fp-summary">' +
+        '<span>Acceptance: ' + box.fp.acceptance + '</span>' +
+        '<span>Sources: ' +
+  box.fp.pathways[0].currentSources +
+'</span>' +
+      '</div>'
+
+: showEWPathways
+  ? '<div class="pathway-dsw-display">' +
+      (
+       box.fp.pathways[0].completingTile.endsWith("3")
+
+          ? '<div class="pathway-tile-row">' +
     tileHtml +
+  '</div>' +
+  '<div class="pathway-indicator">' +
+    '<div class="pathway-ea">' +
+      box.fp.pathways[0].effectiveAcceptance +
+    '</div>' +
+    '<div class="pathway-arrow pathway-arrow-right">↓</div>' +
+  '</div>'
+
+: '<div class="pathway-indicator">' +
+    '<div class="pathway-ea">' +
+      box.fp.pathways[0].effectiveAcceptance +
+    '</div>' +
+    '<div class="pathway-arrow pathway-arrow-left">↓</div>' +
+  '</div>' +
+  '<div class="pathway-tile-row">' +
+    tileHtml +
+  '</div>'
+
+      ) +
+    '</div>' +
+    '<div class="pathway-fp-summary">' +
+      '<span>Acceptance: ' + box.fp.acceptance + '</span>' +
+      '<span>Sources: ' +
+        box.fp.pathways[0].currentSources +
+      '</span>' +
+    '</div>'
+
+    : tileHtml) +
+
   '</div>';
+
 
   });
 
@@ -1709,7 +1846,10 @@ function getCoachAlertMessages(
 
 if (
   hdMode !== "current" ||
-  phase !== "game"
+  phase !== "game" ||
+  result.mahjong ||
+  isEscaleraMahjong() ||
+  isSevenPairsMahjong()
 ) {
   return messages;
 }
@@ -1926,15 +2066,24 @@ const coachAlertHtml =
     : "";
 
 
+const displayedCompleteBoxCount =
+  sevenPairsMode &&
+  sevenPairsBoxState.active
+    ? sevenPairsBoxState.completionOrder.length
+    : structureState.completeBoxes.length;
+
+
   enginePanel.innerHTML =
   '<div class="coach-top-row">' +
 
   '<div class="coach-status-left">' +
     '<div id="coachMessageArea" class="coach-message-area">' +
-      'Boxes Complete: ' +
-      structureState.completeBoxes.length +
-      ' of ' +
-      targetBoxCount +
+ 
+     'Boxes Complete: ' +
+displayedCompleteBoxCount +
+' of ' +
+targetBoxCount +
+
     '</div>' +
     coachAlertHtml +
   '</div>' +
@@ -2099,9 +2248,15 @@ function showHD() {
   configureHDMode();
 buildHandDisplay();
 
+if (hdMode === "starting") {
+  configureHDMode();
+}
+
 if (coachingOn) {
   renderCoachView();
 }
+
+
 
 if (
   hdMode === "current" &&

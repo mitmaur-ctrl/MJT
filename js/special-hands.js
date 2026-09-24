@@ -32,17 +32,21 @@ let escaleraBoxState = {
 let sevenPairsBoxState = {
   active: false,
   pairTileKeys: [],
+  allPairTileKeys: [],
   pairCount: 0,
   complete: false,
-  completionOrder: []
+  completionOrder: [],
+  meldBox: null
 };
 
 function resetSevenPairsBoxState() {
   sevenPairsBoxState.active = false;
   sevenPairsBoxState.pairTileKeys = [];
+  sevenPairsBoxState.allPairTileKeys = [];
   sevenPairsBoxState.pairCount = 0;
   sevenPairsBoxState.complete = false;
   sevenPairsBoxState.completionOrder = [];
+  sevenPairsBoxState.meldBox = null;
 }
 
 
@@ -146,16 +150,79 @@ const nextTileKeys =
   );
 
   const nextCount =
-    nextTileKeys.length;
+  nextTileKeys.length;
 
-  sevenPairsBoxState.pairTileKeys =
-    [...nextTileKeys];
+/*
+================================================
+Siete Pares pair ownership
 
-  sevenPairsBoxState.pairCount =
-    nextCount;
+Keep every available pair as a strategic
+candidate, but the Siete Pares Box itself
+may contain no more than seven pairs.
 
-  sevenPairsBoxState.complete =
-    nextCount >= 7;
+When eight pairs exist, one pair remains
+available to the ordinary meld side as the
+Siete Pares Pong Candidate.
+================================================
+*/
+
+sevenPairsBoxState.allPairTileKeys =
+  [...nextTileKeys];
+
+/*
+If one of the pair candidates now has a third
+available copy, release that pair from the
+Siete Pares Box so the three copies can form
+the required Pong.
+
+This is what keeps all eight pairs strategically
+interchangeable instead of permanently treating
+one particular pair as "pair #8."
+*/
+
+const pongReadyPairKey =
+  nextTileKeys.find(function(tileKey) {
+    const availableCount =
+      Math.max(
+        0,
+        (tileCounts[tileKey] || 0) -
+        (excludedCounts[tileKey] || 0)
+      );
+
+    return availableCount >= 3;
+  });
+
+let sieteParesOwnedPairs =
+  [...nextTileKeys];
+
+if (
+  nextCount > 7 &&
+  pongReadyPairKey
+) {
+  const releaseIndex =
+    sieteParesOwnedPairs.indexOf(
+      pongReadyPairKey
+    );
+
+  if (releaseIndex !== -1) {
+    sieteParesOwnedPairs.splice(
+      releaseIndex,
+      1
+    );
+  }
+}
+
+sevenPairsBoxState.pairTileKeys =
+  sieteParesOwnedPairs.slice(0, 7);
+
+sevenPairsBoxState.pairCount =
+  nextCount;
+
+
+sevenPairsBoxState.complete =
+  nextCount >= 7;
+
+
 
   const changed =
     previousCount !== nextCount ||
@@ -364,7 +431,12 @@ function syncSevenPairsAfterHandChange() {
     return;
   }
 
-  updateSevenPairsBoxState(counts);
+  updateSevenPairsBoxState(
+  counts,
+  sevenPairsBoxState.meldBox
+    ? [sevenPairsBoxState.meldBox]
+    : null
+);
   syncSevenPairsCompletionOrder();
 }
 
@@ -411,6 +483,33 @@ const committedMeld =
         )
       );
     });
+
+const protectedMeld =
+  sevenPairsBoxState.meldBox;
+
+if (protectedMeld) {
+  const requiredCounts = {};
+
+  protectedMeld.tiles.forEach(function(tileKey) {
+    requiredCounts[tileKey] =
+      (requiredCounts[tileKey] || 0) + 1;
+  });
+
+  const meldStillExists =
+    Object.keys(requiredCounts).every(
+      function(tileKey) {
+        return (
+          (counts[tileKey] || 0) >=
+          requiredCounts[tileKey]
+        );
+      }
+    );
+
+  if (!meldStillExists) {
+    sevenPairsBoxState.meldBox = null;
+  }
+}
+
 
 if (committedMeld) {
   const committedCounts = {};
@@ -468,6 +567,67 @@ if (committedMeld) {
   };
 }
 
+if (sevenPairsBoxState.meldBox) {
+  const protectedMeld =
+    sevenPairsBoxState.meldBox;
+
+  const protectedCounts = {};
+
+  protectedMeld.tiles.forEach(function(tileKey) {
+    protectedCounts[tileKey] =
+      (protectedCounts[tileKey] || 0) + 1;
+  });
+
+  const pairTileKeys =
+    getSevenPairsCandidates(
+      counts,
+      protectedCounts
+    );
+
+  const reserveCounts = { ...counts };
+
+  protectedMeld.tiles.forEach(function(tileKey) {
+    reserveCounts[tileKey] =
+      Math.max(
+        0,
+        (reserveCounts[tileKey] || 0) - 1
+      );
+  });
+
+  pairTileKeys.forEach(function(tileKey) {
+    reserveCounts[tileKey] =
+      Math.max(
+        0,
+        (reserveCounts[tileKey] || 0) - 2
+      );
+  });
+
+  sevenPairsBoxState.pairTileKeys =
+    [...pairTileKeys];
+
+  sevenPairsBoxState.pairCount =
+    pairTileKeys.length;
+
+  sevenPairsBoxState.complete =
+    pairTileKeys.length >= 7;
+
+  return {
+    completeBox: {
+      type: protectedMeld.type,
+      tiles: [...protectedMeld.tiles],
+      visibility:
+        protectedMeld.visibility || "hidden"
+    },
+    developingBox: null,
+    reserves:
+      findReserves(
+        reserveCounts,
+        []
+      )
+  };
+}
+
+
   sevenPairsBoxState.pairTileKeys.forEach(
     function(tileKey) {
       workingCounts[tileKey] =
@@ -511,9 +671,16 @@ if (committedMeld) {
     );
 
   if (completedMelds.length > 0) {
-    const completeBox = completedMelds[0];
+  const completeBox = completedMelds[0];
 
-    return {
+  sevenPairsBoxState.meldBox = {
+    type: completeBox.type,
+    tiles: [...completeBox.tiles],
+    visibility:
+      completeBox.visibility || "hidden"
+  };
+
+  return {
       completeBox: completeBox,
       developingBox: null,
       reserves:
@@ -537,6 +704,51 @@ if (committedMeld) {
   CPC > DSW > MW > EW
   ================================================
   */
+
+/*
+================================================
+Siete Pares Pong Candidate
+
+When the Siete Pares Box is complete and the
+remaining structure is exactly a pair, that
+pair is the developing path to the one required
+ordinary Pong.
+
+This is specific to Siete Pares. It is not an
+Eye Candidate or the normal four-tile PKC.
+================================================
+*/
+
+if (sevenPairsBoxState.complete) {
+  const pongCandidateKey =
+    Object.keys(workingCounts).find(
+      function(tileKey) {
+        return (
+          (workingCounts[tileKey] || 0) === 2
+        );
+      }
+    );
+
+  if (pongCandidateKey) {
+    const pongCandidate = {
+      type: "pc",
+      tiles: [
+        pongCandidateKey,
+        pongCandidateKey
+      ]
+    };
+
+    return {
+      completeBox: null,
+      developingBox: pongCandidate,
+      reserves:
+        findReserves(
+          workingCounts,
+          [pongCandidate]
+        )
+    };
+  }
+}
 
   const cpcCandidates =
     findCPCDevelopingBoxes(workingCounts);
@@ -618,6 +830,34 @@ if (committedMeld) {
   };
 }
 
+function isSevenPairsMahjongWatch() {
+  if (
+    !sevenPairsMode ||
+    !sevenPairsBoxState.active ||
+    !sevenPairsBoxState.complete
+  ) {
+    return false;
+  }
+
+  const meldState =
+    getSevenPairsMeldState();
+
+  const mahjongWatchTypes = [
+    "pc",
+    "cpc",
+    "dsw",
+    "mw",
+    "ew"
+  ];
+
+  return Boolean(
+    !meldState.completeBox &&
+    meldState.developingBox &&
+    mahjongWatchTypes.includes(
+      meldState.developingBox.type
+    )
+  );
+}
 
 function isSevenPairsMahjong() {
   if (
@@ -635,8 +875,6 @@ function isSevenPairsMahjong() {
     meldState.completeBox
   );
 }
-
-
 
 
 function syncEscaleraAfterHandChange() {

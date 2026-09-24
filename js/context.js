@@ -126,6 +126,11 @@ function updateDiscardContext() {
   discardContext.textContent = "Seat: " + getWindLabel(seatWind) + " | Round: " + getWindLabel(prevailingWind);
 }
 
+
+// Number of completed player discards in the current hand.
+// This is the game-progression input for the continuous Timing ramp.
+let playerDiscardCount = 0;
+
 function makeSnapshot() {
   return {
     counts: { ...counts },
@@ -138,6 +143,7 @@ function makeSnapshot() {
     screenMode: screenMode,
     hdMode: hdMode,
     gameAction: gameAction,
+    playerDiscardCount: playerDiscardCount,
     lastDrawnTileKey: lastDrawnTileKey,
     revisionReturnHDMode: revisionReturnHDMode,
     revisionTarget: revisionTarget,
@@ -211,6 +217,8 @@ function restoreSnapshot(snapshot) {
   screenMode = snapshot.screenMode;
   hdMode = snapshot.hdMode;
   gameAction = snapshot.gameAction;
+  playerDiscardCount =
+    snapshot.playerDiscardCount || 0;
   lastDrawnTileKey = snapshot.lastDrawnTileKey;
   revisionReturnHDMode = snapshot.revisionReturnHDMode;
   revisionTarget = snapshot.revisionTarget;

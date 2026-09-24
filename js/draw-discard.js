@@ -518,7 +518,78 @@ console.log(
   incomingMeldCandidates
 );
 
+/*
+================================================
+Siete Pares Mahjong Watch
 
+When the incoming draw completes the ordinary
+meld already established by Siete Pares,
+preserve that structure and bypass normal MMR.
+
+A competing meld created by the same tile must
+not replace the watched Siete Pares meld.
+================================================
+*/
+
+if (
+  gameAction === "draw" &&
+  isSevenPairsMahjongWatch()
+) {
+  const sevenPairsMeldState =
+    getSevenPairsMeldState();
+
+  const watchedDB =
+    sevenPairsMeldState.developingBox;
+
+  if (watchedDB) {
+    const watchedCompletion =
+      incomingMeldCandidates.find(
+        function(candidate) {
+
+          if (watchedDB.type === "pc") {
+            return (
+              candidate.type === "pong" &&
+              watchedDB.tiles.every(
+                function(tileKey) {
+                  return candidate.tiles.includes(tileKey);
+                }
+              )
+            );
+          }
+
+          if (
+            watchedDB.type === "dsw" ||
+            watchedDB.type === "mw" ||
+            watchedDB.type === "ew"
+          ) {
+            return (
+              candidate.type === "chow" &&
+              watchedDB.tiles.every(
+                function(tileKey) {
+                  return candidate.tiles.includes(tileKey);
+                }
+              )
+            );
+          }
+
+          return false;
+        }
+      );
+
+    if (watchedCompletion) {
+      mmrCommittedBoxes.push({
+        action: gameAction,
+        tileKey: selectedDrawTileKey,
+        candidate: {
+          type: watchedCompletion.type,
+          tiles: [...watchedCompletion.tiles]
+        }
+      });
+
+      incomingMeldCandidates.length = 0;
+    }
+  }
+}
 
 if (
   gameAction === "claim" &&
@@ -548,7 +619,12 @@ if (
 
 const isSinglePong =
   incomingMeldCandidates.length === 1 &&
-  incomingMeldCandidates[0].type === "pong";
+  incomingMeldCandidates[0].type === "pong" &&
+  !(
+    sevenPairsMode &&
+    sevenPairsBoxState.active &&
+    sevenPairsBoxState.meldBox
+  );
 
 if (isSinglePong) {
   mmrState = {
@@ -1613,6 +1689,7 @@ function confirmDiscard() {
   lastActionTileKey = selectedDiscardTileKey;
 
   counts[selectedDiscardTileKey] -= 1;
+  playerDiscardCount += 1;
     deferredKangTileKeys =
       deferredKangTileKeys.filter(function(deferredKey) {
 

@@ -375,6 +375,7 @@ function startHand() {
   coachingOn = true;
   contextLocked = false;
   handStarted = true;
+  playerDiscardCount = 0;
   lastActionSnapshot = null;
   lastActionType = null;
   lastActionTileKey = null;
