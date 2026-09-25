@@ -1689,6 +1689,8 @@ function confirmDiscard() {
   lastActionTileKey = selectedDiscardTileKey;
 
   counts[selectedDiscardTileKey] -= 1;
+
+
   playerDiscardCount += 1;
     deferredKangTileKeys =
       deferredKangTileKeys.filter(function(deferredKey) {

@@ -264,6 +264,14 @@ function selectSVDiscardTile(tileKey, tileElement) {
     return;
   }
 
+if (
+  tileElement &&
+  tileElement.classList.contains("exposed-meld-tile")
+) {
+  openDialog("exposedMeldDiscardDialog");
+  return;
+}
+
   selectedDiscardTileKey = tileKey;
 
   document
@@ -477,7 +485,8 @@ checkBOLOEyesOpportunity(result, eyeCandidates);
 
          return renderCoachTile(tileKey, {
   extraClass:
-    isLastDrawn ? 'last-drawn' : ''
+    (isLastDrawn ? "last-drawn " : "") +
+    (box.visibility === "exposed" ? "exposed-meld-tile" : "")
 });
 
 
@@ -1575,7 +1584,11 @@ const isCPC =
   box.type === "cpc";
 
 const showCPCPathways =
-  isCPC && window.pathwaysOn;
+  isCPC &&
+  window.pathwaysOn &&
+  box.tiles.length === 4 &&
+  box.fp.structuralPossibilities.length >= 3;
+
 if (isCPC) console.log("CPC BOX:", box);
 const isCPCMirror =
   isCPC &&
@@ -1780,6 +1793,8 @@ renderCoachTile(box.tiles[1])
   });
 
 if (halfEye && halfEye.length > 0) {
+
+
     const boxNumber =
       firstActiveBoxNumber + developingBoxes.length;
 
@@ -1799,13 +1814,41 @@ if (halfEye && halfEye.length > 0) {
     });
   }).join("");
 
-    html +=
-      '<div class="hand-section box-card developing-box">' +
-        '<div class="hand-section-title">DB' +
-  boxNumber +
-  ' — HE</div>' +
-        tileHtml +
-      '</div>';
+    const showHEPathways =
+  window.pathwaysOn &&
+  halfEye[0].fp &&
+  halfEye[0].fp.pathways &&
+  halfEye[0].fp.pathways.length > 0;
+
+html +=
+  '<div class="hand-section box-card developing-box">' +
+    '<div class="hand-section-title">DB' +
+      boxNumber +
+      ' — HE</div>' +
+
+    (showHEPathways
+      ? '<div class="pathway-dsw-display">' +
+          '<div class="pathway-tile-row">' +
+            tileHtml +
+          '</div>' +
+          '<div class="pathway-indicator">' +
+            '<div class="pathway-ea">' +
+              halfEye[0].fp.pathways[0].effectiveAcceptance +
+            '</div>' +
+            '<div class="pathway-arrow pathway-arrow-left pathway-complex">↓</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="pathway-fp-summary">' +
+          '<span>Acceptance: ' +
+            halfEye[0].fp.acceptance +
+          '</span>' +
+          '<span>Sources: ' +
+            halfEye[0].fp.pathways[0].currentSources +
+          '</span>' +
+        '</div>'
+      : tileHtml) +
+
+  '</div>';
   }
 
   const totalBoxes =
@@ -1895,7 +1938,9 @@ const tileHtml = box.tiles.map(function(tileKey) {
   }
 
   return renderCoachTile(tileKey, {
-  extraClass: isLastDrawn ? "last-drawn" : ""
+  extraClass:
+  (isLastDrawn ? "last-drawn " : "") +
+  (box.visibility === "exposed" ? "exposed-meld-tile" : "")
 });
 
 }).join("");
@@ -1944,6 +1989,14 @@ function selectCHDDiscardTile(tileKey, tileElement) {
   if (!tileKey || counts[tileKey] <= 0) {
     return;
   }
+
+if (
+  tileElement &&
+  tileElement.classList.contains("exposed-meld-tile")
+) {
+  openDialog("exposedMeldDiscardDialog");
+  return;
+}
 
   selectedDiscardTileKey = tileKey;
 

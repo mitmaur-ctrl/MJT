@@ -2753,12 +2753,6 @@ function analyzeEPCPongPathways(
       }
     );
 
-console.log(
-  "EPC PATHWAY TRACE",
-  pathways
-);
-
-
 
   return {
     structuralPathways:
@@ -3217,12 +3211,52 @@ if (!halfEyeEligible) {
     return [];
   }
 
-  return [
-    {
-      type: "he",
-      tiles: [unassignedTiles[0]]
+  const halfEyeTile = unassignedTiles[0];
+
+const knownAvailability =
+  getKnownTileAvailability(
+    halfEyeTile,
+    engineInput.counts
+  );
+
+return [
+  {
+    type: "he",
+    tiles: [halfEyeTile],
+
+    fp: {
+      structuralPathways: 1,
+      acceptance: 3,
+
+      pathways: [
+        {
+          completingTile: halfEyeTile,
+          acceptance: 3,
+          knownAvailability,
+          effectiveAcceptance: knownAvailability,
+          effective:
+            knownAvailability > 0,
+          baselineSources: 4,
+          currentSources: 4
+        }
+      ],
+
+      effectivePathways:
+        knownAvailability > 0 ? 1 : 0,
+
+      effectiveAcceptance: [
+        knownAvailability
+      ],
+
+      totalKnownAvailability:
+        knownAvailability,
+
+      sources: 4,
+      currentSources: 4
     }
-  ];
+  }
+];
+
 }
 
 function findReserves(
