@@ -9,7 +9,7 @@ Project:
 Mahjong Coach
 
 Version:
-MJC Beta v6.0
+MJC Beta v6.1
 
 Purpose:
 - Smartphone-optimized tile management vehicle
@@ -284,7 +284,7 @@ V4 = Photo Recognition
     <div class="rapid-draw-main">
 
   <div>
-    <div class="rapid-section-label">Suits</div>
+    <div class="rapid-section-label">Number ▶ Suit</div>
 
     <div class="rapid-number-pad">
         <button type="button" class="rapid-draw-key" data-number="1">1</button>
@@ -310,7 +310,7 @@ V4 = Photo Recognition
 
   <div class="rapid-honor-pad">
 
-  <div class="rapid-section-label">Winds</div>
+  <div class="rapid-section-label">Winds ▼</div>
 
   <div class="rapid-honor-row">
     <button type="button" class="rapid-honor-key" data-key="east">E</button>
@@ -319,7 +319,7 @@ V4 = Photo Recognition
     <button type="button" class="rapid-honor-key" data-key="north">N</button>
   </div>
 
-  <div class="rapid-section-label">Dragons</div>
+  <div class="rapid-section-label">Dragons ▼</div>
 
   <div class="rapid-honor-row dragons">
     <button type="button" class="rapid-honor-key" data-key="red">R</button>
@@ -365,7 +365,7 @@ V4 = Photo Recognition
     <button onclick="openFeedbackDialog()">Feedback</button>
     <button onclick="openSupportDialog()">Support MJC</button>
   </div>
-  <div class="footer-version">Beta v6.0</div>
+  <div class="footer-version">Beta v6.1</div>
 </div>
 
 </div>
@@ -959,7 +959,7 @@ V4 = Photo Recognition
     <h2>Feedback</h2>
     <p>Thank you for helping us improve Mahjong Coach.</p>
     <p>We welcome bug reports, suggestions, comments, and feature requests.</p>
-    <p><strong>Email:</strong> <a href="mailto:mjcfeedbackteam@gmail.com?subject=Mahjong%20Coach%20Feedback%20-%20Beta%20v6.0">mjcfeedbackteam@gmail.com</a></p>
+    <p><strong>Email:</strong> <a href="mailto:mjcfeedbackteam@gmail.com?subject=Mahjong%20Coach%20Feedback%20-%20Beta%20v6.1">mjcfeedbackteam@gmail.com</a></p>
     <p><em>Every message is read and appreciated.</em></p>
     <div class="dialog-actions">
       <button class="dialog-button primary" onclick="closeDialog('feedbackDialog')">Close</button>
@@ -997,7 +997,7 @@ Acceptance standard:
 ==================================================
 */
 
-const MJC_VERSION_LABEL = "Beta v6.0";
+const MJC_VERSION_LABEL = "Beta v6.1";
 
 const MJC_RULESET_BASE_HAND_SIZES = Object.freeze({
   filipino16: 16,
@@ -1325,6 +1325,26 @@ document.addEventListener("touchend", function(e) {
 
 
 </script>
+
+<div id="exposedMeldDiscardDialog" class="dialog-backdrop hidden">
+  <div class="dialog">
+    <h2>Unable to Discard Tile</h2>
+
+    <p>
+      Tiles in an exposed meld cannot be discarded.
+    </p>
+
+    <div class="dialog-actions">
+      <button
+        type="button"
+        class="dialog-button primary"
+        onclick="closeDialog('exposedMeldDiscardDialog')"
+      >
+        OK
+      </button>
+    </div>
+  </div>
+</div>
 
 <div id="chdDiscardConfirmDialog" class="dialog-backdrop hidden">
   <div class="dialog">
