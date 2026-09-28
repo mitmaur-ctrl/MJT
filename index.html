@@ -9,7 +9,7 @@ Project:
 Mahjong Coach
 
 Version:
-MJC Beta v6.1
+MJC Beta v7.0
 
 Purpose:
 - Smartphone-optimized tile management vehicle
@@ -228,6 +228,21 @@ V4 = Photo Recognition
 >
   Pathways: On
 </button>
+
+<div
+  id="pathwaysHelpRow"
+  style="flex-basis:100%; text-align:center;"
+>
+  <button
+    type="button"
+    id="pathwaysHelpLink"
+    class="six-box-link hidden"
+    onclick="openDialog('understandingPathwaysDialog')"
+  >
+    Understanding the Pathways
+  </button>
+</div>
+
 </div>
 
 <div id="currentCorrectionRow" class="hd-action-row hidden">
@@ -365,7 +380,7 @@ V4 = Photo Recognition
     <button onclick="openFeedbackDialog()">Feedback</button>
     <button onclick="openSupportDialog()">Support MJC</button>
   </div>
-  <div class="footer-version">Beta v6.1</div>
+  <div class="footer-version">Beta v7.0</div>
 </div>
 
 </div>
@@ -602,23 +617,25 @@ V4 = Photo Recognition
   <div class="dialog">
     <h2>Turn Cycle</h2>
 
-    <p>
-      What's your next action?
-    </p>
+    <p id="turnCycleMessage">
+  What's your next action?
+</p>
 
     <button
-      type="button"
-      class="dialog-button primary"
-      onclick="confirmTurnCycle('draw')"
-    >
+  type="button"
+  id="turnCycleDrawBtn"
+  class="dialog-button primary"
+  onclick="confirmTurnCycle('draw')"
+>
       Draw
     </button>
 
     <button
-      type="button"
-      class="dialog-button"
-      onclick="confirmTurnCycle('discard')"
-    >
+  type="button"
+  id="turnCycleDiscardBtn"
+  class="dialog-button"
+  onclick="confirmTurnCycle('discard')"
+>
       Discard
     </button>
   </div>
@@ -866,6 +883,51 @@ V4 = Photo Recognition
   </div>
 </div>
 
+<div id="understandingPathwaysDialog" class="dialog-backdrop hidden">
+  <div class="dialog">
+    <h2>Understanding the Pathways</h2>
+
+    <p>
+      Pathways show how a Developing Box can progress toward becoming
+      a Complete Box.
+    </p>
+
+    <p>
+      <strong style="color:#2e8b57;">Green ↓ — Same-Suit Tile</strong><br>
+      A different numbered tile of the same suit can advance the Pathway.
+    </p>
+
+    <p>
+      <strong style="color:#d97706;">Orange ↓ — Matching Tile</strong><br>
+      Another copy of a tile already in the structure can advance the Pathway.
+    </p>
+
+    <p>
+      <strong>EA — Effective Acceptance</strong><br>
+      Shows the remaining tile opportunities for that Pathway.
+    </p>
+
+<p>
+  <strong>Acceptance</strong><br>
+  The number of tile opportunities that can advance the structure.
+</p>
+
+<p>
+  <strong>Sources</strong><br>
+  The availalbe ways a needed tile can enter your hand—by draw or claim.
+</p>
+
+    <div class="dialog-actions">
+      <button
+        class="dialog-button primary"
+        onclick="closeDialog('understandingPathwaysDialog')"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+</div>
+
 <div id="meetCandidatesDialog" class="dialog-backdrop hidden">
   <div class="dialog">
     <h2>Meet the Candidates</h2>
@@ -959,7 +1021,7 @@ V4 = Photo Recognition
     <h2>Feedback</h2>
     <p>Thank you for helping us improve Mahjong Coach.</p>
     <p>We welcome bug reports, suggestions, comments, and feature requests.</p>
-    <p><strong>Email:</strong> <a href="mailto:mjcfeedbackteam@gmail.com?subject=Mahjong%20Coach%20Feedback%20-%20Beta%20v6.1">mjcfeedbackteam@gmail.com</a></p>
+    <p><strong>Email:</strong> <a href="mailto:mjcfeedbackteam@gmail.com?subject=Mahjong%20Coach%20Feedback%20-%20Beta%20v7.0">mjcfeedbackteam@gmail.com</a></p>
     <p><em>Every message is read and appreciated.</em></p>
     <div class="dialog-actions">
       <button class="dialog-button primary" onclick="closeDialog('feedbackDialog')">Close</button>
@@ -997,7 +1059,7 @@ Acceptance standard:
 ==================================================
 */
 
-const MJC_VERSION_LABEL = "Beta v6.1";
+const MJC_VERSION_LABEL = "Beta v7.0";
 
 const MJC_RULESET_BASE_HAND_SIZES = Object.freeze({
   filipino16: 16,
@@ -1343,6 +1405,55 @@ document.addEventListener("touchend", function(e) {
         OK
       </button>
     </div>
+  </div>
+</div>
+
+<div id="releaseTileDialog" class="dialog-backdrop hidden">
+  <div class="dialog">
+    <h2>Select Tile to Release</h2>
+    <div id="releaseTileChoices"></div>
+    <div id="releaseTilePreview" class="hidden"></div>
+
+    <div class="dialog-actions">
+
+  <button
+    type="button"
+    id="releaseTileBackBtn"
+    class="dialog-button hidden"
+    onclick="backReleaseTileStep()"
+  >
+    Back
+  </button>
+
+ <button
+  type="button"
+  id="releaseTileCancelBtn"
+  class="dialog-button"
+  onclick="cancelReleaseTile()"
+>
+  Cancel
+</button>
+
+<button
+  type="button"
+  id="releaseTileConfirmBtn"
+  class="primary hidden"
+  onclick="confirmReleaseTile()"
+>
+  Confirm
+</button>
+
+  <button
+    type="button"
+    id="releaseTileOkBtn"
+    class="dialog-button primary hidden"
+    onclick="closeReleaseTileNoDestination()"
+  >
+    OK
+  </button>
+
+</div>
+
   </div>
 </div>
 
