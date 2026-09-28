@@ -1542,6 +1542,11 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 
   position: relative;
 }
 
+.coach-short-form .complete-box .hand-section-title {
+  padding-right: 32px;
+  padding-left: 32px;
+}
+
 .coach-short-form .complete-box .release-tile-button {
   position: absolute;
   right: 6px;
