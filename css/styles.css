@@ -1537,17 +1537,16 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 
   color: #333;
 }
 
-/* RT button placement experiment — bottom right of Hidden CB */
+/* RT button placement — right edge of Hidden CB title */
 .coach-short-form .complete-box {
   position: relative;
-  padding-bottom: 30px;
 }
 
 .coach-short-form .complete-box .release-tile-button {
   position: absolute;
   right: 6px;
-  bottom: 6px;
-  font-size: 12px;
+  top: 6px;
+  font-size: 11px;
   padding: 2px 5px;
   line-height: 1.1;
 }
