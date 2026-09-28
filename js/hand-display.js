@@ -37,6 +37,16 @@ function togglePathways() {
         : "Pathways: On";
   }
 
+const pathwaysHelpLink =
+  document.getElementById("pathwaysHelpLink");
+
+if (pathwaysHelpLink) {
+  pathwaysHelpLink.classList.toggle(
+    "hidden",
+    !window.pathwaysOn
+  );
+}
+
   if (coachingOn) {
     renderCoachView();
   }
@@ -1519,7 +1529,8 @@ function renderActiveArea(
   completeBoxes,
   developingBoxes,
   halfEye,
-  highlightState
+  highlightState,
+  options = {}
 ) {
   let html =
   '<div class="developing-area">' +
@@ -1530,7 +1541,9 @@ if (typeof renderSevenPairsBox === "function") {
   html += renderSevenPairsBox(highlightState);
 }
 
-  const firstActiveBoxNumber = completeBoxes.length + 1;
+  const firstActiveBoxNumber =
+  options.firstActiveBoxNumber ||
+  (completeBoxes.length + 1);
 
   developingBoxes.forEach(function(box, index) {
     const boxNumber = firstActiveBoxNumber + index;
@@ -1859,16 +1872,18 @@ html +=
 const targetBoxCount =
   escaleraMode ? 3 : 6;
 
-for (
-  let boxNumber = totalBoxes + 1;
-  boxNumber <= targetBoxCount;
-  boxNumber++
-) {
-  html +=
-    '<div class="hand-section box-card empty-box">' +
-      '<div class="hand-section-title">DB' + boxNumber + '</div>' +
-      '<span class="empty-note">Empty</span>' +
-    '</div>';
+if (!options.hideEmptyBoxes) {
+  for (
+    let boxNumber = totalBoxes + 1;
+    boxNumber <= targetBoxCount;
+    boxNumber++
+  ) {
+    html +=
+      '<div class="hand-section box-card empty-box">' +
+        '<div class="hand-section-title">DB' + boxNumber + '</div>' +
+        '<span class="empty-note">Empty</span>' +
+      '</div>';
+  }
 }
 
   html += '</div>';
@@ -1951,6 +1966,12 @@ const tileHtml = box.tiles.map(function(tileKey) {
     ? " wide-box"
     : "";
 
+const showReleaseTile =
+  hdMode === "current" &&
+  gameAction === "draw" &&
+  box.visibility !== "exposed" &&
+  box.type !== "eye";
+
     html +=
   '<div class="hand-section box-card complete-box' +
     cbExtraClass +
@@ -1962,8 +1983,14 @@ const tileHtml = box.tiles.map(function(tileKey) {
         ? ""
         : " — " +
           (box.visibility === "exposed" ? "Exposed" : "Hidden")
-    ) +
+        ) +
+    (showReleaseTile
+  ? ' <button type="button" class="release-tile-button" ' +
+    'data-box-id="' + box.boxId + '">RT</button>'
+  : '') +
+
   '</div>' +
+
   '<div class="cb-tile-row">' +
     tileHtml +
   '</div>' +
@@ -1973,6 +2000,508 @@ const tileHtml = box.tiles.map(function(tileKey) {
   html += '</div>';
 
 return html;
+}
+
+let selectedReleaseTileKey = null;
+let selectedReleaseBoxId = null;
+let releaseTileStep = "tile";
+
+let selectedRTConstraint = null;
+
+function confirmReleaseTile() {
+
+  if (
+    releaseTileStep !== "preview" ||
+    !selectedRTConstraint
+  ) {
+    return;
+  }
+
+  const rtCommitResult =
+    evaluate17TE(
+      MJC_STATE.getEngineInput(),
+      {
+        rtPreviewConstraint:
+          selectedRTConstraint,
+
+        rtCommit: true
+      }
+    );
+
+  if (coachingOn) {
+    renderCoachView();
+  } else {
+    buildHandDisplay();
+  }
+
+  cancelReleaseTile();
+}
+
+function cancelReleaseTile() {
+  selectedReleaseTileKey = null;
+  selectedReleaseBoxId = null;
+  releaseTileStep = "tile";
+
+  document
+    .getElementById("releaseTileBackBtn")
+    .classList.add("hidden");
+
+  document
+    .getElementById("releaseTileOkBtn")
+    .classList.add("hidden");
+
+  document
+    .getElementById("releaseTilePreview")
+    .classList.add("hidden");
+
+  document
+    .getElementById("releaseTileConfirmBtn")
+    .classList.add("hidden");
+
+  document
+    .getElementById("releaseTilePreview")
+    .innerHTML = "";
+
+  closeDialog("releaseTileDialog");
+}
+
+function closeReleaseTileNoDestination() {
+  selectedReleaseTileKey = null;
+  selectedReleaseBoxId = null;
+  releaseTileStep = "tile";
+
+  document
+    .getElementById("releaseTileOkBtn")
+    .classList.add("hidden");
+
+  closeDialog("releaseTileDialog");
+}
+
+function backReleaseTileStep() {
+  if (releaseTileStep === "preview") {
+    releaseTileStep = "destination";
+
+    document.querySelector(
+      "#releaseTileDialog h2"
+    ).textContent = "Select Alternate Grouping";
+
+    document
+      .getElementById("releaseTilePreview")
+      .classList.add("hidden");
+
+    document
+      .getElementById("releaseTileConfirmBtn")
+      .classList.add("hidden");
+
+    return;
+  }
+
+  if (releaseTileStep !== "destination") {
+    return;
+  }
+
+  releaseTileStep = "tile";
+
+  selectedReleaseTileKey = null;
+
+  document.querySelector(
+    "#releaseTileDialog h2"
+  ).textContent = "Select Tile to Release";
+
+  const releaseTileChoices =
+    document.querySelectorAll(
+      "#releaseTileChoices .release-tile-choice"
+    );
+
+  releaseTileChoices.forEach(function(choice) {
+    choice.classList.remove("discard-selected");
+    choice.style.pointerEvents = "";
+  });
+
+  document
+    .getElementById("releaseTileBackBtn")
+    .classList.add("hidden");
+}
+
+function selectReleaseTileBox(boxId) {
+  console.log("RT SELECTED CB:", boxId);
+  selectedReleaseBoxId = boxId;
+  releaseTileStep = "tile";
+
+document.querySelector(
+  "#releaseTileDialog h2"
+).textContent = "Select Tile to Release";
+
+  const result = evaluate17TE(MJC_STATE.getEngineInput());
+  const structureState =
+    result.structureState || result;
+
+const selectedBox =
+  structureState.completeBoxes.find(function(box) {
+    return String(box.boxId) === String(boxId);
+  });
+
+console.log("RT SELECTED BOX:", selectedBox);
+
+console.log(
+  "RT DESTINATION DBS:",
+  structureState.developingBoxes
+);
+console.log(
+  "RT FIRST DESTINATION DB NUMBER:",
+  structureState.completeBoxes.length + 1
+);
+console.log("RT TILES:", selectedBox.tiles);
+const choices = document.getElementById("releaseTileChoices");
+console.log("RT CHOICES CONTAINER:", choices);
+choices.innerHTML =
+  selectedBox.tiles.map(function(tileKey) {
+    return renderCoachTile(tileKey, {
+     extraClass: "release-tile-choice"
+   });
+  }).join("");
+
+const releaseTileChoices =
+  choices.querySelectorAll(".release-tile-choice");
+
+console.log("RT TILE CHOICES:", releaseTileChoices.length);
+
+releaseTileChoices.forEach(function(tile) {
+  tile.addEventListener("click", function() {
+    console.log("RT TILE CLICKED:", tile.dataset.key);
+releaseTileChoices.forEach(function(choice) {
+  choice.classList.remove("discard-selected");
+});
+  tile.classList.add("discard-selected");
+selectedReleaseTileKey = tile.dataset.key;
+console.log("RT SELECTED TILE:", selectedReleaseTileKey);
+
+console.log(
+  "RT SELECTION:",
+  selectedReleaseBoxId,
+  selectedReleaseTileKey
+);
+
+const viableDestinations =
+  findReleaseTileDestinations(
+    selectedReleaseTileKey,
+    structureState.developingBoxes
+  );
+
+console.log(
+  "RT VIABLE DESTINATIONS:",
+  viableDestinations
+);
+
+if (viableDestinations.length === 0) {
+  document.querySelector(
+    "#releaseTileDialog h2"
+  ).textContent =
+    "No viable alternate groupings available.";
+
+  document
+    .getElementById("releaseTileCancelBtn")
+    .classList.add("hidden");
+
+  document
+    .getElementById("releaseTileOkBtn")
+    .classList.remove("hidden");
+
+  return;
+}
+
+releaseTileStep = "destination";
+
+document.querySelector(
+  "#releaseTileDialog h2"
+).textContent = "Select Alternate Grouping";
+
+releaseTileChoices.forEach(function(choice) {
+  choice.style.pointerEvents = "none";
+});
+
+document
+  .getElementById("releaseTileBackBtn")
+  .classList.remove("hidden");
+
+document
+  .getElementById("releaseTileCancelBtn")
+  .classList.remove("hidden");
+
+document
+  .getElementById("releaseTileOkBtn")
+  .classList.add("hidden");
+
+const firstDestinationDbNumber =
+  structureState.completeBoxes.length + 1;
+
+console.log(
+  "RT DESTINATION START:",
+  firstDestinationDbNumber
+);
+
+let groupingChoicesHtml = "";
+
+viableDestinations.forEach(
+  function(destination) {
+    const destinationTileHtml =
+      destination.tiles
+        .map(function(tileKey) {
+          return renderCoachTile(tileKey);
+        })
+        .join("");
+
+    const destinationDbNumber =
+      structureState.developingBoxes.indexOf(
+        destination
+      ) + firstDestinationDbNumber;
+
+    const destinationLabel =
+      getBoxTypeLabel(destination.type);
+
+    groupingChoicesHtml +=
+      '<div class="rt-grouping" ' +
+        'data-db-number="' +
+        destinationDbNumber + '">' +
+        '<div class="hand-section-title">' +
+          'DB' + destinationDbNumber +
+          ' — ' + destinationLabel +
+        '</div>' +
+        '<div>' +
+          destinationTileHtml +
+        '</div>' +
+      '</div>';
+  }
+);
+
+choices.insertAdjacentHTML(
+  "beforeend",
+  '<div class="rt-alternate-groupings">' +
+    '<div class="rt-alternate-groupings-title">' +
+      'Alternate Groupings' +
+    '</div>' +
+    groupingChoicesHtml +
+  '</div>'
+);
+
+choices
+  .querySelectorAll(".rt-grouping")
+  .forEach(function(groupingChoice) {
+
+    groupingChoice.addEventListener(
+  "click",
+  function() {
+
+    choices
+      .querySelectorAll(".rt-grouping-selected")
+      .forEach(function(choice) {
+        choice.classList.remove(
+          "rt-grouping-selected"
+        );
+      });
+
+    groupingChoice.classList.add(
+      "rt-grouping-selected"
+    );
+
+const selectedDestinationDbNumber =
+  Number(groupingChoice.dataset.dbNumber);
+
+const selectedDestination =
+  viableDestinations.find(
+    function(destination) {
+      return (
+        structureState.developingBoxes.indexOf(
+          destination
+        ) + firstDestinationDbNumber ===
+        selectedDestinationDbNumber
+      );
+    }
+  );
+
+    selectedRTConstraint = {
+  releasedTileKey:
+    selectedReleaseTileKey,
+
+  originBoxId:
+    selectedReleaseBoxId,
+
+  originBoxType:
+    selectedBox.type,
+
+  originBoxTiles:
+    [...selectedBox.tiles],
+
+  destinationDbNumber:
+  selectedDestinationDbNumber,
+
+destinationType:
+  selectedDestination.type,
+
+destinationTiles:
+  [...selectedDestination.tiles]
+};
+
+const rtBeforeResult =
+  evaluate17TE(
+    MJC_STATE.getEngineInput()
+  );
+
+const rtBeforeStructure =
+  rtBeforeResult.structureState ||
+  rtBeforeResult;
+
+const rtPreviewResult =
+  evaluate17TE(
+    MJC_STATE.getEngineInput(),
+    {
+      rtPreviewConstraint:
+        selectedRTConstraint
+    }
+  );
+
+  console.warn(
+    "RT PREVIEW RESULT RECEIVED:",
+    rtPreviewResult
+  );
+
+const rtPreviewStructure =
+  rtPreviewResult.structureState ||
+  rtPreviewResult;
+
+console.warn(
+  "RT BEFORE STRUCTURE:",
+  rtBeforeStructure
+);
+
+console.warn(
+  "RT AFTER STRUCTURE:",
+  rtPreviewStructure
+);
+
+function rtBoxSignature(box) {
+  return (
+    box.type +
+    ":" +
+    [...box.tiles].sort().join("|")
+  );
+}
+
+const rtBeforeSignatures =
+  new Set(
+    [
+      ...rtBeforeStructure.completeBoxes,
+      ...rtBeforeStructure.developingBoxes,
+      ...(rtBeforeStructure.halfEye || [])
+    ].map(rtBoxSignature)
+  );
+
+const rtImpactedAfterBoxes =
+  [
+    ...rtPreviewStructure.completeBoxes,
+    ...rtPreviewStructure.developingBoxes,
+    ...(rtPreviewStructure.halfEye || [])
+  ].filter(function(box) {
+    return !rtBeforeSignatures.has(
+      rtBoxSignature(box)
+    );
+  });
+
+console.warn(
+  "RT IMPACTED AFTER BOXES:",
+  rtImpactedAfterBoxes
+);
+
+
+console.warn(
+  "RT PREVIEW STRUCTURE FOR DISPLAY:",
+  rtPreviewStructure
+);
+
+const rtPreviewHighlightState = {
+  used: false
+};
+
+const rtImpactedCompleteBoxes =
+  rtImpactedAfterBoxes.filter(function(box) {
+    return (
+      rtPreviewStructure.completeBoxes.includes(box)
+    );
+  });
+
+const rtImpactedDevelopingBoxes =
+  rtImpactedAfterBoxes.filter(function(box) {
+    return (
+      rtPreviewStructure.developingBoxes.includes(box)
+    );
+  });
+
+const rtImpactedHalfEye =
+  rtImpactedAfterBoxes.filter(function(box) {
+    return (
+      (rtPreviewStructure.halfEye || [])
+        .includes(box)
+    );
+  });
+
+const rtPreviewHtml =
+  '<div class="rt-expected-results-title">' +
+    'Expected Results' +
+  '</div>' +
+  renderActiveArea(
+    rtImpactedCompleteBoxes,
+    rtImpactedDevelopingBoxes,
+    rtImpactedHalfEye,
+    rtPreviewHighlightState,
+    {
+  hideEmptyBoxes: true,
+  firstActiveBoxNumber:
+    rtPreviewStructure.completeBoxes.length + 1
+}
+  ) +
+  renderCompletedArea(
+    rtImpactedCompleteBoxes,
+    rtPreviewHighlightState
+  );
+
+
+console.warn(
+  "RT PREVIEW HTML:",
+  rtPreviewHtml
+);
+
+const previewContainer =
+  document.getElementById("releaseTilePreview");
+
+previewContainer.innerHTML =
+  rtPreviewHtml;
+previewContainer.classList.remove("hidden");
+
+previewContainer
+  .querySelectorAll(".release-tile-button")
+  .forEach(function(button) {
+    button.remove();
+  });
+
+document.querySelector(
+  "#releaseTileDialog h2"
+).textContent = "Preview";
+
+releaseTileStep = "preview";
+
+document
+  .getElementById("releaseTileConfirmBtn")
+  .classList.remove("hidden");
+
+        }
+    );
+  });
+
+
+  });
+});
+
+  openDialog("releaseTileDialog");
 }
 
 function selectCHDDiscardTile(tileKey, tileElement) {
@@ -2311,6 +2840,13 @@ targetBoxCount +
       )
 )
 
+enginePanel
+  .querySelectorAll(".release-tile-button")
+  .forEach(function(button) {
+    button.addEventListener("click", function() {
+      selectReleaseTileBox(button.dataset.boxId);
+    });
+  });
 
 if (
   gameAction === "discard" &&
@@ -2431,8 +2967,6 @@ if (hdMode === "starting") {
 if (coachingOn) {
   renderCoachView();
 }
-
-
 
 if (
   hdMode === "current" &&

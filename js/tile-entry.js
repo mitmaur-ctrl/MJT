@@ -398,6 +398,43 @@ function acceptRevision() {
     handCorrectionSnapshot = null;
     clearCorrectionState();
     lastDrawnTileKey = null;
+    const turnCycleMessage =
+      document.getElementById("turnCycleMessage");
+
+  if (turnCycleMessage) {
+    turnCycleMessage.textContent =
+      handCorrectionReturnAction === "discard"
+        ? "Before Fix Hand, you were preparing to Discard."
+        : "Before Fix Hand, you were preparing to Draw.";
+  }
+
+const turnCycleDrawBtn =
+  document.getElementById("turnCycleDrawBtn");
+
+const turnCycleDiscardBtn =
+  document.getElementById("turnCycleDiscardBtn");
+
+if (turnCycleDrawBtn && turnCycleDiscardBtn) {
+  turnCycleDrawBtn.textContent =
+    handCorrectionReturnAction === "draw"
+      ? "Resume Draw"
+      : "Draw Instead";
+
+  turnCycleDiscardBtn.textContent =
+    handCorrectionReturnAction === "discard"
+      ? "Resume Discard"
+      : "Discard Instead";
+
+  turnCycleDrawBtn.classList.toggle(
+    "primary",
+    handCorrectionReturnAction === "draw"
+  );
+
+  turnCycleDiscardBtn.classList.toggle(
+    "primary",
+    handCorrectionReturnAction === "discard"
+  );
+}
     showTurnCycleConfirmation();
     return;
   }
@@ -533,9 +570,12 @@ function renderMeldVisibilityCorrection() {
   container.innerHTML = html;
 }
 
+let handCorrectionReturnAction = null;
+
 function openHandCorrectionScreen() {
   if (hdMode !== "current") return;
 
+  handCorrectionReturnAction = gameAction;
   handCorrectionSnapshot = makeSnapshot();
   handCorrectionTarget = null;
   revisionTarget = null;

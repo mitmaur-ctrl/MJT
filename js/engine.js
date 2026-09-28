@@ -85,7 +85,7 @@ The next newly completed box becomes CB 3.
 */
 
 let stableCompleteBoxState = [];
-
+let committedRTConstraint = null;
 
 function getCompleteBoxSignature(box) {
   return (
@@ -525,6 +525,115 @@ function getGameTimingProgress(
 }
 
 function evaluate17TE(engineInput, options = {}) {
+  
+const isRTPreview =
+  Boolean(options.rtPreviewConstraint) &&
+  options.rtCommit !== true;
+
+if (
+  options.rtCommit === true &&
+  options.rtPreviewConstraint
+) {
+  committedRTConstraint = {
+    ...options.rtPreviewConstraint,
+    originBoxTiles: [
+      ...options.rtPreviewConstraint.originBoxTiles
+    ],
+    destinationTiles: [
+      ...options.rtPreviewConstraint.destinationTiles
+    ]
+  }; 
+}
+
+if (
+  committedRTConstraint &&
+  options.rtCommit !== true &&
+  !options.rtPreviewConstraint
+) {
+  const requiredCounts = {};
+
+  [
+    committedRTConstraint.releasedTileKey,
+    ...committedRTConstraint.destinationTiles
+  ].forEach(function(tileKey) {
+    requiredCounts[tileKey] =
+      (requiredCounts[tileKey] || 0) + 1;
+  });
+
+  const rtCommitmentStillPossible =
+    Object.keys(requiredCounts).every(
+      function(tileKey) {
+        return (
+          (engineInput.counts[tileKey] || 0) >=
+          requiredCounts[tileKey]
+        );
+      }
+    );
+
+  if (!rtCommitmentStillPossible) {
+    committedRTConstraint = null;
+  }
+
+}
+
+const effectiveRTConstraint =
+  options.rtPreviewConstraint ||
+  committedRTConstraint;
+
+const savedRTStableCompleteBoxState =
+  isRTPreview
+    ? stableCompleteBoxState.map(function(box) {
+        return {
+          ...box,
+          tiles: [...box.tiles]
+        };
+      })
+    : null;
+
+const savedRTCanonicalStructureState =
+  isRTPreview
+    ? {
+        ...canonicalStructureState,
+
+        completeBoxes:
+          canonicalStructureState.completeBoxes.map(
+            function(box) {
+              return {
+                ...box,
+                tiles: [...box.tiles]
+              };
+            }
+          ),
+
+        developingBoxes:
+          canonicalStructureState.developingBoxes.map(
+            function(box) {
+              return {
+                ...box,
+                tiles: [...box.tiles]
+              };
+            }
+          ),
+
+        halfEye:
+          canonicalStructureState.halfEye.map(
+            function(box) {
+              return {
+                ...box,
+                tiles: [...box.tiles]
+              };
+            }
+          ),
+
+        reserves:
+          [...canonicalStructureState.reserves],
+
+        ambition: {
+          ...canonicalStructureState.ambition
+        }
+      }
+    : null;
+
   const structuralInput =
     getStructuralEngineInput(engineInput);
 
@@ -536,7 +645,10 @@ function evaluate17TE(engineInput, options = {}) {
 
 
   const detectedCompleteBoxes =
-    findCompleteBoxes(structuralInput);
+  findCompleteBoxes(
+    structuralInput,
+    effectiveRTConstraint
+  );
 
 const completeBoxes =
   assignStableCompleteBoxIds(
@@ -917,6 +1029,16 @@ eyeNeed:
 //
 // const finishingPotential = ...
 
+if (isRTPreview) {
+  stableCompleteBoxState =
+    savedRTStableCompleteBoxState;
+
+  canonicalStructureState =
+    savedRTCanonicalStructureState;
+
+}
+
+
   return {
   version: MJC_VERSION_LABEL,
   status: "ready",
@@ -937,13 +1059,80 @@ eyeNeed:
     };
   }
 
-function findCompleteBoxes(engineInput) {
+function findCompleteBoxes(
+  engineInput,
+  rtPreviewConstraint = null
+) {
   const workingCounts = { ...engineInput.counts };
   const completeBoxes = [];
+
+  const rtOriginBox =
+  rtPreviewConstraint
+    ? {
+        type:
+          rtPreviewConstraint.originBoxType,
+        tiles:
+          [...rtPreviewConstraint.originBoxTiles]
+      }
+    : null;
+
+const rtTargetBox =
+  rtPreviewConstraint &&
+  (
+    rtPreviewConstraint.destinationType === "dsw" ||
+    rtPreviewConstraint.destinationType === "ew" ||
+    rtPreviewConstraint.destinationType === "mw"
+  )
+    ? {
+        type: "chow",
+        tiles: [
+          rtPreviewConstraint.releasedTileKey,
+          ...rtPreviewConstraint.destinationTiles
+        ].sort(function(a, b) {
+          return Number(a.match(/\d+/)[0]) -
+                 Number(b.match(/\d+/)[0]);
+        })
+      }
+    : null;
 
 const isStartingHand =
   engineInput.context &&
   engineInput.context.phase === "starting";
+
+// RT Preview target gets first priority.
+// Reserve the player-selected grouping before
+// normal Complete Box detection reorganizes the hand.
+if (rtTargetBox) {
+  const requiredCounts = {};
+
+  rtTargetBox.tiles.forEach(function(tileKey) {
+    requiredCounts[tileKey] =
+      (requiredCounts[tileKey] || 0) + 1;
+  });
+
+  const canCommitRTTarget =
+    Object.keys(requiredCounts).every(
+      function(tileKey) {
+        return (
+          (workingCounts[tileKey] || 0) >=
+          requiredCounts[tileKey]
+        );
+      }
+    );
+
+  if (canCommitRTTarget) {
+    completeBoxes.push({
+      type: rtTargetBox.type,
+      tiles: [...rtTargetBox.tiles]
+    });
+
+    rtTargetBox.tiles.forEach(
+      function(tileKey) {
+        workingCounts[tileKey] -= 1;
+      }
+    );
+  }
+}
 
 
 // MMR-committed Complete Boxes get first priority.
@@ -1052,12 +1241,35 @@ for (const tileKey in workingCounts) {
     engineInput.deferredKangTileKeys &&
     engineInput.deferredKangTileKeys.includes(tileKey);
 
+  const existingPong =
+    stableCompleteBoxState.find(function(box) {
+      return (
+        box.type === "pong" &&
+        box.tiles.length === 3 &&
+        box.tiles.every(function(boxTileKey) {
+          return boxTileKey === tileKey;
+        })
+      );
+    });
+
+  const matchingTileUsedElsewhere =
+    existingPong &&
+    stableCompleteBoxState.some(function(box) {
+      return (
+        box !== existingPong &&
+        box.tiles &&
+        box.tiles.includes(tileKey)
+      );
+    });
+
+
  while (
   (workingCounts[tileKey] || 0) >= 4 &&
   !kangIgnored &&
   !kangDeferred &&
-  !isStartingHand
-) {
+  !isStartingHand &&
+  !matchingTileUsedElsewhere
+ ) {
 
     completeBoxes.push({
       type: "kang",
@@ -1117,10 +1329,19 @@ for (const tileKey in workingCounts) {
       const third = suit + (start + 2);
 
       while (
-        (workingCounts[first] || 0) > 0 &&
-        (workingCounts[second] || 0) > 0 &&
-        (workingCounts[third] || 0) > 0
-      ) {
+  (workingCounts[first] || 0) > 0 &&
+  (workingCounts[second] || 0) > 0 &&
+  (workingCounts[third] || 0) > 0 &&
+  !(
+    rtOriginBox &&
+    rtOriginBox.type === "chow" &&
+    getCompleteBoxSignature(rtOriginBox) ===
+      getCompleteBoxSignature({
+        type: "chow",
+        tiles: [first, second, third]
+      })
+  )
+) {
         completeBoxes.push({
           type: "chow",
           tiles: [first, second, third]
@@ -1132,6 +1353,33 @@ for (const tileKey in workingCounts) {
       }
     }
   }
+
+// Recheck for Pongs after Chow extraction.
+// A Starting Hand four-of-a-kind may contribute one tile
+// to a Chow and leave three identical tiles that form
+// another Complete Box.
+if (isStartingHand) {
+  for (const tileKey in workingCounts) {
+    const ecProtected =
+      engineInput.protectedECTileKey === tileKey;
+
+    if (
+      (workingCounts[tileKey] || 0) === 3 &&
+      !ecProtected
+    ) {
+      completeBoxes.push({
+        type: "pong",
+        tiles: [
+          tileKey,
+          tileKey,
+          tileKey
+        ]
+      });
+
+      workingCounts[tileKey] -= 3;
+    }
+  }
+}
 
   console.log("Complete Boxes found:", completeBoxes);
 
@@ -2718,6 +2966,50 @@ function getEPCPongPathwayStructure(box) {
     acceptance: 2,
     completingTiles: [first]
   };
+}
+
+function canReleasedTileAdvanceDB(
+  tileKey,
+  box
+) {
+  if (!tileKey || !box) {
+    return false;
+  }
+
+  let structure = null;
+
+      if (box.type === "dsw") {
+    structure = getDSWPathwayStructure(box);
+  } else if (box.type === "mw") {
+    structure = getMWPathwayStructure(box);
+  } else if (box.type === "ew") {
+    structure = getEWPathwayStructure(box);
+  }
+
+  if (!structure || !structure.completingTiles) {
+    return false;
+  }
+
+  return structure.completingTiles.includes(tileKey);
+}
+
+function findReleaseTileDestinations(
+  tileKey,
+  developingBoxes
+) {
+  if (
+    !tileKey ||
+    !Array.isArray(developingBoxes)
+  ) {
+    return [];
+  }
+
+  return developingBoxes.filter(function(box) {
+    return canReleasedTileAdvanceDB(
+      tileKey,
+      box
+    );
+  });
 }
 
 function analyzeEPCPongPathways(
