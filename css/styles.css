@@ -1542,10 +1542,6 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 
   position: relative;
 }
 
-.coach-short-form .complete-box .hand-section-title {
-  margin-right: 32px;
-}
-
 .coach-short-form .complete-box .release-tile-button {
   position: absolute;
   right: 6px;
@@ -1555,7 +1551,16 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 
   line-height: 1.1;
 }
 
+@media (max-width: 480px) {
+  .coach-short-form .complete-box .release-tile-button {
+    top: 30px;
+  }
+}
+
 /* RT Select Tile dialog — breathing room above Cancel */
 #releaseTileDialog .dialog-actions {
   margin-top: 8px;
 }
+
+
+
