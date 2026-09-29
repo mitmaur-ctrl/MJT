@@ -2840,6 +2840,20 @@ targetBoxCount +
       )
 )
 
+if (hdMode === "current" && gameAction === "draw") {
+  const rtHeading = enginePanel.querySelector(".completed-area .engine-title");
+  if (rtHeading && enginePanel.querySelector(".release-tile-button")) {
+    rtHeading.insertAdjacentHTML(
+      "afterend",
+                  `<div style="grid-column:1 / -1; flex-basis:100%; text-align:center; margin:4px 0 8px;">
+        <button type="button" class="six-box-link" style="font-size:13px; font-weight:400;" onclick="openDialog('understandingReleaseTileDialog')">Understanding Release Tile (RT)</button>
+      </div>`
+    );
+  }
+}
+
+
+
 enginePanel
   .querySelectorAll(".release-tile-button")
   .forEach(function(button) {
