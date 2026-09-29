@@ -893,34 +893,54 @@ V4 = Photo Recognition
     </p>
 
     <p>
-      <strong style="color:#2e8b57;">Green ↓ — Same-Suit Tile</strong><br>
-      A different numbered tile of the same suit can advance the Pathway.
+      <strong style="color:#2e8b57;"><u>Green</u> ↓ — <u>Same-Suit Tile</u></strong><br>
+      A different numbered tile of the same suit can advance the Developing Box toward completion.
     </p>
 
     <p>
-      <strong style="color:#d97706;">Orange ↓ — Matching Tile</strong><br>
-      Another copy of a tile already in the structure can advance the Pathway.
+      <strong style="color:#d97706;"><u>Orange</u> ↓ — <u>Matching Tile</u></strong><br>
+      Another copy of a tile already in the Developing Box can advance it toward completion.
     </p>
+
+
+<p>
+  <strong><u>Acceptance</u></strong><br>
+  The number of tile opportunities that can advance a Developing Box toward completion.
+</p>
+
+<p>
+  <strong><u>Sources</u></strong><br>
+  How a needed tile can enter your hand—through your own draw or a discard you can claim.
+</p>
 
     <p>
-      <strong>EA — Effective Acceptance</strong><br>
-      Shows the remaining tile opportunities for that Pathway.
+      <strong><u>EA — Effective Acceptance</u></strong><br>
+      The number of tile opportunities still available to advance a Developing Box toward completion.
     </p>
 
-<p>
-  <strong>Acceptance</strong><br>
-  The number of tile opportunities that can advance the structure.
-</p>
-
-<p>
-  <strong>Sources</strong><br>
-  The availalbe ways a needed tile can enter your hand—by draw or claim.
-</p>
 
     <div class="dialog-actions">
       <button
         class="dialog-button primary"
         onclick="closeDialog('understandingPathwaysDialog')"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="understandingReleaseTileDialog" class="dialog-backdrop hidden">
+  <div class="dialog">
+    <h2>Understanding Release Tile (RT)</h2>
+    <p>
+      Release Tile (RT) lets you free a tile from a Hidden Complete Box to complete another grouping. MJC shows you the resulting structure before anything changes—you decide whether to keep it.
+    </p>
+    <div class="dialog-actions">
+      <button
+        type="button"
+        class="dialog-button primary"
+        onclick="closeDialog('understandingReleaseTileDialog')"
       >
         Close
       </button>
