@@ -2074,6 +2074,10 @@ function closeReleaseTileNoDestination() {
     .getElementById("releaseTileOkBtn")
     .classList.add("hidden");
 
+  document
+    .getElementById("releaseTileCancelBtn")
+    .classList.remove("hidden");
+
   closeDialog("releaseTileDialog");
 }
 
