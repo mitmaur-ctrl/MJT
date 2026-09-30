@@ -2850,7 +2850,7 @@ if (hdMode === "current" && gameAction === "draw") {
     rtHeading.insertAdjacentHTML(
       "afterend",
                   `<div style="grid-column:1 / -1; flex-basis:100%; text-align:center; margin:4px 0 8px;">
-        <button type="button" class="six-box-link" style="font-size:13px; font-weight:400;" onclick="openDialog('understandingReleaseTileDialog')">Understanding Release Tile (RT)</button>
+                <button type="button" class="six-box-link" style="font-size:13px; font-weight:400;" onclick="openDialog('understandingReleaseTileDialog')">RT Explained</button>
       </div>`
     );
   }
