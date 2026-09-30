@@ -239,7 +239,7 @@ V4 = Photo Recognition
     class="six-box-link hidden"
     onclick="openDialog('understandingPathwaysDialog')"
   >
-    Understanding the Pathways
+    Pathways Explained
   </button>
 </div>
 
@@ -785,6 +785,36 @@ V4 = Photo Recognition
   </div>
 </div>
 
+<div id="welcomeDialog" class="dialog-backdrop hidden">
+  <div class="dialog">
+    <h2>Welcome to Mahjong Coach (MJC)</h2>
+
+   <p>
+  New here?<br>
+  Getting Started shows you how to begin.<br>
+  You can find it again in the footer.
+</p>
+
+    <div class="dialog-actions">
+      <button
+        type="button"
+        class="dialog-button primary"
+        onclick="closeDialog('welcomeDialog'); openGettingStartedDialog();"
+      >
+        Getting Started
+      </button>
+      <button
+        type="button"
+        class="dialog-button"
+        onclick="closeDialog('welcomeDialog')"
+      >
+        Continue to App
+      </button>
+    </div>
+  </div>
+</div>
+
+
 <div id="gettingStartedDialog" class="dialog-backdrop hidden">
   <div class="dialog">
     <h2>Welcome to Mahjong Coach (MJC)</h2>
@@ -885,26 +915,26 @@ V4 = Photo Recognition
 
 <div id="understandingPathwaysDialog" class="dialog-backdrop hidden">
   <div class="dialog">
-    <h2>Understanding the Pathways</h2>
+    <h2>Understanding Pathways</h2>
 
     <p>
-      Pathways show how a Developing Box can advance to a Complete Box.
+       Pathways show how a Developing Box (DB) can advance to a Complete Box.
     </p>
 
     <p>
       <strong style="color:#2e8b57;"><u>Green</u> ↓ — <u>Same-Suit Tile</u></strong><br>
-      A different numbered tile of the same suit can advance the Developing Box toward completion.
+            A different numbered tile of the same suit can advance the DB toward completion.
     </p>
 
     <p>
       <strong style="color:#d97706;"><u>Orange</u> ↓ — <u>Matching Tile</u></strong><br>
-      Another copy of a tile already in the Developing Box can advance it toward completion.
+            Another copy of a tile already in the DB can advance it toward completion.
     </p>
 
 
 <p>
   <strong><u>Acceptance</u></strong><br>
-  The number of tile opportunities that can advance a Developing Box toward completion.
+    The number of tile opportunities that can advance a DB toward completion.
 </p>
 
 <p>
@@ -914,7 +944,7 @@ V4 = Photo Recognition
 
     <p>
       <strong><u>EA — Effective Acceptance</u></strong><br>
-      The number of tile opportunities still available to advance a Developing Box toward completion.
+            The number of tile opportunities still available to advance a DB toward completion.
     </p>
 
 
@@ -1512,6 +1542,28 @@ document.addEventListener("touchend", function(e) {
 
 <script>
   MJCApp.init();
+
+  const welcomeStorageKey = "mjcWelcomeSeen";
+  let welcomeSeen = false;
+
+  try {
+    welcomeSeen = localStorage.getItem(welcomeStorageKey) === "yes";
+  } catch (error) {}
+
+  document.querySelectorAll("#welcomeDialog .dialog-actions button")
+    .forEach(function(button) {
+      button.addEventListener("click", function() {
+        try {
+          localStorage.setItem(welcomeStorageKey, "yes");
+        } catch (error) {}
+      });
+    });
+
+  if (!welcomeSeen) {
+    openDialog("welcomeDialog");
+  }
 </script>
+
+
 </body>
 </html>
