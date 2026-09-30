@@ -2803,14 +2803,15 @@ const displayedCompleteBoxCount =
   enginePanel.innerHTML =
   '<div class="coach-top-row">' +
 
-  '<div class="coach-status-left">' +
+    '<div class="coach-status-left">' +
     '<div id="coachMessageArea" class="coach-message-area">' +
- 
-     'Boxes Complete: ' +
-displayedCompleteBoxCount +
-' of ' +
-targetBoxCount +
-
+      'Boxes Complete: ' +
+      displayedCompleteBoxCount +
+      ' of ' +
+      targetBoxCount +
+    '</div>' +
+    '<div class="tih-counter">' +
+      'Tiles In Hand: ' + tih +
     '</div>' +
     coachAlertHtml +
   '</div>' +
@@ -2818,9 +2819,6 @@ targetBoxCount +
   '<div class="coach-top-right">' +
     getBoxLabelToggleHtml() +
     getTileIndexToggleHtml() +
-    '<div class="tih-counter">' +
-      'TIH: ' + tih +
-    '</div>' +
   '</div>' +
 
 '</div>' +
