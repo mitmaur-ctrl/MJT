@@ -291,6 +291,20 @@ function openDrawScreen() {
 
   showStartingHeader(false);
   applyDisplayOrderToScreens();
+  const honorPad = document.querySelector("#drawScreen .rapid-honor-pad");
+  const windRow = honorPad.querySelector('[data-key="east"]').parentElement;
+  const dragonRow = honorPad.querySelector('[data-key="red"]').parentElement;
+  const windLabel = windRow.previousElementSibling;
+  const dragonLabel = dragonRow.previousElementSibling;
+
+  const honorElements = displayOrder.honorsOrder === "dragonsFirst"
+    ? [dragonLabel, dragonRow, windLabel, windRow]
+    : [windLabel, windRow, dragonLabel, dragonRow];
+
+  honorElements.forEach(function(element) {
+    honorPad.appendChild(element);
+  });
+
   scrollToTopForScreen();
   clearDrawSelection();
   rapidDrawNumber = null;
