@@ -659,7 +659,25 @@ function configureHDMode() {
   
   enginePanel.classList.toggle("hidden", !coachingOn);
 
+const pathwaysHelpLink =
+  document.getElementById("pathwaysHelpLink");
 
+if (pathwaysHelpLink) {
+  pathwaysHelpLink.classList.toggle(
+    "hidden",
+    !coachingOn || !window.pathwaysOn
+  );
+}
+
+const pathwaysBtn =
+  document.getElementById("pathwaysBtn");
+
+if (pathwaysBtn) {
+  pathwaysBtn.disabled = !coachingOn;
+  pathwaysBtn.textContent = !coachingOn
+    ? "Pathways: NA"
+    : (window.pathwaysOn ? "Pathways: Off" : "Pathways: On");
+}
 
   drawBtn.classList.remove("hidden");
   chowBtn.classList.remove("hidden");
