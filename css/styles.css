@@ -863,7 +863,7 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 
 
 .rapid-draw-choices {
   width: 92px;
-  min-height: 210px;
+    min-height: 240px;
     height: auto;
 
   display: flex;
