@@ -140,7 +140,7 @@ V4 = Photo Recognition
     type="button"
     id="discardRecommendationInsight"
     class="discard-insight-link"
-    disabled
+    onclick="openDialog('discardInsightDialog')"
   >Insight</button>
 </div>
 </div>
@@ -985,6 +985,25 @@ V4 = Photo Recognition
       >
         Close
       </button>
+    </div>
+  </div>
+</div>
+
+<div id="discardInsightDialog" class="dialog-backdrop hidden">
+  <div class="dialog">
+    <h2>Understanding the Recommended Discard</h2>
+
+    <p id="discardInsightText">
+      This is a layout sample. Discard evaluation is not
+      connected yet.
+    </p>
+
+    <div class="dialog-actions">
+      <button
+        type="button"
+        class="dialog-button primary"
+        onclick="closeDialog('discardInsightDialog')"
+      >Close</button>
     </div>
   </div>
 </div>
