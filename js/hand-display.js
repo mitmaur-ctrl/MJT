@@ -657,31 +657,19 @@ function configureHDMode() {
     " | Round: " + getWindLabel(prevailingWind);
 
   
-// DR placement test — temporary text, no evaluation yet.
+// Clear DR until the current Coaching View is rendered.
 const discardRecommendation =
   document.getElementById("discardRecommendation");
+
+if (discardRecommendation) {
+  discardRecommendation.classList.add("hidden");
+}
 
 const discardRecommendationText =
   document.getElementById("discardRecommendationText");
 
-const showDiscardRecommendation =
-  hdMode === "current" &&
-  coachingOn &&
-  gameAction === "discard" &&
-  !kangReplacementDraw;
-
-if (discardRecommendation) {
-  discardRecommendation.classList.toggle(
-    "hidden",
-    !showDiscardRecommendation
-  );
-}
-
 if (discardRecommendationText) {
-  discardRecommendationText.textContent =
-    showDiscardRecommendation
-      ? "Recommended Discard: 7 Bamboo."
-      : "";
+  discardRecommendationText.textContent = "";
 }
 
   enginePanel.classList.toggle("hidden", !coachingOn);
@@ -2769,6 +2757,61 @@ enginePanel.classList.toggle(
 
   const structureState =
     result.structureState || result;
+
+// Present the lowest-ranked Reserve from 17TE.
+const reserves = structureState.reserves || [];
+const recommendedTileKey =
+  reserves.length > 0
+    ? reserves[reserves.length - 1]
+    : null;
+
+const recommendedTileName =
+  recommendedTileKey
+    ? tileLabels[recommendedTileKey]
+    : null;
+
+const showDiscardRecommendation =
+  hdMode === "current" &&
+  coachingOn &&
+  gameAction === "discard" &&
+  !kangReplacementDraw &&
+  !result.mahjong &&
+  !escaleraBoxState.active &&
+  !sevenPairsBoxState.active &&
+  !!recommendedTileName;
+
+const recommendationArea =
+  document.getElementById("discardRecommendation");
+const recommendationText =
+  document.getElementById("discardRecommendationText");
+const insightText =
+  document.getElementById("discardInsightText");
+
+if (recommendationArea) {
+  recommendationArea.classList.toggle(
+    "hidden",
+    !showDiscardRecommendation
+  );
+}
+
+if (recommendationText) {
+  recommendationText.textContent =
+    showDiscardRecommendation
+      ? "Recommended Discard: " +
+        recommendedTileName + "."
+      : "";
+}
+
+if (insightText) {
+  insightText.textContent =
+    showDiscardRecommendation
+      ? recommendedTileName +
+        " is a Reserve. Discarding it leaves your " +
+        "displayed Developing and Complete Boxes intact. " +
+        "It ranks last among your Reserves using " +
+        "nearby same-suit support, then centrality."
+      : "";
+}
 
 const targetBoxCount =
   escaleraMode &&
