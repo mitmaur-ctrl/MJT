@@ -2815,7 +2815,7 @@ if (insightText) {
             ? recommendedTileName +
               ": these Reserves tie for the lowest rank " +
               "using nearby same-suit support, then centrality. " +
-              "Discarding either leaves your displayed " +
+              "Discarding any one leaves your displayed " +
               "Developing and Complete Boxes intact."
             : recommendedTileName +
               " is a Reserve. Discarding it leaves your " +
