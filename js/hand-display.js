@@ -680,7 +680,7 @@ if (discardRecommendation) {
 if (discardRecommendationText) {
   discardRecommendationText.textContent =
     showDiscardRecommendation
-      ? "MJC: Discard [tile]."
+      ? "Discard Recommendation: 7 Bamboo."
       : "";
 }
 
