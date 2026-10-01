@@ -2858,6 +2858,39 @@ function getReserveDevelopmentPotential(
   return richness;
 }
 
+
+function getReserveDiscardCandidates(
+  reserves,
+  remainingCounts
+) {
+  if (!reserves || reserves.length === 0) {
+    return [];
+  }
+
+  const weakestTile =
+    reserves[reserves.length - 1];
+
+  const weakestSupport =
+    getReserveDevelopmentPotential(
+      weakestTile,
+      remainingCounts
+    );
+
+  const weakestCentrality =
+    getTileCentricityScore(weakestTile);
+
+  return [...new Set(reserves)].filter(function(tileKey) {
+    return (
+      getReserveDevelopmentPotential(
+        tileKey,
+        remainingCounts
+      ) === weakestSupport &&
+      getTileCentricityScore(tileKey) ===
+        weakestCentrality
+    );
+  });
+}
+
 function getDSWPathwayStructure(box) {
   const firstMatch =
     box.tiles[0].match(/^(char|bam|dot)([1-9])$/);

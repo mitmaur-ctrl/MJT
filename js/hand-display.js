@@ -2758,17 +2758,22 @@ enginePanel.classList.toggle(
   const structureState =
     result.structureState || result;
 
-// Present the lowest-ranked Reserve from 17TE.
-const reserves = structureState.reserves || [];
-const recommendedTileKey =
-  reserves.length > 0
-    ? reserves[reserves.length - 1]
-    : null;
+// Present the lowest-ranked Reserve(s) from 17TE.
+const recommendedTileKeys =
+  getReserveDiscardCandidates(
+    structureState.reserves || [],
+    result.remainingCounts
+  );
 
 const recommendedTileName =
-  recommendedTileKey
-    ? tileLabels[recommendedTileKey]
-    : null;
+  recommendedTileKeys
+    .map(function(tileKey) {
+      return tileLabels[tileKey];
+    })
+    .join(" or ");
+
+const tiedReserves =
+  recommendedTileKeys.length > 1;
 
 const showDiscardRecommendation =
   hdMode === "current" &&
@@ -2805,11 +2810,19 @@ if (recommendationText) {
 if (insightText) {
   insightText.textContent =
     showDiscardRecommendation
-      ? recommendedTileName +
-        " is a Reserve. Discarding it leaves your " +
-        "displayed Developing and Complete Boxes intact. " +
-        "It ranks last among your Reserves using " +
-        "nearby same-suit support, then centrality."
+      ? (
+          tiedReserves
+            ? recommendedTileName +
+              ": these Reserves tie for the lowest rank " +
+              "using nearby same-suit support, then centrality. " +
+              "Discarding either leaves your displayed " +
+              "Developing and Complete Boxes intact."
+            : recommendedTileName +
+              " is a Reserve. Discarding it leaves your " +
+              "displayed Developing and Complete Boxes intact. " +
+              "It ranks last among your Reserves using " +
+              "nearby same-suit support, then centrality."
+        )
       : "";
 }
 
