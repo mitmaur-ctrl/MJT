@@ -1323,6 +1323,37 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 
   
 }
 
+/* CHD — Discard Recommendation */
+.discard-recommendation {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  padding: 0 8px 8px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: bold;
+  color: #222;
+}
+
+.discard-insight-link {
+  background: none;
+  border: none;
+  padding: 4px 0;
+  margin: 0;
+  font: inherit;
+  font-weight: normal;
+  color: #0057b8;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.discard-insight-link:disabled {
+  color: #666;
+  cursor: default;
+}
+
 #enginePanel {
   margin-top: 4px;
 }
