@@ -657,6 +657,33 @@ function configureHDMode() {
     " | Round: " + getWindLabel(prevailingWind);
 
   
+// DR placement test — temporary text, no evaluation yet.
+const discardRecommendation =
+  document.getElementById("discardRecommendation");
+
+const discardRecommendationText =
+  document.getElementById("discardRecommendationText");
+
+const showDiscardRecommendation =
+  hdMode === "current" &&
+  coachingOn &&
+  gameAction === "discard" &&
+  !kangReplacementDraw;
+
+if (discardRecommendation) {
+  discardRecommendation.classList.toggle(
+    "hidden",
+    !showDiscardRecommendation
+  );
+}
+
+if (discardRecommendationText) {
+  discardRecommendationText.textContent =
+    showDiscardRecommendation
+      ? "MJC: Discard [tile]."
+      : "";
+}
+
   enginePanel.classList.toggle("hidden", !coachingOn);
 
 const pathwaysHelpLink =
