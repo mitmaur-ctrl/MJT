@@ -2800,6 +2800,26 @@ const recommendedTileName =
 const tiedReserves =
   recommendedTileKeys.length > 1;
 
+const reserveTileKeys =
+  [...new Set(structureState.reserves || [])];
+
+const allReservesRecommended =
+  reserveTileKeys.length > 0 &&
+  reserveTileKeys.every(function(tileKey) {
+    return recommendedTileKeys.includes(tileKey);
+  });
+
+const recommendedDiscardSummary =
+  recommendedTileKeys.length > 3
+    ? (
+        allReservesRecommended
+          ? "Any of your " + reserveTileKeys.length + " Reserves"
+          : recommendedTileKeys.length +
+            " equally recommended Reserves—see Insight"
+      )
+    : recommendedTileName;
+
+
 const showDiscardRecommendation =
   (
     hdMode === "current" ||
@@ -2861,7 +2881,7 @@ if (recommendationText) {
   recommendationText.textContent =
     showDiscardRecommendation && recommendationsVisible
       ? "Recommended Discard: " +
-        recommendedTileName + "."
+                recommendedDiscardSummary + "."
       : "";
 }
 
