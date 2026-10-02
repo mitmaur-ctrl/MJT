@@ -2967,8 +2967,8 @@ const displayedCompleteBoxCount =
   '</div>' +
 
   '<div class="coach-top-right">' +
+        getTileIndexToggleHtml() +
     getBoxLabelToggleHtml() +
-    getTileIndexToggleHtml() +
   '</div>' +
 
 '</div>' +
