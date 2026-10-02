@@ -2870,15 +2870,19 @@ if (insightText) {
     recommendedNames.textContent = recommendedTileName;
     insightText.appendChild(recommendedNames);
 
-    const explanation = tiedReserves
-      ? ": these Reserves tie for the lowest rank " +
-        "using nearby same-suit support, then centrality. " +
+        const explanation = tiedReserves
+      ? ": these Reserves offer equally low contribution " +
+        "to developing your hand, based on nearby same-suit " +
+        "support, then centricity—how close a tile’s number " +
+        "is to the middle of its suit. " +
         "Discarding any one leaves your displayed " +
         "Developing and Complete Boxes intact."
       : " is a Reserve. Discarding it leaves your " +
         "displayed Developing and Complete Boxes intact. " +
-        "It ranks last among your Reserves using " +
-        "nearby same-suit support, then centrality.";
+        "Among your Reserves, it offers the least contribution " +
+        "to developing your hand, based on nearby same-suit " +
+        "support, then centricity—how close a tile’s number " +
+        "is to the middle of its suit.";
 
     insightText.appendChild(
       document.createTextNode(explanation)
