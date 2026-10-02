@@ -2891,6 +2891,67 @@ function getReserveDiscardCandidates(
   });
 }
 
+function getNoReserveDiscardCandidates(structureState) {
+  if ((structureState.reserves || []).length > 0) {
+    return [];
+  }
+
+  const typePriority = { ew: 0, mw: 1, dsw: 2 };
+  const candidates = [];
+
+  (structureState.developingBoxes || []).forEach(function(box) {
+    if (
+      !Object.prototype.hasOwnProperty.call(typePriority, box.type) ||
+      !box.fp ||
+      !Array.isArray(box.fp.pathways) ||
+      box.fp.pathways.length === 0 ||
+      box.tiles.length !== 2
+    ) {
+      return;
+    }
+
+    const ea = box.fp.pathways.reduce(function(total, pathway) {
+      return total + pathway.effectiveAcceptance;
+    }, 0);
+
+    if (!Number.isFinite(ea)) return;
+
+    box.tiles.forEach(function(tileKey, index) {
+      candidates.push({
+        tileKey,
+        ea,
+        typePriority: typePriority[box.type],
+        retainedCentricity:
+          getTileCentricityScore(box.tiles[1 - index])
+      });
+    });
+  });
+
+  candidates.sort(function(a, b) {
+    return (
+      a.ea - b.ea ||
+      a.typePriority - b.typePriority ||
+      b.retainedCentricity - a.retainedCentricity
+    );
+  });
+
+  if (candidates.length === 0) return [];
+
+  const best = candidates[0];
+
+  return [...new Set(
+    candidates.filter(function(candidate) {
+      return (
+        candidate.ea === best.ea &&
+        candidate.typePriority === best.typePriority &&
+        candidate.retainedCentricity === best.retainedCentricity
+      );
+    }).map(function(candidate) {
+      return candidate.tileKey;
+    })
+  )];
+}
+
 function getDSWPathwayStructure(box) {
   const firstMatch =
     box.tiles[0].match(/^(char|bam|dot)([1-9])$/);

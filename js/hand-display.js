@@ -2783,12 +2783,15 @@ enginePanel.classList.toggle(
   const structureState =
     result.structureState || result;
 
-// Present the lowest-ranked Reserve(s) from 17TE.
-const recommendedTileKeys =
-  getReserveDiscardCandidates(
-    structureState.reserves || [],
-    result.remainingCounts
-  );
+const hasReserves =
+  (structureState.reserves || []).length > 0;
+
+const recommendedTileKeys = hasReserves
+  ? getReserveDiscardCandidates(
+      structureState.reserves,
+      result.remainingCounts
+    )
+  : getNoReserveDiscardCandidates(structureState);
 
 const recommendedTileName =
   recommendedTileKeys
@@ -2815,7 +2818,11 @@ const recommendedDiscardSummary =
         allReservesRecommended
           ? "Any of your " + reserveTileKeys.length + " Reserves"
           : recommendedTileKeys.length +
-            " equally recommended Reserves—see Insight"
+            (
+  hasReserves
+    ? " equally recommended Reserves—see Insight"
+    : " equally recommended tiles—see Insight"
+)
       )
     : recommendedTileName;
 
@@ -2893,7 +2900,16 @@ if (insightText) {
     recommendedNames.textContent = recommendedTileName;
     insightText.appendChild(recommendedNames);
 
-        const explanation = tiedReserves
+        const explanation = !hasReserves
+  ? ": with no Reserves, MJC compares your simple " +
+    "Chow Candidates by their remaining capacity " +
+    "to complete (EA). When EA ties, it considers " +
+    "Edge Waits before Middle Waits, then " +
+    "Double-Sided Waits, and favors keeping the " +
+    "more central tile. Discarding one of the " +
+    "recommended tiles breaks its Developing Box " +
+    "and leaves your Complete Boxes intact."
+  : tiedReserves
       ? ": these Reserves offer equally low contribution " +
         "to developing your hand, based on nearby same-suit " +
         "support, then centricity—how close a tile’s number " +
