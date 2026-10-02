@@ -21,7 +21,32 @@ No game engine logic belongs in this file.
 // "long" = expanded Pathways / teaching layout.
 window.coachViewForm = "short";
 window.pathwaysOn = false;
+window.discardRecommendationsOn = true;
 
+try {
+  window.discardRecommendationsOn =
+    localStorage.getItem("mjcDiscardRecommendations") !== "off";
+} catch (error) {
+  // Keep the default if storage is unavailable.
+}
+
+function toggleDiscardRecommendations() {
+  window.discardRecommendationsOn =
+    !window.discardRecommendationsOn;
+
+  try {
+    localStorage.setItem(
+      "mjcDiscardRecommendations",
+      window.discardRecommendationsOn ? "on" : "off"
+    );
+  } catch (error) {
+    // The toggle still works for this visit.
+  }
+
+  if (coachingOn) {
+    renderCoachView();
+  }
+}
 
 function togglePathways() {
   window.pathwaysOn =
@@ -2792,16 +2817,46 @@ const recommendationText =
 const insightText =
   document.getElementById("discardInsightText");
 
+const recommendationsVisible =
+  window.discardRecommendationsOn !== false;
+
+const recommendationToggle =
+  document.getElementById("discardRecommendationToggle");
+
 if (recommendationArea) {
   recommendationArea.classList.toggle(
     "hidden",
     !showDiscardRecommendation
   );
+
+  recommendationArea.classList.toggle(
+    "recommendation-hidden",
+    !recommendationsVisible
+  );
+}
+
+if (recommendationToggle) {
+  recommendationToggle.textContent =
+    recommendationsVisible
+      ? "Hide"
+      : "Show Recommended Discards";
+
+  recommendationToggle.setAttribute(
+    "aria-label",
+    recommendationsVisible
+      ? "Hide recommended discards"
+      : "Show recommended discards"
+  );
 }
 
 if (recommendationText) {
+  recommendationText.classList.toggle(
+    "hidden",
+    !recommendationsVisible
+  );
+
   recommendationText.textContent =
-    showDiscardRecommendation
+    showDiscardRecommendation && recommendationsVisible
       ? "Recommended Discard: " +
         recommendedTileName + "."
       : "";
