@@ -2801,7 +2801,10 @@ const tiedReserves =
   recommendedTileKeys.length > 1;
 
 const showDiscardRecommendation =
-  hdMode === "current" &&
+  (
+    hdMode === "current" ||
+    (hdMode === "starting" && role === "dealer")
+  ) &&
   coachingOn &&
   gameAction === "discard" &&
   !kangReplacementDraw &&
