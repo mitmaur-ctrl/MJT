@@ -3000,6 +3000,99 @@ function getNoReserveDiscardCandidates(structureState) {
   )];
 }
 
+function getTimedEyeCPCRecommendation(structureState, context = {}) {
+  const boxes = structureState.developingBoxes || [];
+
+  const eyes = boxes.filter(function(box) {
+    return box.type === "ec";
+  });
+
+  const cpcs = boxes.filter(function(box) {
+    return box.type === "cpc" && box.tiles.length === 3;
+  });
+
+  // Experimental scope: three CBs, one Eye, two three-tile CPCs.
+  if (
+    (structureState.reserves || []).length > 0 ||
+    (structureState.halfEye || []).length > 0 ||
+    (structureState.completeBoxes || []).length !== 3 ||
+    boxes.length !== 3 ||
+    eyes.length !== 1 ||
+    cpcs.length !== 2 ||
+    eyes[0].tiles.length !== 2 ||
+    eyes[0].tiles[0] !== eyes[0].tiles[1]
+  ) return null;
+
+  const terminalOptions = [];
+  let alternativePairExists = false;
+
+  cpcs.forEach(function(box) {
+    const possibilities = getCPCStructuralPossibilities(box);
+    if (!possibilities) return;
+
+    alternativePairExists = true;
+
+    const chow = (box.fp?.structuralPossibilities || []).find(
+      function(option) {
+        return option.structureType === "chow";
+      }
+    );
+
+    if (!chow || !Number.isFinite(chow.effectiveAcceptance)) return;
+
+    box.tiles.forEach(function(tileKey, index) {
+      if (!/^(char|bam|dot)(1|9)$/.test(tileKey)) return;
+
+      const retained = box.tiles.filter(function(_, tileIndex) {
+        return tileIndex !== index;
+      });
+
+      if (retained[0] === retained[1]) {
+        terminalOptions.push({
+          tileKey,
+          ea: chow.effectiveAcceptance
+        });
+      }
+    });
+  });
+
+  if (!alternativePairExists || terminalOptions.length === 0) {
+    return null;
+  }
+
+  const lowestEA = Math.min(...terminalOptions.map(function(option) {
+    return option.ea;
+  }));
+
+  const terminalKeys = [...new Set(
+    terminalOptions.filter(function(option) {
+      return option.ea === lowestEA;
+    }).map(function(option) {
+      return option.tileKey;
+    })
+  )];
+
+  const timing = getGameTimingProgress(
+    context.playerDiscardCount,
+    context.role
+  );
+
+  // Provisional test weights, not a general FP formula.
+  const eyeCost = 2 * timing;
+  const cpcCost = 1 - timing;
+  const tied = Math.abs(eyeCost - cpcCost) < 1e-9;
+
+  return {
+    tileKeys: tied
+      ? [...new Set([eyes[0].tiles[0], ...terminalKeys])]
+      : eyeCost < cpcCost
+        ? [eyes[0].tiles[0]]
+        : terminalKeys,
+    kind: tied ? "tie" : eyeCost < cpcCost ? "eye" : "cpc",
+    timing
+  };
+}
+
 function getDSWPathwayStructure(box) {
   const firstMatch =
     box.tiles[0].match(/^(char|bam|dot)([1-9])$/);

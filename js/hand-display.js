@@ -2786,12 +2786,26 @@ enginePanel.classList.toggle(
 const hasReserves =
   (structureState.reserves || []).length > 0;
 
+const noReserveTileKeys = hasReserves
+  ? []
+  : getNoReserveDiscardCandidates(structureState);
+
+const timedRecommendation =
+  !hasReserves && noReserveTileKeys.length === 0
+    ? getTimedEyeCPCRecommendation(
+        structureState,
+        result.input?.context || {}
+      )
+    : null;
+
 const recommendedTileKeys = hasReserves
   ? getReserveDiscardCandidates(
       structureState.reserves,
       result.remainingCounts
     )
-  : getNoReserveDiscardCandidates(structureState);
+  : timedRecommendation
+    ? timedRecommendation.tileKeys
+    : noReserveTileKeys;
 
 const recommendedTileName =
   recommendedTileKeys
@@ -2906,7 +2920,31 @@ if (insightText) {
         return ["dsw", "mw", "ew"].includes(box.type);
       });
 
-    const explanation = terminalCPCFallback
+    const timedExplanation =
+  timedRecommendation?.kind === "eye"
+    ? ": with little time pressure, MJC favors preserving " +
+      "both Chow-Pong Candidates. Their existing pairs " +
+      "remain possible Eyes. Discarding this tile breaks " +
+      "your Eye Candidate and leaves a Half Eye. " +
+      "Your Complete Boxes remain intact."
+    : timedRecommendation?.kind === "cpc"
+      ? ": as time pressure increases, MJC favors keeping " +
+        "your Eye Candidate. Removing this terminal from " +
+        "a three-tile Chow-Pong Candidate leaves its pair. " +
+        "Among eligible terminals, MJC favors the one whose " +
+        "Chow option has the lowest remaining capacity " +
+        "to complete (EA). Your other Developing Boxes " +
+        "and all Complete Boxes remain intact."
+      : ": at the current timing, MJC gives equal preference " +
+        "to breaking the Eye Candidate or removing the " +
+        "terminal from a three-tile Chow-Pong Candidate. " +
+        "The latter leaves its pair. Discard only one of " +
+        "the recommended tiles. Your Complete Boxes " +
+        "remain intact.";
+
+const explanation = timedRecommendation
+  ? timedExplanation
+  : terminalCPCFallback
       ? ": this terminal tile can be removed from a " +
         "four-tile Chow-Pong Candidate, leaving a " +
         "three-tile Chow-Pong Candidate with both " +
