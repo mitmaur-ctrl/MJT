@@ -2863,22 +2863,27 @@ if (recommendationText) {
 }
 
 if (insightText) {
-  insightText.textContent =
-    showDiscardRecommendation
-      ? (
-          tiedReserves
-            ? recommendedTileName +
-              ": these Reserves tie for the lowest rank " +
-              "using nearby same-suit support, then centrality. " +
-              "Discarding any one leaves your displayed " +
-              "Developing and Complete Boxes intact."
-            : recommendedTileName +
-              " is a Reserve. Discarding it leaves your " +
-              "displayed Developing and Complete Boxes intact. " +
-              "It ranks last among your Reserves using " +
-              "nearby same-suit support, then centrality."
-        )
-      : "";
+  insightText.textContent = "";
+
+  if (showDiscardRecommendation) {
+    const recommendedNames = document.createElement("strong");
+    recommendedNames.textContent = recommendedTileName;
+    insightText.appendChild(recommendedNames);
+
+    const explanation = tiedReserves
+      ? ": these Reserves tie for the lowest rank " +
+        "using nearby same-suit support, then centrality. " +
+        "Discarding any one leaves your displayed " +
+        "Developing and Complete Boxes intact."
+      : " is a Reserve. Discarding it leaves your " +
+        "displayed Developing and Complete Boxes intact. " +
+        "It ranks last among your Reserves using " +
+        "nearby same-suit support, then centrality.";
+
+    insightText.appendChild(
+      document.createTextNode(explanation)
+    );
+  }
 }
 
 const targetBoxCount =
