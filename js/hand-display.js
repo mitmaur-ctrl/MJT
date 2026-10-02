@@ -2900,7 +2900,19 @@ if (insightText) {
     recommendedNames.textContent = recommendedTileName;
     insightText.appendChild(recommendedNames);
 
-        const explanation = !hasReserves
+           const terminalCPCFallback =
+      !hasReserves &&
+      !(structureState.developingBoxes || []).some(function(box) {
+        return ["dsw", "mw", "ew"].includes(box.type);
+      });
+
+    const explanation = terminalCPCFallback
+      ? ": this terminal tile can be removed from a " +
+        "four-tile Chow-Pong Candidate, leaving a " +
+        "three-tile Chow-Pong Candidate with both " +
+        "Chow and Pong options. Your other Developing " +
+        "Boxes and all Complete Boxes remain intact."
+      : !hasReserves
   ? ": with no Reserves, MJC compares your simple " +
     "Chow Candidates by their remaining capacity " +
     "to complete (EA). When EA ties, it considers " +

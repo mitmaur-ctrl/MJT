@@ -2935,7 +2935,55 @@ function getNoReserveDiscardCandidates(structureState) {
     );
   });
 
-  if (candidates.length === 0) return [];
+    if (candidates.length === 0) {
+    const boxes = structureState.developingBoxes || [];
+
+    if (boxes.some(function(box) {
+      return ["dsw", "mw", "ew"].includes(box.type);
+    })) return [];
+
+    const terminalCandidates = [];
+
+    boxes.forEach(function(box) {
+      if (box.type !== "cpc" || box.tiles.length !== 4) {
+        return;
+      }
+
+      box.tiles.forEach(function(tileKey, index) {
+        if (!/^(char|bam|dot)(1|9)$/.test(tileKey)) {
+          return;
+        }
+
+        const remainingTiles =
+          box.tiles.filter(function(_, tileIndex) {
+            return tileIndex !== index;
+          });
+
+        const possibilities =
+          getCPCStructuralPossibilities({
+            tiles: remainingTiles
+          });
+
+        if (!possibilities) return;
+
+        const retainsChow =
+          possibilities.some(function(option) {
+            return option.structureType === "chow";
+          });
+
+        const retainsPong =
+          possibilities.some(function(option) {
+            return option.structureType === "pong";
+          });
+
+        if (retainsChow && retainsPong) {
+          terminalCandidates.push(tileKey);
+        }
+      });
+    });
+
+    return [...new Set(terminalCandidates)];
+  }
 
   const best = candidates[0];
 
