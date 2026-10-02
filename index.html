@@ -135,6 +135,18 @@ V4 = Photo Recognition
   <div id="handMeta" class="hand-meta"></div>
   <div id="handInstruction" class="hand-instruction hidden"></div>
 <div id="discardRecommendation" class="discard-recommendation hidden">
+  <div id="discardRecommendationControl" class="discard-recommendation-control">
+    <button
+      type="button"
+      id="discardRecommendationToggle"
+      class="discard-recommendation-toggle"
+      aria-label="Hide recommended discards"
+      onclick="toggleDiscardRecommendations()"
+    >Hide</button>
+  </div>
+
+
+
   <span id="discardRecommendationText"></span>
   <button
     type="button"
