@@ -1582,7 +1582,46 @@ function renderSevenPairsShortForm(
   return html;
 }
 
+function renderThreeTileCPCPathways(box, tileParts) {
+  const chow = box.fp.structuralPossibilities[0];
+  const pong = box.fp.structuralPossibilities[1];
+  const pairFirst = box.tiles[0] === box.tiles[1];
 
+  function indicator(pathway, isPong) {
+    return '<div class="pathway-indicator">' +
+      '<div class="pathway-ea">' +
+        pathway.effectiveAcceptance +
+      '</div>' +
+      '<div class="pathway-arrow pathway-arrow-left' +
+        (isPong ? ' pathway-complex' : '') +
+      '">↓</div>' +
+    '</div>';
+  }
+
+  function summary(label, pathway) {
+    return '<div class="pathway-fp-summary pathway-cpc-summary">' +
+      '<span>' + label + '</span>' +
+      '<span>Acceptance: ' + pathway.acceptance + '</span>' +
+      '<span>Sources: ' + pathway.currentSources + '</span>' +
+    '</div>';
+  }
+
+  const row = pairFirst
+    ? tileParts[0] + tileParts[1] +
+      indicator(pong, true) +
+      indicator(chow, false) +
+      tileParts[2]
+    : tileParts[0] +
+      indicator(chow, false) +
+      tileParts[1] + tileParts[2] +
+      indicator(pong, true);
+
+  return '<div class="pathway-dsw-display">' +
+    '<div class="pathway-tile-row">' + row + '</div>' +
+  '</div>' +
+    summary('Chow', chow) +
+    summary('Pong', pong);
+}
 function renderActiveArea(
   completeBoxes,
   developingBoxes,
@@ -1606,7 +1645,7 @@ if (typeof renderSevenPairsBox === "function") {
   developingBoxes.forEach(function(box, index) {
     const boxNumber = firstActiveBoxNumber + index;
 
-    const tileHtml = box.tiles.map(function(tileKey) {
+    const tileHtmlParts = box.tiles.map(function(tileKey) {
   const isLastDrawn =
     tileKey === lastDrawnTileKey &&
 !highlightState.used
@@ -1620,7 +1659,9 @@ if (typeof renderSevenPairsBox === "function") {
 });
 
 
-}).join("");
+});
+
+const tileHtml = tileHtmlParts.join("");
 
     const dbExtraClass =
   box.type === "cpc"
@@ -1653,6 +1694,12 @@ const showEPCPathways =
 
 const isCPC =
   box.type === "cpc";
+
+const showThreeTileCPCPathways =
+  isCPC &&
+  window.pathwaysOn &&
+  box.tiles.length === 3 &&
+  box.fp.structuralPossibilities.length === 2;
 
 const showCPCPathways =
   isCPC &&
@@ -1771,7 +1818,9 @@ html +=
           '</span>' +
         '</div>'
 
-                    : showCPCPathways
+                    : showThreeTileCPCPathways
+  ? renderThreeTileCPCPathways(box, tileHtmlParts)
+  : showCPCPathways
         ? '<div class="pathway-dsw-display">' +
             '<div class="pathway-tile-row">' +
 
