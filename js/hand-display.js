@@ -2978,15 +2978,18 @@ if (insightText) {
       "Your Complete Boxes remain intact."
     : timedRecommendation?.kind === "cpc"
       ? ": as time pressure increases, MJC favors keeping " +
-        "your Eye Candidate. Removing this terminal from " +
-        "a three-tile Chow-Pong Candidate leaves its pair. " +
-        "Among eligible terminals, MJC favors the one whose " +
-        "Chow option has the lowest remaining capacity " +
-        "to complete (EA). Your other Developing Boxes " +
+
+        "your Eye Candidate. Removing this unpaired tile from " +
+"a three-tile Chow-Pong Candidate leaves its pair. " +
+"Among eligible unpaired tiles, MJC favors the one whose " +
+"Chow option has the lowest Effective Acceptance " +
+"(EA). Your other Developing Boxes " +
+
         "and all Complete Boxes remain intact."
       : ": at the current timing, MJC gives equal preference " +
-        "to breaking the Eye Candidate or removing the " +
-        "terminal from a three-tile Chow-Pong Candidate. " +
+        "to breaking the Eye Candidate or removing the " +    
+        "unpaired tile from a three-tile Chow-Pong Candidate. " +
+
         "The latter leaves its pair. Discard only one of " +
         "the recommended tiles. Your Complete Boxes " +
         "remain intact.";

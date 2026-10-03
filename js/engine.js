@@ -3041,7 +3041,7 @@ function getTimedEyeCPCRecommendation(structureState, context = {}) {
     if (!chow || !Number.isFinite(chow.effectiveAcceptance)) return;
 
     box.tiles.forEach(function(tileKey, index) {
-      if (!/^(char|bam|dot)(1|9)$/.test(tileKey)) return;
+      if (!/^(char|bam|dot)([1-9])$/.test(tileKey)) return;
 
       const retained = box.tiles.filter(function(_, tileIndex) {
         return tileIndex !== index;
