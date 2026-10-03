@@ -1,7 +1,7 @@
 /*
 ==================================================
 MJC Hand Display
-Version: 6BT v1.25
+Version: 6BT v8.1
 ==================================================
 Hand Display presentation functions.
 
