@@ -889,7 +889,7 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 
 }
 
 .rapid-honor-section {
-  width: 300px;
+  width: 366px;
   padding-top: 14px;
   border-top: 1px solid #d3d3d3;
 
@@ -899,7 +899,8 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 
 }
 
 .rapid-honor-pad {
-  width: 190px;
+  width: 256px;
+  flex-shrink: 0;
   margin-right: 0;
 
   display: flex;
@@ -924,6 +925,10 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 
 
 .rapid-honor-key {
   width: 58px;
+  font-size: 14px;
+  padding: 0 2px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .rapid-tile-choice.rapid-correction-target .coach-tile {
