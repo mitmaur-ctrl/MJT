@@ -1874,7 +1874,7 @@ renderMeldVisibilityCorrection();
 if (hcsMeta) {
   hcsMeta.innerHTML =
     '<div style="margin-top:10px;">' +
-      '<strong>What are you preparing to do next?</strong>' +
+      '<strong>What are you going to do next?</strong>' +
     '</div>' +
     '<div class="draw-source-selector" style="justify-content:center; margin-top:6px; margin-bottom:10px;">' +
 
