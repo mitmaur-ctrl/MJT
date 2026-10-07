@@ -70,11 +70,20 @@ function createTile(containerId, label, key) {
     activeTileKey = key;
     longPressFired = false;
 
-    if (!isStartingTileSelectionMode()) return;
+    if (
+  !isStartingTileSelectionMode() &&
+  screenMode !== "handCorrection"
+) return;
 
     pressTimer = setTimeout(function() {
-      counts[key] = 0;
-      longPressFired = true;
+  counts[key] = 0;
+
+  if (screenMode === "handCorrection") {
+    tcsOriginalCounts[key] = 0;
+    tcsAddedCounts[key] = 0;
+  }
+
+  longPressFired = true;
 
       if (screenMode === "revision") revisionTouched = true;
 
@@ -165,6 +174,7 @@ function cycleTile(key) {
 }
 
 function cycleCorrectionTile(key) {
+  fhValidationMessage = null;
   const originalCount = tcsOriginalCounts[key] || 0;
   const addedCount = tcsAddedCounts[key] || 0;
 
@@ -177,18 +187,8 @@ function cycleCorrectionTile(key) {
     tcsAddedCounts[key] = 0;
     counts[key] = 0;
   } else {
+ 
     const nextAddedCount = (addedCount + 1) % 5;
-    const nextTotal = getTotal() - addedCount + nextAddedCount;
-  // HCS maximum is determined by the current game state.
-  // Prepare to Draw  -> Base hand size.
-  // Prepare to Discard -> Base hand size + 1.
-    const maxHandCount =
-      getBaseHandSize() + (gameAction === "discard" ? 1 : 0);
-
-    if (nextAddedCount > addedCount && nextTotal > maxHandCount) {
-      updateDisplay("Maximum tiles selected.");
-      return;
-    }
 
     tcsAddedCounts[key] = nextAddedCount;
     counts[key] = nextAddedCount;
@@ -264,8 +264,12 @@ tileEl.classList.toggle(
 
   document.getElementById("total").textContent = total;
   document.getElementById("target").textContent = target;
-  document.getElementById("counterLabel").textContent = screenMode === "handCorrection" ? "Tile Count:" : "Tiles Entered:";
-  document.getElementById("targetWrap").classList.toggle("hidden", screenMode === "handCorrection");
+
+  document.getElementById("counterLabel").textContent =
+  screenMode === "handCorrection"
+    ? "Free Tiles:"
+    : "Tiles Entered:";
+document.getElementById("targetWrap").classList.toggle("hidden", screenMode === "handCorrection");
 
   document.getElementById("charsTotal").textContent = chars;
   document.getElementById("bamsTotal").textContent = bams;
@@ -279,10 +283,151 @@ tileEl.classList.toggle(
 
   const suggestion = document.getElementById("suggestion");
 
+
+if (screenMode === "handCorrection") {
+  const activeFHMelds =
+    fhMelds.filter(function(box) {
+      return box.visibility !== "remove";
+    });
+
+  const activeMeldCount = activeFHMelds.length;
+
+  const extraMeldTiles =
+    activeFHMelds.filter(function(box) {
+      return box.type === "kang" || box.type === "news";
+    }).length;
+
+  const physicalMeldTileCount =
+    activeFHMelds.reduce(function(sum, box) {
+      return sum + box.tiles.length;
+    }, 0);
+
+  const baseTarget =
+    getBaseHandSize() +
+    (fhTurnCycle === "discard" ? 1 : 0);
+
+  const physicalTarget =
+    baseTarget + extraMeldTiles;
+
+  const fhStickyAccounting =
+    document.getElementById("fhStickyAccounting");
+
+  if (fhStickyAccounting) {
+    fhStickyAccounting.classList.remove("hidden");
+  }
+
+  const fhTileTarget =
+    document.getElementById("fhTileTarget");
+
+  if (fhTileTarget) {
+    fhTileTarget.textContent = physicalTarget;
+  }
+
+const fhMeldedTiles =
+  document.getElementById("fhMeldedTiles");
+
+if (fhMeldedTiles) {
+  fhMeldedTiles.textContent = physicalMeldTileCount;
+}
+
+if (fhStickyAccounting) {
+  if (fhValidationMessage) {
+  fhStickyAccounting.innerHTML =
+    '<span style="color:#b00020; font-weight:700;">' +
+    '⚠ ' + fhValidationMessage +
+    '</span>';
+} else {
+    fhStickyAccounting.innerHTML =
+      'Tile Target: <span id="fhTileTarget">' +
+      physicalTarget +
+      '</span> | Melded Tiles: <span id="fhMeldedTiles">' +
+      physicalMeldTileCount +
+      '</span>';
+  }
+}
+
+  const remainingTilesNeeded =
+    physicalTarget - physicalMeldTileCount;
+
+document.getElementById("total").textContent =
+  total + " of " + remainingTilesNeeded;
+
+const stickyTarget =
+  document.getElementById("target");
+
+if (stickyTarget) {
+  stickyTarget.textContent =
+    physicalTarget + " | Melded Tiles: " + physicalMeldTileCount;
+}
+
+const actionText =
+  fhTurnCycle === "discard"
+    ? "Preparing to Discard"
+    : "Preparing to Draw";
+
+const guidance =
+  actionText +
+  ", your Tile Target is " +
+  physicalTarget +
+  "." +
+
+  (extraMeldTiles > 0
+  ? " This includes " +
+    extraMeldTiles +
+    " extra " +
+    (extraMeldTiles === 1 ? "tile" : "tiles") +
+    " for " +
+extraMeldTiles +
+" " +
+ 
+    activeFHMelds
+      .filter(function(box) {
+        return box.type === "kang" || box.type === "news";
+      })
+      .map(function(box) {
+        return box.type === "news" ? "NEWS" : "Kang";
+      })
+      .join(extraMeldTiles === 2 ? " and " : ", ") +
+    (extraMeldTiles === 1 ? " meld." : " melds.")
+  : "") +
+
+  "\nYour " +
+  activeMeldCount +
+  " " +
+  (activeMeldCount === 1 ? "meld contains " : "melds contain ") +
+  physicalMeldTileCount +
+  " Melded " +
+  (physicalMeldTileCount === 1 ? "Tile." : "Tiles.") +
+ "\nEnter " +
+remainingTilesNeeded +
+" Free " +
+(remainingTilesNeeded === 1 ? "Tile" : "Tiles") +
+" to complete your hand.";
+
+  const fhAccountingMessage =
+  document.getElementById("fhAccountingMessage");
+
+if (fhAccountingMessage) {
+  fhAccountingMessage.textContent =
+    customMessage
+      ? guidance + "\n" + customMessage
+      : guidance;
+}
+
+suggestion.textContent = "";
+
+} else {
+  const fhStickyAccounting =
+    document.getElementById("fhStickyAccounting");
+
+  if (fhStickyAccounting) {
+    fhStickyAccounting.classList.add("hidden");
+  }
+
   if (customMessage) {
-    suggestion.textContent = customMessage;
-  } else if (screenMode === "handCorrection") {
-    suggestion.textContent = "The tiles in your MJC hand are highlighted in green.";
+
+  suggestion.textContent = customMessage;
+
   } else if (isStartingTileSelectionMode() && total === 0) {
     suggestion.textContent = screenMode === "revision"
       ? "Review and revise your hand. \nPress Play On! when ready."
@@ -301,6 +446,7 @@ tileEl.classList.toggle(
 
   updateWindIcons();
   updateContextControls();
+  }
 }
 
 function updateActionButtons(total, target) {
@@ -358,6 +504,61 @@ function undoClear() {
   updateDisplay("Hand restored.");
 }
 
+
+// ==================================================
+// GAME TRANSCRIPT
+// ==================================================
+
+let gameTranscript = {
+  initialTiles: [],
+  actions: []
+};
+
+let fhTranscriptBefore = null;
+
+function makeFHTranscriptSnapshot(tileCounts, melds, turnCycle) {
+  const tiles = [];
+
+  for (const key in tileCounts) {
+    for (let i = 0; i < (tileCounts[key] || 0); i++) {
+      tiles.push(key);
+    }
+  }
+
+  return {
+    tiles: tiles,
+    melds: melds.map(function(box) {
+      return {
+        type: box.type,
+        tiles: [...box.tiles],
+        visibility: box.visibility
+      };
+    }),
+    turnCycle: turnCycle
+  };
+}
+
+function captureInitialTiles() {
+  if (gameTranscript.initialTiles.length > 0) return;
+
+  const initialTiles = [];
+
+  for (const key in counts) {
+    for (let i = 0; i < counts[key]; i++) {
+      initialTiles.push(key);
+    }
+  }
+
+  gameTranscript.initialTiles = initialTiles;
+}
+
+function recordGameAction(type, tileKey) {
+  gameTranscript.actions.push({
+    type: type,
+    tileKey: tileKey
+  });
+}
+
 function startHand() {
   const target = getTarget();
 
@@ -388,8 +589,101 @@ function startHand() {
   showHD();
 }
 
+let fhValidationMessage = null;
 function acceptRevision() {
   if (screenMode === "handCorrection") {
+
+  const activeFHMelds =
+    fhMelds.filter(function(box) {
+      return box.visibility !== "remove";
+    });
+
+  const activeMeldCount = activeFHMelds.length;
+
+  const expectedRackCount =
+    getBaseHandSize() -
+    (activeMeldCount * 3) +
+    (fhTurnCycle === "discard" ? 1 : 0);
+
+  const actualRackCount = getTotal();
+
+  if (actualRackCount !== expectedRackCount) {
+    const difference =
+      Math.abs(expectedRackCount - actualRackCount);
+
+    const message =
+      actualRackCount < expectedRackCount
+        ? "Enter " + difference + " more tile(s) before accepting."
+        : "Remove " + difference + " tile(s) before accepting.";
+
+    updateDisplay(message);
+    return;
+  }
+
+const physicalTileCounts = {};
+
+for (const key in counts) {
+  physicalTileCounts[key] = counts[key] || 0;
+}
+
+activeFHMelds.forEach(function(box) {
+  box.tiles.forEach(function(tileKey) {
+    physicalTileCounts[tileKey] =
+      (physicalTileCounts[tileKey] || 0) + 1;
+  });
+});
+
+for (const tileKey in physicalTileCounts) {
+
+  if (physicalTileCounts[tileKey] > 4) {
+  fhValidationMessage =
+    "More than four " +
+    tileLabels[tileKey] +
+    " tiles. Correct your hand.";
+
+  updateDisplay();
+  return;
+}
+
+}
+
+mmrCommittedBoxes =
+  activeFHMelds.map(function(box) {
+    return {
+      action: "fix-hand",
+      tileKey:
+        box.tiles && box.tiles.length > 0
+          ? box.tiles[0]
+          : null,
+      candidate: {
+        type: box.type,
+        tiles: [...box.tiles],
+        visibility: box.visibility
+      }
+    };
+  });
+
+activeFHMelds.forEach(function(box) {
+  box.tiles.forEach(function(tileKey) {
+    counts[tileKey] += 1;
+  });
+});
+
+const fhTranscriptAccepted =
+  makeFHTranscriptSnapshot(
+    counts,
+    activeFHMelds,
+    fhTurnCycle
+  );
+
+gameTranscript.actions.push({
+  type: "FH",
+  before: fhTranscriptBefore,
+  accepted: fhTranscriptAccepted
+});
+
+fhTranscriptBefore = null;
+
     hdMode = "current";
     phase = "game";
     revisionReturnHDMode = "current";
@@ -398,44 +692,8 @@ function acceptRevision() {
     handCorrectionSnapshot = null;
     clearCorrectionState();
     lastDrawnTileKey = null;
-    const turnCycleMessage =
-      document.getElementById("turnCycleMessage");
-
-  if (turnCycleMessage) {
-    turnCycleMessage.textContent =
-      handCorrectionReturnAction === "discard"
-        ? "Before Fix Hand, you were preparing to Discard."
-        : "Before Fix Hand, you were preparing to Draw.";
-  }
-
-const turnCycleDrawBtn =
-  document.getElementById("turnCycleDrawBtn");
-
-const turnCycleDiscardBtn =
-  document.getElementById("turnCycleDiscardBtn");
-
-if (turnCycleDrawBtn && turnCycleDiscardBtn) {
-  turnCycleDrawBtn.textContent =
-    handCorrectionReturnAction === "draw"
-      ? "Resume Draw"
-      : "Draw Instead";
-
-  turnCycleDiscardBtn.textContent =
-    handCorrectionReturnAction === "discard"
-      ? "Resume Discard"
-      : "Discard Instead";
-
-  turnCycleDrawBtn.classList.toggle(
-    "primary",
-    handCorrectionReturnAction === "draw"
-  );
-
-  turnCycleDiscardBtn.classList.toggle(
-    "primary",
-    handCorrectionReturnAction === "discard"
-  );
-}
-    showTurnCycleConfirmation();
+    gameAction = fhTurnCycle;
+    showHD();
     return;
   }
 
@@ -476,14 +734,13 @@ function reviseHand() {
   scrollToTopForScreen();
 }
 
-function renderMeldVisibilityCorrection() {
-  const container =
-    document.getElementById(
-      "hcsMeldVisibility"
-    );
+// ==================================================
+// FIX HAND — MELD BUILDER
+// ==================================================
 
-  if (!container) return;
-
+let fhMeldBuilderType = null;
+let fhMelds = [];
+function initializeFHMelds() {
   const result =
     evaluate17TE(
       MJC_STATE.getEngineInput()
@@ -495,21 +752,916 @@ function renderMeldVisibilityCorrection() {
   const completeBoxes =
     structureState.completeBoxes || [];
 
-  if (completeBoxes.length === 0) {
-    container.innerHTML =
-      '<div class="empty-note">' +
-      'No melds to correct.' +
-      '</div>';
+  fhMelds = completeBoxes.map(function(box) {
+    return {
+      boxId: box.boxId,
+      source: "existing",
+      type: box.type,    
+      tiles: [...box.tiles],
+      visibility:
+        box.visibility === "exposed"
+          ? "exposed"
+          : "hidden"
+    };
+  });
+}
 
+
+function openFHMeldBuilder() {
+  fhMeldBuilderType = null;
+
+  const builder =
+    document.getElementById("fhMeldTypeBuilder");
+
+  if (builder) {
+    builder.innerHTML = "";
+  }
+
+  document
+    .getElementById("fhMeldBuilder")
+    .classList.remove("hidden");
+
+  const newsButton =
+    document.getElementById("fhMeldTypeNEWS");
+
+  if (newsButton) {
+    const context = MJC_STATE.getContext();
+
+    const showNEWS =
+      context.ruleset === "filipino16" &&
+      context.newsAllowed === true;
+
+    newsButton.classList.toggle("hidden", !showNEWS);
+  }
+}
+
+function selectFHMeldType(type) {
+  fhMeldBuilderType = type;
+["chow", "pong", "kang"].forEach(function(meldType) {
+  const button =
+    document.getElementById(
+      "fhMeldType" +
+      meldType.charAt(0).toUpperCase() +
+      meldType.slice(1)
+    );
+
+  if (!button) return;
+
+  button.classList.toggle(
+    "selected",
+    meldType === type
+  );
+});
+
+
+  const builder =
+    document.getElementById("fhMeldTypeBuilder");
+
+  if (!builder) return;
+
+if (type === "chow") {
+  renderFHChowBuilder();
+  return;
+}
+
+  if (type === "pong") {
+    renderFHPongBuilder();
     return;
   }
 
+if (type === "kang") {
+  renderFHKangBuilder();
+  return;
+}
+
+if (type === "news") {
+  renderFHNewsBuilder();
+  return;
+}
+
+  const labels = {
+    chow: "Chow selected.",
+    kang: "Kang selected."   
+  };
+
+  builder.innerHTML =
+    '<div style="text-align:center; margin:14px 0;">' +
+      '<strong>' + labels[type] + '</strong>' +
+    '</div>';
+}
+
+let fhChowSuit = null;
+let fhChowTiles = [];
+let fhChowVisibility = "hidden";
+
+function renderFHChowBuilder() {
+  fhChowSuit = null;
+  fhChowTiles = [];
+  fhChowVisibility = "hidden";
+
+  const builder =
+    document.getElementById("fhMeldTypeBuilder");
+
+  if (!builder) return;
+
+  builder.innerHTML =
+    '<div style="border-top:1px solid #ccc; margin:18px auto 10px; max-width:365px;"></div>' +
+    '<div class="draw-title">Set Your Chow Meld</div>' +
+    '<div class="rapid-section-label" style="text-align:center; margin-top:14px;">Suit ▼</div>' +
+    '<div id="fhChowSuitChoices" style="display:flex; justify-content:center; gap:8px; margin-top:8px;"></div>' +
+    '<div id="fhChowTileChoices"></div>';
+const suitLabels = {
+  chars: "Chars",
+  bams: "Bams",
+  dots: "Dots"
+};
+
+const orderedSuits = [
+  displayOrder.firstSuit,
+  displayOrder.secondSuit,
+  displayOrder.thirdSuit
+];
+
+const suitChoices =
+  document.getElementById("fhChowSuitChoices");
+
+if (suitChoices) {
+  suitChoices.innerHTML =
+    orderedSuits.map(function(suitName) {
+      return (
+        '<button type="button" ' +
+          'class="secondary-action" ' +
+          'onclick="selectFHChowSuit(\'' +
+          suitName +
+          '\')">' +
+          suitLabels[suitName] +
+        '</button>'
+      );
+    }).join("");
+}
+
+}
+
+function selectFHChowSuit(suitName) {
+  fhChowSuit = suitName;
+  fhChowTiles = [];
+
+  const tileChoices =
+    document.getElementById("fhChowTileChoices");
+
+  if (!tileChoices) return;
+
+  const suitKeyMap = {
+    chars: "char",
+    bams: "bam",
+    dots: "dot"
+  };
+
+  const suitPrefix = suitKeyMap[suitName];
+
   let html =
-    '<div class="hand-section-title">' +
-    'Meld Visibility' +
+    '<div style="' +
+      'display:grid; ' +
+      'grid-template-columns:repeat(3, auto); ' +
+      'justify-content:center; ' +
+      'gap:8px; ' +
+      'margin-top:14px;' +
+    '">';
+
+  for (let i = 1; i <= 9; i++) {
+    const tileKey = suitPrefix + i;
+
+    const isSelectable = i <= 7;
+
+html +=
+  '<button type="button" ' +
+    'class="rapid-honor-key" ' +
+    (isSelectable
+      ? 'onclick="selectFHChowStart(' + i + ')" '
+      : 'disabled ') +
+    'style="' +
+      (!isSelectable ? 'opacity:1; cursor:default;' : '') +
+    '">' +
+    renderCoachTile(tileKey) +
+  '</button>';
+  }
+
+  html += '</div>';
+
+  tileChoices.innerHTML = html;
+const builder =
+  document.getElementById("fhMeldTypeBuilder");
+
+if (builder) {
+  let controls =
+    document.getElementById("fhChowControls");
+
+  if (!controls) {
+    controls = document.createElement("div");
+    controls.id = "fhChowControls";
+
+    controls.innerHTML =
+      '<div class="draw-source-selector" style="justify-content:center; margin-top:14px;">' +
+
+        '<label>' +
+          '<input type="radio" ' +
+            'name="fhChowVisibility" ' +
+            'value="hidden" checked ' +
+            'onchange="fhChowVisibility=\'hidden\'">' +
+          ' Hidden' +
+        '</label>' +
+
+        '<label>' +
+          '<input type="radio" ' +
+            'name="fhChowVisibility" ' +
+            'value="exposed" ' +
+            'onchange="fhChowVisibility=\'exposed\'">' +
+          ' Exposed' +
+        '</label>' +
+
+      '</div>' +
+
+      '<div style="text-align:center; margin-top:14px;">' +
+        '<button type="button" ' +
+          'class="secondary-action" ' +
+          'onclick="addFHChow()">' +
+          'Add Chow' +
+        '</button>' +
+      '</div>';
+
+    builder.appendChild(controls);
+  }
+}
+
+}
+
+function selectFHChowStart(startNumber) {
+  const suitKeyMap = {
+    chars: "char",
+    bams: "bam",
+    dots: "dot"
+  };
+
+  const prefix = suitKeyMap[fhChowSuit];
+
+  fhChowTiles = [
+    prefix + startNumber,
+    prefix + (startNumber + 1),
+    prefix + (startNumber + 2)
+  ];
+
+  const tileChoices =
+    document.getElementById("fhChowTileChoices");
+
+  if (!tileChoices) return;
+
+  const buttons =
+    tileChoices.querySelectorAll("button");
+
+  buttons.forEach(function(button, index) {
+  const number = index + 1;
+
+  const isSelected =
+    number >= startNumber &&
+    number <= startNumber + 2;
+
+  button.style.backgroundColor =
+    isSelected ? "#fff2a8" : "";
+
+  button.style.border =
+    isSelected ? "2px solid #d6a800" : "";
+});
+
+}
+
+function addFHChow() {
+  if (fhChowTiles.length !== 3) {
+    showToast("Select a Chow.");
+    return;
+  }
+
+  fhMelds.push({
+    type: "chow",
+    tiles: [...fhChowTiles],
+    visibility: fhChowVisibility,
+    source: "added"
+  });
+
+  revisionTouched = true;
+
+  cancelFHMeldBuilder();
+  renderMeldVisibilityCorrection();
+}
+
+let fhPongNumber = null;
+let fhPongTileKey = null;
+let fhPongVisibility = "hidden";
+
+function renderFHPongBuilder() {
+  fhPongNumber = null;
+  fhPongTileKey = null;
+  fhPongVisibility = "hidden";
+
+  const builder =
+    document.getElementById("fhMeldTypeBuilder");
+
+  if (!builder) return;
+
+  let html =
+    '<div style="border-top:1px solid #ccc; margin:18px auto 10px; max-width:365px;"></div>' +
+'<div class="draw-title">Set Your Pong Meld</div>' +
+
+    '<div class="rapid-draw-layout">' +
+
+      '<div class="rapid-draw-main">' +
+
+        '<div>' +
+          '<div class="rapid-section-label">Number ▼</div>' +
+          '<div class="rapid-number-pad">';
+
+  for (let i = 1; i <= 9; i++) {
+    html +=
+      '<button ' +
+        'type="button" ' +
+        'class="rapid-draw-key" ' +
+        'onclick="selectFHPongNumber(' + i + ')">' +
+        i +
+      '</button>';
+  }
+
+  html +=
+          '</div>' +
+        '</div>' +
+
+        '<div>' +
+          '<div class="rapid-section-label" style="padding-left: 12px;">Suit ▼</div>' +
+          '<div id="fhPongSuitChoices" class="rapid-draw-choices"></div>' +
+        '</div>' +
+
+      '</div>' +
+
+      '<div class="rapid-honor-section">' +
+
+        '<div class="rapid-honor-pad">' +
+
+          '<div class="rapid-section-label">Winds ▼</div>' +
+
+          '<div class="rapid-honor-row">' +
+
+            '<button type="button" class="rapid-honor-key" ' +
+              'onclick="selectFHPongHonor(\'east\')">' +
+              renderCoachTile("east") +
+            '</button>' +
+
+            '<button type="button" class="rapid-honor-key" ' +
+              'onclick="selectFHPongHonor(\'south\')">' +
+              renderCoachTile("south") +
+            '</button>' +
+
+            '<button type="button" class="rapid-honor-key" ' +
+              'onclick="selectFHPongHonor(\'west\')">' +
+              renderCoachTile("west") +
+            '</button>' +
+
+            '<button type="button" class="rapid-honor-key" ' +
+              'onclick="selectFHPongHonor(\'north\')">' +
+              renderCoachTile("north") +
+            '</button>' +
+
+          '</div>' +
+
+          '<div class="rapid-section-label">Dragons ▼</div>' +
+
+          '<div class="rapid-honor-row dragons">' +
+
+            '<button type="button" class="rapid-honor-key" ' +
+              'onclick="selectFHPongHonor(\'red\')">' +
+              renderCoachTile("red") +
+            '</button>' +
+
+            '<button type="button" class="rapid-honor-key" ' +
+              'onclick="selectFHPongHonor(\'green\')">' +
+              renderCoachTile("green") +
+            '</button>' +
+
+            '<button type="button" class="rapid-honor-key" ' +
+              'onclick="selectFHPongHonor(\'white\')">' +
+              renderCoachTile("white") +
+            '</button>' +
+
+          '</div>' +
+
+        '</div>' +
+
+        '<div id="fhPongHonorChoice" class="rapid-honor-choice"></div>' +
+
+      '</div>' +
+
+    '</div>' +
+
+'<div class="draw-source-selector" style="justify-content:center; margin-top:14px;">' +
+
+  '<label>' +
+    '<input type="radio" ' +
+      'name="fhPongVisibility" ' +
+      'value="hidden" checked ' +
+      'onchange="fhPongVisibility=\'hidden\'">' +
+    ' Hidden' +
+  '</label>' +
+
+  '<label>' +
+    '<input type="radio" ' +
+      'name="fhPongVisibility" ' +
+      'value="exposed" ' +
+      'onchange="fhPongVisibility=\'exposed\'">' +
+    ' Exposed' +
+  '</label>' +
+
+'</div>' +
+
+'<div style="text-align:center; margin-top:14px;">' +
+  '<button type="button" ' +
+    'class="secondary-action" ' +
+    'onclick="addFHPong()">' +
+    'Add Pong' +
+  '</button>' +
+'</div>';
+
+  builder.innerHTML = html;
+}
+
+function addFHPong() {
+  if (!fhPongTileKey) {
+    showToast("Select a tile for your Pong.");
+    return;
+  }
+
+  fhMelds.push({
+    type: "pong",
+    tiles: [
+      fhPongTileKey,
+      fhPongTileKey,
+      fhPongTileKey
+    ],
+    visibility: fhPongVisibility,
+    source: "added"
+  });
+
+  revisionTouched = true;
+
+  cancelFHMeldBuilder();
+  renderMeldVisibilityCorrection();
+}
+
+function selectFHPongNumber(number) {
+  fhPongNumber = number;
+  fhPongTileKey = null;
+const honorChoice =
+  document.getElementById("fhPongHonorChoice");
+
+if (honorChoice) {
+  honorChoice.innerHTML = "";
+}
+
+
+  const choices =
+    document.getElementById("fhPongSuitChoices");
+
+  if (!choices) return;
+
+  const suitKeyMap = {
+    chars: "char",
+    bams: "bam",
+    dots: "dot"
+  };
+
+  const orderedSuits = [
+    displayOrder.firstSuit,
+    displayOrder.secondSuit,
+    displayOrder.thirdSuit
+  ];
+
+  choices.innerHTML =
+    orderedSuits.map(function(suitName) {
+      const tileKey =
+        suitKeyMap[suitName] + number;
+
+      return (
+        '<button ' +
+          'type="button" ' +
+          'class="rapid-tile-choice" ' +
+          'onclick="selectFHPongTile(\'' +
+            tileKey +
+          '\')">' +
+          renderCoachTile(tileKey) +
+        '</button>'
+      );
+    }).join("");
+}
+
+function selectFHPongTile(tileKey) {
+  fhPongTileKey = tileKey;
+
+  const suitChoices =
+    document.getElementById("fhPongSuitChoices");
+
+  if (suitChoices) {
+    suitChoices.innerHTML =
+      renderCoachTile(tileKey);
+  }
+
+  showToast(
+    "Pong: " + tileLabels[tileKey]
+  );
+}
+function selectFHPongHonor(tileKey) {
+  fhPongNumber = null;
+  fhPongTileKey = tileKey;
+
+  const suitChoices =
+    document.getElementById("fhPongSuitChoices");
+
+  const honorChoice =
+    document.getElementById("fhPongHonorChoice");
+
+  if (suitChoices) {
+    suitChoices.innerHTML = "";
+  }
+
+  if (honorChoice) {
+    honorChoice.innerHTML =
+      renderCoachTile(tileKey);
+  }
+
+  showToast(
+    "Pong: " + tileLabels[tileKey]
+  );
+}
+
+let fhKangNumber = null;
+let fhKangTileKey = null;
+let fhKangVisibility = "hidden";
+
+function renderFHKangBuilder() {
+  fhKangNumber = null;
+  fhKangTileKey = null;
+  fhKangVisibility = "hidden";
+
+  const builder =
+    document.getElementById("fhMeldTypeBuilder");
+
+  if (!builder) return;
+
+  let html =
+    '<div style="border-top:1px solid #ccc; margin:18px auto 10px; max-width:365px;"></div>' +
+    '<div class="draw-title">Set Your Kang Meld</div>' +
+
+    '<div class="rapid-draw-layout">' +
+
+      '<div class="rapid-draw-main">' +
+
+        '<div>' +
+          '<div class="rapid-section-label">Number ▼</div>' +
+          '<div class="rapid-number-pad">';
+
+  for (let i = 1; i <= 9; i++) {
+    html +=
+      '<button ' +
+        'type="button" ' +
+        'class="rapid-draw-key" ' +
+        'onclick="selectFHKangNumber(' + i + ')">' +
+        i +
+      '</button>';
+  }
+
+  html +=
+          '</div>' +
+        '</div>' +
+
+        '<div>' +
+          '<div class="rapid-section-label" style="padding-left:12px;">Suit ▼</div>' +
+          '<div id="fhKangSuitChoices" class="rapid-draw-choices"></div>' +
+        '</div>' +
+
+      '</div>' +
+
+      '<div class="rapid-honor-section">' +
+
+        '<div class="rapid-honor-pad">' +
+
+          '<div class="rapid-section-label">Winds ▼</div>' +
+
+          '<div class="rapid-honor-row">' +
+            '<button type="button" class="rapid-honor-key" onclick="selectFHKangHonor(\'east\')">' +
+              renderCoachTile("east") +
+            '</button>' +
+            '<button type="button" class="rapid-honor-key" onclick="selectFHKangHonor(\'south\')">' +
+              renderCoachTile("south") +
+            '</button>' +
+            '<button type="button" class="rapid-honor-key" onclick="selectFHKangHonor(\'west\')">' +
+              renderCoachTile("west") +
+            '</button>' +
+            '<button type="button" class="rapid-honor-key" onclick="selectFHKangHonor(\'north\')">' +
+              renderCoachTile("north") +
+            '</button>' +
+          '</div>' +
+
+          '<div class="rapid-section-label">Dragons ▼</div>' +
+
+          '<div class="rapid-honor-row dragons">' +
+            '<button type="button" class="rapid-honor-key" onclick="selectFHKangHonor(\'red\')">' +
+              renderCoachTile("red") +
+            '</button>' +
+            '<button type="button" class="rapid-honor-key" onclick="selectFHKangHonor(\'green\')">' +
+              renderCoachTile("green") +
+            '</button>' +
+            '<button type="button" class="rapid-honor-key" onclick="selectFHKangHonor(\'white\')">' +
+              renderCoachTile("white") +
+            '</button>' +
+          '</div>' +
+
+        '</div>' +
+
+        '<div id="fhKangHonorChoice" class="rapid-honor-choice"></div>' +
+
+      '</div>' +
+
+        '</div>' +
+
+    '<div class="draw-source-selector" style="justify-content:center; margin-top:14px;">' +
+
+      '<label>' +
+        '<input type="radio" ' +
+          'name="fhKangVisibility" ' +
+          'value="hidden" checked ' +
+          'onchange="fhKangVisibility=\'hidden\'">' +
+        ' Hidden' +
+      '</label>' +
+
+      '<label>' +
+        '<input type="radio" ' +
+          'name="fhKangVisibility" ' +
+          'value="exposed" ' +
+          'onchange="fhKangVisibility=\'exposed\'">' +
+        ' Exposed' +
+      '</label>' +
+
+    '</div>' +
+
+    '<div style="text-align:center; margin-top:14px;">' +
+      '<button type="button" ' +
+        'class="secondary-action" ' +
+        'onclick="addFHKang()">' +
+        'Add Kang' +
+      '</button>' +
     '</div>';
 
-  completeBoxes.forEach(function(box) {
+  builder.innerHTML = html;
+}
+
+function selectFHKangNumber(number) {
+  fhKangNumber = number;
+  fhKangTileKey = null;
+
+  const honorChoice =
+    document.getElementById("fhKangHonorChoice");
+
+  if (honorChoice) {
+    honorChoice.innerHTML = "";
+  }
+
+  const choices =
+    document.getElementById("fhKangSuitChoices");
+
+  if (!choices) return;
+
+  const suitKeyMap = {
+    chars: "char",
+    bams: "bam",
+    dots: "dot"
+  };
+
+  const orderedSuits = [
+    displayOrder.firstSuit,
+    displayOrder.secondSuit,
+    displayOrder.thirdSuit
+  ];
+
+  choices.innerHTML =
+    orderedSuits.map(function(suitName) {
+      const tileKey =
+        suitKeyMap[suitName] + number;
+
+      return (
+        '<button ' +
+          'type="button" ' +
+          'class="rapid-tile-choice" ' +
+          'onclick="selectFHKangTile(\'' +
+            tileKey +
+          '\')">' +
+          renderCoachTile(tileKey) +
+        '</button>'
+      );
+    }).join("");
+}
+
+function selectFHKangTile(tileKey) {
+  fhKangTileKey = tileKey;
+
+  const suitChoices =
+    document.getElementById("fhKangSuitChoices");
+
+  if (suitChoices) {
+    suitChoices.innerHTML =
+      renderCoachTile(tileKey);
+  }
+
+  showToast(
+    "Kang: " + tileLabels[tileKey]
+  );
+}
+
+function selectFHKangHonor(tileKey) {
+  fhKangNumber = null;
+  fhKangTileKey = tileKey;
+
+  const suitChoices =
+    document.getElementById("fhKangSuitChoices");
+
+  const honorChoice =
+    document.getElementById("fhKangHonorChoice");
+
+  if (suitChoices) {
+    suitChoices.innerHTML = "";
+  }
+
+  if (honorChoice) {
+    honorChoice.innerHTML =
+      renderCoachTile(tileKey);
+  }
+
+  showToast(
+    "Kang: " + tileLabels[tileKey]
+  );
+}
+
+function addFHKang() {
+  if (!fhKangTileKey) {
+    showToast("Select a tile for your Kang.");
+    return;
+  }
+
+  fhMelds.push({
+    type: "kang",
+    tiles: [
+      fhKangTileKey,
+      fhKangTileKey,
+      fhKangTileKey,
+      fhKangTileKey
+    ],
+    visibility: fhKangVisibility,
+    source: "added"
+  });
+
+  revisionTouched = true;
+
+  cancelFHMeldBuilder();
+  renderMeldVisibilityCorrection();
+}
+
+let fhNEWSVisibility = "hidden";
+
+function renderFHNewsBuilder() {
+  fhNEWSVisibility = "hidden";
+
+  const builder =
+    document.getElementById("fhMeldTypeBuilder");
+
+  if (!builder) return;
+
+  builder.innerHTML =
+    '<div style="border-top:1px solid #ccc; margin:18px auto 10px; max-width:365px;"></div>' +
+    '<div class="draw-title">Set Your NEWS Meld</div>' +
+
+    '<div class="rapid-honor-row" style="justify-content:center; margin-top:14px;">' +
+      '<div class="rapid-honor-key">' +
+        renderCoachTile("north") +
+      '</div>' +
+      '<div class="rapid-honor-key">' +
+        renderCoachTile("east") +
+      '</div>' +
+      '<div class="rapid-honor-key">' +
+        renderCoachTile("west") +
+      '</div>' +
+      '<div class="rapid-honor-key">' +
+        renderCoachTile("south") +
+      '</div>' +
+    '</div>' +
+
+    '<div class="draw-source-selector" style="justify-content:center; margin-top:14px;">' +
+
+      '<label>' +
+        '<input type="radio" ' +
+          'name="fhNEWSVisibility" ' +
+          'value="hidden" checked ' +
+          'onchange="fhNEWSVisibility=\'hidden\'">' +
+        ' Hidden' +
+      '</label>' +
+
+      '<label>' +
+        '<input type="radio" ' +
+          'name="fhNEWSVisibility" ' +
+          'value="exposed" ' +
+          'onchange="fhNEWSVisibility=\'exposed\'">' +
+        ' Exposed' +
+      '</label>' +
+
+    '</div>' +
+
+    '<div style="text-align:center; margin-top:14px;">' +
+      '<button type="button" ' +
+        'class="secondary-action" ' +
+        'onclick="addFHNEWS()">' +
+        'Add NEWS' +
+      '</button>' +
+    '</div>';
+}
+
+function addFHNEWS() {
+  fhMelds.push({
+    type: "news",
+    tiles: [
+      "north",
+      "east",
+      "west",
+      "south"
+    ],
+    visibility: fhNEWSVisibility,
+    source: "added"
+  });
+
+  revisionTouched = true;
+
+  cancelFHMeldBuilder();
+  renderMeldVisibilityCorrection();
+}
+
+function cancelFHMeldBuilder() {
+  fhMeldBuilderType = null;
+
+  const builder =
+    document.getElementById("fhMeldTypeBuilder");
+
+  if (builder) {
+    builder.innerHTML = "";
+  }
+
+  document
+    .getElementById("fhMeldBuilder")
+    .classList.add("hidden");
+}
+
+function setFHMeldState(index, state) {
+  if (!fhMelds[index]) return;
+
+  fhMelds[index].visibility = state;
+  revisionTouched = true;
+  updateDisplay();
+}
+
+function renderMeldVisibilityCorrection() {
+  const container =
+    document.getElementById(
+      "hcsMeldVisibility"
+    );
+
+  if (!container) return;
+
+  const existingMelds =
+  fhMelds.filter(function(box) {
+    return box.source === "existing";
+  });
+
+const addedMelds =
+  fhMelds.filter(function(box) {
+    return box.source === "added";
+  });
+
+const completeBoxes = existingMelds;
+
+  let html =
+  '<div class="hand-section-title" style="margin-top:12px;">' +
+  'Existing Melds' +
+  '</div>';
+
+if (completeBoxes.length === 0) {
+  html +=
+    '<div class="empty-note">' +
+    'None' +
+    '</div>';
+}
+
+completeBoxes.forEach(function(box, index) {
     const typeLabel =
       box.type.charAt(0).toUpperCase() +
       box.type.slice(1);
@@ -538,13 +1690,16 @@ function renderMeldVisibilityCorrection() {
               box.boxId +
               '" ' +
               'value="hidden" ' +
-              (box.visibility !== "exposed"
+              (box.visibility === "hidden"
                 ? 'checked '
                 : '') +
-              'onchange="setCompleteBoxVisibility(' +
-              box.boxId +
-              ', \'hidden\')">' +
-            ' Hidden' +
+ 
+             'onchange="setFHMeldState(' +
+index +
+', \'hidden\')">' +
+  
+
+          ' Hidden' +
           '</label>' +
 
           '<label>' +
@@ -557,46 +1712,197 @@ function renderMeldVisibilityCorrection() {
               (box.visibility === "exposed"
                 ? 'checked '
                 : '') +
-              'onchange="setCompleteBoxVisibility(' +
-              box.boxId +
-              ', \'exposed\')">' +
+
+              'onchange="setFHMeldState(' +
+index +
+', \'exposed\')">' +
+
             ' Exposed' +
           '</label>' +
+
+'<label>' +
+  '<input ' +
+    'type="radio" ' +
+    'name="meldVisibility-' +
+    box.boxId +
+    '" ' +
+    'value="remove" ' +
+(box.visibility === "remove"
+  ? 'checked '
+  : '') +
+'onchange="setFHMeldState(' +
+index +
+', \'remove\')">' +
+' Remove' +
+'</label>' +
+
 
         '</div>' +
       '</div>';
   });
 
+html +=
+  '<div class="hand-section-title" style="margin-top:16px;">' +
+  'Added Melds' +
+  '</div>';
+
+if (addedMelds.length === 0) {
+  html +=
+    '<div class="empty-note">' +
+    'None' +
+    '</div>';
+} else {
+  addedMelds.forEach(function(box) {
+    const index = fhMelds.indexOf(box);
+
+    const typeLabel =
+      box.type.charAt(0).toUpperCase() +
+      box.type.slice(1);
+
+    const tileLabel =
+      box.tiles
+        .map(function(tileKey) {
+          return tileLabels[tileKey];
+        })
+        .join(", ");
+
+    html +=
+      '<div class="hand-section">' +
+        '<div class="hand-section-title">' +
+          typeLabel +
+        '</div>' +
+        '<div>' +
+          tileLabel +
+        '</div>' +
+        '<div class="draw-source-selector">' +
+
+          '<label>' +
+            '<input type="radio" ' +
+              'name="fhAddedMeld-' + index + '" ' +
+              'value="hidden" ' +
+              (box.visibility === "hidden" ? 'checked ' : '') +
+              'onchange="setFHMeldState(' +
+              index +
+              ', \'hidden\')">' +
+            ' Hidden' +
+          '</label>' +
+
+          '<label>' +
+            '<input type="radio" ' +
+              'name="fhAddedMeld-' + index + '" ' +
+              'value="exposed" ' +
+              (box.visibility === "exposed" ? 'checked ' : '') +
+              'onchange="setFHMeldState(' +
+              index +
+              ', \'exposed\')">' +
+            ' Exposed' +
+          '</label>' +
+
+          '<label>' +
+            '<input type="radio" ' +
+              'name="fhAddedMeld-' + index + '" ' +
+              'value="remove" ' +
+              (box.visibility === "remove" ? 'checked ' : '') +
+              'onchange="setFHMeldState(' +
+              index +
+              ', \'remove\')">' +
+            ' Remove' +
+          '</label>' +
+
+        '</div>' +
+      '</div>';
+  });
+}
+
   container.innerHTML = html;
+if (screenMode === "handCorrection") {
+  updateDisplay();
+}
 }
 
 let handCorrectionReturnAction = null;
+let fhTurnCycle = null;
+
+function setFHTurnCycle(action) {
+  fhTurnCycle = action;
+  revisionTouched = true;
+  updateDisplay();
+}
 
 function openHandCorrectionScreen() {
   if (hdMode !== "current") return;
 
   handCorrectionReturnAction = gameAction;
+  fhTurnCycle = handCorrectionReturnAction;
   handCorrectionSnapshot = makeSnapshot();
   handCorrectionTarget = null;
   revisionTarget = null;
   revisionReturnHDMode = "current";
   screenMode = "handCorrection";
   revisionTouched = false;
-  initializeCorrectionStateFromCounts();
-  renderMeldVisibilityCorrection();
+  initializeFHMelds();
+  fhTranscriptBefore =
+    makeFHTranscriptSnapshot(
+      counts,
+      fhMelds,
+      handCorrectionReturnAction
+    );
+
+for (const key in counts) {
+  counts[key] = 0;
+}
+
+tcsOriginalCounts = {};
+tcsAddedCounts = {};
+
+for (const key in counts) {
+  tcsOriginalCounts[key] = 0;
+  tcsAddedCounts[key] = 0;
+}
+
+renderMeldVisibilityCorrection();
 
   document.getElementById("hdScreen").classList.add("hidden");
   document.getElementById("drawScreen").classList.add("hidden");
   document.getElementById("discardScreen").classList.add("hidden");
   document.getElementById("tdScreen").classList.remove("hidden");
   document.getElementById("hcsIntro").classList.remove("hidden");
-  document.querySelector("#hcsIntro .hcs-title").textContent = "Hand Correction Screen";
-  document.getElementById("hcsMeta").innerHTML = "Tap any tile to adjust its quantity.<br>Correct MJC to match the tiles on your rack.";
+  document.querySelector("#hcsIntro .hcs-title").textContent = "Fix Hand";
+
+  const hcsMeta = document.getElementById("hcsMeta");
+
+if (hcsMeta) {
+  hcsMeta.innerHTML =
+    '<div style="margin-top:10px;">' +
+      '<strong>What are you preparing to do next?</strong>' +
+    '</div>' +
+    '<div class="draw-source-selector" style="justify-content:center; margin-top:6px; margin-bottom:10px;">' +
+
+      '<label>' +
+        '<input type="radio" ' +
+          'name="fhTurnCycle" ' +
+          'value="draw" ' +
+          (fhTurnCycle === "draw" ? 'checked ' : '') +
+          'onchange="setFHTurnCycle(\'draw\')">' +
+        ' Preparing to Draw' +
+      '</label>' +
+
+      '<label>' +
+        '<input type="radio" ' +
+          'name="fhTurnCycle" ' +
+          'value="discard" ' +
+          (fhTurnCycle === "discard" ? 'checked ' : '') +
+          'onchange="setFHTurnCycle(\'discard\')">' +
+        ' Preparing to Discard' +
+      '</label>' +
+
+    '</div>';
+}
 
   showStartingHeader(true);
   hideUndo();
   applyDisplayOrderToScreens();
-  updateDisplay("The tiles in your MJC hand are highlighted in green.");
+  updateDisplay();
   scrollToTopForScreen();
 }
 

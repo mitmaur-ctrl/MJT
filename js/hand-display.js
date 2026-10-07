@@ -22,6 +22,7 @@ No game engine logic belongs in this file.
 window.coachViewForm = "short";
 window.pathwaysOn = false;
 window.discardRecommendationsOn = true;
+window.currentDiscardRecommendation = [];
 
 try {
   window.discardRecommendationsOn =
@@ -675,6 +676,7 @@ function configureHDMode() {
   const startingUtilityRow = document.getElementById("startingUtilityRow");
   const currentCorrectionRow = document.getElementById("currentCorrectionRow");
   const newGameRow = document.getElementById("newGameRow");
+  const gameHistoryRow = document.getElementById("gameHistoryRow");
   const enginePanel = document.getElementById("enginePanel");
 
   const total = getTotal();
@@ -850,6 +852,7 @@ correctLastBtn.classList.toggle(
   correctLastBtn.classList.toggle("disabled", !(hdMode === "current" && lastActionSnapshot));
   handCorrectionBtn.disabled = hdMode !== "current";
   newGameRow.classList.toggle("hidden", hdMode !== "current");
+  gameHistoryRow.classList.toggle("hidden", hdMode !== "current");
 
 if (gameAction === "mahjong") {
   hdPrimaryRow.classList.add("hidden");
@@ -2855,6 +2858,9 @@ const recommendedTileKeys = hasReserves
   : timedRecommendation
     ? timedRecommendation.tileKeys
     : noReserveTileKeys;
+
+window.currentDiscardRecommendation =
+  [...recommendedTileKeys];
 
 const recommendedTileName =
   recommendedTileKeys

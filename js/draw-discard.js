@@ -794,8 +794,17 @@ mahjongWatchBeforeDraw =
     preDrawResult.mahjongWatch === true
   );
 
+captureInitialTiles();
+
 counts[selectedDrawTileKey] += 1;
 
+if (gameAction === "draw") {
+  recordGameAction("D", selectedDrawTileKey);
+}
+
+if (gameAction === "claim" && claimType === "chow") {
+  recordGameAction("C", selectedDrawTileKey);
+}
 
 syncEscaleraAfterHandChange();
 syncSevenPairsAfterHandChange();
@@ -1701,9 +1710,13 @@ function confirmDiscard() {
   lastActionSnapshot = makeSnapshot();
   lastActionType = "discard";
   lastActionTileKey = selectedDiscardTileKey;
+  captureInitialTiles();
 
+  window.currentDiscardRecommendation.forEach(function(tileKey) {
+    recordGameAction("DR", tileKey);
+  });
   counts[selectedDiscardTileKey] -= 1;
-
+  recordGameAction("Di", selectedDiscardTileKey);
 
   playerDiscardCount += 1;
     deferredKangTileKeys =
@@ -2099,6 +2112,7 @@ function correctLastEntry() {
   correctionActionType = action;
 
   if (action === "draw") {
+  gameTranscript.actions.pop(); // D
   showToast("Correct the last draw entry. Red shows the previous entry.");
   openDrawScreen();
 
@@ -2107,6 +2121,8 @@ function correctLastEntry() {
   openDrawScreen();
 
 } else if (action === "discard") {
+gameTranscript.actions.pop(); // Di
+gameTranscript.actions.pop(); // DR
   showToast("Correct the last discard entry. Red shows the previous entry.");
   openDiscardScreen();
 }
