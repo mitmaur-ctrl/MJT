@@ -9,7 +9,7 @@ Project:
 Mahjong Coach
 
 Version:
-MJC Beta v8.1
+MJC Beta v8.2
 
 Purpose:
 - Smartphone-optimized tile management vehicle
@@ -43,7 +43,7 @@ V4 = Photo Recognition
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Mahjong Coach</title>
 
-<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="css/styles.css?v=8.1-honors">
 </head>
 
 <body>
@@ -95,6 +95,12 @@ V4 = Photo Recognition
 
     <div id="lockedNote" class="locked-note hidden">Hand context locked for this hand.</div>
     <div class="counter"><span id="counterLabel">Tiles Entered:</span> <span id="total">0</span><span id="targetWrap"> / <span id="target">16</span></span></div>
+
+<div id="fhStickyAccounting" class="counter hidden">
+  Tile Target: <span id="fhTileTarget">16</span>
+  | Melded Tiles: <span id="fhMeldedTiles">0</span>
+</div>
+
     <div id="suggestion" class="suggestion">Need 16 more tile(s).</div>
   </div>
 </div>
@@ -103,10 +109,105 @@ V4 = Photo Recognition
 
   <div id="tdScreen">
     <div id="hcsIntro" class="hcs-panel hidden">
-      <div class="hcs-title">Hand Correction</div>
-      <div id="hcsMeta" class="hcs-meta">Review your hand and make any needed corrections.</div>
-      <div id="hcsMeldVisibility"></div>
-    </div>
+
+  <div class="hcs-title">Fix Hand</div>
+
+  <div style="text-align:center; margin-bottom:16px;">
+    <button
+      type="button"
+      class="six-box-link"
+      onclick="showToast('Fix Hand instructions coming next.')"
+    >
+      How to Fix Your Hand
+    </button>
+  </div>
+
+  <div id="hcsMeta"></div>
+
+
+  <div class="hand-section-title">
+    1. Set Your Melds
+  </div>
+
+  <div id="hcsMeldVisibility"></div>
+
+  <div class="actions">
+    <button
+      type="button"
+      class="action-button"
+     onclick="openFHMeldBuilder()"
+    >
+      Add Meld
+    </button>
+
+  </div>
+
+<div id="fhMeldBuilder" class="hidden" style="margin-top:16px;">
+
+  <div class="hand-section-title">Set a Meld</div>
+
+  <div style="text-align:center; margin:8px 0;">
+    Select the meld type
+  </div>
+
+  <div class="actions">
+ <button id="fhMeldTypeChow"
+        type="button"
+        class="action-button"
+        onclick="selectFHMeldType('chow')">
+  Chow
+</button>
+
+<button id="fhMeldTypePong"
+        type="button"
+        class="action-button"
+        onclick="selectFHMeldType('pong')">
+  Pong
+</button>
+
+<button id="fhMeldTypeKang"
+        type="button"
+        class="action-button"
+        onclick="selectFHMeldType('kang')">
+  Kang
+</button>
+
+<button id="fhMeldTypeNEWS"
+        type="button"
+        class="action-button"
+        onclick="selectFHMeldType('news')">
+  NEWS
+</button>
+
+  </div>
+
+  <div id="fhMeldTypeBuilder"></div>
+
+  <div class="actions">
+    <button
+      type="button"
+      class="action-button"
+      onclick="cancelFHMeldBuilder()"
+    >
+      Cancel
+    </button>
+  </div>
+
+</div>
+
+<div
+  id="fhAccountingMessage"
+  class="suggestion"
+  style="margin-top:16px; margin-bottom:16px;">
+</div>
+
+  <div class="hand-section-title" style="margin-top:20px;">
+    2. Enter Your Free Tiles
+  </div>
+
+</div>
+
+
     <div id="section-chars" class="section"><h2>Chars (<span id="charsTotal">0</span>)</h2><div class="tile-grid" id="characters"></div></div>
     <div id="section-bams" class="section"><h2>Bams (<span id="bamsTotal">0</span>)</h2><div class="tile-grid" id="bams"></div></div>
     <div id="section-dots" class="section"><h2>Dots (<span id="dotsTotal">0</span>)</h2><div class="tile-grid" id="dots"></div></div>
@@ -303,6 +404,27 @@ V4 = Photo Recognition
     New Game
   </button>
 </div>
+
+<div id="gameHistoryRow" class="hd-action-row game-history-row hidden">
+  <button
+    id="saveGameBtn"
+    class="action-button secondary-hd-button"
+    type="button"
+    onclick="showToast('This feature is coming soon.')"
+  >
+    Save Game
+  </button>
+
+  <button
+    id="gameHistoryBtn"
+    class="action-button secondary-hd-button"
+    type="button"
+    onclick="showToast('This feature is coming soon.')"
+  >
+    Game History
+  </button>
+</div>
+
   </div>
 </div>
 
@@ -400,7 +522,7 @@ V4 = Photo Recognition
     <button onclick="openFeedbackDialog()">Feedback</button>
     <button onclick="openSupportDialog()">Support MJC</button>
   </div>
-  <div class="footer-version">Beta v8.1</div>
+  <div class="footer-version">Beta v8.2</div>
 </div>
 
 </div>
@@ -1109,7 +1231,7 @@ V4 = Photo Recognition
     <h2>Feedback</h2>
     <p>Thank you for helping us improve Mahjong Coach.</p>
     <p>We welcome bug reports, suggestions, comments, and feature requests.</p>
-    <p><strong>Email:</strong> <a href="mailto:mjcfeedbackteam@gmail.com?subject=Mahjong%20Coach%20Feedback%20-%20Beta%20v8.1">mjcfeedbackteam@gmail.com</a></p>
+    <p><strong>Email:</strong> <a href="mailto:mjcfeedbackteam@gmail.com?subject=Mahjong%20Coach%20Feedback%20-%20Beta%20v8.2">mjcfeedbackteam@gmail.com</a></p>
     <p><em>Every message is read and appreciated.</em></p>
     <div class="dialog-actions">
       <button class="dialog-button primary" onclick="closeDialog('feedbackDialog')">Close</button>
@@ -1147,7 +1269,7 @@ Acceptance standard:
 ==================================================
 */
 
-const MJC_VERSION_LABEL = "Beta v8.1";
+const MJC_VERSION_LABEL = "Beta v8.2";
 
 const MJC_RULESET_BASE_HAND_SIZES = Object.freeze({
   filipino16: 16,
@@ -1377,6 +1499,8 @@ function startNewGame() {
   overPairedActive = false;
   sevenPairsMode = false;
   handStarted = false;
+  gameTranscript.initialTiles = [];
+  gameTranscript.actions = [];
   playerDiscardCount = 0;
   sevenPairsStatusAsked = false;
   overPairedDelayOneEvaluation = false;
