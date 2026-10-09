@@ -173,31 +173,25 @@ function cycleTile(key) {
   updateDisplay();
 }
 
+
 function cycleCorrectionTile(key) {
   fhValidationMessage = null;
-  const originalCount = tcsOriginalCounts[key] || 0;
-  const addedCount = tcsAddedCounts[key] || 0;
 
-  // TCS rule:
-  // Green = original/current hand tile count. One tap clears the entire green count.
-  // Unselected = no tile count. One tap starts a new yellow correction count at 1.
-  // Yellow = newly added correction count. Repeated taps cycle 1 → 2 → 3 → 4 → clear.
-  if (originalCount > 0) {
-    tcsOriginalCounts[key] = 0;
-    tcsAddedCounts[key] = 0;
-    counts[key] = 0;
-  } else {
- 
-    const nextAddedCount = (addedCount + 1) % 5;
+  const currentCount = counts[key] || 0;
+  const nextCount = (currentCount + 1) % 5;
 
-    tcsAddedCounts[key] = nextAddedCount;
-    counts[key] = nextAddedCount;
-  }
+  counts[key] = nextCount;
+
+  // Any tap changes MJC's remembered count.
+  // Display the new count in yellow.
+  tcsOriginalCounts[key] = 0;
+  tcsAddedCounts[key] = nextCount;
 
   revisionTouched = true;
   hideUndo();
   updateDisplay();
 }
+
 
 function initializeCorrectionStateFromCounts() {
   tcsOriginalCounts = {};
@@ -330,21 +324,31 @@ if (fhMeldedTiles) {
   fhMeldedTiles.textContent = physicalMeldTileCount;
 }
 
+
 if (fhStickyAccounting) {
-  if (fhValidationMessage) {
   fhStickyAccounting.innerHTML =
-    '<span style="color:#b00020; font-weight:700;">' +
-    '⚠ ' + fhValidationMessage +
+    'Tile Target: <span id="fhTileTarget">' +
+    physicalTarget +
+    '</span> | Melded Tiles: <span id="fhMeldedTiles">' +
+    physicalMeldTileCount +
     '</span>';
-} else {
-    fhStickyAccounting.innerHTML =
-      'Tile Target: <span id="fhTileTarget">' +
-      physicalTarget +
-      '</span> | Melded Tiles: <span id="fhMeldedTiles">' +
-      physicalMeldTileCount +
-      '</span>';
-  }
 }
+
+const fhAcceptValidationMessage =
+  document.getElementById("fhAcceptValidationMessage");
+
+if (fhAcceptValidationMessage) {
+  fhAcceptValidationMessage.textContent =
+    fhValidationMessage
+      ? "⚠ " + fhValidationMessage
+      : "";
+
+  fhAcceptValidationMessage.classList.toggle(
+    "hidden",
+    !fhValidationMessage
+  );
+}
+
 
   const remainingTilesNeeded =
     physicalTarget - physicalMeldTileCount;
@@ -398,11 +402,15 @@ extraMeldTiles +
   physicalMeldTileCount +
   " Melded " +
   (physicalMeldTileCount === 1 ? "Tile." : "Tiles.") +
- "\nEnter " +
-remainingTilesNeeded +
-" Free " +
-(remainingTilesNeeded === 1 ? "Tile" : "Tiles") +
-" to complete your hand.";
+ 
+(remainingTilesNeeded < 0
+  ? "\nToo many Melded Tiles. Remove a meld to continue."
+  : "\nEnter " +
+    remainingTilesNeeded +
+    " Free " +
+    (remainingTilesNeeded === 1 ? "Tile" : "Tiles") +
+    " to complete your hand.");
+
 
   const fhAccountingMessage =
   document.getElementById("fhAccountingMessage");
@@ -477,7 +485,13 @@ function updateActionButtons(total, target) {
     startBtn.style.color = "";
     acceptBtn.classList.remove("hidden");
 
-    const acceptReady = screenMode === "handCorrection" ? true : total === target;
+   
+const acceptReady = screenMode === "handCorrection"
+  ? total === getBaseHandSize()
+      - fhMelds.filter(box => box.visibility !== "remove").length * 3
+      + (fhTurnCycle === "discard" ? 1 : 0)
+  : total === target;
+
     acceptBtn.disabled = !acceptReady;
     acceptBtn.classList.toggle("enabled", acceptReady);
     acceptBtn.classList.toggle("disabled", !acceptReady);
@@ -582,9 +596,14 @@ function startHand() {
   lastActionTileKey = null;
   correctionTargetTileKey = null;
   correctionActionType = null;
+ 
   handCorrectionTarget = null;
 
+  // A new hand starts with no previously removed FH boxes.
+  fhRemovedBoxSignatures = [];
+
   gameAction = role === "dealer" ? "discard" : "draw";
+
 
   showHD();
 }
@@ -607,18 +626,20 @@ function acceptRevision() {
 
   const actualRackCount = getTotal();
 
-  if (actualRackCount !== expectedRackCount) {
-    const difference =
-      Math.abs(expectedRackCount - actualRackCount);
+  
+if (actualRackCount !== expectedRackCount) {
+  const difference =
+    Math.abs(expectedRackCount - actualRackCount);
 
-    const message =
-      actualRackCount < expectedRackCount
-        ? "Enter " + difference + " more tile(s) before accepting."
-        : "Remove " + difference + " tile(s) before accepting.";
+  fhValidationMessage =
+    actualRackCount < expectedRackCount
+      ? "Enter " + difference + " more tile(s) before accepting."
+      : "Remove " + difference + " tile(s) before accepting.";
 
-    updateDisplay(message);
-    return;
-  }
+  updateDisplay();
+  return;
+}
+
 
 const physicalTileCounts = {};
 
@@ -738,34 +759,31 @@ function reviseHand() {
 // FIX HAND — MELD BUILDER
 // ==================================================
 
+
 let fhMeldBuilderType = null;
 let fhMelds = [];
+
+// Compatibility with index.html reset; FH no longer suppresses box signatures.
+let fhRemovedBoxSignatures = [];
+
 function initializeFHMelds() {
-  const result =
-    evaluate17TE(
-      MJC_STATE.getEngineInput()
-    );
+  const result = evaluate17TE(MJC_STATE.getEngineInput());
+  const structureState = result.structureState || result;
+  const completeBoxes = structureState.completeBoxes || [];
 
-  const structureState =
-    result.structureState || result;
-
-  const completeBoxes =
-    structureState.completeBoxes || [];
-
+  // FH is a recovery workflow: display every recognized Complete Box.
+  // Removed melds disappear because their tiles are absent after Accept,
+  // not because a signature is hidden from the engine.
   fhMelds = completeBoxes.map(function(box) {
     return {
       boxId: box.boxId,
       source: "existing",
-      type: box.type,    
+      type: box.type,
       tiles: [...box.tiles],
-      visibility:
-        box.visibility === "exposed"
-          ? "exposed"
-          : "hidden"
+      visibility: box.visibility === "exposed" ? "exposed" : "hidden"
     };
   });
 }
-
 
 function openFHMeldBuilder() {
   fhMeldBuilderType = null;
@@ -1034,24 +1052,50 @@ function selectFHChowStart(startNumber) {
 
 }
 
+
+function transferFreeTilesToFHMeld(meldTiles) {
+  const transferred = [];
+
+  meldTiles.forEach(function(tileKey) {
+    if ((counts[tileKey] || 0) > 0) {
+      counts[tileKey] -= 1;
+      transferred.push(tileKey);
+
+      tcsOriginalCounts[tileKey] = counts[tileKey];
+      tcsAddedCounts[tileKey] = 0;
+    }
+  });
+
+  return transferred;
+}
+
+
 function addFHChow() {
   if (fhChowTiles.length !== 3) {
     showToast("Select a Chow.");
     return;
   }
 
+  const meldTiles = [...fhChowTiles];
+
+  const transferred =
+    transferFreeTilesToFHMeld(meldTiles);
+
   fhMelds.push({
     type: "chow",
-    tiles: [...fhChowTiles],
+    tiles: meldTiles,
     visibility: fhChowVisibility,
-    source: "added"
+    source: "added",
+    fhTransferredTiles: transferred
   });
 
+  fhValidationMessage = null;
   revisionTouched = true;
 
   cancelFHMeldBuilder();
   renderMeldVisibilityCorrection();
 }
+
 
 let fhPongNumber = null;
 let fhPongTileKey = null;
@@ -1190,28 +1234,37 @@ function renderFHPongBuilder() {
   builder.innerHTML = html;
 }
 
+
 function addFHPong() {
   if (!fhPongTileKey) {
     showToast("Select a tile for your Pong.");
     return;
   }
 
+  const meldTiles = [
+    fhPongTileKey,
+    fhPongTileKey,
+    fhPongTileKey
+  ];
+
+  const transferred =
+    transferFreeTilesToFHMeld(meldTiles);
+
   fhMelds.push({
     type: "pong",
-    tiles: [
-      fhPongTileKey,
-      fhPongTileKey,
-      fhPongTileKey
-    ],
+    tiles: meldTiles,
     visibility: fhPongVisibility,
-    source: "added"
+    source: "added",
+    fhTransferredTiles: transferred
   });
 
+  fhValidationMessage = null;
   revisionTouched = true;
 
   cancelFHMeldBuilder();
   renderMeldVisibilityCorrection();
 }
+
 
 function selectFHPongNumber(number) {
   fhPongNumber = number;
@@ -1505,31 +1558,38 @@ function selectFHKangHonor(tileKey) {
   );
 }
 
+
 function addFHKang() {
   if (!fhKangTileKey) {
     showToast("Select a tile for your Kang.");
     return;
   }
 
+  const meldTiles = [
+    fhKangTileKey,
+    fhKangTileKey,
+    fhKangTileKey,
+    fhKangTileKey
+  ];
+
+  const transferred =
+    transferFreeTilesToFHMeld(meldTiles);
+
   fhMelds.push({
     type: "kang",
-    tiles: [
-      fhKangTileKey,
-      fhKangTileKey,
-      fhKangTileKey,
-      fhKangTileKey
-    ],
+    tiles: meldTiles,
     visibility: fhKangVisibility,
-    source: "added"
+    source: "added",
+    fhTransferredTiles: transferred
   });
 
+  fhValidationMessage = null;
   revisionTouched = true;
 
   cancelFHMeldBuilder();
   renderMeldVisibilityCorrection();
 }
 
-let fhNEWSVisibility = "hidden";
 
 function renderFHNewsBuilder() {
   fhNEWSVisibility = "hidden";
@@ -1587,24 +1647,33 @@ function renderFHNewsBuilder() {
     '</div>';
 }
 
+
 function addFHNEWS() {
+  const meldTiles = [
+    "north",
+    "east",
+    "west",
+    "south"
+  ];
+
+  const transferred =
+    transferFreeTilesToFHMeld(meldTiles);
+
   fhMelds.push({
     type: "news",
-    tiles: [
-      "north",
-      "east",
-      "west",
-      "south"
-    ],
+    tiles: meldTiles,
     visibility: fhNEWSVisibility,
-    source: "added"
+    source: "added",
+    fhTransferredTiles: transferred
   });
 
+  fhValidationMessage = null;
   revisionTouched = true;
 
   cancelFHMeldBuilder();
   renderMeldVisibilityCorrection();
 }
+
 
 function cancelFHMeldBuilder() {
   fhMeldBuilderType = null;
@@ -1621,12 +1690,20 @@ function cancelFHMeldBuilder() {
     .classList.add("hidden");
 }
 
-function setFHMeldState(index, state) {
-  if (!fhMelds[index]) return;
 
-  fhMelds[index].visibility = state;
+function setFHMeldState(index, state) {
+  const box = fhMelds[index];
+  if (!box) return;
+
+  // Remove means delete the meld AND its tiles from the reconstructed hand.
+  // Meld tiles are already excluded from Free Tiles (existing melds at
+  // FH entry; newly added melds through transferFreeTilesToFHMeld).
+  // Do not return tiles to Free Tiles when removing a meld, or transfer
+  // them again if the player changes Remove back to Hidden/Exposed.
+  box.visibility = state;
+  fhValidationMessage = null;
   revisionTouched = true;
-  updateDisplay();
+  renderMeldVisibilityCorrection();
 }
 
 function renderMeldVisibilityCorrection() {
@@ -1848,15 +1925,23 @@ function openHandCorrectionScreen() {
       handCorrectionReturnAction
     );
 
-for (const key in counts) {
-  counts[key] = 0;
-}
+// Start Free Tiles with the current physical hand.
+const fhFreeTileCounts = { ...counts };
+
+// Exclude tiles belonging to established melds.
+fhMelds.forEach(function(box) {
+  box.tiles.forEach(function(tileKey) {
+    fhFreeTileCounts[tileKey] =
+      (fhFreeTileCounts[tileKey] || 0) - 1;
+  });
+});
 
 tcsOriginalCounts = {};
 tcsAddedCounts = {};
 
 for (const key in counts) {
-  tcsOriginalCounts[key] = 0;
+  counts[key] = Math.max(0, fhFreeTileCounts[key] || 0);
+  tcsOriginalCounts[key] = counts[key];
   tcsAddedCounts[key] = 0;
 }
 
