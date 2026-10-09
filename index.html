@@ -201,11 +201,20 @@ V4 = Photo Recognition
   style="margin-top:16px; margin-bottom:16px;">
 </div>
 
-  <div class="hand-section-title" style="margin-top:20px;">
-    2. Enter Your Free Tiles
-  </div>
+  
+<div class="hand-section-title" style="margin-top:20px;">
+  2. Enter Your Free Tiles
+</div>
+
+<p style="font-size:13px; line-height:1.4; margin:8px 0 12px;">
+  <strong>Green tiles</strong> are from MJC's last recorded
+  hand and may no longer be accurate.
+  Tap a tile to cycle its count (0–4).
+  Long-press to clear.
+</p>
 
 </div>
+
 
 
     <div id="section-chars" class="section"><h2>Chars (<span id="charsTotal">0</span>)</h2><div class="tile-grid" id="characters"></div></div>
@@ -214,12 +223,23 @@ V4 = Photo Recognition
     <div id="section-winds" class="section"><h2>Winds (<span id="windsTotal">0</span>)</h2><div class="wind-grid" id="winds"></div></div>
     <div id="section-dragons" class="section"><h2>Dragons (<span id="dragonsTotal">0</span>)</h2><div class="dragon-grid" id="dragons"></div></div>
 
-    <div class="actions">
-      <button id="clearAllBtn" class="action-button" onclick="clearAll()">Clear Tiles</button>
-      <button id="cancelCorrectionBtn" class="action-button hidden" onclick="cancelHandCorrection()">Cancel</button>
-      <button id="startBtn" class="action-button start-button disabled" onclick="startHand()" disabled>Play On!</button>
-      <button id="acceptBtn" class="action-button accept-button disabled hidden" onclick="acceptRevision()" disabled>Accept</button>
-    </div>
+
+<div class="actions" style="flex-wrap:wrap;">
+
+  <div id="fhAcceptValidationMessage"
+       class="suggestion hidden"
+       
+style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#c62828; font-weight:600;">
+
+  </div>
+
+  <button id="clearAllBtn" class="action-button" onclick="clearAll()">Clear Tiles</button>
+  <button id="cancelCorrectionBtn" class="action-button hidden" onclick="cancelHandCorrection()">Cancel</button>
+  <button id="startBtn" class="action-button start-button disabled" onclick="startHand()" disabled>Play On!</button>
+  <button id="acceptBtn" class="action-button accept-button disabled hidden" onclick="acceptRevision()" disabled>Accept</button>
+
+</div>
+
 
     <div id="longPressTip" class="tip">Long press tile to clear the tile.</div>
 
@@ -1585,6 +1605,8 @@ overPairedDialogs.forEach(function(dialogId) {
 
   mmrState = null;
   mmrCommittedBoxes = [];
+  fhRemovedBoxSignatures = [];
+
   canonicalStructureState = {
     completeBoxes: [],
     developingBoxes: [],
