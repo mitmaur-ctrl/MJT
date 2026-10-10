@@ -486,7 +486,7 @@ function updateActionButtons(total, target) {
     startBtn.classList.remove("hidden");
     acceptBtn.classList.add("hidden");
 
-    const startReady = screenMode === "revision" ? true : total === target;
+    const startReady = total === target;
     startBtn.disabled = !startReady;
     startBtn.classList.toggle("enabled", startReady);
     startBtn.classList.toggle("disabled", !startReady);
