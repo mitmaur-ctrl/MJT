@@ -788,6 +788,16 @@ const preDrawResult =
       )
     : null;
 
+const hadNEWSBeforeDraw =
+  Boolean(
+    preDrawResult &&
+    preDrawResult.structureState.completeBoxes.some(
+      function(box) {
+        return box.type === "news";
+      }
+    )
+  );
+
 mahjongWatchBeforeDraw =
   Boolean(
     preDrawResult &&
@@ -884,7 +894,13 @@ const deferredPKC =
     }
   );
 
-if (deferredPKC) {
+if (
+  deferredPKC &&
+  !(
+    deferredPKC.candidateType === "news" &&
+    hadNEWSBeforeDraw
+  )
+) {
   const isNewsPKC =
     deferredPKC.candidateType === "news";
 
@@ -1046,7 +1062,8 @@ const declarableNEWS =
 
 if (
   declarableNEWS &&
-  ignoredNEWS !== true
+  ignoredNEWS !== true &&
+  !hadNEWSBeforeDraw
 ) {
   mmrState = {
     action: "hidden-news-after-draw",
@@ -1381,7 +1398,7 @@ if (mmrState.action === "hidden-news-after-draw") {
     );
   }
 
-ignoredNEWS = true;
+ignoredNEWS = false;
 
   lockHandContext();
 
