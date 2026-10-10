@@ -9,7 +9,7 @@ Project:
 Mahjong Coach
 
 Version:
-MJC Beta v8.3
+MJC Beta v8.4
 
 Purpose:
 - Smartphone-optimized tile management vehicle
@@ -545,20 +545,35 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
       <button id="insightBtn" class="action-button insight-button" onclick="showInsightPlaceholder()">Insight</button>      
     </div>
   </div>
-
+  
 <div class="footer">
   <div class="footer-row">
-    <button onclick="openGettingStartedDialog()">Getting Started</button>
+    
+<button
+  type="button"
+  id="gettingStartedFooterBtn"
+  onclick="handleGettingStartedFooterClick(event)"
+  onpointerdown="startWelcomeLongPress(event)"
+  onpointerup="endWelcomeLongPress()"
+  onpointerleave="endWelcomeLongPress()"
+  onpointercancel="endWelcomeLongPress()"
+  oncontextmenu="event.preventDefault()"
+>Getting Started</button>
+
     <button onclick="openAboutDialog()">About MJC</button>
     <button onclick="openAbout6BTDialog()">About 6BT</button>
   </div>
+
   <div class="footer-row">
     <button onclick="openAcknowledgmentsDialog()">Acknowledgments</button>
     <button onclick="openFeedbackDialog()">Feedback</button>
     <button onclick="openSupportDialog()">Support MJC</button>
   </div>
-  <div class="footer-version">Beta v8.3</div>
+
+  <div class="footer-version">Beta v8.4</div>
 </div>
+
+
 
 </div>
 
@@ -1003,15 +1018,27 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
   </div>
 </div>
 
+
 <div id="welcomeDialog" class="dialog-backdrop hidden">
   <div class="dialog">
-    <h2>Welcome to Mahjong Coach (MJC)</h2>
+    <h2>Welcome to Mahjong Coach</h2>
 
-   <p>
-  New here?<br>
-  Getting Started shows you how to begin.<br>
-  You can find it again in the footer.
-</p>
+    <p style="text-align:center;">
+      <strong>Learn. Understand. Improve.</strong>
+    </p>
+
+    <p>
+      Mahjong Coach uses Six Box Theory™ (6BT) to
+      help you understand your hand, recognize its
+      strengths and weaknesses, and make better
+      playing decisions.
+    </p>
+
+    <p>
+      <strong>New here?</strong><br>
+      Getting Started shows you how to begin.
+      You can return to it anytime from the footer.
+    </p>
 
     <div class="dialog-actions">
       <button
@@ -1021,6 +1048,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
       >
         Getting Started
       </button>
+
       <button
         type="button"
         class="dialog-button"
@@ -1035,26 +1063,36 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
 
 <div id="gettingStartedDialog" class="dialog-backdrop hidden">
   <div class="dialog">
-    <h2>Welcome to Mahjong Coach (MJC)</h2>
+    <h2>Getting Started</h2>
+
+    <p>Welcome to Mahjong Coach!</p>
 
     <p><strong>To get started:</strong></p>
 
     <ol>
-      <li>Select your Display preferences. This is the order in which you normally organize tiles on your rack.</li>
-      <li>Select your Role: Player or Dealer.</li>
-      <li>Select your Seat and Round winds.</li>
-      <li>Enter your starting tiles.</li>
-      <li>Review your settings and tile entries.</li>
-      <li>Press Play On!</li>
+      <li><strong>Select your Role:</strong> Player or Dealer.</li>
+      <li><strong>Select your Ruleset:</strong> Choose the Mahjong rules you play by.</li>
+      <li><strong>Select your Display preferences:</strong> Choose the order in which your tiles are displayed.</li>
+      <li><strong>Enter your starting tiles:</strong> Tap each tile to enter the tiles in your hand.</li>
+      <li><strong>Review your settings and tiles:</strong> Make sure everything is correct.</li>
+      <li><strong>Press Play On!</strong> MJC will organize your hand according to Six Box Theory™.</li>
     </ol>
 
-    <p><button class="dialog-button" onclick="openUserGuideDialog()">User Guide</button></p>
+    <p>
+      <button class="dialog-button" onclick="openUserGuideDialog()">
+        User Guide
+      </button>
+    </p>
 
     <div class="dialog-actions">
-      <button class="dialog-button primary" onclick="closeDialog('gettingStartedDialog')">Close</button>
+      <button
+        class="dialog-button primary"
+        onclick="closeDialog('gettingStartedDialog')"
+      >Close</button>
     </div>
   </div>
-</div>  
+</div>
+
 
 <div id="about6BTDialog" class="dialog-backdrop hidden">
   <div class="dialog">
@@ -1357,7 +1395,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     <h2>Feedback</h2>
     <p>Thank you for helping us improve Mahjong Coach.</p>
     <p>We welcome bug reports, suggestions, comments, and feature requests.</p>
-    <p><strong>Email:</strong> <a href="mailto:mjcfeedbackteam@gmail.com?subject=Mahjong%20Coach%20Feedback%20-%20Beta%20v8.3">mjcfeedbackteam@gmail.com</a></p>
+    <p><strong>Email:</strong> <a href="mailto:mjcfeedbackteam@gmail.com?subject=Mahjong%20Coach%20Feedback%20-%20Beta%20v8.4">mjcfeedbackteam@gmail.com</a></p>
     <p><em>Every message is read and appreciated.</em></p>
     <div class="dialog-actions">
       <button class="dialog-button primary" onclick="closeDialog('feedbackDialog')">Close</button>
@@ -1395,7 +1433,7 @@ Acceptance standard:
 ==================================================
 */
 
-const MJC_VERSION_LABEL = "Beta v8.3";
+const MJC_VERSION_LABEL = "Beta v8.4";
 
 const MJC_RULESET_BASE_HAND_SIZES = Object.freeze({
   filipino16: 16,
@@ -1710,6 +1748,39 @@ overPairedDialogs.forEach(function(dialogId) {
   updateContextControls();
   updateDisplay();
   showToast("New game ready.");
+}
+
+
+let welcomeLongPressTimer = null;
+let welcomeLongPressTriggered = false;
+
+function startWelcomeLongPress(event) {
+  if (event.button !== undefined && event.button !== 0) return;
+
+  welcomeLongPressTriggered = false;
+
+  clearTimeout(welcomeLongPressTimer);
+
+  welcomeLongPressTimer = setTimeout(function() {
+    welcomeLongPressTimer = null;
+    welcomeLongPressTriggered = true;
+    openDialog('welcomeDialog');
+  }, 2000);
+}
+
+function endWelcomeLongPress() {
+  clearTimeout(welcomeLongPressTimer);
+  welcomeLongPressTimer = null;
+}
+
+function handleGettingStartedFooterClick(event) {
+  if (welcomeLongPressTriggered) {
+    event.preventDefault();
+    welcomeLongPressTriggered = false;
+    return;
+  }
+
+  openGettingStartedDialog();
 }
 
 
