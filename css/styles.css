@@ -445,11 +445,16 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 
 }
 
 .hand-meta {
+  display: table;
+  margin: 0 auto 10px;
+  padding: 4px 14px;
   text-align: center;
   font-size: 14px;
   font-weight: bold;
-  color: #444;
-  margin-bottom: 10px;
+  color: #28552b;
+  background: #e5f1e3;
+  border: 1px solid #a9cba5;
+  border-radius: 8px;
 }
 
 
