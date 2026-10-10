@@ -913,16 +913,50 @@ if (sixBoxTheoryLink) {
 
 }
     handInstruction.classList.remove("hidden");
-    handMeta.textContent =
-      "Role: " + (role === "dealer" ? "Dealer" : "Player") +
-      " | Tiles: " + total +
-      " | " + setupContext;
 
-    return;
+handMeta.textContent =
+  "Role: " + (role === "dealer" ? "Dealer" : "Player") + " ↔";
+
+handMeta.classList.remove("hidden");
+
+handMeta.setAttribute("role", "button");
+handMeta.setAttribute("tabindex", "0");
+handMeta.style.cursor = "pointer";
+
+handMeta.onclick = toggleStartingHandRole;
+
+handMeta.onkeydown = function(event) {
+  if (event.key === "Enter" || event.key === " ") {
+    event.preventDefault();
+    toggleStartingHandRole();
   }
+};
 
-  handTitle.textContent = "Current Hand";
-  handMeta.textContent = setupContext;
+const roleTarget = getStartingTarget();
+const roleCountValid = getTotal() === roleTarget;
+
+if (!roleCountValid) {
+  hdPrimaryRow.classList.add("hidden");
+
+  const difference = Math.abs(roleTarget - getTotal());
+  const correction = getTotal() < roleTarget
+    ? "Add " + difference
+    : "Remove " + difference;
+
+  handInstruction.innerHTML +=
+    "<br><strong>" +
+    correction + " " +
+    (difference === 1 ? "tile" : "tiles") +
+    " using Revise before continuing.</strong>";
+}
+
+return;
+}
+
+handTitle.textContent = "Current Hand";
+  handMeta.textContent = "";
+  handMeta.classList.add("hidden");
+
   handInstruction.innerHTML =
   kangReplacementDraw
     ? (
@@ -2899,9 +2933,14 @@ const recommendedDiscardSummary =
 const showDiscardRecommendation =
   (
     hdMode === "current" ||
-    (hdMode === "starting" && role === "dealer")
+    (
+      hdMode === "starting" &&
+      role === "dealer" &&
+      getTotal() === getStartingTarget()
+    )
   ) &&
   coachingOn &&
+
   gameAction === "discard" &&
   !kangReplacementDraw &&
   !result.mahjong &&

@@ -88,7 +88,11 @@ function createTile(containerId, label, key) {
       if (screenMode === "revision") revisionTouched = true;
 
       hideUndo();
-      updateDisplay("Tile cleared.");
+updateDisplay(
+  screenMode === "handCorrection"
+    ? undefined
+    : "Tile cleared."
+);
     }, 650);
   });
 
@@ -405,11 +409,21 @@ extraMeldTiles +
  
 (remainingTilesNeeded < 0
   ? "\nToo many Melded Tiles. Remove a meld to continue."
-  : "\nEnter " +
+  : "\nYour hand requires " +
     remainingTilesNeeded +
+    " Free Tiles." +
+
+    (total < remainingTilesNeeded
+  ? "\nAdd " +
+    (remainingTilesNeeded - total) +
     " Free " +
-    (remainingTilesNeeded === 1 ? "Tile" : "Tiles") +
-    " to complete your hand.");
+    (remainingTilesNeeded - total === 1 ? "Tile." : "Tiles.")
+  : total > remainingTilesNeeded
+    ? "\nRemove " +
+      (total - remainingTilesNeeded) +
+      " Free " +
+      (total - remainingTilesNeeded === 1 ? "Tile." : "Tiles.")
+    : "\nYour Free Tile count is correct."));
 
 
   const fhAccountingMessage =

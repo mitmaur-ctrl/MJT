@@ -52,6 +52,7 @@ function updateContextControls() {
   document.getElementById("rulesButton").disabled = locked;
   document.getElementById("displayButton").disabled = locked;
   document.getElementById("roleSelect").disabled = locked;
+  document.getElementById("roleButton").disabled = locked;
   document.getElementById("seatWindSelect").disabled = locked;
   document.getElementById("prevailingWindSelect").disabled = locked;
   document.getElementById("lockedNote").classList.toggle("hidden", !locked);
@@ -86,6 +87,23 @@ function setRuleset(newRuleset) {
   updateDisplay();
 }
 
+function saveRoleDialog() {
+  if (contextLocked) return;
+
+  const selected = document.querySelector(
+    'input[name="roleRadio"]:checked'
+  );
+
+  if (!selected) return;
+
+  document.getElementById("roleSelect").value =
+    selected.value;
+
+  setMode(selected.value);
+
+  closeDialog("roleDialog");
+}
+
 function setMode(newRole) {
   if (contextLocked) return;
   role = newRole;
@@ -104,6 +122,22 @@ function setMode(newRole) {
 
   hideUndo();
   updateDisplay();
+}
+
+function toggleStartingHandRole() {
+  if (hdMode !== "starting") return;
+
+  const newRole =
+    role === "player" ? "dealer" : "player";
+
+  // Reuse the existing Role-setting logic.
+  setMode(newRole);
+
+  // Keep the original Role selector synchronized.
+  document.getElementById("roleSelect").value = role;
+
+  // Refresh the Starting Hand Display.
+  showHD();
 }
 
 function getWindLabel(value) {
