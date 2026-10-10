@@ -9,7 +9,7 @@ Project:
 Mahjong Coach
 
 Version:
-MJC Beta v8.2
+MJC Beta v8.3
 
 Purpose:
 - Smartphone-optimized tile management vehicle
@@ -53,52 +53,67 @@ V4 = Photo Recognition
     <div class="title">Mahjong Coach</div>
   </div>
 
-  <div id="startingHeaderControls" class="header-controls">
-    <div class="top-control-row">
-      <button id="rulesButton" class="mode-button" onclick="openRulesDialog()">Ruleset</button>
-      <button id="displayButton" class="mode-button" onclick="openDisplayDialog()">Display</button>
-    </div>
+<div id="startingHeaderControls" class="header-controls">
+  <div class="top-control-row">
 
-    <div class="context-row">
-      <div class="context-control">
-        <div class="context-label">Role</div>
-        <select id="roleSelect" class="control-select" onchange="setMode(this.value)">
-          <option value="player">Player</option>
-          <option value="dealer">Dealer</option>
-        </select>
-      </div>
+    <button
+  type="button"
+  id="roleButton"
+  class="mode-button"
+  onclick="openDialog('roleDialog')"
+>Role</button>
 
-      <div class="context-control">
-        <div class="context-label">Seat</div>
-        <div class="context-line">
-          <select id="seatWindSelect" class="control-select" onchange="setSeatWind(this.value)">
-            <option value="east">East</option>
-            <option value="south">South</option>
-            <option value="west">West</option>
-            <option value="north">North</option>
-          </select>
-        </div>
-      </div>
+<select
+  id="roleSelect"
+  class="control-select hidden"
+  aria-label="Role"
+  onchange="setMode(this.value)"
+>
+  <option value="player">Player</option>
+  <option value="dealer">Dealer</option>
+</select>
 
-      <div class="context-control">
-        <div class="context-label">Round</div>
-        <div class="context-line">
-          <select id="prevailingWindSelect" class="control-select" onchange="setPrevailingWind(this.value)">
-            <option value="east">East</option>
-            <option value="south">South</option>
-            <option value="west">West</option>
-            <option value="north">North</option>
-          </select>
-        </div>
-      </div>
-    </div>
+    <button
+      id="rulesButton"
+      class="mode-button"
+      onclick="openRulesDialog()"
+    >Ruleset</button>
+
+    <button
+      id="displayButton"
+      class="mode-button"
+      onclick="openDisplayDialog()"
+    >Display</button>
+
+  </div>
+
+  <div class="hidden">
+    <select id="seatWindSelect" onchange="setSeatWind(this.value)">
+      <option value="east">East</option>
+      <option value="south">South</option>
+      <option value="west">West</option>
+      <option value="north">North</option>
+    </select>
+
+    <select id="prevailingWindSelect" onchange="setPrevailingWind(this.value)">
+      <option value="east">East</option>
+      <option value="south">South</option>
+      <option value="west">West</option>
+      <option value="north">North</option>
+    </select>
+  </div>
 
     <div id="lockedNote" class="locked-note hidden">Hand context locked for this hand.</div>
-    <div class="counter"><span id="counterLabel">Tiles Entered:</span> <span id="total">0</span><span id="targetWrap"> / <span id="target">16</span></span></div>
 
-<div id="fhStickyAccounting" class="counter hidden">
+    <div id="fhStickyAccounting" class="counter hidden">
   Tile Target: <span id="fhTileTarget">16</span>
   | Melded Tiles: <span id="fhMeldedTiles">0</span>
+</div>
+
+<div class="counter">
+  <span id="counterLabel">Tiles Entered:</span>
+  <span id="total">0</span>
+  <span id="targetWrap"> / <span id="target">16</span></span>
 </div>
 
     <div id="suggestion" class="suggestion">Need 16 more tile(s).</div>
@@ -521,7 +536,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
 
   <div id="discardScreen" class="hidden">
     <div class="discard-title">Discard Tile</div>
-    <div id="discardContext" class="discard-context-line">Seat Wind: East | Round Wind: East</div>
+
     <div id="discardMeta" class="discard-meta">Enter the tile you discarded.</div>
     <div id="discardDisplay" class="hand-display"></div>
 
@@ -542,9 +557,50 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     <button onclick="openFeedbackDialog()">Feedback</button>
     <button onclick="openSupportDialog()">Support MJC</button>
   </div>
-  <div class="footer-version">Beta v8.2</div>
+  <div class="footer-version">Beta v8.3</div>
 </div>
 
+</div>
+
+<div id="roleDialog" class="dialog-backdrop hidden">
+  <div class="dialog">
+    <h2>Select Your Role</h2>
+
+    <div class="dialog-option">
+      <label>
+        <input
+          type="radio"
+          name="roleRadio"
+          value="player"
+          checked
+        >
+        Player
+      </label>
+    </div>
+
+    <div class="dialog-option">
+      <label>
+        <input
+          type="radio"
+          name="roleRadio"
+          value="dealer"
+        >
+        Dealer
+      </label>
+    </div>
+
+    <div class="dialog-actions">
+      <button
+        class="dialog-button"
+        onclick="closeDialog('roleDialog')"
+      >Cancel</button>
+
+      <button
+        class="dialog-button primary"
+        onclick="saveRoleDialog()"
+      >Save</button>
+    </div>
+  </div>
 </div>
 
 <div id="rulesDialog" class="dialog-backdrop hidden">
@@ -1301,7 +1357,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     <h2>Feedback</h2>
     <p>Thank you for helping us improve Mahjong Coach.</p>
     <p>We welcome bug reports, suggestions, comments, and feature requests.</p>
-    <p><strong>Email:</strong> <a href="mailto:mjcfeedbackteam@gmail.com?subject=Mahjong%20Coach%20Feedback%20-%20Beta%20v8.2">mjcfeedbackteam@gmail.com</a></p>
+    <p><strong>Email:</strong> <a href="mailto:mjcfeedbackteam@gmail.com?subject=Mahjong%20Coach%20Feedback%20-%20Beta%20v8.3">mjcfeedbackteam@gmail.com</a></p>
     <p><em>Every message is read and appreciated.</em></p>
     <div class="dialog-actions">
       <button class="dialog-button primary" onclick="closeDialog('feedbackDialog')">Close</button>
@@ -1339,7 +1395,7 @@ Acceptance standard:
 ==================================================
 */
 
-const MJC_VERSION_LABEL = "Beta v8.2";
+const MJC_VERSION_LABEL = "Beta v8.3";
 
 const MJC_RULESET_BASE_HAND_SIZES = Object.freeze({
   filipino16: 16,
