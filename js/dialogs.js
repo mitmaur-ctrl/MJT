@@ -673,9 +673,12 @@ function openFeedbackDialog() {
   openDialog("feedbackDialog");
 }
 
+
 function openSupportDialog() {
+  resetSupportDialog();
   openDialog("supportDialog");
 }
+
 
 function featureComingSoon(input) {
   showToast("Feature Coming Soon");
