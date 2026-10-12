@@ -1640,4 +1640,11 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 
 }
 
 
+/* Support MJC — center contribution buttons */
+.support-amounts {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+
 
