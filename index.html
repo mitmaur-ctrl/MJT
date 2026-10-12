@@ -9,7 +9,7 @@ Project:
 Mahjong Coach
 
 Version:
-MJC Beta v8.4
+MJC Beta v8.5
 
 Purpose:
 - Smartphone-optimized tile management vehicle
@@ -570,7 +570,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     <button onclick="openSupportDialog()">Support MJC</button>
   </div>
 
-  <div class="footer-version">Beta v8.4</div>
+  <div class="footer-version">Beta v8.5</div>
 </div>
 
 
@@ -1395,7 +1395,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     <h2>Feedback</h2>
     <p>Thank you for helping us improve Mahjong Coach.</p>
     <p>We welcome bug reports, suggestions, comments, and feature requests.</p>
-    <p><strong>Email:</strong> <a href="mailto:mjcfeedbackteam@gmail.com?subject=Mahjong%20Coach%20Feedback%20-%20Beta%20v8.4">mjcfeedbackteam@gmail.com</a></p>
+    <p><strong>Email:</strong> <a href="mailto:mjcfeedbackteam@gmail.com?subject=Mahjong%20Coach%20Feedback%20-%20Beta%20v8.5">mjcfeedbackteam@gmail.com</a></p>
     <p><em>Every message is read and appreciated.</em></p>
     <div class="dialog-actions">
       <button class="dialog-button primary" onclick="closeDialog('feedbackDialog')">Close</button>
@@ -1403,18 +1403,218 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
   </div>
 </div>
 
+
 <div id="supportDialog" class="dialog-backdrop hidden">
   <div class="dialog">
     <h2>Support MJC</h2>
+
     <p>Thank you for your interest in supporting Mahjong Coach.</p>
-    <p><strong>This feature is coming soon.</strong></p>
+
+    <p>
+  Mahjong Coach is free to use. If you find it helpful,
+  please consider making a voluntary contribution to support
+  the continued development of the app and its educational
+  YouTube channel.
+</p>
+
+<p style="text-align:center;">
+  <strong>Count me in!</strong>
+</p>
+
+<div class="support-amounts" style="margin-bottom:12px;">
+  <button type="button" onclick="selectSupportAmount(5)">$5</button>
+  <button type="button" onclick="selectSupportAmount(10)">$10</button>
+  <button type="button" onclick="selectSupportAmount(25)">$25</button>
+  <button type="button" onclick="selectSupportAmount(50)">$50</button>
+</div>
+
+<div style="text-align:center; margin:12px 0;">
+  <label>
+    
+<input
+  type="checkbox"
+  id="supportMonthly"
+  onchange="resetSupportSubscriptionCheckout()"
+>
+
+    Go ahead, make it monthly!
+  </label>
+</div>
+
+
+<div id="supportSubscriptionCheckout"
+     class="hidden"
+     style="margin:12px auto; max-width:320px;">
+</div>
+
+
     <div class="dialog-actions">
-      <button class="dialog-button primary" onclick="closeDialog('supportDialog')">Close</button>
+      
+<a
+  id="supportPayPalButton"
+  class="dialog-button primary"
+  href="#"
+  onclick="return openSupportCheckout(event)"
+>Support via PayPal</a>
+
+
+      <button
+        class="dialog-button"
+        onclick="closeDialog('supportDialog')"
+      >Close</button>
     </div>
   </div>
 </div>
   
 <div id="toast" class="toast hidden"></div>
+
+<script>
+
+function resetSupportDialog() {
+  resetSupportSubscriptionCheckout();
+
+  document.getElementById("supportMonthly").checked = false;
+
+  document.querySelectorAll(
+    "#supportDialog .support-amounts button"
+  ).forEach(function(button) {
+    button.style.backgroundColor = "";
+    button.style.color = "";
+    button.setAttribute("aria-pressed", "false");
+  });
+}
+
+
+function resetSupportSubscriptionCheckout() {
+  document.getElementById("supportSubscriptionCheckout")
+    .classList.add("hidden");
+
+  document.getElementById("supportPayPalButton")
+    .classList.remove("hidden");
+}
+
+
+function selectSupportAmount(amount) {
+
+document.getElementById("supportSubscriptionCheckout")
+  .classList.add("hidden");
+
+document.getElementById("supportPayPalButton")
+  .classList.remove("hidden");
+
+  const buttons = document.querySelectorAll(
+    "#supportDialog .support-amounts button"
+  );
+
+  buttons.forEach(function(button) {
+    const selected =
+      button.textContent.trim() === "$" + amount;
+
+    button.style.backgroundColor = selected ? "#333" : "";
+    button.style.color = selected ? "#fff" : "";
+    button.setAttribute("aria-pressed", String(selected));
+  });
+}
+
+
+function openSupportCheckout(event) {
+  event.preventDefault();
+
+  const selected = document.querySelector(
+    '#supportDialog .support-amounts button[aria-pressed="true"]'
+  );
+
+  if (!selected) {
+    alert("Please select a contribution amount.");
+    return false;
+  }
+
+  
+if (document.getElementById("supportMonthly").checked) {
+  const amount = Number(
+    selected.textContent.trim().replace("$", "")
+  );
+
+
+  const container = document.getElementById(
+    "supportSubscriptionCheckout"
+  );
+
+  
+container.classList.remove("hidden");
+renderSupportSubscription(amount);
+
+document.getElementById("supportPayPalButton")
+  .classList.add("hidden");
+
+return false;
+
+}
+
+  const links = {
+    5: "https://www.paypal.com/ncp/payment/VLWKFNE6TRUTQ",
+    10: "https://www.paypal.com/ncp/payment/NZB3PVPUEP8N8",
+    25: "https://www.paypal.com/ncp/payment/PVE8NC2YRDY9G",
+    50: "https://www.paypal.com/ncp/payment/V7HAS2MW4YZG8"
+  };
+
+  const amount = Number(
+    selected.textContent.trim().replace("$", "")
+  );
+
+  const url = links[amount];
+  if (!url) return false;
+
+  window.open(url, "_blank", "noopener,noreferrer");
+  return false;
+}
+
+function renderSupportSubscription(amount) {
+  const container = document.getElementById(
+    "supportSubscriptionCheckout"
+  );
+
+  if (!container || typeof paypal === "undefined") {
+    return;
+  }
+
+  container.innerHTML = "";
+
+const plans = {
+  5: "P-1CR43293YS778400HNLF356A",
+  10: "P-431992113G894594LNLF4AWY",
+  25: "P-2J207181JM580673XNLF4CWI",
+  50: "P-33J2891740262754FNLF4HNY"
+};
+
+const planId = plans[amount];
+if (!planId) return;
+
+  paypal.Buttons({
+    style: {
+      shape: "rect",
+      color: "gold",
+      layout: "vertical",
+      label: "subscribe"
+    },
+    
+createSubscription: function(data, actions) {
+  return actions.subscription.create({
+    plan_id: planId
+  });
+},
+
+    onApprove: function(data, actions) {
+      alert("Subscription approved: " + data.subscriptionID);
+    }
+  }).render("#supportSubscriptionCheckout");
+}
+
+
+</script>
+
+<script src="https://www.paypal.com/sdk/js?client-id=BAAALWHdgjXQV15W6whM5b8Qkr-IXyTJsGQOWtUU0h2GKGnoNKumxKcsh0ceKJdmNVwoyzLpfNIPEkN3No&vault=true&intent=subscription"></script>
+
 
 <script src="js/ui-utils.js"></script>
 <script src="js/tile-renderer.js?v=3.0"></script>
@@ -1433,7 +1633,7 @@ Acceptance standard:
 ==================================================
 */
 
-const MJC_VERSION_LABEL = "Beta v8.4";
+const MJC_VERSION_LABEL = "Beta v8.5";
 
 const MJC_RULESET_BASE_HAND_SIZES = Object.freeze({
   filipino16: 16,
