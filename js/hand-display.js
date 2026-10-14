@@ -1934,8 +1934,6 @@ renderCoachTile(box.tiles[1])
       '<div class="pathway-arrow pathway-arrow-left pathway-complex">↓</div>' +
     '</div>') +
 
-
-
 (isCPCMirror
   ? ''
   : '<div class="pathway-indicator">' +
@@ -3076,8 +3074,8 @@ const explanation = timedRecommendation
         "Boxes and all Complete Boxes remain intact."
       : !hasReserves
   ? ": with no Reserves, MJC compares your simple " +
-    "Chow Candidates by their remaining capacity " +
-    "to complete (EA). When EA ties, it considers " +
+        "Chow Candidates by their remaining completion opportunities. " +
+    "When those opportunities are equal, it considers " +
     "Edge Waits before Middle Waits, then " +
     "Double-Sided Waits, and favors keeping the " +
     "more central tile. Discarding one of the " +
