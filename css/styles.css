@@ -1571,6 +1571,24 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 
   text-align: left;
 }
 
+.pathway-fp-summary.pathway-summary-chow {
+  color: #2e8b57;
+}
+
+.pathway-fp-summary.pathway-summary-pong {
+  color: #d97706;
+}
+
+.developing-box:has(.pathway-arrow):not(:has(.pathway-complex))
+.pathway-fp-summary {
+  color: #2e8b57;
+}
+
+.developing-box:has(.pathway-complex)
+.pathway-fp-summary:not(.pathway-cpc-summary) {
+  color: #d97706;
+}
+
 .rt-grouping-selected {
   outline: 3px solid #f4d03f;
   outline-offset: 3px;
