@@ -9,7 +9,7 @@ Project:
 Mahjong Coach
 
 Version:
-MJC Beta v8.5
+MJC Beta v8.6
 
 Purpose:
 - Smartphone-optimized tile management vehicle
@@ -570,7 +570,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     <button onclick="openSupportDialog()">Support MJC</button>
   </div>
 
-  <div class="footer-version">Beta v8.5</div>
+  <div class="footer-version">Beta v8.6</div>
 </div>
 
 
@@ -1123,9 +1123,17 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
 
     <p>This makes it easier to recognize strengths and weaknesses, improve tile efficiency, and make better discard decisions.</p>
 
+        <p>
+      <button
+        type="button"
+        class="dialog-button"
+        onclick="showToast('Glossary coming soon.')"
+      >Glossary</button>
+    </p>
+
     <div class="dialog-actions">
       <button class="dialog-button primary" onclick="closeDialog('about6BTDialog')">Close</button>
-    </div>
+    </div>      
   </div>
 </div>
 
@@ -1414,7 +1422,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     <h2>Feedback</h2>
     <p>Thank you for helping us improve Mahjong Coach.</p>
     <p>We welcome bug reports, suggestions, comments, and feature requests.</p>
-    <p><strong>Email:</strong> <a href="mailto:mjcfeedbackteam@gmail.com?subject=Mahjong%20Coach%20Feedback%20-%20Beta%20v8.5">mjcfeedbackteam@gmail.com</a></p>
+    <p><strong>Email:</strong> <a href="mailto:mjcfeedbackteam@gmail.com?subject=Mahjong%20Coach%20Feedback%20-%20Beta%20v8.6">mjcfeedbackteam@gmail.com</a></p>
     <p><em>Every message is read and appreciated.</em></p>
     <div class="dialog-actions">
       <button class="dialog-button primary" onclick="closeDialog('feedbackDialog')">Close</button>
@@ -1652,7 +1660,7 @@ Acceptance standard:
 ==================================================
 */
 
-const MJC_VERSION_LABEL = "Beta v8.5";
+const MJC_VERSION_LABEL = "Beta v8.6";
 
 const MJC_RULESET_BASE_HAND_SIZES = Object.freeze({
   filipino16: 16,
