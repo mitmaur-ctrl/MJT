@@ -1811,6 +1811,41 @@ function getCPCStructuralPossibilities(box) {
     const low = ranks[0];
     const middle = ranks[1];
     const high = ranks[2];
+    if (high === low + 1 &&
+        (low === middle || middle === high)) {
+      if (low > 1) {
+        possibilities.push({
+          structureType: "chow",
+          tiles: [suit + (low - 1), suit + low, suit + high],
+          keyTile: suit + (low - 1),
+          acceptance: 4,
+          baselineSources: 2
+        });
+      }
+
+      if (high < 9) {
+        possibilities.push({
+          structureType: "chow",
+          tiles: [suit + low, suit + high, suit + (high + 1)],
+          keyTile: suit + (high + 1),
+          acceptance: 4,
+          baselineSources: 2
+        });
+      }
+
+      const pairRank = low === middle ? low : high;
+
+      possibilities.push({
+        structureType: "pong",
+        tiles: [suit + pairRank, suit + pairRank, suit + pairRank],
+        keyTile: suit + pairRank,
+        acceptance: 2,
+        baselineSources: 4
+      });
+
+      return possibilities;
+    }
+
 
     if (
       low === middle &&
@@ -2235,6 +2270,72 @@ function normalizePartitionPairTypes(
 });
 }
 
+function splitFourTileCPCs(boxes, remainingCounts, originalCounts = {}) {
+  const freeCounts = { ...remainingCounts };
+
+  boxes.forEach(box => {
+    box.tiles.forEach(tile => {
+      freeCounts[tile] -= 1;
+    });
+  });
+
+  const result = [];
+
+  boxes.forEach(box => {
+    let split = null;
+
+    if (box.type === "cpc" && box.tiles.length === 4) {
+      for (let index = 0; index < box.tiles.length && !split; index++) {
+        const releasedTile = box.tiles[index];
+        const cpcTiles = box.tiles.filter((tile, i) => i !== index);
+        const possibilities = getCPCStructuralPossibilities({
+          tiles: cpcTiles
+        });
+
+        if (!possibilities) continue;
+
+        const match = releasedTile.match(/^(char|bam|dot)([1-9])$/);
+        if (!match) continue;
+
+        const suit = match[1];
+        const rank = Number(match[2]);
+
+        for (const partnerRank of [rank - 1, rank + 1]) {
+          const start = Math.min(rank, partnerRank);
+          const partner = suit + partnerRank;
+
+          if (
+            start < 2 || start > 7 ||
+            !(freeCounts[partner] > 0)
+          ) continue;
+
+          const cpc = {
+            ...box,
+            tiles: cpcTiles,
+            fp: {
+              structuralPossibilities:
+                analyzeCPCCondition(possibilities, originalCounts)
+            }
+          };
+
+          const dsw = {
+            type: "dsw",
+            tiles: [suit + start, suit + (start + 1)]
+          };
+
+          dsw.fp = analyzeDSWPathways(dsw, originalCounts);
+          freeCounts[partner] -= 1;
+          split = [cpc, dsw];
+          break;
+        }
+      }
+    }
+
+    result.push(...(split || [box]));
+  });
+
+  return result;
+}
 
 function evaluateDBPartitions(
   remainingCounts,
@@ -2534,14 +2635,14 @@ if (
   getPartitionEyeStatus(bestBoxes) === "secured" &&
   chowFirstEyeStatus === "missing"
 ) {
-  return bestBoxes;
+    return splitFourTileCPCs(bestBoxes, remainingCounts, originalCounts);
 }
 
   if (
     chowFirstTileCount >
     bestTileCount
   ) {
-    return chowFirstBoxes;
+        return splitFourTileCPCs(chowFirstBoxes, remainingCounts, originalCounts);
   }
 
   if (
@@ -2562,11 +2663,11 @@ if (
       chowFirstDSWCount >
       bestDSWCount
     ) {
-      return chowFirstBoxes;
+            return splitFourTileCPCs(chowFirstBoxes, remainingCounts, originalCounts);
     }
   }
 
-  return bestBoxes;
+    return splitFourTileCPCs(bestBoxes, remainingCounts, originalCounts);
 }
 
 

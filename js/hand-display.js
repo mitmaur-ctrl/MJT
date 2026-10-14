@@ -1618,11 +1618,16 @@ function renderSevenPairsShortForm(
 
   return html;
 }
-
 function renderThreeTileCPCPathways(box, tileParts) {
-  const chow = box.fp.structuralPossibilities[0];
-  const pong = box.fp.structuralPossibilities[1];
+  const pathways = box.fp.structuralPossibilities;
+  const chows = pathways.filter(p => p.structureType === "chow");
+  const pong = pathways.find(p => p.structureType === "pong");
   const pairFirst = box.tiles[0] === box.tiles[1];
+  const ranks = box.tiles.map(tile =>
+    Number(tile.match(/\d+$/)[0])
+  );
+  const low = Math.min(...ranks);
+  const high = Math.max(...ranks);
 
   function indicator(pathway, isPong) {
     return '<div class="pathway-indicator">' +
@@ -1643,22 +1648,43 @@ function renderThreeTileCPCPathways(box, tileParts) {
     '</div>';
   }
 
-  const row = pairFirst
-    ? tileParts[0] + tileParts[1] +
-      indicator(pong, true) +
-      indicator(chow, false) +
-      tileParts[2]
-    : tileParts[0] +
-      indicator(chow, false) +
-      tileParts[1] + tileParts[2] +
-      indicator(pong, true);
+  let row;
+
+  if (high - low === 1) {
+    const leftChow = chows.find(p =>
+      Number(p.keyTile.match(/\d+$/)[0]) < low
+    );
+    const rightChow = chows.find(p =>
+      Number(p.keyTile.match(/\d+$/)[0]) > high
+    );
+
+    row = (leftChow ? indicator(leftChow, false) : '') +
+      tileParts[0] +
+      (pairFirst
+        ? tileParts[1] + indicator(pong, true) + tileParts[2]
+        : tileParts[1] + tileParts[2] + indicator(pong, true)) +
+      (rightChow ? indicator(rightChow, false) : '');
+  } else {
+    const chow = chows[0];
+
+    row = pairFirst
+      ? tileParts[0] + tileParts[1] +
+        indicator(pong, true) +
+        indicator(chow, false) +
+        tileParts[2]
+      : tileParts[0] +
+        indicator(chow, false) +
+        tileParts[1] + tileParts[2] +
+        indicator(pong, true);
+  }
 
   return '<div class="pathway-dsw-display">' +
     '<div class="pathway-tile-row">' + row + '</div>' +
   '</div>' +
-    summary('Chow', chow) +
+    chows.map(p => summary('Chow', p)).join('') +
     summary('Pong', pong);
 }
+
 function renderActiveArea(
   completeBoxes,
   developingBoxes,
@@ -1736,7 +1762,7 @@ const showThreeTileCPCPathways =
   isCPC &&
   window.pathwaysOn &&
   box.tiles.length === 3 &&
-  box.fp.structuralPossibilities.length === 2;
+    box.fp.structuralPossibilities.length >= 2;
 
 const showCPCPathways =
   isCPC &&
@@ -3058,17 +3084,13 @@ const explanation = timedRecommendation
     "and leaves your Complete Boxes intact."
   : tiedReserves
       ? ": these Reserves offer equally low contribution " +
-        "to developing your hand, based on nearby same-suit " +
-        "support, then centricity—how close a tile’s number " +
-        "is to the middle of its suit. " +
-        "Discarding any one leaves your displayed " +
+        "to developing your hand, based on Connectivity, then Centricity. " +
+        "Discarding any one leaves your " +
         "Developing and Complete Boxes intact."
       : " is a Reserve. Discarding it leaves your " +
-        "displayed Developing and Complete Boxes intact. " +
+        "Developing and Complete Boxes intact. " +
         "Among your Reserves, it offers the least contribution " +
-        "to developing your hand, based on nearby same-suit " +
-        "support, then centricity—how close a tile’s number " +
-        "is to the middle of its suit.";
+        "to developing your hand, based on Connectivity, then Centricity.";
 
     insightText.appendChild(
       document.createTextNode(explanation)
