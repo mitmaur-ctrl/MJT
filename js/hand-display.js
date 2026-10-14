@@ -1641,7 +1641,8 @@ function renderThreeTileCPCPathways(box, tileParts) {
   }
 
   function summary(label, pathway) {
-    return '<div class="pathway-fp-summary pathway-cpc-summary">' +
+        return '<div class="pathway-fp-summary pathway-cpc-summary pathway-summary-' +
+      pathway.structureType + '">' +
       '<span>' + label + '</span>' +
       '<span>Acceptance: ' + pathway.acceptance + '</span>' +
       '<span>Sources: ' + pathway.currentSources + '</span>' +
@@ -1947,7 +1948,7 @@ renderCoachTile(box.tiles[1])
 
 '</div>' +
 '</div>' +
-'<div class="pathway-fp-summary pathway-cpc-summary">' +
+'<div class="pathway-fp-summary pathway-cpc-summary pathway-summary-chow">' +
   '<span>Chow</span>' +
   '<span>Acceptance: ' +
     box.fp.structuralPossibilities[0].acceptance +
@@ -1958,7 +1959,7 @@ renderCoachTile(box.tiles[1])
 '</div>'
 
 +
-'<div class="pathway-fp-summary pathway-cpc-summary">' +
+'<div class="pathway-fp-summary pathway-cpc-summary pathway-summary-pong">' +
   '<span>Pong</span>' +
   '<span>Acceptance: ' +
     box.fp.structuralPossibilities[2].acceptance +
