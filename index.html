@@ -9,7 +9,7 @@ Project:
 Mahjong Coach
 
 Version:
-MJC Beta v8.6
+MJC Beta v8.7
 
 Purpose:
 - Smartphone-optimized tile management vehicle
@@ -436,7 +436,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     class="action-button new-game-button secondary-hd-button"
     onclick="confirmNewGame()"
   >
-    New Game
+    New Hand
   </button>
 </div>
 
@@ -445,18 +445,18 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     id="saveGameBtn"
     class="action-button secondary-hd-button"
     type="button"
-    onclick="showToast('This feature is coming soon.')"
+    onclick="saveCurrentGame()"
   >
-    Save Game
+    Save Hand
   </button>
 
   <button
     id="gameHistoryBtn"
     class="action-button secondary-hd-button"
     type="button"
-    onclick="showToast('This feature is coming soon.')"
+    onclick="openGameHistoryDialog()"
   >
-    Game History
+    Hand History
   </button>
 </div>
 
@@ -570,7 +570,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     <button onclick="openSupportDialog()">Support MJC</button>
   </div>
 
-  <div class="footer-version">Beta v8.6</div>
+  <div class="footer-version">Beta v8.7</div>
 </div>
 
 
@@ -1024,6 +1024,18 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
   </div>
 </div>
 
+<div id="gameHistoryDialog" class="dialog-backdrop hidden">
+  <div class="dialog">
+    <h2>Hand History</h2>
+    <div id="gameHistoryContent"></div>
+    <div class="dialog-actions">
+      <button class="dialog-button primary"
+        onclick="closeDialog('gameHistoryDialog')">
+        Close
+      </button>
+    </div>
+  </div>
+</div>
 
 <div id="welcomeDialog" class="dialog-backdrop hidden">
   <div class="dialog">
@@ -1034,14 +1046,15 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     </p>
 
         <p>
-      The purpose of Mahjong Coach is to introduce
+      The purpose of Mahjong Coach (MJC) is to introduce
+      beginning and intermediate Mahjong players to
       Six Box Theory™ (6BT), a method for understanding
-      Mahjong hand structure, and help you apply it
+      Mahjong hand structure, and help them apply it
       to make better playing decisions.
     </p>
 
     <p>
-      Mahjong Coach currently supports 16-Tile Mahjong
+      Currently, MJC supports 16-Tile Mahjong
       styles such as Filipino and Taiwanese, with a
       version adapted for Chinese 13-Tile Mahjong
       coming soon.
@@ -1087,7 +1100,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
 
             <li>
         <strong>Select your Ruleset:</strong> Choose the Mahjong rules
-        you play by. (Currently supports Filipino and Taiwanese 16-Tile Mahjong.
+        you play by. (Currently, MJC supports Filipino and Taiwanese 16-Tile Mahjong.
         Chinese 13-Tile adaptation coming soon.)
       </li>
 
@@ -1422,7 +1435,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     <h2>Feedback</h2>
     <p>Thank you for helping us improve Mahjong Coach.</p>
     <p>We welcome bug reports, suggestions, comments, and feature requests.</p>
-    <p><strong>Email:</strong> <a href="mailto:mjcfeedbackteam@gmail.com?subject=Mahjong%20Coach%20Feedback%20-%20Beta%20v8.6">mjcfeedbackteam@gmail.com</a></p>
+    <p><strong>Email:</strong> <a href="mailto:mjcfeedbackteam@gmail.com?subject=Mahjong%20Coach%20Feedback%20-%20Beta%20v8.7">mjcfeedbackteam@gmail.com</a></p>
     <p><em>Every message is read and appreciated.</em></p>
     <div class="dialog-actions">
       <button class="dialog-button primary" onclick="closeDialog('feedbackDialog')">Close</button>
@@ -1660,7 +1673,7 @@ Acceptance standard:
 ==================================================
 */
 
-const MJC_VERSION_LABEL = "Beta v8.6";
+const MJC_VERSION_LABEL = "Beta v8.7";
 
 const MJC_RULESET_BASE_HAND_SIZES = Object.freeze({
   filipino16: 16,
