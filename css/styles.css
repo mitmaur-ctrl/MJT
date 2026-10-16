@@ -1665,4 +1665,28 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 
   gap: 6px;
 }
 
+/* Hand History — keep title and Close visible */
+#gameHistoryDialog > .dialog {
+  display: flex;
+  flex-direction: column;
+  max-height: 88vh;
+  max-height: 88dvh;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+#gameHistoryDialog > .dialog > h2 {
+  flex-shrink: 0;
+}
+
+#gameHistoryContent {
+  min-height: 0;
+  overflow-y: auto;
+}
+
+#gameHistoryDialog > .dialog > .dialog-actions {
+  flex-shrink: 0;
+  padding-top: 12px;
+  background: white;
+}
 
