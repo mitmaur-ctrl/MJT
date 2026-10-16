@@ -578,6 +578,8 @@ function captureInitialTiles() {
   }
 
   gameTranscript.initialTiles = initialTiles;
+  gameTranscript.savedGameId = null;
+
 }
 
 function recordGameAction(type, tileKey) {
@@ -585,6 +587,103 @@ function recordGameAction(type, tileKey) {
     type: type,
     tileKey: tileKey
   });
+}
+
+function getSavedGames() {
+  const saved = JSON.parse(
+    localStorage.getItem("mjcSavedGames") || "[]"
+  );
+
+  if (!Array.isArray(saved)) {
+    throw new Error("Invalid game history.");
+  }
+
+  return saved;
+}
+
+function saveCurrentGame() {
+  if (!handStarted) {
+    showToast("Start a hand before saving.");
+    return;
+  }
+
+  try {
+    captureInitialTiles();
+
+    const result = evaluate17TE(
+      MJC_STATE.getEngineInput()
+    );
+    const structure = result.structureState || result;
+
+    const specialEscalera =
+      escaleraMode && escaleraBoxState.active;
+    const specialSevenPairs =
+      sevenPairsMode && sevenPairsBoxState.active;
+
+    const existingGames = getSavedGames();
+    const previousSave = existingGames.find(function(game) {
+      return game.id === gameTranscript.savedGameId;
+    }) || {};
+    const savedGame = {
+      id: gameTranscript.savedGameId ||
+        Date.now().toString(36) + Math.random().toString(36).slice(2),
+      savedAt: new Date().toISOString(),
+      playerName: previousSave.playerName || "",
+      seatWind: previousSave.seatWind || "",
+      roundWind: previousSave.roundWind || "",
+      notes: previousSave.notes || "",
+      status: gameAction === "mahjong"
+        ? "Mahjong"
+        : "Incomplete",
+      ruleset: getRulesetLabel(),
+      honorsEnabled: ruleset === "filipino16"
+        ? document.querySelector(
+            'input[name="filipinoHonorRadio"]:checked'
+          )?.value === "enabled"
+        : true,
+      role: role,
+      version: MJC_VERSION_LABEL,
+      tiles: makeFHTranscriptSnapshot(
+        counts,
+        structure.completeBoxes,
+        gameAction
+      ).tiles,
+      melds: structure.completeBoxes.map(function(box) {
+        return {
+          type: box.type,
+          tiles: [...box.tiles],
+          visibility: box.visibility || "hidden"
+        };
+      }),
+      tilesInHand: getTilesInHand(structure),
+      boxesCompleted: specialSevenPairs
+        ? sevenPairsBoxState.completionOrder.length
+        : structure.completeBoxes.length,
+      boxTarget: specialEscalera
+        ? 4
+        : (specialSevenPairs ? 2 : 6),
+      initialTiles: [...gameTranscript.initialTiles],
+      actions: JSON.parse(
+        JSON.stringify(gameTranscript.actions)
+      )
+    };
+
+            const savedGames = existingGames.filter(function(game) {
+      return game.id !== savedGame.id;
+    });
+    savedGames.unshift(savedGame);
+
+    localStorage.setItem(
+      "mjcSavedGames",
+      JSON.stringify(savedGames.slice(0, 20))
+    );
+
+    gameTranscript.savedGameId = savedGame.id;
+    showToast("Hand saved.");
+  } catch (error) {
+    console.error("Game save failed:", error);
+    showToast("Unable to save hand.");
+  }
 }
 
 function startHand() {

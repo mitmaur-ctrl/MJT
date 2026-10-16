@@ -1305,3 +1305,549 @@ function closeOverPairedAdviceDialog() {
     .getElementById("overPairedAdviceDialog")
     .classList.add("hidden");
 }
+
+function openGameHistoryDialog() {
+  try {
+    const games = getSavedGames();
+    const content = document.getElementById("gameHistoryContent");
+    content.replaceChildren();
+
+    const note = document.createElement("p");
+    note.textContent = games.length
+                  ? "Saved Hands: " + games.length + " (Keeps your 20 most recent hands.)"
+      : "No saved hands.";
+    content.appendChild(note);
+    if (games.length > 0) {
+      const clearButton = document.createElement("button");
+      clearButton.className = "dialog-button";
+      clearButton.textContent = "Clear All";
+      clearButton.onclick = clearSavedGameHistory;
+      content.appendChild(clearButton);
+    }
+
+    games.forEach(function(game, index) {
+      const row = document.createElement("p");
+      row.textContent =
+        (index + 1) + ". " +
+        new Date(game.savedAt).toLocaleString() +
+        " — " + game.status +
+        " — " + game.ruleset;
+      const viewButton = document.createElement("button");
+      viewButton.className = "dialog-button";
+      viewButton.textContent = "View Transcript";
+      viewButton.onclick = function() {
+        viewSavedGameTranscript(index);
+      };
+
+      row.appendChild(document.createElement("br"));
+      row.appendChild(viewButton);
+
+      content.appendChild(row);
+    });
+
+    openDialog("gameHistoryDialog");
+
+
+  } catch (error) {
+    console.error("Game history failed:", error);
+    showToast("Unable to open game history.");
+  }
+}
+
+function viewSavedGameTranscript(index) {
+  try {
+    const game = getSavedGames()[index];
+    if (!game) return;
+
+    const content =
+      document.getElementById("gameHistoryContent");
+
+    content.replaceChildren();
+
+    const backButton = document.createElement("button");
+    backButton.className = "dialog-button";
+    backButton.textContent = "Back to History";
+    backButton.onclick = openGameHistoryDialog;
+    content.appendChild(backButton);
+    const deleteButton = document.createElement("button");
+    deleteButton.className = "dialog-button";
+    deleteButton.textContent = "Delete";
+    deleteButton.onclick = function() {
+      deleteSavedGameById(game.id);
+    };
+    content.appendChild(deleteButton);
+    const shareButton = document.createElement("button");
+    shareButton.className = "dialog-button";
+    shareButton.textContent = "Share";
+    shareButton.onclick = function() {
+      shareSavedGameById(game.id);
+    };
+    content.appendChild(shareButton);
+    const transcriptButtons = document.createElement("div");
+    transcriptButtons.style.display = "flex";
+    transcriptButtons.style.flexWrap = "wrap";
+    transcriptButtons.style.gap = "8px";
+    transcriptButtons.append(backButton, deleteButton, shareButton);
+    content.appendChild(transcriptButtons);
+    const detailsButton = document.createElement("button");
+    detailsButton.className = "dialog-button";
+    detailsButton.textContent = "Edit Details";
+    detailsButton.onclick = function() {
+      editSavedHandDetails(game.id);
+    };
+    transcriptButtons.appendChild(detailsButton);
+    const body = document.createElement("div");
+    body.style.maxHeight = "50vh";
+    body.style.overflowY = "auto";
+    content.appendChild(body);
+
+    function addText(text, heading) {
+      const element =
+        document.createElement(heading ? "h3" : "p");
+      element.textContent = text;
+      body.appendChild(element);
+    }
+
+    function tileList(tiles) {
+      return (tiles || []).map(function(key) {
+        return tileLabels[key] || key;
+      }).join(", ");
+    }
+
+    function addState(label, state) {
+      addText(label, true);
+
+      if (!state) {
+        addText("Not recorded.");
+        return;
+      }
+
+      addText("Tiles: " + tileList(state.tiles));
+      addText("Turn cycle: " + state.turnCycle);
+
+      (state.melds || []).forEach(function(meld) {
+        addText(
+          meld.type + " — " + meld.visibility +
+          ": " + tileList(meld.tiles)
+        );
+      });
+    }
+
+    addText("Hand Summary", true);
+    addText(new Date(game.savedAt).toLocaleString());
+    if (game.playerName) {
+      addText("Player: " + game.playerName);
+    }
+    if (game.seatWind) {
+      addText("Seat Wind: " + getWindLabel(game.seatWind));
+    }
+    if (game.roundWind) {
+      addText("Round Wind: " + getWindLabel(game.roundWind));
+    }
+    if (game.notes) {
+      const notesText = document.createElement("p");
+      notesText.style.whiteSpace = "pre-wrap";
+      notesText.textContent = "Notes: " + game.notes;
+      body.appendChild(notesText);
+    }
+        addText("Status: " + game.status);
+    addText("Ruleset: " + game.ruleset);
+    addText(
+      "Honors: " +
+      (typeof game.honorsEnabled === "boolean"
+        ? (game.honorsEnabled ? "Enabled" : "Disabled")
+        : "Not recorded")
+    );
+    addText("Role: " + game.role);
+    addText("Version: " + game.version);
+    addText("Tiles in Hand: " + game.tilesInHand);
+    addText(
+      "Boxes Completed: " + game.boxesCompleted +
+      " of " + game.boxTarget
+    );
+
+    
+
+    addText("Initial Tiles", true);
+    addText(tileList(game.initialTiles));
+
+    addText("Recorded Actions", true);
+
+    if (!(game.actions || []).length) {
+      addText("No actions recorded.");
+    }
+
+        let turnNumber = 1;
+    let turnHeadingNeeded = true;
+    const actions = game.actions || [];
+
+    actions.forEach(function(action, i) {
+      if (turnHeadingNeeded) {
+        addText("Turn " + turnNumber, true);
+        turnHeadingNeeded = false;
+      }
+
+      if (action.type === "FH") {
+        addState("Fix Hand — Before", action.before);
+        addState("Fix Hand — Accepted", action.accepted);
+        return;
+      }
+
+      if (action.type === "DR") {
+        // Display consecutive recommendations together.
+        if (i > 0 && actions[i - 1].type === "DR") {
+          return;
+        }
+
+        const recommendations = [];
+
+        for (
+          let j = i;
+          j < actions.length && actions[j].type === "DR";
+          j++
+        ) {
+          recommendations.push(actions[j].tileKey);
+        }
+
+        addText("DR = " + tileList(recommendations));
+        return;
+      }
+
+      addText(
+        action.type + " = " +
+        (tileLabels[action.tileKey] || action.tileKey || "")
+      );
+
+      if (action.type === "Di") {
+        turnNumber++;
+        turnHeadingNeeded = true;
+      }
+    });
+
+addText("Final Melds", true);
+
+    if (!(game.melds || []).length) {
+      addText("None.");
+    }
+
+    (game.melds || []).forEach(function(meld) {
+      addText(
+        meld.type + " — " + meld.visibility +
+        ": " + tileList(meld.tiles)
+      );
+    });
+  } catch (error) {
+    console.error("Transcript view failed:", error);
+    showToast("Unable to open transcript.");
+  }
+}
+
+function deleteSavedGameById(id) {
+  if (!window.confirm("Delete this saved hand?")) return;
+
+  try {
+    const games = getSavedGames();
+    const remaining = games.filter(function(game) {
+      return game.id !== id;
+    });
+
+    localStorage.setItem(
+      "mjcSavedGames",
+      JSON.stringify(remaining)
+    );
+
+    if (gameTranscript.savedGameId === id) {
+      gameTranscript.savedGameId = null;
+    }
+
+    openGameHistoryDialog();
+    showToast("Saved hand deleted.");
+  } catch (error) {
+    console.error("Hand deletion failed:", error);
+    showToast("Unable to delete saved hand.");
+  }
+}
+
+function clearSavedGameHistory() {
+  if (!window.confirm(
+    "Delete all saved hands from History? This cannot be undone."
+  )) return;
+
+  try {
+    localStorage.removeItem("mjcSavedGames");
+    gameTranscript.savedGameId = null;
+
+    openGameHistoryDialog();
+    showToast("Hand history cleared.");
+  } catch (error) {
+    console.error("Clear history failed:", error);
+    showToast("Unable to clear hand history.");
+  }
+}
+
+async function shareSavedGameById(id, suppliedName) {
+  try {
+    const game = getSavedGames().find(function(item) {
+      return item.id === id;
+    });
+
+    if (!game) {
+      showToast("Saved hand not found.");
+      return;
+    }
+
+        if (typeof suppliedName !== "string") {
+      const existing = document.getElementById("handShareForm");
+      if (existing) {
+        existing.querySelector("input").focus();
+        return;
+      }
+
+      const form = document.createElement("form");
+      form.id = "handShareForm";
+      form.style.margin = "12px 0";
+
+      const label = document.createElement("label");
+      label.textContent = "Your name or nickname: ";
+
+      const input = document.createElement("input");
+      input.type = "text";
+      input.maxLength = 100;
+      input.required = true;
+      label.appendChild(input);
+      form.appendChild(label);
+
+      const submit = document.createElement("button");
+      submit.type = "submit";
+      submit.className = "dialog-button";
+      submit.textContent = "Share Hand";
+      form.appendChild(submit);
+
+      const cancel = document.createElement("button");
+      cancel.type = "button";
+      cancel.className = "dialog-button";
+      cancel.textContent = "Cancel";
+      cancel.onclick = function() {
+        form.remove();
+      };
+      form.appendChild(cancel);
+
+      form.onsubmit = function(event) {
+        event.preventDefault();
+
+        const name = input.value.trim();
+        if (!name) {
+          showToast("Enter a name or nickname before sharing.");
+          return;
+        }
+
+        form.remove();
+        shareSavedGameById(id, name);
+      };
+
+      document.getElementById("gameHistoryContent").prepend(form);
+      input.focus();
+      return;
+    }
+
+    const playerName = suppliedName.trim();
+
+    if (!playerName) {
+      showToast("Enter a name or nickname before sharing.");
+      return;
+    }
+
+    const sharedHand = {
+      format: "mjc-hand",
+      formatVersion: 1,
+      sharedAt: new Date().toISOString(),
+      hand: {
+        ...game,
+        playerName: playerName
+      }
+    };
+
+    const file = new File(
+      [JSON.stringify(sharedHand, null, 2)],
+      "MJC-Hand.json",
+      { type: "application/json" }
+    );
+
+    if (
+      typeof navigator.share === "function" &&
+      typeof navigator.canShare === "function" &&
+      navigator.canShare({ files: [file] })
+    ) {
+            try {
+        await navigator.share({
+          title: "MJC Hand — " + playerName,
+          text: "Played by: " + playerName,
+          files: [file]
+        });
+        return;
+      } catch (shareError) {
+        if (shareError.name === "AbortError") return;
+
+        if (shareError.name !== "NotAllowedError") {
+          throw shareError;
+        }
+
+        // Continue to the existing file download below.
+      }
+    }
+
+    const url = URL.createObjectURL(file);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = file.name;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    setTimeout(function() {
+      URL.revokeObjectURL(url);
+    }, 60000);
+
+    showToast("Hand file downloaded for sharing.");
+  } catch (error) {
+    if (error.name === "AbortError") return;
+
+    console.error("Hand sharing failed:", error);
+    showToast("Unable to share saved hand.");
+  }
+}
+
+function editSavedHandDetails(id) {
+  try {
+    const game = getSavedGames().find(function(item) {
+      return item.id === id;
+    });
+    if (!game) {
+      showToast("Saved hand not found.");
+      return;
+    }
+
+    const content = document.getElementById("gameHistoryContent");
+    const body = content.lastElementChild;
+    body.replaceChildren();
+
+    const heading = document.createElement("h3");
+    heading.textContent = "Edit Hand Details";
+    body.appendChild(heading);
+
+    const note = document.createElement("p");
+    note.textContent = "All fields are optional.";
+    body.appendChild(note);
+
+    const form = document.createElement("form");
+    body.appendChild(form);
+
+    function addField(labelText, control) {
+      const label = document.createElement("label");
+      label.style.display = "block";
+      label.style.marginBottom = "12px";
+      label.textContent = labelText;
+
+      control.style.display = "block";
+      control.style.width = "100%";
+      control.style.boxSizing = "border-box";
+      label.appendChild(control);
+      form.appendChild(label);
+      return control;
+    }
+
+    const name = document.createElement("input");
+    name.type = "text";
+    name.maxLength = 100;
+    name.value = game.playerName || "";
+    addField("Name or Nickname", name);
+
+    function addWind(label, value) {
+      const select = document.createElement("select");
+
+      ["", "east", "south", "west", "north"].forEach(function(wind) {
+        const option = document.createElement("option");
+        option.value = wind;
+        option.textContent = wind
+          ? wind.charAt(0).toUpperCase() + wind.slice(1)
+          : "Not specified";
+        select.appendChild(option);
+      });
+
+      select.value = value || "";
+      return addField(label, select);
+    }
+
+    const seat = addWind("Seat Wind", game.seatWind);
+    const round = addWind("Round Wind", game.roundWind);
+
+    const notes = document.createElement("textarea");
+    notes.rows = 4;
+    notes.maxLength = 2000;
+    notes.value = game.notes || "";
+    addField("Notes", notes);
+
+    function returnToTranscript() {
+      const index = getSavedGames().findIndex(function(item) {
+        return item.id === id;
+      });
+      if (index >= 0) {
+        viewSavedGameTranscript(index);
+      } else {
+        openGameHistoryDialog();
+      }
+    }
+
+    const buttons = document.createElement("div");
+    buttons.style.display = "flex";
+    buttons.style.gap = "8px";
+    form.appendChild(buttons);
+
+    const save = document.createElement("button");
+    save.type = "submit";
+    save.className = "dialog-button";
+    save.textContent = "Save Details";
+    buttons.appendChild(save);
+
+    const cancel = document.createElement("button");
+    cancel.type = "button";
+    cancel.className = "dialog-button";
+    cancel.textContent = "Cancel";
+    cancel.onclick = returnToTranscript;
+    buttons.appendChild(cancel);
+
+    form.onsubmit = function(event) {
+      event.preventDefault();
+
+      try {
+        const games = getSavedGames();
+        const saved = games.find(function(item) {
+          return item.id === id;
+        });
+
+        if (!saved) {
+          showToast("Saved hand not found.");
+          return;
+        }
+
+        saved.playerName = name.value.trim();
+        saved.seatWind = seat.value;
+        saved.roundWind = round.value;
+        saved.notes = notes.value.trim();
+
+        localStorage.setItem("mjcSavedGames", JSON.stringify(games));
+        returnToTranscript();
+        showToast("Hand details saved.");
+      } catch (error) {
+        console.error("Hand details save failed:", error);
+        showToast("Unable to save hand details.");
+      }
+    };
+
+    body.scrollTop = 0;
+    name.focus();
+  } catch (error) {
+    console.error("Hand details editor failed:", error);
+    showToast("Unable to open hand details.");
+  }
+}

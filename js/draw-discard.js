@@ -816,6 +816,10 @@ if (gameAction === "claim" && claimType === "chow") {
   recordGameAction("C", selectedDrawTileKey);
 }
 
+if (gameAction === "claim" && claimType === "pong") {
+  recordGameAction("P", selectedDrawTileKey);
+}
+
 syncEscaleraAfterHandChange();
 syncSevenPairsAfterHandChange();
 
@@ -1188,6 +1192,8 @@ if (mmrState.action === "sagasa-after-draw") {
       }
     });
 
+    recordGameAction("K", sagasaTileKey);
+
     const declarationResult =
       evaluate17TE(
         MJC_STATE.getEngineInput()
@@ -1273,8 +1279,9 @@ if (isNewsDeclaration) {
       declaredNEWS.boxId,
       "hidden"
     );
-  }
+      }
 
+  recordGameAction("K", "NEWS");
 } else {
 
 const kangTileKey =
@@ -1322,6 +1329,8 @@ deferredKangTileKeys =
       visibility: "hidden"
     }
   });
+
+  recordGameAction("K", kangTileKey);
 
   const declarationResult =
     evaluate17TE(
@@ -1396,7 +1405,9 @@ if (mmrState.action === "hidden-news-after-draw") {
       declaredNEWS.boxId,
       "hidden"
     );
-  }
+      }
+
+  recordGameAction("K", "NEWS");
 
 ignoredNEWS = false;
 
@@ -1480,7 +1491,28 @@ ignoredNEWS = false;
   const selectedTileKey =
   mmrState.tileKey;
 
+const claimedMeldType =
+  mmrState.action === "claim"
+    ? mmrState.selectedCandidate?.type
+    : null;
+
+if (
+  claimedMeldType === "pong" ||
+  claimedMeldType === "kang"
+) {
+  captureInitialTiles();
+}
+
 counts[selectedTileKey] += 1;
+
+if (claimedMeldType === "pong") {
+  recordGameAction("P", selectedTileKey);
+}
+
+if (claimedMeldType === "kang") {
+  recordGameAction("K", selectedTileKey);
+}
+
 syncEscaleraAfterHandChange();
 syncSevenPairsAfterHandChange();
 
@@ -1563,6 +1595,11 @@ function cancelDraw() {
     correctingLastEntry &&
     cleCancelState
   ) {
+
+    gameTranscript.actions = JSON.parse(
+      JSON.stringify(cleCancelState.transcriptActions)
+    );
+
     restoreSnapshot(
       cleCancelState.currentState
     );
@@ -2097,7 +2134,14 @@ function buildDiscardDisplay() {
   "Select the tile you want to discard.";
 }
 
-function cancelDiscard() { showHD(); }
+function cancelDiscard() {
+  if (correctingLastEntry && cleCancelState) {
+    cancelDraw();
+    return;
+  }
+
+  showHD();
+}
 
 function showInsightPlaceholder() {
   window.alert(
@@ -2113,11 +2157,14 @@ function correctLastEntry() {
   const targetKey = lastActionTileKey;
   const snapshot = lastActionSnapshot;
 
-  cleCancelState = {
+    cleCancelState = {
     currentState: makeSnapshot(),
     lastActionSnapshot: lastActionSnapshot,
     lastActionType: lastActionType,
-    lastActionTileKey: lastActionTileKey
+    lastActionTileKey: lastActionTileKey,
+    transcriptActions: JSON.parse(
+      JSON.stringify(gameTranscript.actions)
+    )
   };
 
   restoreSnapshot(snapshot);
@@ -2134,12 +2181,22 @@ function correctLastEntry() {
   openDrawScreen();
 
 } else if (action === "claim") {
+  gameTranscript.actions.pop(); // Remove previous claim
   showToast("Correct the last claim entry. Red shows the previous entry.");
   openDrawScreen();
 
 } else if (action === "discard") {
-gameTranscript.actions.pop(); // Di
-gameTranscript.actions.pop(); // DR
+gameTranscript.actions.pop(); // Remove previous discard
+
+while (
+  gameTranscript.actions.length > 0 &&
+  gameTranscript.actions[
+    gameTranscript.actions.length - 1
+  ].type === "DR"
+) {
+  gameTranscript.actions.pop();
+}
+
   showToast("Correct the last discard entry. Red shows the previous entry.");
   openDiscardScreen();
 }
