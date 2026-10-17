@@ -57,6 +57,12 @@ function closeDialog(id) {
 
 const mjcGlossaryEntries = [
   {
+    term: "Display",
+    definition:
+      "A setting that lets you choose the order in which the " +
+      "suits, Winds, and Dragons appear in MJC."
+  },
+  {
     term: "Siete Pares",
     definition:
       "Seven Pairs. A special-hand pattern available under rulesets " +
@@ -646,6 +652,7 @@ const mjcGlossaryGroups = {
   ],
   "Screens and Display Controls": [
     "Tile Selection Screen",
+    "Display",
     "Starting Hand Display",
     "Current Hand Display",
     "Draw Tile Screen",
