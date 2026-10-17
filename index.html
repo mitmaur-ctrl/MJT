@@ -1597,7 +1597,26 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
             Understanding Pathways
           </a>
         </li>
-        <li><a href="#">Understanding Release Tile (RT)</a></li>
+                <li>
+          <a href="#"
+             onclick="
+               event.preventDefault();
+               event.stopPropagation();
+               closeDialog('userGuideDialog');
+               openDialog('userGuideChapter8Dialog');
+
+               requestAnimationFrame(function() {
+                 document.getElementById(
+                   'userGuideChapter8Body'
+                 ).scrollTo({
+                   top: 0,
+                   behavior: 'instant'
+                 });
+               });
+             ">
+            Understanding Release Tile (RT)
+          </a>
+        </li>
         <li><a href="#">Understanding Recommendations and Coaching</a></li>
         <li><a href="#">Completing a Hand</a></li>
         <li><a href="#">Saving and Reviewing Hands</a></li>
@@ -7933,7 +7952,359 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     </div>
   </div>
 </div>
+<!-- USER GUIDE — CHAPTER 8 -->
+<div id="userGuideChapter8Dialog"
+     class="dialog-backdrop hidden">
+  <div class="dialog"
+       style="display:flex; flex-direction:column;
+              max-height:85vh; overflow:hidden;">
 
+    <h2>Understanding Release Tile (RT)</h2>
+
+    <div id="userGuideChapter8Body"
+         style="overflow-y:auto; min-height:0; flex:1;">
+
+      <nav aria-label="Chapter 8 sections"
+           style="background:#f0f4f8; border-radius:10px;
+                  padding:14px; margin-bottom:20px;"
+           onclick="
+             const link =
+               event.target.closest('a[data-section]');
+             if (!link) return;
+             event.preventDefault();
+
+             const scroller = this.parentElement;
+             const heading = Array.from(
+               scroller.querySelectorAll('h3')
+             ).find(function(item) {
+               return item.textContent.trim() ===
+                 link.dataset.section;
+             });
+
+             if (heading) {
+               scroller.scrollTo({
+                 top: scroller.scrollTop +
+                   heading.getBoundingClientRect().top -
+                   scroller.getBoundingClientRect().top,
+                 behavior: 'smooth'
+               });
+             }
+           ">
+
+        <strong>In this chapter</strong>
+        <ul style="padding-left:1.3em; line-height:1.6;
+                   margin-bottom:0;">
+          <li>
+            <a href="#" data-section="1. What Release Tile Does">
+              What Release Tile Does
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="2. When RT Is Available">
+              When RT Is Available
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="3. Select a Tile and Grouping">
+              Select a Tile and Grouping
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="4. Preview and Confirm">
+              Preview and Confirm
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="5. Back, Cancel, and No Alternatives">
+              Back, Cancel, and No Alternatives
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <h3>1. What Release Tile Does</h3>
+
+      <p>
+        Release Tile (RT) lets you explore
+        a different arrangement by freeing
+        a tile from an eligible hidden
+        Complete Box and using it in
+        another grouping.
+      </p>
+
+      <p>
+        The tile stays in your hand.
+        RT changes its structural assignment;
+        it does not draw, claim, or discard
+        a tile.
+      </p>
+
+      <div role="img"
+           aria-label="Release Tile teaching example:
+             release 3 Char from a hidden
+             1, 2, 3 Char Chow to complete
+             a 3, 4, 5 Char Chow."
+           style="border:1px solid #ccc;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0;">
+
+        <strong>Example: the same tiles,
+          a different arrangement</strong>
+
+        <p><strong>Before</strong></p>
+
+        <div style="background:#eaf4e8;
+                    border-radius:8px; padding:12px;
+                    margin-bottom:10px;">
+          Hidden Chow:<br>
+          1 Char · 2 Char ·
+          <strong style="color:#6b3fa0;">3 Char</strong>
+        </div>
+
+        <div style="background:#fff4df;
+                    border-radius:8px; padding:12px;">
+          Developing grouping:<br>
+          4 Char · 5 Char
+        </div>
+
+        <p><strong>After regrouping</strong></p>
+
+        <div style="background:#fff4df;
+                    border-radius:8px; padding:12px;
+                    margin-bottom:10px;">
+          Developing grouping:<br>
+          1 Char · 2 Char
+        </div>
+
+        <div style="background:#eaf4e8;
+                    border-radius:8px; padding:12px;">
+          Hidden Chow:<br>
+          <strong style="color:#6b3fa0;">3 Char</strong>
+          · 4 Char · 5 Char
+        </div>
+
+        <p style="color:#666; margin-bottom:0;">
+          Teaching example; tile names replace
+          images. Available RT choices depend
+          on the full recorded hand.
+        </p>
+      </div>
+
+      <p>
+        In this example, moving the 3 Char
+        completes one Chow and leaves
+        1 Char · 2 Char developing.
+        You still hold exactly the same tiles.
+      </p>
+
+      <p>
+        An alternate arrangement is not
+        automatically an improvement.
+        RT lets you inspect the result
+        before deciding whether to keep it.
+      </p>
+
+      <h3>2. When RT Is Available</h3>
+
+      <p>
+        Look for <strong>RT</strong> beside
+        an eligible Complete Box heading
+        in <strong>Current Hand Coaching View</strong>
+        while preparing to draw or claim.
+      </p>
+
+      <p>
+        Eligible boxes are hidden melds.
+        Exposed melds and the Eye do not
+        offer this control.
+        RT is not offered during the
+        ordinary discard step.
+      </p>
+
+      <p>
+        The <strong>RT Explained</strong>
+        link provides a short explanation
+        when Release Tile controls are available.
+      </p>
+
+      <h3>3. Select a Tile and Grouping</h3>
+
+      <ol style="padding-left:1.5em; line-height:1.6;">
+        <li>
+          Tap <strong>RT</strong> beside
+          the hidden Complete Box you
+          want to explore.
+        </li>
+        <li>
+          In <strong>Select Tile to Release</strong>,
+          tap the tile you want to move
+          out of that grouping.
+        </li>
+        <li>
+          If viable alternatives are available,
+          MJC displays
+          <strong>Select Alternate Grouping</strong>.
+        </li>
+        <li>
+          Review the listed Developing Boxes
+          and tap the destination grouping.
+        </li>
+      </ol>
+
+      <p>
+        Each alternate grouping shows its
+        box number, grouping type, and tiles.
+        Choose by those details so you
+        direct the released tile to
+        the intended grouping.
+      </p>
+
+      <p>
+        Only the alternatives MJC finds
+        for the selected tile are listed.
+        RT does not let you place a tile
+        into any box arbitrarily.
+      </p>
+
+      <h3>4. Preview and Confirm</h3>
+
+      <p>
+        Selecting an alternate grouping
+        opens <strong>Preview</strong>.
+        The <strong>Expected Results</strong>
+        area shows the affected groupings
+        in the proposed arrangement.
+      </p>
+
+      <div role="img"
+           aria-label="Release Tile preview checklist:
+             inspect the origin, destination,
+             and resulting structure before confirming."
+           style="background:#f0f4f8;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0;">
+
+        <strong>Before confirming, check:</strong>
+
+        <ul style="padding-left:1.3em; line-height:1.6;
+                   margin-bottom:0;">
+          <li>
+            What remains of the original
+            Complete Box?
+          </li>
+          <li>
+            What does the destination
+            grouping become?
+          </li>
+          <li>
+            Does the resulting arrangement
+            support your intended plan?
+          </li>
+        </ul>
+      </div>
+
+      <p>
+        The preview focuses on affected
+        groupings. It is not a complete
+        redisplay of every unchanged box
+        in your hand.
+      </p>
+
+      <p>
+        Tap <strong>Confirm</strong> to
+        apply the previewed arrangement.
+        MJC returns to the hand display
+        with the updated structure.
+      </p>
+
+      <p>
+        Confirming RT does not consume
+        a draw or discard.
+        Continue with the action shown
+        in the hand instruction.
+      </p>
+
+      <h3>5. Back, Cancel, and No Alternatives</h3>
+
+      <p>
+        <strong>Back</strong><br>
+        From Preview, returns to the
+        alternate-grouping step.
+        From that step, returns to
+        tile selection.
+        Use it to explore another choice
+        before confirming.
+      </p>
+
+      <p>
+        <strong>Cancel</strong><br>
+        Closes the RT process without
+        applying the proposed arrangement.
+      </p>
+
+      <p>
+        <strong>No viable alternate groupings
+        available</strong><br>
+        This notice means MJC found no
+        supported destination for the
+        tile you selected.
+        Tap <strong>OK</strong> to close
+        the notice.
+      </p>
+
+      <p>
+        If you want to explore another tile,
+        reopen RT and make a different
+        selection.
+        Finding no alternative for one tile
+        does not mean every tile in that
+        hidden meld has the same result.
+      </p>
+
+      <p>
+        Use RT to investigate structure
+        deliberately: inspect the starting
+        grouping, inspect the alternative,
+        then confirm only when you want
+        the displayed result.
+      </p>
+
+    </div>
+
+    <div class="dialog-actions"
+         style="flex-shrink:0; flex-wrap:wrap;">
+
+      <button type="button"
+              class="dialog-button"
+              onclick="
+                document.getElementById(
+                  'userGuideChapter8Body'
+                ).scrollTo({
+                  top: 0,
+                  behavior: 'smooth'
+                });
+              ">
+        Chapter Sections
+      </button>
+
+      <button type="button"
+              class="dialog-button"
+              onclick="
+                closeDialog('userGuideChapter8Dialog');
+                openDialog('userGuideDialog');
+              ">
+        Back to Contents
+      </button>
+
+      <button type="button"
+              class="dialog-button primary"
+              onclick="closeDialog('userGuideChapter8Dialog');">
+        Close
+      </button>
+
+    </div>
+  </div>
+</div>
 
 <div id="acknowledgmentsDialog" class="dialog-backdrop hidden">
   <div class="dialog">
