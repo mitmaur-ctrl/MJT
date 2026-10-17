@@ -1477,7 +1477,26 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     Getting to Know MJC: Screens and Controls
   </a>
 </li>
-        <li><a href="#">Getting Your Hand Ready</a></li>
+                <li>
+          <a href="#"
+             onclick="
+               event.preventDefault();
+               event.stopPropagation();
+               closeDialog('userGuideDialog');
+               openDialog('userGuideChapter2Dialog');
+
+               requestAnimationFrame(function() {
+                 document.getElementById(
+                   'userGuideChapter2Body'
+                 ).scrollTo({
+                   top: 0,
+                   behavior: 'instant'
+                 });
+               });
+             ">
+            Getting Your Hand Ready
+          </a>
+        </li>
         <li><a href="#">Understanding Your Hand Display</a></li>
         <li><a href="#">Understanding the Boxes</a></li>
         <li><a href="#">Following the Turn Cycle</a></li>
@@ -5210,6 +5229,326 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
 
     </div>
 
+  </div>
+</div>
+<!-- USER GUIDE — CHAPTER 2 -->
+<div id="userGuideChapter2Dialog"
+     class="dialog-backdrop hidden">
+  <div class="dialog"
+       style="display:flex; flex-direction:column;
+              max-height:85vh; overflow:hidden;">
+
+    <h2>Getting Your Hand Ready</h2>
+
+    <div id="userGuideChapter2Body"
+         style="overflow-y:auto; min-height:0; flex:1;">
+
+      <nav aria-label="Chapter 2 sections"
+           style="background:#f0f4f8; border-radius:10px;
+                  padding:14px; margin-bottom:20px;"
+           onclick="
+             const link =
+               event.target.closest('a[data-section]');
+             if (!link) return;
+             event.preventDefault();
+
+             const scroller = this.parentElement;
+             const heading = Array.from(
+               scroller.querySelectorAll('h3')
+             ).find(function(item) {
+               return item.textContent.trim() ===
+                 link.dataset.section;
+             });
+
+             if (heading) {
+               scroller.scrollTo({
+                 top: scroller.scrollTop +
+                   heading.getBoundingClientRect().top -
+                   scroller.getBoundingClientRect().top,
+                 behavior: 'smooth'
+               });
+             }
+           ">
+
+        <strong>In this chapter</strong>
+        <ul style="padding-left:1.3em; line-height:1.6;
+                   margin-bottom:0;">
+          <li>
+            <a href="#" data-section="1. Choose Your Role">
+              Choose Your Role
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="2. Check Your Ruleset">
+              Check Your Ruleset
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="3. Choose Your Display Order">
+              Choose Your Display Order
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="4. Enter Your Starting Tiles">
+              Enter Your Starting Tiles
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="5. Review and Play On!">
+              Review and Play On!
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <p>
+        Begin on the Tile Selection Screen (TSS).
+        Set up MJC to match the hand you are about
+        to play, then enter the tiles you were dealt.
+        Keep your actual tiles nearby so you can
+        check your entry.
+      </p>
+
+      <h3>1. Choose Your Role</h3>
+
+      <p>
+        Tap <strong>Role</strong>. Select
+        <strong>Player</strong> if you are not
+        the dealer, or <strong>Dealer</strong>
+        if you are dealing this hand.
+        Tap <strong>Save</strong>.
+      </p>
+
+      <div role="img"
+           aria-label="Starting tile targets:
+             Player requires 16 tiles;
+             Dealer requires 17 tiles."
+           style="display:grid;
+                  grid-template-columns:repeat(2, minmax(0, 1fr));
+                  gap:10px; text-align:center;
+                  background:#f0f4f8; border-radius:12px;
+                  padding:16px; margin:16px 0;">
+        <div>
+          <strong>Player</strong><br>
+          <span style="color:#6b3fa0; font-size:1.4em;">
+            16
+          </span><br>
+          starting tiles
+        </div>
+        <div>
+          <strong>Dealer</strong><br>
+          <span style="color:#6b3fa0; font-size:1.4em;">
+            17
+          </span><br>
+          starting tiles
+        </div>
+      </div>
+
+      <p>
+        Check that the target beside
+        <strong>Tiles Entered</strong> matches
+        your role.
+      </p>
+
+      <h3>2. Check Your Ruleset</h3>
+
+      <p>
+        Tap <strong>Ruleset</strong> and select
+        <strong>Filipino 16-Tile</strong> or
+        <strong>Taiwanese 16-Tile</strong> to
+        match your game.
+      </p>
+
+      <p>
+        For Filipino Mahjong, choose
+        <strong>Honors Enabled</strong> or
+        <strong>Honors Disabled</strong>.
+        Honors are the Winds and Dragons.
+        With Honors enabled, also check whether
+        <strong>N-E-W-S Allowed</strong>
+        matches your table’s rules.
+      </p>
+
+      <p>
+        Tap <strong>Save</strong> when finished.
+        Chinese 13-Tile is marked
+        <em>Feature Coming Soon</em>.
+      </p>
+
+      <h3>3. Choose Your Display Order</h3>
+
+      <p>
+        Tap <strong>Display</strong>.
+        Choose your <strong>First Suit</strong>
+        and <strong>Second Suit</strong>.
+        The remaining suit automatically becomes
+        the <strong>Third Suit</strong>.
+      </p>
+
+      <p>
+        Under <strong>Honors Order</strong>,
+        choose Winds before Dragons or Dragons
+        before Winds. Tap <strong>Save</strong>.
+      </p>
+
+      <p>
+        Use an order you find easy to follow.
+        This setting controls how suit and honor
+        groups appear in MJC’s tile displays and
+        selection screens.
+      </p>
+
+      <h3>4. Enter Your Starting Tiles</h3>
+
+      <p>
+        Work through your actual hand one suit
+        or honor group at a time. Find each tile
+        on the TSS and tap it once for each copy
+        you hold.
+      </p>
+
+      <p>
+        For example, if you have two copies of
+        5 Char, tap its tile twice from a count
+        of zero.
+      </p>
+
+      <div role="img"
+           aria-label="Tile-entry example:
+             two taps on 5 Char from zero
+             records two copies."
+           style="border:1px solid #ccc;
+                  border-radius:12px; padding:16px;
+                  text-align:center; margin:16px 0;">
+
+        <strong>Example: two copies of 5 Char</strong>
+
+        <div style="display:inline-block;
+                    background:#f8f6e9;
+                    border:1px solid #bbb;
+                    border-radius:8px;
+                    padding:20px; margin-top:16px;">
+          5 Char<br>
+          <strong style="color:#6b3fa0;">2</strong>
+        </div>
+
+        <p style="color:#666; margin-bottom:0;">
+          The tile name replaces its image
+          in this illustration.
+        </p>
+      </div>
+
+      <p>
+        Check the quantity shown on each selected
+        tile. A blank quantity means zero.
+        Each tap cycles the count from zero
+        through four, then back to zero.
+        Long-press a tile to clear its count.
+      </p>
+
+      <p>
+        Watch <strong>Tiles Entered</strong>
+        as you work. Continue until all your
+        starting tiles are recorded:
+        <strong>16 for Player</strong> or
+        <strong>17 for Dealer</strong>.
+      </p>
+
+      <p>
+        If you need to start the entry again,
+        tap <strong>Clear Tiles</strong>.
+        <strong>Undo Clear</strong> appears
+        temporarily if you need to restore
+        the cleared tiles.
+      </p>
+
+      <h3>5. Review and Play On!</h3>
+
+      <p>
+        Before continuing, compare your entry
+        with your actual hand:
+      </p>
+
+      <ul style="padding-left:1.3em; line-height:1.6;">
+        <li>Your Role and Ruleset are correct.</li>
+        <li>Each tile is in the correct suit or honor group.</li>
+        <li>The quantity of each tile matches your hand.</li>
+        <li>The entered total matches the required target.</li>
+      </ul>
+
+      <div role="img"
+           aria-label="Completed Player entry:
+             Tiles Entered 16 out of 16,
+             followed by Play On."
+           style="background:#f0f4f8;
+                  border:1px solid #ccc;
+                  border-radius:12px; padding:16px;
+                  text-align:center; margin:16px 0;">
+
+        <p style="margin-top:0;">
+          <strong>Player example</strong><br>
+          Tiles Entered: 16 / 16
+        </p>
+
+        <span style="display:inline-block;
+                     background:#222; color:white;
+                     border-radius:10px;
+                     padding:12px 20px;">
+          <strong>Play On!</strong>
+        </span>
+      </div>
+
+      <p>
+        <strong>Play On!</strong> becomes available
+        when the required tile count is entered.
+        A matching total alone does not confirm
+        that every tile is correct, so finish
+        checking the tile identities and quantities
+        before tapping it.
+      </p>
+
+      <p>
+        Tap <strong>Play On!</strong> to open
+        the <strong>Starting Hand Display</strong>.
+        If you notice an entry mistake there,
+        use <strong>Revise</strong> to return
+        to tile entry.
+      </p>
+
+    </div>
+
+    <div class="dialog-actions"
+         style="flex-shrink:0; flex-wrap:wrap;">
+
+      <button type="button"
+              class="dialog-button"
+              onclick="
+                document.getElementById(
+                  'userGuideChapter2Body'
+                ).scrollTo({
+                  top: 0,
+                  behavior: 'smooth'
+                });
+              ">
+        Chapter Sections
+      </button>
+
+      <button type="button"
+              class="dialog-button"
+              onclick="
+                closeDialog('userGuideChapter2Dialog');
+                openDialog('userGuideDialog');
+              ">
+        Back to Contents
+      </button>
+
+      <button type="button"
+              class="dialog-button primary"
+              onclick="closeDialog('userGuideChapter2Dialog');">
+        Close
+      </button>
+
+    </div>
   </div>
 </div>
 <div id="acknowledgmentsDialog" class="dialog-backdrop hidden">
