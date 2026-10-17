@@ -1557,7 +1557,26 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
             Following the Turn Cycle
           </a>
         </li>
-        <li><a href="#">Chow, Pong, Kang, and Secret</a></li>
+                <li>
+          <a href="#"
+             onclick="
+               event.preventDefault();
+               event.stopPropagation();
+               closeDialog('userGuideDialog');
+               openDialog('userGuideChapter6Dialog');
+
+               requestAnimationFrame(function() {
+                 document.getElementById(
+                   'userGuideChapter6Body'
+                 ).scrollTo({
+                   top: 0,
+                   behavior: 'instant'
+                 });
+               });
+             ">
+            Chow, Pong, Kang, and Secret
+          </a>
+        </li>
         <li><a href="#">Understanding Pathways</a></li>
         <li><a href="#">Understanding Release Tile (RT)</a></li>
         <li><a href="#">Understanding Recommendations and Coaching</a></li>
@@ -6940,6 +6959,502 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
       <button type="button"
               class="dialog-button primary"
               onclick="closeDialog('userGuideChapter5Dialog');">
+        Close
+      </button>
+
+    </div>
+  </div>
+</div>
+<!-- USER GUIDE — CHAPTER 6 -->
+<div id="userGuideChapter6Dialog"
+     class="dialog-backdrop hidden">
+  <div class="dialog"
+       style="display:flex; flex-direction:column;
+              max-height:85vh; overflow:hidden;">
+
+    <h2>Chow, Pong, Kang, and Secret</h2>
+
+    <div id="userGuideChapter6Body"
+         style="overflow-y:auto; min-height:0; flex:1;">
+
+      <nav aria-label="Chapter 6 sections"
+           style="background:#f0f4f8; border-radius:10px;
+                  padding:14px; margin-bottom:20px;"
+           onclick="
+             const link =
+               event.target.closest('a[data-section]');
+             if (!link) return;
+             event.preventDefault();
+
+             const scroller = this.parentElement;
+             const heading = Array.from(
+               scroller.querySelectorAll('h3')
+             ).find(function(item) {
+               return item.textContent.trim() ===
+                 link.dataset.section;
+             });
+
+             if (heading) {
+               scroller.scrollTo({
+                 top: scroller.scrollTop +
+                   heading.getBoundingClientRect().top -
+                   scroller.getBoundingClientRect().top,
+                 behavior: 'smooth'
+               });
+             }
+           ">
+
+        <strong>In this chapter</strong>
+        <ul style="padding-left:1.3em; line-height:1.6;
+                   margin-bottom:0;">
+          <li>
+            <a href="#" data-section="1. Drawn Tiles and Claimed Tiles">
+              Drawn Tiles and Claimed Tiles
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="2. Chow and Pong">
+              Chow and Pong
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="3. Choosing a Meld">
+              Choosing a Meld
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="4. Kang and Secret">
+              Kang and Secret
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="5. NEWS and Sagasa">
+              NEWS and Sagasa
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="6. Declare, Defer, or Ignore">
+              Declare, Defer, or Ignore
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <p>
+        Melds are completed groupings such as
+        Chows, Pongs, and Kangs.
+        This chapter explains how to record
+        them in MJC and respond when the app
+        offers a grouping or declaration.
+      </p>
+
+      <p>
+        Follow your table’s rules for when
+        a claim or declaration is permitted.
+        MJC’s controls record the action
+        you take in your actual game.
+      </p>
+
+      <h3>1. Drawn Tiles and Claimed Tiles</h3>
+
+      <p>
+        Use <strong>Draw</strong> when the
+        incoming tile comes from the wall.
+        MJC evaluates the recorded hand
+        and may offer meld choices
+        or a declaration.
+      </p>
+
+      <p>
+        Use <strong>Chow</strong>,
+        <strong>Pong</strong>, or
+        <strong>Kang</strong> when you
+        claim another player’s discard
+        for that meld.
+      </p>
+
+      <div style="background:#f0f4f8;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0;">
+        <p style="margin-top:0;">
+          <strong>From the wall</strong><br>
+          Record through Draw.
+        </p>
+        <p style="margin-bottom:0;">
+          <strong>From an opponent’s discard</strong><br>
+          Record through the appropriate claim control.
+        </p>
+      </div>
+
+      <p>
+        A completed grouping can be
+        <strong>Hidden</strong> or
+        <strong>Exposed</strong>.
+        Claiming a discard to form a meld
+        makes that meld exposed.
+        A grouping completed with your own
+        tiles can remain hidden.
+      </p>
+
+      <h3>2. Chow and Pong</h3>
+
+      <h4>Chow</h4>
+
+      <p>
+        A Chow contains three consecutive
+        tiles of one suit.
+        To record a Chow claim, tap
+        <strong>Chow</strong> and select
+        the opponent’s discarded tile.
+        Choose the intended grouping
+        if MJC offers more than one.
+      </p>
+
+      <div role="img"
+           aria-label="Chow example:
+             4 Bam and 5 Bam in hand;
+             claim 6 Bam to form 4, 5, 6 Bam."
+           style="background:#eaf4e8;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0; text-align:center;">
+        <strong>Chow example</strong>
+        <p>You hold: 4 Bam · 5 Bam</p>
+        <p>Claim: 6 Bam</p>
+        <div style="background:white;
+                    border-radius:8px; padding:12px;">
+          4 Bam · 5 Bam · 6 Bam
+        </div>
+      </div>
+
+      <h4>Pong</h4>
+
+      <p>
+        A Pong contains three matching tiles.
+        To record a Pong claim, tap
+        <strong>Pong</strong> and select
+        the discarded tile that matches
+        the pair you hold.
+      </p>
+
+      <div role="img"
+           aria-label="Pong example:
+             two Red Dragons in hand;
+             claim a Red Dragon to form a Pong."
+           style="background:#eaf4e8;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0; text-align:center;">
+        <strong>Pong example</strong>
+        <p>You hold: Red · Red</p>
+        <p>Claim: Red</p>
+        <div style="background:white;
+                    border-radius:8px; padding:12px;">
+          Red · Red · Red
+        </div>
+      </div>
+
+      <p>
+        After recording a Chow or Pong claim,
+        follow the instruction to discard.
+        Use the separate
+        <strong>Mahjong</strong> control
+        when claiming a discard to complete
+        your winning hand.
+      </p>
+
+      <h3>3. Choosing a Meld</h3>
+
+      <p>
+        An incoming tile may fit more than
+        one grouping. When MJC presents
+        multiple meld choices, compare
+        the tiles shown in each choice
+        before selecting one.
+      </p>
+
+      <div role="img"
+           aria-label="Example of overlapping Chow choices:
+             incoming 3 Char can form
+             1, 2, 3 Char or 2, 3, 4 Char."
+           style="border:1px solid #ccc;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0; text-align:center;">
+
+        <strong>Incoming tile: 3 Char</strong>
+        <p>Possible Chow choices</p>
+
+        <div style="background:#f0f4f8;
+                    border-radius:8px; padding:12px;
+                    margin-bottom:10px;">
+          1 Char · 2 Char · 3 Char
+        </div>
+
+        <div style="background:#f0f4f8;
+                    border-radius:8px; padding:12px;">
+          2 Char · 3 Char · 4 Char
+        </div>
+
+        <p style="color:#666; margin-bottom:0;">
+          Example choices; the actual options
+          depend on your recorded hand.
+          Tile names replace images.
+        </p>
+      </div>
+
+      <p>
+        Selecting a grouping records that
+        choice and continues the action.
+        There is no separate Confirm button
+        for the ordinary meld choices.
+      </p>
+
+      <p>
+        MJC may identify a recommended grouping.
+        If it assesses the choices as equally
+        sound, it may display
+        <strong>“MJC: Either choice is
+        structurally sound.”</strong>
+        Choose the grouping that matches
+        what you intend to play.
+      </p>
+
+      <p>
+        <strong>Ignore Melds</strong> declines
+        the offered groupings.
+        It does not serve as an undo control
+        for the tile entry.
+        If you entered the wrong tile,
+        use the appropriate correction control.
+      </p>
+
+      <h3>4. Kang and Secret</h3>
+
+      <p>
+        A Kang contains four matching tiles.
+        How you obtained the fourth tile
+        determines how you record it.
+      </p>
+
+      <div role="img"
+           aria-label="Kang example:
+             four matching 7 Dot tiles."
+           style="background:#eaf4e8;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0; text-align:center;">
+        <strong>Kang</strong>
+        <p style="margin-bottom:0;">
+          7 Dot · 7 Dot · 7 Dot · 7 Dot
+        </p>
+      </div>
+
+      <p>
+        If you claim an opponent’s discard
+        to complete the Kang, use
+        <strong>Kang</strong> and select
+        that discarded tile.
+        A declaration control such as
+        <strong>Commit Kang</strong>
+        completes the offered action.
+      </p>
+
+      <p>
+        If you hold all four tiles hidden,
+        MJC may offer a hidden Kang declaration.
+        In Filipino mode, the control reads
+        <strong>Declare Secret</strong>.
+        Other ruleset contexts may use
+        <strong>Declare Kang</strong>.
+      </p>
+
+      <p>
+        <strong>Secret</strong> is the
+        Filipino declaration wording for
+        the eligible hidden four-tile grouping.
+        The underlying grouping is still
+        recorded according to its type,
+        such as Kang.
+      </p>
+
+      <p>
+        After recording the declaration,
+        follow the replacement-draw instruction.
+        Record that draw before continuing
+        to the ordinary discard step.
+      </p>
+
+      <h3>5. NEWS and Sagasa</h3>
+
+      <h4>NEWS</h4>
+
+      <p>
+        NEWS groups one each of
+        <strong>North, East, West, and South</strong>.
+        In Filipino mode, it is available
+        when Honors are enabled and
+        <strong>N-E-W-S Allowed</strong>
+        is selected in Ruleset.
+      </p>
+
+      <div role="img"
+           aria-label="NEWS grouping:
+             North, East, West, South."
+           style="background:#eaf4e8;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0; text-align:center;">
+        <strong>NEWS</strong>
+        <p style="margin-bottom:0;">
+          North · East · West · South
+        </p>
+      </div>
+
+      <p>
+        Resolve the NEWS offer using
+        the declaration control shown.
+        Filipino hidden NEWS can use
+        <strong>Declare Secret</strong>;
+        other contexts may show
+        <strong>Commit NEWS</strong>
+        or <strong>Declare NEWS</strong>.
+        Follow the replacement-draw instruction
+        after declaring.
+      </p>
+
+      <h4>Sagasa</h4>
+
+      <p>
+        Sagasa adds a fourth matching tile
+        to an already exposed Pong.
+        When your draw makes this available,
+        MJC can offer
+        <strong>Declare Sagasa</strong>.
+      </p>
+
+      <div style="background:#f0f4f8;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0; text-align:center;">
+        <strong>Sagasa example</strong>
+        <p>Exposed Pong: 7 Dot · 7 Dot · 7 Dot</p>
+        <p style="margin-bottom:0;">
+          Draw another 7 Dot<br>
+          → Declare Sagasa<br>
+          → Record a replacement draw
+        </p>
+      </div>
+
+      <p>
+        The Sagasa offer also provides
+        <strong>Ignore Sagasa</strong>.
+        It does not provide a Defer option.
+      </p>
+
+      <h3>6. Declare, Defer, or Ignore</h3>
+
+      <p>
+        Four-tile declaration offers may
+        provide different ways to continue.
+        Read the actual button labels
+        before choosing.
+      </p>
+
+      <div role="img"
+           aria-label="Example Filipino hidden Kang offer:
+             Declare Secret, Defer Kang,
+             Ignore Kang."
+           style="border:1px solid #ccc;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0; text-align:center;">
+
+        <strong>Kang Available</strong>
+
+        <div style="background:#222; color:white;
+                    border-radius:8px; padding:12px;
+                    margin-top:16px;">
+          Declare Secret
+        </div>
+
+        <div style="background:#ddd;
+                    border-radius:8px; padding:12px;
+                    margin-top:10px;">
+          Defer Kang
+        </div>
+
+        <div style="background:#ddd;
+                    border-radius:8px; padding:12px;
+                    margin-top:10px;">
+          Ignore Kang
+        </div>
+
+        <p style="color:#666; margin-bottom:0;">
+          Example offer; labels and available
+          choices depend on the context.
+        </p>
+      </div>
+
+      <p>
+        <strong>Declare / Commit</strong><br>
+        Records the offered four-tile meld
+        declaration now. Follow the resulting
+        replacement-draw instruction.
+      </p>
+
+      <p>
+        <strong>Defer Kang / Defer NEWS</strong><br>
+        Postpones the declaration.
+        MJC tracks the deferred grouping
+        while you continue.
+        A deferred declaration has not yet
+        been completed, so do not record
+        its replacement draw at this point.
+      </p>
+
+      <p>
+        <strong>Ignore Kang / Ignore NEWS /
+        Ignore Sagasa</strong><br>
+        Declines the current offer.
+        It does not remove the incoming tile
+        or reverse the action you recorded.
+        Follow the next instruction.
+      </p>
+
+      <p>
+        Keep MJC’s record consistent with
+        the declaration and meld you actually
+        play at the table.
+        Use <strong>Correct Last Entry</strong>
+        or <strong>Fix Hand</strong>
+        when a recorded action or grouping
+        needs correction.
+      </p>
+
+    </div>
+
+    <div class="dialog-actions"
+         style="flex-shrink:0; flex-wrap:wrap;">
+
+      <button type="button"
+              class="dialog-button"
+              onclick="
+                document.getElementById(
+                  'userGuideChapter6Body'
+                ).scrollTo({
+                  top: 0,
+                  behavior: 'smooth'
+                });
+              ">
+        Chapter Sections
+      </button>
+
+      <button type="button"
+              class="dialog-button"
+              onclick="
+                closeDialog('userGuideChapter6Dialog');
+                openDialog('userGuideDialog');
+              ">
+        Back to Contents
+      </button>
+
+      <button type="button"
+              class="dialog-button primary"
+              onclick="closeDialog('userGuideChapter6Dialog');">
         Close
       </button>
 
