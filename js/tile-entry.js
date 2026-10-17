@@ -482,6 +482,14 @@ function updateActionButtons(total, target) {
   const longPressTip = document.getElementById("longPressTip");
   if (longPressTip) longPressTip.classList.toggle("hidden", !isStartingTileSelectionMode());
 
+  const tssHistoryRow = document.getElementById("tssHistoryRow");
+  if (tssHistoryRow) {
+    tssHistoryRow.classList.toggle(
+      "hidden",
+      !isStartingTileSelectionMode()
+    );
+  }
+
   if (isStartingTileSelectionMode()) {
     startBtn.classList.remove("hidden");
     acceptBtn.classList.add("hidden");
