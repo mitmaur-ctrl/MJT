@@ -575,6 +575,21 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
   </div>
 
   <div class="footer-row">
+    <button type="button" onclick="openUserGuideDialog()">
+      User Guide
+    </button>
+
+    <button type="button"
+            onclick="showToast('Playing MJC is a work in progress.');">
+      Playing MJC
+    </button>
+
+    <button type="button" onclick="openGlossaryDialog()">
+      Glossary
+    </button>
+  </div>
+
+  <div class="footer-row">
     <button onclick="openAcknowledgmentsDialog()">Acknowledgments</button>
     <button onclick="openFeedbackDialog()">Feedback</button>
     <button onclick="openSupportDialog()">Support MJC</button>
@@ -1120,18 +1135,6 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
       <li><strong>Press Play On!</strong> MJC will organize your hand according to Six Box Theory™.</li>
     </ol>
 
-    <p>
-      Unfamiliar with a term or abbreviation?
-      Find its meaning in the <strong>Glossary</strong>,
-      available under <strong>About 6BT</strong> in the footer.
-    </p>
-
-    <p>
-      <button class="dialog-button" onclick="openUserGuideDialog()">
-        User Guide
-      </button>
-    </p>
-
     <div class="dialog-actions">
       <button
         class="dialog-button primary"
@@ -1151,14 +1154,6 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     <p>Rather than viewing a hand as individual tiles, 6BT organizes it into boxes, offering a simpler way to visualize, understand, and develop your hand.</p>
 
     <p>This makes it easier to recognize strengths and weaknesses, improve tile efficiency, and make better discard decisions.</p>
-
-        <p>
-      <button
-        type="button"
-        class="dialog-button"
-        onclick="openGlossaryDialog()"
-      >Glossary</button>
-    </p>
 
     <div class="dialog-actions">
       <button class="dialog-button primary" onclick="closeDialog('about6BTDialog')">Close</button>
@@ -1181,7 +1176,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
       <button
         type="button"
         class="dialog-button primary"
-        onclick="closeDialog('glossaryDialog'); openDialog('about6BTDialog')"
+        onclick="closeDialog('glossaryDialog')"
       >Close</button>
     </div>
   </div>
