@@ -1577,7 +1577,26 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
             Chow, Pong, Kang, and Secret
           </a>
         </li>
-        <li><a href="#">Understanding Pathways</a></li>
+                <li>
+          <a href="#"
+             onclick="
+               event.preventDefault();
+               event.stopPropagation();
+               closeDialog('userGuideDialog');
+               openDialog('userGuideChapter7Dialog');
+
+               requestAnimationFrame(function() {
+                 document.getElementById(
+                   'userGuideChapter7Body'
+                 ).scrollTo({
+                   top: 0,
+                   behavior: 'instant'
+                 });
+               });
+             ">
+            Understanding Pathways
+          </a>
+        </li>
         <li><a href="#">Understanding Release Tile (RT)</a></li>
         <li><a href="#">Understanding Recommendations and Coaching</a></li>
         <li><a href="#">Completing a Hand</a></li>
@@ -7461,6 +7480,460 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     </div>
   </div>
 </div>
+<!-- USER GUIDE — CHAPTER 7 -->
+<div id="userGuideChapter7Dialog"
+     class="dialog-backdrop hidden">
+  <div class="dialog"
+       style="display:flex; flex-direction:column;
+              max-height:85vh; overflow:hidden;">
+
+    <h2>Understanding Pathways</h2>
+
+    <div id="userGuideChapter7Body"
+         style="overflow-y:auto; min-height:0; flex:1;">
+
+      <nav aria-label="Chapter 7 sections"
+           style="background:#f0f4f8; border-radius:10px;
+                  padding:14px; margin-bottom:20px;"
+           onclick="
+             const link =
+               event.target.closest('a[data-section]');
+             if (!link) return;
+             event.preventDefault();
+
+             const scroller = this.parentElement;
+             const heading = Array.from(
+               scroller.querySelectorAll('h3')
+             ).find(function(item) {
+               return item.textContent.trim() ===
+                 link.dataset.section;
+             });
+
+             if (heading) {
+               scroller.scrollTo({
+                 top: scroller.scrollTop +
+                   heading.getBoundingClientRect().top -
+                   scroller.getBoundingClientRect().top,
+                 behavior: 'smooth'
+               });
+             }
+           ">
+
+        <strong>In this chapter</strong>
+        <ul style="padding-left:1.3em; line-height:1.6;
+                   margin-bottom:0;">
+          <li>
+            <a href="#" data-section="1. Turn Pathways On">
+              Turn Pathways On
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="2. Read the Colored Markers">
+              Read the Colored Markers
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="3. Read the Numbers">
+              Read the Numbers
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="4. Follow a Chow Pathway">
+              Follow a Chow Pathway
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="5. Read Multiple Pathways">
+              Read Multiple Pathways
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="6. Use Pathways in Your Decisions">
+              Use Pathways in Your Decisions
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <p>
+        Pathways show how supported Developing
+        Boxes can advance toward completion.
+        They help you connect the tiles
+        already grouped in a box with
+        the incoming tiles that could help it.
+      </p>
+
+      <h3>1. Turn Pathways On</h3>
+
+      <ol style="padding-left:1.5em; line-height:1.6;">
+        <li>
+          Open your hand in
+          <strong>Coaching View</strong>.
+        </li>
+        <li>
+          Tap <strong>Pathways: On</strong>
+          to show pathway information.
+        </li>
+        <li>
+          Examine the markers and numbers
+          added to supported Developing Boxes.
+        </li>
+      </ol>
+
+      <p>
+        Once Pathways are displayed,
+        the button reads
+        <strong>Pathways: Off</strong>,
+        offering to hide them.
+        <strong>Pathways Explained</strong>
+        opens a quick reference.
+      </p>
+
+      <p>
+        In Standard View, the Pathways control
+        reads <strong>Pathways: NA</strong>
+        and is unavailable.
+        Switch to Coaching View to use it.
+      </p>
+
+      <h3>2. Read the Colored Markers</h3>
+
+      <p>
+        The marker color identifies the kind
+        of incoming tile that advances
+        the grouping.
+      </p>
+
+      <div role="img"
+           aria-label="Pathway marker key:
+             green means a different numbered tile
+             of the same suit;
+             orange means a matching tile."
+           style="border:1px solid #ccc;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0;">
+
+        <p style="margin-top:0;">
+          <strong style="color:#2e8b57;">
+            Green ↓ — Same-Suit Tile
+          </strong><br>
+          A different numbered tile of the
+          same suit can advance the grouping.
+        </p>
+
+        <p style="margin-bottom:0;">
+          <strong style="color:#d97706;">
+            Orange ↓ — Matching Tile
+          </strong><br>
+          Another copy of a tile already
+          in the grouping can advance it.
+        </p>
+      </div>
+
+      <p>
+        For example, adding 3 Bam to
+        4 Bam · 5 Bam follows a same-suit
+        pathway. Adding Red to Red · Red
+        follows a matching-tile pathway.
+      </p>
+
+      <p>
+        The colors identify pathway types.
+        They do not mark a tile for discard.
+      </p>
+
+      <h3>3. Read the Numbers</h3>
+
+      <p>
+        <strong>Acceptance</strong><br>
+        The number of tile opportunities
+        that can advance the Developing Box
+        toward completion.
+      </p>
+
+      <p>
+        <strong>Sources</strong><br>
+        How a needed tile can enter your hand:
+        through your own draw or through
+        an eligible discard claim.
+        Claim eligibility depends on
+        the grouping and game rules.
+      </p>
+
+      <p>
+        <strong>Effective Acceptance (EA)</strong><br>
+        The number above a pathway marker.
+        It represents the remaining tile
+        opportunities MJC calculates for
+        that particular pathway.
+      </p>
+
+      <div style="background:#f0f4f8;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0;">
+        <strong>Count opportunities, not promises</strong>
+        <p style="margin-bottom:0;">
+          These figures describe opportunities
+          based on MJC’s recorded information.
+          They do not guarantee that a tile
+          will arrive, identify the next draw,
+          or show a percentage chance of winning.
+        </p>
+      </div>
+
+      <p>
+        A tile type and a tile opportunity
+        are different things.
+        A DSW may need either of two tile
+        types, with multiple copies of
+        each type potentially contributing
+        to its opportunities.
+      </p>
+
+      <h3>4. Follow a Chow Pathway</h3>
+
+      <p>
+        Begin by identifying the tiles
+        already in the box. Then ask:
+        which same-suit tile would
+        complete the Chow?
+      </p>
+
+      <div role="img"
+           aria-label="Double-Sided Wait example:
+             4 Bam and 5 Bam can complete
+             with 3 Bam or 6 Bam.
+             Pathway figures are omitted."
+           style="background:#fff4df;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0; text-align:center;">
+
+        <strong>Double-Sided Wait</strong>
+
+        <div style="display:grid;
+                    grid-template-columns:repeat(2, minmax(0, 1fr));
+                    gap:10px; margin-top:16px;">
+          <div style="background:white;
+                      border-radius:8px; padding:12px;">
+            <strong style="color:#2e8b57;">3 Bam</strong><br>
+            <span style="color:#2e8b57;">↓</span><br>
+            3 · 4 · 5 Bam
+          </div>
+          <div style="background:white;
+                      border-radius:8px; padding:12px;">
+            <strong style="color:#2e8b57;">6 Bam</strong><br>
+            <span style="color:#2e8b57;">↓</span><br>
+            4 · 5 · 6 Bam
+          </div>
+        </div>
+
+        <p>
+          Starting grouping:
+          <strong>4 Bam · 5 Bam</strong>
+        </p>
+
+        <p style="color:#666; margin-bottom:0;">
+          Teaching illustration. Needed tile names
+          replace the live EA figures above
+          the markers; tile images are omitted.
+        </p>
+      </div>
+
+      <p>
+        This DSW has two completing tile types:
+        3 Bam and 6 Bam.
+        Read the EA figure for each pathway,
+        then the Acceptance and Sources
+        information shown for the box.
+      </p>
+
+      <h4>Middle Wait</h4>
+
+      <div style="background:#f0f4f8;
+                  border-radius:8px; padding:12px;
+                  text-align:center; margin:12px 0;">
+        <strong>4 Char · 6 Char</strong><br>
+        Needs 5 Char
+      </div>
+
+      <p>
+        The missing tile fits between
+        the two existing tiles.
+        The pathway marker appears
+        in that middle position.
+      </p>
+
+      <h4>Edge Wait</h4>
+
+      <div style="background:#f0f4f8;
+                  border-radius:8px; padding:12px;
+                  text-align:center; margin:12px 0;">
+        <strong>1 Dot · 2 Dot</strong><br>
+        Needs 3 Dot
+      </div>
+
+      <p>
+        The completing tile fits at
+        the available end.
+        Likewise, 8 Dot · 9 Dot
+        needs 7 Dot.
+        Each Edge Wait has one
+        completing tile type.
+      </p>
+
+      <h3>5. Read Multiple Pathways</h3>
+
+      <p>
+        A Chow-Pong Candidate can offer
+        both same-suit and matching-tile
+        pathways. Read them as alternative
+        ways to develop the grouping.
+      </p>
+
+      <div role="img"
+           aria-label="Three-tile Chow-Pong Candidate:
+             2 Char, 2 Char, 3 Char.
+             Adding 1 or 4 Char offers a Chow;
+             adding 2 Char offers a Pong."
+           style="border:1px solid #ccc;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0;">
+
+        <p style="text-align:center; margin-top:0;">
+          <strong>2 Char · 2 Char · 3 Char</strong>
+        </p>
+
+        <div style="background:#eaf4e8;
+                    border-radius:8px; padding:12px;
+                    margin-bottom:10px;">
+          <strong style="color:#2e8b57;">
+            Chow pathways
+          </strong><br>
+          Add 1 Char → 1 · 2 · 3 Char<br>
+          Add 4 Char → 2 · 3 · 4 Char
+        </div>
+
+        <div style="background:#fff4df;
+                    border-radius:8px; padding:12px;">
+          <strong style="color:#d97706;">
+            Pong pathway
+          </strong><br>
+          Add 2 Char → 2 · 2 · 2 Char
+        </div>
+
+        <p style="color:#666; margin-bottom:0;">
+          Tile names replace images.
+          Each alternative uses only the tiles
+          needed for its completed meld.
+        </p>
+      </div>
+
+      <p>
+        Completing a Chow in this example
+        leaves one 2 Char outside that meld.
+        Completing the Pong leaves the 3 Char.
+        The same physical tile cannot belong
+        to both completed alternatives.
+      </p>
+
+      <p>
+        Where MJC shows separate
+        <strong>Chow</strong> and
+        <strong>Pong</strong> summaries,
+        read each alongside its corresponding
+        markers. Do not treat every displayed
+        figure as a separate quantity to add
+        into one total.
+      </p>
+
+      <p>
+        Matching-tile pathways also help
+        explain an Eye-Pong Candidate
+        becoming a Pong or a Half Eye
+        developing into a pair.
+        The grouping determines what
+        that matching tile accomplishes.
+      </p>
+
+      <h3>6. Use Pathways in Your Decisions</h3>
+
+      <ol style="padding-left:1.5em; line-height:1.6;">
+        <li>
+          Identify the Developing Box
+          and the tiles it contains.
+        </li>
+        <li>
+          Read the marker colors to distinguish
+          same-suit and matching-tile pathways.
+        </li>
+        <li>
+          Identify the incoming tiles
+          that advance each pathway.
+        </li>
+        <li>
+          Read the EA figures and the
+          Acceptance and Sources summaries.
+        </li>
+        <li>
+          Consider how the grouping fits
+          the rest of your hand.
+        </li>
+      </ol>
+
+      <p>
+        More opportunities can make a grouping
+        easier to develop, but a single figure
+        does not settle every decision.
+        Your Eye, completed melds, other
+        candidates, and the current stage
+        of play also matter.
+      </p>
+
+      <p>
+        Pathways explain development options.
+        For MJC’s current discard suggestion,
+        read <strong>Recommended Discard</strong>
+        and <strong>Insight</strong>.
+        Chapter 9 explains that coaching.
+      </p>
+
+    </div>
+
+    <div class="dialog-actions"
+         style="flex-shrink:0; flex-wrap:wrap;">
+
+      <button type="button"
+              class="dialog-button"
+              onclick="
+                document.getElementById(
+                  'userGuideChapter7Body'
+                ).scrollTo({
+                  top: 0,
+                  behavior: 'smooth'
+                });
+              ">
+        Chapter Sections
+      </button>
+
+      <button type="button"
+              class="dialog-button"
+              onclick="
+                closeDialog('userGuideChapter7Dialog');
+                openDialog('userGuideDialog');
+              ">
+        Back to Contents
+      </button>
+
+      <button type="button"
+              class="dialog-button primary"
+              onclick="closeDialog('userGuideChapter7Dialog');">
+        Close
+      </button>
+
+    </div>
+  </div>
+</div>
+
 
 <div id="acknowledgmentsDialog" class="dialog-backdrop hidden">
   <div class="dialog">
