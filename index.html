@@ -1637,7 +1637,26 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
             Understanding Recommendations and Coaching
           </a>
         </li>
-        <li><a href="#">Completing a Hand</a></li>
+                <li>
+          <a href="#"
+             onclick="
+               event.preventDefault();
+               event.stopPropagation();
+               closeDialog('userGuideDialog');
+               openDialog('userGuideChapter10Dialog');
+
+               requestAnimationFrame(function() {
+                 document.getElementById(
+                   'userGuideChapter10Body'
+                 ).scrollTo({
+                   top: 0,
+                   behavior: 'instant'
+                 });
+               });
+             ">
+            Completing a Hand
+          </a>
+        </li>
         <li><a href="#">Saving and Reviewing Hands</a></li>
         <li><a href="#">Correcting an Entry</a></li>
         <li><a href="#">Finding Help and Sharing Feedback</a></li>
@@ -8789,6 +8808,374 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     </div>
   </div>
 </div>
+<!-- USER GUIDE — CHAPTER 10 -->
+<div id="userGuideChapter10Dialog"
+     class="dialog-backdrop hidden">
+  <div class="dialog"
+       style="display:flex; flex-direction:column;
+              max-height:85vh; overflow:hidden;">
+
+    <h2>Completing a Hand</h2>
+
+    <div id="userGuideChapter10Body"
+         style="overflow-y:auto; min-height:0; flex:1;">
+
+      <nav aria-label="Chapter 10 sections"
+           style="background:#f0f4f8; border-radius:10px;
+                  padding:14px; margin-bottom:20px;"
+           onclick="
+             const link =
+               event.target.closest('a[data-section]');
+             if (!link) return;
+             event.preventDefault();
+
+             const scroller = this.parentElement;
+             const heading = Array.from(
+               scroller.querySelectorAll('h3')
+             ).find(function(item) {
+               return item.textContent.trim() ===
+                 link.dataset.section;
+             });
+
+             if (heading) {
+               scroller.scrollTo({
+                 top: scroller.scrollTop +
+                   heading.getBoundingClientRect().top -
+                   scroller.getBoundingClientRect().top,
+                 behavior: 'smooth'
+               });
+             }
+           ">
+
+        <strong>In this chapter</strong>
+        <ul style="padding-left:1.3em; line-height:1.6;
+                   margin-bottom:0;">
+          <li>
+            <a href="#" data-section="1. Recognize Mahjong Watch">
+              Recognize Mahjong Watch
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="2. Record the Winning Tile">
+              Record the Winning Tile
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="3. Read the Completion Message">
+              Read the Completion Message
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="4. Review and Save">
+              Review and Save
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="5. Begin Another Hand">
+              Begin Another Hand
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <p>
+        Keep recording your actions until
+        the winning tile completes your hand.
+        How that tile entered your hand
+        matters: record a draw from the wall
+        differently from a claimed discard.
+      </p>
+
+      <h3>1. Recognize Mahjong Watch</h3>
+
+      <p>
+        Mahjong Watch identifies a hand
+        waiting for a completing tile.
+        For the usual six-box structure,
+        five Complete Boxes leave
+        the final grouping to complete.
+      </p>
+
+      <p>
+        When MJC recognizes Mahjong Watch
+        during the acquisition step,
+        the usual four acquisition controls
+        are replaced by
+        <strong>Draw</strong> and
+        <strong>Mahjong</strong>.
+      </p>
+
+      <div role="img"
+           aria-label="Mahjong Watch acquisition controls:
+             Draw for a tile from the wall;
+             Mahjong for an opponent’s winning discard."
+           style="border:1px solid #ccc;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0; text-align:center;">
+
+        <strong>Mahjong Watch</strong>
+
+        <div style="display:grid;
+                    grid-template-columns:repeat(2, minmax(0, 1fr));
+                    gap:10px; margin-top:16px;">
+          <div style="background:#222; color:white;
+                      border-radius:8px; padding:14px 6px;">
+            <strong>Draw</strong>
+          </div>
+          <div style="background:#222; color:white;
+                      border-radius:8px; padding:14px 6px;">
+            <strong>Mahjong</strong>
+          </div>
+        </div>
+
+        <p style="color:#666; margin-bottom:0;">
+          Choose according to where
+          the incoming tile comes from.
+        </p>
+      </div>
+
+      <p>
+        Being on Mahjong Watch does not
+        mean every incoming tile wins.
+        Continue recording the actual tile.
+        If it does not complete your hand,
+        follow the next instruction
+        and continue play.
+      </p>
+
+      <h3>2. Record the Winning Tile</h3>
+
+      <h4>Winning by Draw</h4>
+
+      <ol style="padding-left:1.5em; line-height:1.6;">
+        <li>
+          Draw your actual tile from the wall.
+        </li>
+        <li>
+          Tap <strong>Draw</strong>.
+        </li>
+        <li>
+          Select the number and suit,
+          or the honor tile’s name.
+        </li>
+        <li>
+          Tap the tile image to record it.
+        </li>
+      </ol>
+
+      <p>
+        MJC evaluates the hand after
+        the tile is recorded.
+        If the tile completes the hand,
+        MJC displays the completion message.
+      </p>
+
+      <h4>Winning on an Opponent’s Discard</h4>
+
+      <ol style="padding-left:1.5em; line-height:1.6;">
+        <li>
+          Identify the discarded tile
+          you are claiming to complete
+          your hand.
+        </li>
+        <li>
+          Tap <strong>Mahjong</strong>.
+        </li>
+        <li>
+          Select and record that tile
+          through the tile-selection screen.
+        </li>
+      </ol>
+
+      <p>
+        Use this winning-claim control
+        when completing Mahjong on a discard,
+        rather than recording the tile
+        as a draw from the wall.
+      </p>
+
+      <div style="background:#f0f4f8;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0;">
+        <strong>Example: waiting for White</strong>
+        <p>
+          You draw White from the wall:
+          use <strong>Draw</strong>.
+        </p>
+        <p style="margin-bottom:0;">
+          An opponent discards White
+          and you claim it to win:
+          use <strong>Mahjong</strong>.
+        </p>
+      </div>
+
+      <h3>3. Read the Completion Message</h3>
+
+      <p>
+        MJC displays
+        <strong>“That’s Mahjong!”</strong>
+        when it recognizes a completed hand.
+        In Filipino mode, a win recorded
+        from your own draw displays
+        <strong>“Bunot!”</strong>
+      </p>
+
+      <div role="img"
+           aria-label="Example completion messages:
+             That’s Mahjong;
+             Bunot for a Filipino win by draw."
+           style="background:#eaf4e8;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0; text-align:center;">
+
+        <p style="margin-top:0;">
+          <strong>That’s Mahjong!</strong>
+        </p>
+
+        <p style="margin-bottom:0;">
+          <strong>Bunot!</strong><br>
+          Filipino win by draw
+        </p>
+      </div>
+
+      <p>
+        Once the hand is complete,
+        the ordinary acquisition and
+        discard cycle stops.
+        Do not record another discard
+        from the winning hand.
+      </p>
+
+      <p>
+        Active special-hand pursuits
+        use their own completion structure.
+        Read the displayed target
+        and resulting completion message
+        rather than applying the ordinary
+        six-box count to every special hand.
+      </p>
+
+      <p>
+        MJC’s completion message reflects
+        the hand and ruleset recorded
+        in the app. Keep that record
+        aligned with your actual tiles
+        and your table’s rules.
+      </p>
+
+      <h3>4. Review and Save</h3>
+
+      <p>
+        Review the final tiles and melds.
+        Check that the winning tile
+        and its source were recorded
+        correctly.
+      </p>
+
+      <p>
+        If the most recent entry was wrong,
+        use <strong>Correct Last Entry</strong>
+        when available.
+        Correct the record before treating
+        the displayed result as your
+        actual hand outcome.
+      </p>
+
+      <p>
+        Tap <strong>Save Hand</strong>
+        if you want to keep the hand
+        for later review.
+        Open <strong>Hand History</strong>
+        to locate the saved entry and
+        view its transcript.
+      </p>
+
+      <div style="background:#f0f4f8;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0; text-align:center;">
+        <strong>Keep a learning record</strong>
+        <p style="margin-bottom:0;">
+          Review the final hand<br>
+          → Save Hand<br>
+          → Hand History<br>
+          → View Transcript
+        </p>
+      </div>
+
+      <p>
+        Saving is useful for more than wins.
+        You can also save an unfinished
+        recorded hand for review.
+        Chapter 11 explains saved hands,
+        transcripts, details, and sharing.
+      </p>
+
+      <h3>5. Begin Another Hand</h3>
+
+      <p>
+        Save anything you want to keep
+        before selecting
+        <strong>New Hand</strong>.
+        Then follow the app’s prompts
+        to begin the next hand.
+      </p>
+
+      <p>
+        On the Tile Selection Screen,
+        check the new hand’s
+        <strong>Role</strong>,
+        <strong>Ruleset</strong>, and
+        <strong>Display</strong> settings.
+        The dealer may have changed,
+        so do not assume the previous
+        role still applies.
+      </p>
+
+      <p>
+        Enter the new starting tiles,
+        verify their identities and
+        quantities, then press
+        <strong>Play On!</strong>
+      </p>
+
+    </div>
+
+    <div class="dialog-actions"
+         style="flex-shrink:0; flex-wrap:wrap;">
+
+      <button type="button"
+              class="dialog-button"
+              onclick="
+                document.getElementById(
+                  'userGuideChapter10Body'
+                ).scrollTo({
+                  top: 0,
+                  behavior: 'smooth'
+                });
+              ">
+        Chapter Sections
+      </button>
+
+      <button type="button"
+              class="dialog-button"
+              onclick="
+                closeDialog('userGuideChapter10Dialog');
+                openDialog('userGuideDialog');
+              ">
+        Back to Contents
+      </button>
+
+      <button type="button"
+              class="dialog-button primary"
+              onclick="closeDialog('userGuideChapter10Dialog');">
+        Close
+      </button>
+
+    </div>
+  </div>
+</div>
+
+
 
 
 
