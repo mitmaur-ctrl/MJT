@@ -104,10 +104,11 @@ const mjcGlossaryEntries = [
   {
     term: "Mahjong Coach",
     abbreviation: "MJC",
-    definition:
-      "A learning tool that introduces Six Box Theory to beginning " +
-      "and intermediate players and helps them apply it to make " +
-      "better playing decisions."
+        definition:
+      "A learning tool that introduces Six Box Theory™ (6BT) " +
+      "to beginning and intermediate Mahjong players and helps " +
+      "them put it into practice to understand hand structure " +
+      "and make better playing decisions."
   },
   {
     term: "Six Box Theory",
