@@ -1537,7 +1537,26 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
             Understanding the Boxes
           </a>
         </li>
-        <li><a href="#">Following the Turn Cycle</a></li>
+                <li>
+          <a href="#"
+             onclick="
+               event.preventDefault();
+               event.stopPropagation();
+               closeDialog('userGuideDialog');
+               openDialog('userGuideChapter5Dialog');
+
+               requestAnimationFrame(function() {
+                 document.getElementById(
+                   'userGuideChapter5Body'
+                 ).scrollTo({
+                   top: 0,
+                   behavior: 'instant'
+                 });
+               });
+             ">
+            Following the Turn Cycle
+          </a>
+        </li>
         <li><a href="#">Chow, Pong, Kang, and Secret</a></li>
         <li><a href="#">Understanding Pathways</a></li>
         <li><a href="#">Understanding Release Tile (RT)</a></li>
@@ -6459,6 +6478,468 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
       <button type="button"
               class="dialog-button primary"
               onclick="closeDialog('userGuideChapter4Dialog');">
+        Close
+      </button>
+
+    </div>
+  </div>
+</div>
+<!-- USER GUIDE — CHAPTER 5 -->
+<div id="userGuideChapter5Dialog"
+     class="dialog-backdrop hidden">
+  <div class="dialog"
+       style="display:flex; flex-direction:column;
+              max-height:85vh; overflow:hidden;">
+
+    <h2>Following the Turn Cycle</h2>
+
+    <div id="userGuideChapter5Body"
+         style="overflow-y:auto; min-height:0; flex:1;">
+
+      <nav aria-label="Chapter 5 sections"
+           style="background:#f0f4f8; border-radius:10px;
+                  padding:14px; margin-bottom:20px;"
+           onclick="
+             const link =
+               event.target.closest('a[data-section]');
+             if (!link) return;
+             event.preventDefault();
+
+             const scroller = this.parentElement;
+             const heading = Array.from(
+               scroller.querySelectorAll('h3')
+             ).find(function(item) {
+               return item.textContent.trim() ===
+                 link.dataset.section;
+             });
+
+             if (heading) {
+               scroller.scrollTo({
+                 top: scroller.scrollTop +
+                   heading.getBoundingClientRect().top -
+                   scroller.getBoundingClientRect().top,
+                 behavior: 'smooth'
+               });
+             }
+           ">
+
+        <strong>In this chapter</strong>
+        <ul style="padding-left:1.3em; line-height:1.6;
+                   margin-bottom:0;">
+          <li>
+            <a href="#" data-section="1. Your First Action">
+              Your First Action
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="2. Record a Draw">
+              Record a Draw
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="3. Record a Claim">
+              Record a Claim
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="4. Record Your Discard">
+              Record Your Discard
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="5. Replacement Draws">
+              Replacement Draws
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="6. Keep MJC in Step">
+              Keep MJC in Step
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <p>
+        MJC accompanies your actual game.
+        You draw, claim, and discard at the table,
+        then record those actions in the app.
+        Follow the instruction beneath the
+        hand heading to see which action
+        MJC expects next.
+      </p>
+
+      <div role="img"
+           aria-label="Usual turn cycle:
+             acquire a tile by drawing or claiming;
+             resolve any meld choices;
+             discard unless the hand is complete;
+             prepare for the next acquisition."
+           style="border:1px solid #ccc;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0; text-align:center;">
+
+        <div style="background:#f0f4f8;
+                    border-radius:8px; padding:12px;">
+          <strong>Acquire</strong><br>
+          Draw from the wall or claim a discard
+        </div>
+
+        <p style="color:#6b3fa0; margin:8px 0;">↓</p>
+
+        <div style="background:#fff4df;
+                    border-radius:8px; padding:12px;">
+          <strong>Resolve any choices</strong><br>
+          Meld selection or declaration,
+          when offered
+        </div>
+
+        <p style="color:#6b3fa0; margin:8px 0;">↓</p>
+
+        <div style="background:#f4f4f4;
+                    border-radius:8px; padding:12px;">
+          <strong>Discard</strong><br>
+          Record the tile you release
+        </div>
+
+        <p style="margin-bottom:0;">
+          Then prepare to acquire again.
+        </p>
+      </div>
+
+      <p>
+        Replacement draws add a step before
+        discarding. Completing Mahjong ends
+        the hand instead of continuing
+        the usual cycle.
+      </p>
+
+      <h3>1. Your First Action</h3>
+
+      <p>
+        After entering your starting tiles
+        and pressing <strong>Play On!</strong>,
+        your role determines the usual
+        first action.
+      </p>
+
+      <div style="background:#f0f4f8;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0;">
+        <p style="margin-top:0;">
+          <strong>Player — 16 starting tiles</strong><br>
+          Prepare to draw or claim a tile
+          when the game allows.
+        </p>
+        <p style="margin-bottom:0;">
+          <strong>Dealer — 17 starting tiles</strong><br>
+          Begin by selecting a tile to discard.
+          You already have the extra starting tile.
+        </p>
+      </div>
+
+      <p>
+        Check the role and instruction before
+        recording your first action.
+        If your starting entry is incorrect,
+        use <strong>Revise</strong>.
+      </p>
+
+      <h3>2. Record a Draw</h3>
+
+      <ol style="padding-left:1.5em; line-height:1.6;">
+        <li>
+          Draw your actual tile from the wall.
+        </li>
+        <li>
+          Tap <strong>Draw</strong> in MJC
+          to open the Draw Tile Screen.
+        </li>
+        <li>
+          For a suited tile, select its number,
+          then tap its tile image under
+          <strong>Suit</strong>.
+        </li>
+        <li>
+          For an honor tile, select its name
+          under <strong>Winds</strong> or
+          <strong>Dragons</strong>, then tap
+          the displayed tile image.
+        </li>
+      </ol>
+
+      <p>
+        Tapping the tile image records the draw
+        immediately. There is no separate
+        confirmation button on the Draw Tile Screen.
+        <strong>Cancel</strong> leaves that screen
+        without recording a draw.
+      </p>
+
+      <div style="background:#f0f4f8;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0; text-align:center;">
+        <strong>Example: you draw 5 Bam</strong>
+        <p style="margin-bottom:0;">
+          Draw → select 5 → tap 5 Bam
+        </p>
+      </div>
+
+      <p>
+        MJC updates your hand. A green highlight
+        identifies the last-drawn tile.
+        If a meld choice or declaration is
+        offered, resolve it before continuing.
+        Otherwise, follow the discard instruction.
+      </p>
+
+      <h3>3. Record a Claim</h3>
+
+      <p>
+        A claim uses another player’s discard
+        to complete a grouping.
+        Record it through the appropriate
+        claim control rather than
+        <strong>Draw</strong>.
+      </p>
+
+      <ol style="padding-left:1.5em; line-height:1.6;">
+        <li>
+          Confirm that the claim is permitted
+          by your table’s rules.
+        </li>
+        <li>
+          Tap <strong>Chow</strong>,
+          <strong>Pong</strong>, or
+          <strong>Kang</strong> to match
+          the claim you are making.
+        </li>
+        <li>
+          Select the discarded tile you
+          are claiming.
+        </li>
+        <li>
+          If MJC offers grouping choices,
+          select the grouping that matches
+          your intended meld.
+        </li>
+      </ol>
+
+      <p>
+        After a Chow or Pong claim,
+        continue with your discard.
+        A Kang requires a replacement draw
+        before the discard.
+        Follow MJC’s instruction for
+        the resulting state.
+      </p>
+
+      <p>
+        When Mahjong Watch controls are shown,
+        <strong>Mahjong</strong> records
+        an opponent’s discard claimed
+        to complete your winning hand.
+        Use <strong>Draw</strong> when
+        the winning tile comes from the wall.
+      </p>
+
+      <p>
+        Chapter 6 covers meld choices,
+        declarations, and Secret in detail.
+        Chapter 10 covers completing a hand.
+      </p>
+
+      <h3>4. Record Your Discard</h3>
+
+      <p>
+        When MJC asks you to select a discard,
+        review your hand and decide which
+        tile you will release.
+        In Coaching View, a recommendation
+        and <strong>Insight</strong> may
+        help explain the available choice.
+      </p>
+
+      <ol style="padding-left:1.5em; line-height:1.6;">
+        <li>
+          Tap the tile you intend to discard
+          in the hand display.
+        </li>
+        <li>
+          Check the tile identified in the
+          <strong>Discard Tile?</strong>
+          confirmation dialog.
+        </li>
+        <li>
+          Tap <strong>Discard</strong>
+          to record the discard, or
+          <strong>Cancel</strong> to return
+          without discarding it.
+        </li>
+      </ol>
+
+      <div role="img"
+           aria-label="Example discard confirmation:
+             selected tile White,
+             Cancel and Discard controls."
+           style="border:1px solid #ccc;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0; text-align:center;">
+
+        <strong>Discard Tile?</strong>
+        <p>Selected tile: White</p>
+
+        <div style="display:grid;
+                    grid-template-columns:repeat(2, minmax(0, 1fr));
+                    gap:8px;">
+          <div style="background:#ddd;
+                      border-radius:8px; padding:12px;">
+            Cancel
+          </div>
+          <div style="background:#222; color:white;
+                      border-radius:8px; padding:12px;">
+            Discard
+          </div>
+        </div>
+
+        <p style="color:#666; margin-bottom:0;">
+          Illustration only.
+        </p>
+      </div>
+
+      <p>
+        Make sure the recorded discard matches
+        the tile you release at the table.
+        Tiles belonging to an exposed meld
+        cannot be discarded.
+      </p>
+
+      <p>
+        After the discard, MJC prepares for
+        your next draw or claim.
+        Continue following the actual game;
+        the app’s acquisition controls do not
+        mean it is immediately your turn
+        to draw at the table.
+      </p>
+
+      <h3>5. Replacement Draws</h3>
+
+      <p>
+        Declaring a Kang, NEWS, or Sagasa
+        can lead to a replacement-draw step
+        under the applicable rules.
+        MJC identifies the declaration
+        and asks you to draw a replacement tile.
+      </p>
+
+      <div style="background:#fff4df;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0; text-align:center;">
+        <strong>Replacement-draw sequence</strong>
+        <p style="margin-bottom:0;">
+          Record the declaration<br>
+          ↓<br>
+          Draw and record the replacement tile<br>
+          ↓<br>
+          Follow the next instruction
+        </p>
+      </div>
+
+      <p>
+        Use <strong>Draw</strong> to record
+        the replacement tile from the wall.
+        The normal claim controls are unavailable
+        during this replacement-draw step.
+      </p>
+
+      <p>
+        Do not record an ordinary discard
+        before the required replacement draw.
+        If another declaration is offered,
+        or the replacement completes Mahjong,
+        follow the resulting instruction
+        instead of assuming a discard
+        must come next.
+      </p>
+
+      <h3>6. Keep MJC in Step</h3>
+
+      <p>
+        Record your own draws, claims,
+        declarations, and discards as they occur.
+        You do not enter every opponent’s
+        ordinary draw or discard in this cycle.
+        Enter an opponent’s discarded tile
+        when you claim it for your hand.
+      </p>
+
+      <p>
+        Before each entry, check both
+        <strong>the action</strong> and
+        <strong>the tile</strong>.
+        A draw and a claim may add the same
+        tile, but they describe different
+        events in the hand.
+      </p>
+
+      <ul style="padding-left:1.3em; line-height:1.6;">
+        <li>
+          Use <strong>Correct Last Entry</strong>
+          when the most recent recorded action
+          needs correction and the control
+          is available.
+        </li>
+        <li>
+          Use <strong>Fix Hand</strong>
+          when you need to bring the recorded
+          hand back into agreement with
+          your actual tiles and melds.
+        </li>
+        <li>
+          Use <strong>Revise</strong>
+          for an entry correction while
+          still on the Starting Hand Display.
+        </li>
+      </ul>
+
+      <p>
+        Chapter 12 explains corrections.
+        Keeping the recorded hand accurate
+        allows MJC’s structure, available
+        actions, and coaching to follow
+        your actual game.
+      </p>
+
+    </div>
+
+    <div class="dialog-actions"
+         style="flex-shrink:0; flex-wrap:wrap;">
+
+      <button type="button"
+              class="dialog-button"
+              onclick="
+                document.getElementById(
+                  'userGuideChapter5Body'
+                ).scrollTo({
+                  top: 0,
+                  behavior: 'smooth'
+                });
+              ">
+        Chapter Sections
+      </button>
+
+      <button type="button"
+              class="dialog-button"
+              onclick="
+                closeDialog('userGuideChapter5Dialog');
+                openDialog('userGuideDialog');
+              ">
+        Back to Contents
+      </button>
+
+      <button type="button"
+              class="dialog-button primary"
+              onclick="closeDialog('userGuideChapter5Dialog');">
         Close
       </button>
 
