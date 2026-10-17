@@ -1617,7 +1617,26 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
             Understanding Release Tile (RT)
           </a>
         </li>
-        <li><a href="#">Understanding Recommendations and Coaching</a></li>
+                <li>
+          <a href="#"
+             onclick="
+               event.preventDefault();
+               event.stopPropagation();
+               closeDialog('userGuideDialog');
+               openDialog('userGuideChapter9Dialog');
+
+               requestAnimationFrame(function() {
+                 document.getElementById(
+                   'userGuideChapter9Body'
+                 ).scrollTo({
+                   top: 0,
+                   behavior: 'instant'
+                 });
+               });
+             ">
+            Understanding Recommendations and Coaching
+          </a>
+        </li>
         <li><a href="#">Completing a Hand</a></li>
         <li><a href="#">Saving and Reviewing Hands</a></li>
         <li><a href="#">Correcting an Entry</a></li>
@@ -8305,6 +8324,473 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     </div>
   </div>
 </div>
+<!-- USER GUIDE — CHAPTER 9 -->
+<div id="userGuideChapter9Dialog"
+     class="dialog-backdrop hidden">
+  <div class="dialog"
+       style="display:flex; flex-direction:column;
+              max-height:85vh; overflow:hidden;">
+
+    <h2>Recommendations and Coaching</h2>
+
+    <div id="userGuideChapter9Body"
+         style="overflow-y:auto; min-height:0; flex:1;">
+
+      <nav aria-label="Chapter 9 sections"
+           style="background:#f0f4f8; border-radius:10px;
+                  padding:14px; margin-bottom:20px;"
+           onclick="
+             const link =
+               event.target.closest('a[data-section]');
+             if (!link) return;
+             event.preventDefault();
+
+             const scroller = this.parentElement;
+             const heading = Array.from(
+               scroller.querySelectorAll('h3')
+             ).find(function(item) {
+               return item.textContent.trim() ===
+                 link.dataset.section;
+             });
+
+             if (heading) {
+               scroller.scrollTo({
+                 top: scroller.scrollTop +
+                   heading.getBoundingClientRect().top -
+                   scroller.getBoundingClientRect().top,
+                 behavior: 'smooth'
+               });
+             }
+           ">
+
+        <strong>In this chapter</strong>
+        <ul style="padding-left:1.3em; line-height:1.6;
+                   margin-bottom:0;">
+          <li>
+            <a href="#" data-section="1. Read a Discard Recommendation">
+              Read a Discard Recommendation
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="2. Open Insight">
+              Open Insight
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="3. Understand the Reasoning">
+              Understand the Reasoning
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="4. Handle Equal Choices">
+              Handle Equal Choices
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="5. Read Meld Recommendations">
+              Read Meld Recommendations
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="6. Read Coaching Alerts">
+              Read Coaching Alerts
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <p>
+        MJC’s coaching helps you understand
+        the structure of your recorded hand
+        and the reasons behind a suggested
+        choice. You decide which action
+        to take in your actual game.
+      </p>
+
+      <h3>1. Read a Discard Recommendation</h3>
+
+      <p>
+        In Coaching View, MJC can display
+        a discard recommendation when
+        your hand is ready for a discard.
+        This includes the Dealer’s first
+        discard from the Starting Hand Display.
+      </p>
+
+      <div role="img"
+           aria-label="Example recommendation:
+             Recommended Discard White,
+             with Hide and Insight controls."
+           style="background:#f0f4f8;
+                  border:1px solid #ccc;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0; text-align:center;">
+
+        <strong>Recommended Discard: White.</strong>
+
+        <div style="display:flex;
+                    justify-content:center;
+                    flex-wrap:wrap; gap:10px;
+                    margin-top:16px;">
+          <span style="background:#ddd;
+                       border-radius:8px;
+                       padding:10px 16px;">
+            Hide
+          </span>
+          <span style="background:#ddd;
+                       border-radius:8px;
+                       padding:10px 16px;">
+            Insight
+          </span>
+        </div>
+
+        <p style="color:#666; margin-bottom:0;">
+          Example recommendation;
+          the suggested tile depends
+          on your recorded hand.
+        </p>
+      </div>
+
+      <p>
+        Read the tile name carefully,
+        including its suit where applicable.
+        The recommendation does not
+        discard the tile for you.
+        Select the tile and complete
+        the normal discard confirmation
+        when you decide to use it.
+      </p>
+
+      <p>
+        Tap <strong>Hide</strong> if you
+        want to consider your own choice first.
+        Tap <strong>Show Recommended Discards</strong>
+        to reveal the recommendation again.
+      </p>
+
+      <p>
+        Recommendations are not displayed
+        at every step. They are unavailable
+        in Standard View, during acquisition
+        or replacement draws, and after
+        the hand is complete.
+        The current special-hand pursuits
+        also suppress ordinary discard
+        recommendations.
+      </p>
+
+      <h3>2. Open Insight</h3>
+
+      <p>
+        Tap <strong>Insight</strong>
+        beside the hand-display recommendation
+        to open <strong>Why This Discard?</strong>
+      </p>
+
+      <p>
+        The explanation identifies the
+        recommended tile or choices and
+        describes the structural effect
+        of discarding one.
+        Recommended tile names appear
+        in bold.
+      </p>
+
+      <div style="background:#fff4df;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0;">
+        <strong>Read for the effect</strong>
+        <p style="margin-bottom:0;">
+          Does the discard remove a Reserve?
+          Does it break a Developing Box?
+          What remains afterward?
+          Which groupings stay intact?
+        </p>
+      </div>
+
+      <p>
+        Insight explains the current
+        recommendation. Revisit it after
+        your hand changes rather than
+        assuming an earlier explanation
+        still applies.
+      </p>
+
+      <p>
+        The separate <strong>Insight</strong>
+        control on the Discard Tile Screen
+        currently displays a coming-soon
+        message. Use the hand-display
+        recommendation’s Insight for
+        the working explanation.
+      </p>
+
+      <h3>3. Understand the Reasoning</h3>
+
+      <h4>When Reserves are available</h4>
+
+      <p>
+        MJC compares their contribution
+        to developing the hand.
+        Its explanations use
+        <strong>Connectivity</strong>,
+        then <strong>Centricity</strong>,
+        to describe the comparison.
+      </p>
+
+      <p>
+        Connectivity concerns nearby
+        same-suit support.
+        Centricity concerns a suited
+        tile’s position toward the middle
+        of the suit.
+        Refer to the Glossary for
+        these terms.
+      </p>
+
+      <p>
+        Discarding a Reserve leaves
+        the displayed Developing and
+        Complete Boxes intact.
+        That structural effect is part
+        of the explanation.
+      </p>
+
+      <h4>When there are no Reserves</h4>
+
+      <p>
+        MJC must consider a tile from
+        an existing developing grouping.
+        Insight explains which grouping
+        changes and what is preserved.
+      </p>
+
+      <p>
+        Depending on the structure,
+        MJC may compare Chow Candidates’
+        completion opportunities,
+        consider removing a tile from
+        a Chow-Pong Candidate, or weigh
+        preserving an Eye Candidate
+        against other developing options.
+      </p>
+
+      <p>
+        Some comparisons also take account
+        of the hand’s progress, using
+        your recorded discards.
+        A recommendation can therefore
+        change as play advances even
+        when familiar grouping types
+        remain in the hand.
+      </p>
+
+      <p>
+        Read the current explanation
+        for the actual comparison being made.
+        A useful recommendation describes
+        both what you give up and
+        what you retain.
+      </p>
+
+      <h3>4. Handle Equal Choices</h3>
+
+      <p>
+        Sometimes MJC gives equal preference
+        to more than one discard.
+        It may list tile names joined
+        by <strong>“or”</strong>,
+        or summarize a larger set
+        and direct you to Insight.
+      </p>
+
+      <div role="img"
+           aria-label="Equal-choice examples:
+             White or East;
+             or any of three Reserves.
+             Discard only one tile."
+           style="border:1px solid #ccc;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0;">
+
+        <strong>Possible forms</strong>
+
+        <p style="background:#f0f4f8;
+                  border-radius:8px; padding:12px;">
+          Recommended Discard: White or East.
+        </p>
+
+        <p style="background:#f0f4f8;
+                  border-radius:8px; padding:12px;">
+          Recommended Discard:
+          Any of your 3 Reserves.
+        </p>
+
+        <p style="margin-bottom:0;">
+          These are examples of alternative
+          recommendations, not instructions
+          to discard multiple tiles.
+        </p>
+      </div>
+
+      <p>
+        <strong>Discard only one tile.</strong>
+        Equal preference means MJC’s
+        current assessment does not
+        distinguish those choices.
+        It does not mean they will
+        produce identical future hands.
+      </p>
+
+      <p>
+        Open <strong>Insight</strong>
+        to see the named choices
+        and the reason they are tied.
+      </p>
+
+      <h3>5. Read Meld Recommendations</h3>
+
+      <p>
+        When an incoming tile offers
+        multiple meld groupings,
+        MJC may mark a recommended choice.
+        Compare the tiles in each grouping
+        before selecting one.
+      </p>
+
+      <p>
+        If MJC assesses the choices
+        as equally sound, it may say
+        <strong>“MJC: Either choice
+        is structurally sound.”</strong>
+      </p>
+
+      <p>
+        A meld recommendation and
+        a discard recommendation address
+        different decisions.
+        Choosing a meld determines
+        the grouping to record.
+        Choosing a discard determines
+        the tile to release afterward,
+        when a discard is required.
+      </p>
+
+      <p>
+        Chapter 6 explains the meld-choice
+        and declaration controls.
+      </p>
+
+      <h3>6. Read Coaching Alerts</h3>
+
+      <p>
+        Coaching View may display messages
+        that call attention to the
+        current structure or pursuit.
+      </p>
+
+      <h4>BOLO for Eyes</h4>
+
+      <p>
+        “BOLO” means “be on the lookout.”
+        This alert draws attention
+        to the need to develop an Eye.
+      </p>
+
+      <h4>Protect Your Only Eye</h4>
+
+      <p>
+        Draws attention to your only
+        Eye Candidate. Consider the effect
+        before using its tiles
+        in another grouping.
+      </p>
+
+      <h4>Over-Paired</h4>
+
+      <p>
+        Draws attention to an excess
+        of pairs in the current structure.
+        Review how those pairs support
+        your intended hand and whether
+        a special-hand option is relevant.
+      </p>
+
+      <h4>Pursuing a Special Hand</h4>
+
+      <p>
+        Messages such as
+        <strong>Pursuing Siete Pares</strong>
+        or <strong>Pursuing Escalera</strong>
+        identify the active pursuit.
+        Names may differ with the ruleset,
+        such as Seven Pairs or Straight.
+      </p>
+
+      <h4>Kang Deferred</h4>
+
+      <p>
+        Reminds you that a Kang declaration
+        has been postponed.
+        It does not mean the declaration
+        or its replacement draw has
+        already been completed.
+      </p>
+
+      <p>
+        Treat alerts as prompts to inspect
+        your hand. They do not replace
+        the current action instruction,
+        declare a meld, or make a discard.
+      </p>
+
+      <p>
+        Accurate coaching depends on
+        an accurate recorded hand.
+        If MJC’s tiles or melds no longer
+        match your actual hand, correct
+        the record before relying
+        on its next recommendation.
+      </p>
+
+    </div>
+
+    <div class="dialog-actions"
+         style="flex-shrink:0; flex-wrap:wrap;">
+
+      <button type="button"
+              class="dialog-button"
+              onclick="
+                document.getElementById(
+                  'userGuideChapter9Body'
+                ).scrollTo({
+                  top: 0,
+                  behavior: 'smooth'
+                });
+              ">
+        Chapter Sections
+      </button>
+
+      <button type="button"
+              class="dialog-button"
+              onclick="
+                closeDialog('userGuideChapter9Dialog');
+                openDialog('userGuideDialog');
+              ">
+        Back to Contents
+      </button>
+
+      <button type="button"
+              class="dialog-button primary"
+              onclick="closeDialog('userGuideChapter9Dialog');">
+        Close
+      </button>
+
+    </div>
+  </div>
+</div>
+
+
 
 <div id="acknowledgmentsDialog" class="dialog-backdrop hidden">
   <div class="dialog">
