@@ -1442,15 +1442,46 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
 </div>
 
 <div id="userGuideDialog" class="dialog-backdrop hidden">
-  <div class="dialog">
+  <div class="dialog"
+       style="display:flex; flex-direction:column; max-height:85vh; overflow:hidden;">
+
     <h2>User Guide</h2>
-    <p>This feature is coming soon.</p>
-    <div class="dialog-actions">
-      <button class="dialog-button primary" onclick="closeDialog('userGuideDialog')">Close</button>
+
+    <div style="overflow-y:auto; min-height:0; flex:1;">
+      <h3>Table of Contents</h3>
+
+      <ol style="padding-left:1.5em; line-height:1.6;"
+          onclick="if (event.target.closest('a')) {
+            event.preventDefault();
+            showToast('This chapter is a work in progress.');
+          }">
+        <li><a href="#">Getting to Know MJC: Screens and Controls</a></li>
+        <li><a href="#">Getting Your Hand Ready</a></li>
+        <li><a href="#">Understanding Your Hand Display</a></li>
+        <li><a href="#">Understanding the Boxes</a></li>
+        <li><a href="#">Following the Turn Cycle</a></li>
+        <li><a href="#">Chow, Pong, Kang, and Secret</a></li>
+        <li><a href="#">Understanding Pathways</a></li>
+        <li><a href="#">Understanding Release Tile (RT)</a></li>
+        <li><a href="#">Understanding Recommendations and Coaching</a></li>
+        <li><a href="#">Completing a Hand</a></li>
+        <li><a href="#">Saving and Reviewing Hands</a></li>
+        <li><a href="#">Correcting an Entry</a></li>
+        <li><a href="#">Finding Help and Sharing Feedback</a></li>
+        <li><a href="#">Quick Reference</a></li>
+      </ol>
     </div>
+
+    <div class="dialog-actions" style="flex-shrink:0;">
+      <button type="button"
+              class="dialog-button primary"
+              onclick="closeDialog('userGuideDialog')">
+        Close
+      </button>
+    </div>
+
   </div>
 </div>
-
 <div id="acknowledgmentsDialog" class="dialog-backdrop hidden">
   <div class="dialog">
     <h2>Acknowledgments</h2>
