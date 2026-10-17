@@ -1497,7 +1497,26 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
             Getting Your Hand Ready
           </a>
         </li>
-        <li><a href="#">Understanding Your Hand Display</a></li>
+                <li>
+          <a href="#"
+             onclick="
+               event.preventDefault();
+               event.stopPropagation();
+               closeDialog('userGuideDialog');
+               openDialog('userGuideChapter3Dialog');
+
+               requestAnimationFrame(function() {
+                 document.getElementById(
+                   'userGuideChapter3Body'
+                 ).scrollTo({
+                   top: 0,
+                   behavior: 'instant'
+                 });
+               });
+             ">
+            Understanding Your Hand Display
+          </a>
+        </li>
         <li><a href="#">Understanding the Boxes</a></li>
         <li><a href="#">Following the Turn Cycle</a></li>
         <li><a href="#">Chow, Pong, Kang, and Secret</a></li>
@@ -5545,6 +5564,366 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
       <button type="button"
               class="dialog-button primary"
               onclick="closeDialog('userGuideChapter2Dialog');">
+        Close
+      </button>
+
+    </div>
+  </div>
+</div>
+
+<!-- USER GUIDE — CHAPTER 3 -->
+<div id="userGuideChapter3Dialog"
+     class="dialog-backdrop hidden">
+  <div class="dialog"
+       style="display:flex; flex-direction:column;
+              max-height:85vh; overflow:hidden;">
+
+    <h2>Understanding Your Hand Display</h2>
+
+    <div id="userGuideChapter3Body"
+         style="overflow-y:auto; min-height:0; flex:1;">
+
+      <nav aria-label="Chapter 3 sections"
+           style="background:#f0f4f8; border-radius:10px;
+                  padding:14px; margin-bottom:20px;"
+           onclick="
+             const link =
+               event.target.closest('a[data-section]');
+             if (!link) return;
+             event.preventDefault();
+
+             const scroller = this.parentElement;
+             const heading = Array.from(
+               scroller.querySelectorAll('h3')
+             ).find(function(item) {
+               return item.textContent.trim() ===
+                 link.dataset.section;
+             });
+
+             if (heading) {
+               scroller.scrollTo({
+                 top: scroller.scrollTop +
+                   heading.getBoundingClientRect().top -
+                   scroller.getBoundingClientRect().top,
+                 behavior: 'smooth'
+               });
+             }
+           ">
+
+        <strong>In this chapter</strong>
+        <ul style="padding-left:1.3em; line-height:1.6;
+                   margin-bottom:0;">
+          <li>
+            <a href="#" data-section="1. Starting and Current Hand">
+              Starting and Current Hand
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="2. Standard View">
+              Standard View
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="3. Coaching View">
+              Coaching View
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="4. Counters and Display Options">
+              Counters and Display Options
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="5. Messages and Tile Highlights">
+              Messages and Tile Highlights
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <p>
+        MJC reveals the structure hidden within
+        a Mahjong hand. Learning to read its
+        displays helps you follow your hand
+        as tiles are drawn, claimed, and discarded.
+      </p>
+
+      <h3>1. Starting and Current Hand</h3>
+
+      <p>
+        <strong>Starting Hand</strong> shows the
+        tiles you entered before beginning play.
+        Review them against your actual hand.
+        Use <strong>Revise</strong> if you need
+        to correct the entry.
+      </p>
+
+      <p>
+        <strong>Current Hand</strong> shows your
+        recorded hand as play progresses.
+        It updates as you record your actions.
+        Keep those actions in step with your
+        actual game so MJC continues to show
+        the hand you hold.
+      </p>
+
+      <p>
+        Starting and Current describe
+        <em>when</em> you are viewing the hand.
+        Standard and Coaching describe
+        <em>how</em> MJC presents it.
+        Both hand displays offer both views.
+      </p>
+
+      <h3>2. Standard View</h3>
+
+      <p>
+        Starting Hand Standard View groups your
+        tiles by suit and honors. The groups
+        follow the order selected in
+        <strong>Display</strong>.
+      </p>
+
+      <p>
+        Current Hand Standard View separates
+        your tiles into three areas:
+      </p>
+
+      <div role="img"
+           aria-label="Current Hand Standard View:
+             Loose Tiles, Hidden Melds, Exposed Melds."
+           style="border:1px solid #ccc;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0;">
+
+        <div style="background:#f0f4f8;
+                    border-radius:8px; padding:12px;
+                    margin-bottom:10px;">
+          <strong>Loose Tiles</strong><br>
+          Tiles outside Complete Boxes,
+          grouped by suit and honors.
+        </div>
+
+        <div style="background:#f4f4f4;
+                    border-radius:8px; padding:12px;
+                    margin-bottom:10px;">
+          <strong>Hidden Melds</strong><br>
+          Completed groupings recorded as hidden.
+        </div>
+
+        <div style="background:#eaf4e8;
+                    border-radius:8px; padding:12px;">
+          <strong>Exposed Melds</strong><br>
+          Completed groupings recorded as exposed.
+        </div>
+
+        <p style="color:#666; text-align:center;
+                  margin-bottom:0;">
+          Area overview; tile images are omitted.
+        </p>
+      </div>
+
+      <p>
+        “Loose” describes where MJC displays
+        these tiles. They may still form pairs
+        or other developing groupings.
+      </p>
+
+      <h3>3. Coaching View</h3>
+
+      <p>
+        Tap <strong>Coaching View</strong> to
+        see your hand organized using
+        Six Box Theory™. MJC presents its
+        developing and completed structures,
+        along with any Reserves.
+      </p>
+
+      <div role="img"
+           aria-label="Coaching View order:
+             Reserves, Developing Boxes,
+             Completed Boxes."
+           style="border:1px solid #ccc;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0;">
+
+        <div style="background:#f4f4f4;
+                    border-radius:8px; padding:12px;
+                    margin-bottom:10px;">
+          <strong>Reserves</strong><br>
+          Tiles outside the displayed
+          Developing and Complete Boxes.
+        </div>
+
+        <div style="background:#fff4df;
+                    border-radius:8px; padding:12px;
+                    margin-bottom:10px;">
+          <strong>Developing Boxes</strong><br>
+          Groupings that still need tiles
+          to become complete.
+        </div>
+
+        <div style="background:#eaf4e8;
+                    border-radius:8px; padding:12px;">
+          <strong>Completed Boxes</strong><br>
+          Completed groupings, including
+          melds and the Eye.
+        </div>
+
+        <p style="color:#666; text-align:center;
+                  margin-bottom:0;">
+          Area overview; tile images are omitted.
+        </p>
+      </div>
+
+      <p>
+        Box headings identify each grouping.
+        <strong>DB</strong> means Developing Box;
+        <strong>CB</strong> means Complete Box.
+        Meld headings also identify whether
+        the meld is Hidden or Exposed.
+      </p>
+
+      <p>
+        Switching views changes the presentation
+        of your recorded hand. It does not draw,
+        discard, or change any tiles.
+        The view button names the view you can
+        switch to: while Coaching View is shown,
+        the button reads <strong>Standard View</strong>.
+      </p>
+
+      <p>
+        Chapter 4 explains the boxes and
+        their grouping types in detail.
+      </p>
+
+      <h3>4. Counters and Display Options</h3>
+
+      <p>
+        <strong>Boxes Complete</strong> shows
+        how many of the required boxes are
+        complete. The usual six-box structure
+        consists of five melds and an Eye.
+        Special-hand pursuits use their own
+        box targets.
+      </p>
+
+      <p>
+        <strong>Tiles In Hand</strong> counts
+        tiles outside Complete Boxes.
+        It is not the total number of tiles
+        in your entire recorded hand.
+        Tiles in Complete Boxes are still
+        part of your hand.
+      </p>
+
+      <div style="background:#f0f4f8;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0;">
+        <strong>Reading the counters</strong>
+        <p style="margin-bottom:0;">
+          If a 16-tile hand has two completed
+          three-tile melds, those melds contain
+          six tiles. The remaining ten tiles
+          are counted as
+          <strong>Tiles In Hand: 10</strong>.
+        </p>
+      </div>
+
+      <p>
+        <strong>Indices</strong> shows or hides
+        the identifying numbers and letters
+        added to tile images.
+        <strong>Labels</strong> switches
+        Coaching View’s box-type labels
+        between full and shortened names.
+      </p>
+
+      <p>
+        <strong>Pathways</strong> adds information
+        about completion opportunities to
+        supported developing groupings.
+        It is available in Coaching View.
+        Chapter 7 explains how to read it.
+      </p>
+
+      <h3>5. Messages and Tile Highlights</h3>
+
+      <p>
+        Read the instruction beneath the hand
+        heading to see what MJC expects next,
+        such as drawing or claiming a tile,
+        selecting a discard, or recording
+        a replacement draw.
+      </p>
+
+      <p>
+        Coaching messages may draw attention
+        to your Eye, a special-hand pursuit,
+        or a deferred Kang.
+        These messages provide context
+        for the hand currently recorded.
+      </p>
+
+      <p>
+        When available during a discard step,
+        <strong>Recommended Discard</strong>
+        identifies MJC’s suggested choice.
+        <strong>Insight</strong> explains
+        the recommendation. Chapter 9 covers
+        recommendations and coaching.
+      </p>
+
+      <ul style="padding-left:1.3em; line-height:1.6;">
+        <li>
+          <strong>Green highlight:</strong>
+          identifies the last-drawn tile.
+        </li>
+        <li>
+          <strong>Yellow outline:</strong>
+          identifies a tile selected for discard.
+        </li>
+      </ul>
+
+      <p>
+        As your hand changes, MJC may move tiles
+        between displayed groupings.
+        Follow the tile names, box headings,
+        and counters to understand the new
+        arrangement.
+      </p>
+
+    </div>
+
+    <div class="dialog-actions"
+         style="flex-shrink:0; flex-wrap:wrap;">
+
+      <button type="button"
+              class="dialog-button"
+              onclick="
+                document.getElementById(
+                  'userGuideChapter3Body'
+                ).scrollTo({
+                  top: 0,
+                  behavior: 'smooth'
+                });
+              ">
+        Chapter Sections
+      </button>
+
+      <button type="button"
+              class="dialog-button"
+              onclick="
+                closeDialog('userGuideChapter3Dialog');
+                openDialog('userGuideDialog');
+              ">
+        Back to Contents
+      </button>
+
+      <button type="button"
+              class="dialog-button primary"
+              onclick="closeDialog('userGuideChapter3Dialog');">
         Close
       </button>
 
