@@ -1498,6 +1498,98 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     <h2>Getting to Know MJC</h2>
 
     <div style="overflow-y:auto; min-height:0; flex:1;">
+      <nav aria-label="Chapter 1 sections"
+           style="background:#f0f4f8; border-radius:10px;
+                  padding:14px; margin-bottom:20px;"
+           onclick="
+             const link = event.target.closest('a[data-section]');
+             if (!link) return;
+             event.preventDefault();
+
+             const scroller = this.parentElement;
+             const heading = Array.from(
+               scroller.querySelectorAll('h3, h4')
+             ).find(function(item) {
+               return item.textContent.trim() ===
+                 link.dataset.section;
+             });
+
+             if (heading) {
+               scroller.scrollTo({
+                 top: scroller.scrollTop +
+                   heading.getBoundingClientRect().top -
+                   scroller.getBoundingClientRect().top,
+                 behavior: 'smooth'
+               });
+             }
+           ">
+
+        <strong>In this chapter</strong>
+
+        <ul style="padding-left:1.3em; line-height:1.6;
+                   margin-bottom:0;">
+          <li>
+            <a href="#" data-section="Tile Selection Screen (TSS)">
+              Tile Selection Screen
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="Starting Hand Display (SHD)">
+              Starting Hand Display
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="Current Hand Display (CHD)">
+              Current Hand Display
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="Draw Tile Screen">
+              Draw Tile Screen
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="Mahjong Watch Controls">
+              Mahjong Watch Controls
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="Tile Highlights">
+              Tile Highlights
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="Settings Dialogs">
+              Settings Dialogs
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="Revision and Hand Correction">
+              Revision and Fix Hand
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="Correct Last Entry">
+              Correct Last Entry
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="Meld Selection">
+              Meld Selection and Declarations
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="Hand History">
+              Hand History
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="Footer Links">
+              Footer Links
+            </a>
+          </li>
+        </ul>
+      </nav>
 
       <h3>Screens and Controls</h3>
 
@@ -4737,6 +4829,21 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
 
     <div class="dialog-actions"
          style="flex-shrink:0; flex-wrap:wrap;">
+
+      <button
+        type="button"
+        class="dialog-button"
+        onclick="
+          document.querySelector(
+            '#userGuideChapter1Dialog nav'
+          ).parentElement.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          });
+        "
+      >
+        Chapter Sections
+      </button>
 
       <button type="button"
               class="dialog-button"
