@@ -1455,7 +1455,14 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
             event.preventDefault();
             showToast('This chapter is a work in progress.');
           }">
-        <li><a href="#">Getting to Know MJC: Screens and Controls</a></li>
+       <li>
+  <a href="#"
+     onclick="event.preventDefault(); event.stopPropagation();
+              closeDialog('userGuideDialog');
+              openDialog('userGuideChapter1Dialog');">
+    Getting to Know MJC: Screens and Controls
+  </a>
+</li>
         <li><a href="#">Getting Your Hand Ready</a></li>
         <li><a href="#">Understanding Your Hand Display</a></li>
         <li><a href="#">Understanding the Boxes</a></li>
@@ -1478,6 +1485,251 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
               onclick="closeDialog('userGuideDialog')">
         Close
       </button>
+    </div>
+
+  </div>
+</div>
+
+<div id="userGuideChapter1Dialog" class="dialog-backdrop hidden">
+  <div class="dialog"
+       style="display:flex; flex-direction:column;
+              max-height:85vh; overflow:hidden;">
+
+    <h2>Getting to Know MJC</h2>
+
+    <div style="overflow-y:auto; min-height:0; flex:1;">
+
+      <h3>Screens and Controls</h3>
+
+      <p>
+        This chapter identifies MJC’s screens, controls,
+        and indicators and explains what each does.
+      </p>
+
+      <h3>Tile Selection Screen (TSS)</h3>
+
+      <p>
+        This is where you choose your settings and enter
+        your starting hand.
+      </p>
+
+      <h4>Settings and Status</h4>
+
+      <div role="img"
+           aria-label="TSS settings illustration:
+             1 Role, 2 Ruleset, 3 Display,
+             4 Tiles Entered, 5 instruction message."
+           style="background:#f0f4f8; border:1px solid #ccc;
+                  border-radius:12px; padding:16px;
+                  text-align:center; margin-bottom:20px;">
+
+        <div style="display:flex; justify-content:center;
+                    flex-wrap:wrap; gap:8px;">
+
+          <span style="background:#ddd; border-radius:10px;
+                       padding:10px;">
+            <strong><span style="color:#6b3fa0;">①</span> Role</strong>
+          </span>
+
+          <span style="background:#ddd; border-radius:10px;
+                       padding:10px;">
+            <strong><span style="color:#6b3fa0;">②</span> Ruleset</strong>
+          </span>
+
+          <span style="background:#ddd; border-radius:10px;
+                       padding:10px;">
+            <strong><span style="color:#6b3fa0;">③</span> Display</strong>
+          </span>
+
+        </div>
+
+       <p><span style="color:#6b3fa0;">④</span> Tiles Entered: 0 / 16</p>
+
+        <p style="color:#005eb8; font-weight:bold;">
+          <span style="color:#6b3fa0;">⑤</span> Verify your settings and tile selection.<br>
+          Then press Play On!
+        </p>
+
+      </div>
+
+      <strong><span style="color:#6b3fa0;">①</span> Role</strong>
+        Choose whether you are the Player or Dealer.
+      </p>
+
+      <p><strong><span style="color:#6b3fa0;">②</span> Ruleset</strong><br>
+        Choose the Mahjong rules used for your hand.
+      </p>
+
+      <p><strong><span style="color:#6b3fa0;">③</span> Display</strong><br>
+        Choose the order of the suits, Winds, and Dragons
+        in MJC’s tile displays and selection screens.
+      </p>
+
+     <p><strong><span style="color:#6b3fa0;">④</span> Tiles Entered</strong><br>
+  Shows how many tiles you have entered and the required
+  starting total: 16 for Player or 17 for Dealer.
+</p>
+
+      <p><strong><span style="color:#6b3fa0;">⑤</span> Instruction Message</strong><br>
+        Shows guidance or feedback for your current task.
+      </p>
+
+      <h4>Tile Entry and Controls</h4>
+
+      <p>
+        Tiles are grouped into Chars, Bams, Dots, Winds,
+        and Dragons. The shortened illustration below
+        shows a sample tile group and the controls
+        beneath the tile-entry area.
+      </p>
+
+      <div style="border:1px solid #ccc; border-radius:12px;
+                  padding:16px; margin-bottom:20px;">
+
+        <p style="margin-top:0;">
+          <strong>
+            <span style="color:#6b3fa0;">⑥</span>
+            Chars (2)
+          </strong>
+        </p>
+
+        <div style="display:grid;
+                    grid-template-columns:repeat(3,minmax(0,1fr));
+                    gap:6px;">
+
+          <div class="tile">
+            <div class="tile-name">
+              <span style="color:#6b3fa0;">⑦</span> 1 Char
+            </div>
+            <div class="tile-count">
+              <span style="color:#6b3fa0;">⑧</span> 2
+            </div>
+          </div>
+
+          <div class="tile">
+            <div class="tile-name">2 Char</div>
+            <div class="tile-count"></div>
+          </div>
+
+          <div class="tile">
+            <div class="tile-name">3 Char</div>
+            <div class="tile-count"></div>
+          </div>
+
+        </div>
+
+        <p style="text-align:center; color:#666;">
+          Remaining tile buttons omitted here.
+        </p>
+
+        <div style="display:flex; justify-content:center;
+                    flex-wrap:wrap; gap:8px; margin-top:16px;">
+
+          <span style="background:#ddd; border-radius:10px;
+                       padding:10px;">
+            <span style="color:#6b3fa0;">⑨</span> Clear Tiles
+          </span>
+
+          <span style="background:#ddd; border-radius:10px;
+                       padding:10px;">
+            <span style="color:#6b3fa0;">⑩</span> Play On!
+          </span>
+
+        </div>
+
+        <p style="text-align:center; color:#666;">
+          Long press tile to clear the tile.
+        </p>
+
+        <div style="text-align:center; margin:16px 0;">
+          <span style="display:inline-block; background:#eee;
+                       border:1px solid #bbb;
+                       border-radius:10px; padding:10px;">
+            <span style="color:#6b3fa0;">⑪</span> Hand History
+          </span>
+        </div>
+
+      </div>
+
+      <p>
+        <strong><span style="color:#6b3fa0;">⑥</span>
+          Tile Group and Total</strong><br>
+        Identifies the suit or honor group. The number
+        in parentheses shows how many tiles you have
+        entered in that group.
+      </p>
+
+      <p>
+        <strong><span style="color:#6b3fa0;">⑦</span>
+          Tile Button</strong><br>
+        Identifies a tile and lets you enter its quantity.
+        Long-pressing clears that tile’s quantity.
+      </p>
+
+      <p>
+        <strong><span style="color:#6b3fa0;">⑧</span>
+          Tile Quantity</strong><br>
+        Shows how many copies of that tile you have
+        entered. A blank quantity means zero.
+      </p>
+
+      <p>
+        <strong><span style="color:#6b3fa0;">⑨</span>
+          Clear Tiles</strong><br>
+        Clears the tiles entered for your starting hand.
+      </p>
+
+      <p>
+        <strong><span style="color:#6b3fa0;">⑩</span>
+          Play On!</strong><br>
+        Accepts your starting tiles and opens the Starting
+        Hand Display. It becomes available when the
+        required number of tiles has been entered.
+      </p>
+
+      <p>
+        <strong><span style="color:#6b3fa0;">⑪</span>
+          Hand History</strong><br>
+        Opens your saved hands for review and sharing.
+      </p>
+
+      <p>
+        <strong><span style="color:#6b3fa0;">⑫</span>
+          Undo Clear</strong><br>
+        Appears temporarily after clearing tiles and
+        restores the cleared entry.
+      </p>
+
+      <div style="text-align:center; margin:16px 0;">
+        <span style="display:inline-block; background:#ddd;
+                     border-radius:10px; padding:10px;">
+          <span style="color:#6b3fa0;">⑫</span> Undo Clear
+        </span>
+      </div>
+
+      <p><em>
+        Additional screen illustrations are being added
+        to this chapter.
+      </em></p>
+
+    </div>
+
+    <div class="dialog-actions"
+         style="flex-shrink:0; flex-wrap:wrap;">
+
+      <button type="button"
+              class="dialog-button"
+              onclick="closeDialog('userGuideChapter1Dialog');
+                       openDialog('userGuideDialog');">
+        Back to Contents
+      </button>
+
+      <button type="button"
+              class="dialog-button primary"
+              onclick="closeDialog('userGuideChapter1Dialog');">
+        Close
+      </button>
+
     </div>
 
   </div>
