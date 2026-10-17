@@ -3685,6 +3685,353 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
         the unfinished meld.
       </p>
 
+      <h4>Meld Builder — Chow Selection</h4>
+
+      <p>
+        This example shows the Chow builder after
+        choosing Chars. Tile numbers stand in for images.
+      </p>
+
+      <div style="border:1px solid #ccc; border-radius:12px;
+                  padding:16px; margin:16px 0;">
+
+        <div style="text-align:center; font-weight:bold;">
+          Set Your Chow Meld
+        </div>
+
+        <p style="text-align:center;">
+          <span style="color:#6b3fa0;">112</span>
+          Suit ▼
+        </p>
+
+        <div style="display:grid;
+                    grid-template-columns:repeat(3, minmax(0, 1fr));
+                    gap:6px; text-align:center; font-size:14px;">
+          <span style="background:#ddd; padding:10px 2px;">Chars</span>
+          <span style="background:#eee; padding:10px 2px;">Bams</span>
+          <span style="background:#eee; padding:10px 2px;">Dots</span>
+        </div>
+
+        <p style="text-align:center;">
+          <span style="color:#6b3fa0;">113</span>
+          Starting Tile
+        </p>
+
+        <div style="display:grid;
+                    grid-template-columns:repeat(3, minmax(0, 1fr));
+                    gap:6px; text-align:center;">
+          <span style="background:#f8f5e9; padding:12px;">1</span>
+          <span style="background:#f8f5e9; padding:12px;">2</span>
+          <span style="background:#f8f5e9; padding:12px;">3</span>
+          <span style="background:#f8f5e9; padding:12px;">4</span>
+          <span style="background:#f8f5e9; padding:12px;">5</span>
+          <span style="background:#f8f5e9; padding:12px;">6</span>
+          <span style="background:#f8f5e9; padding:12px;">7</span>
+          <span style="background:#eee; color:#777; padding:12px;">8</span>
+          <span style="background:#eee; color:#777; padding:12px;">9</span>
+        </div>
+
+        <p style="text-align:center; font-size:14px;">
+          <span style="color:#6b3fa0;">114</span>
+          ◉ Hidden
+          &nbsp;
+          <span style="color:#6b3fa0;">115</span>
+          ○ Exposed
+        </p>
+
+        <div style="text-align:center; margin-top:16px;">
+          <span style="display:inline-block; background:#ddd;
+                       border-radius:8px; padding:12px 20px;">
+            <span style="color:#6b3fa0;">116</span>
+            Add Chow
+          </span>
+        </div>
+
+      </div>
+
+      <p>
+        <strong><span style="color:#6b3fa0;">112</span>
+          Suit</strong><br>
+        Chooses the Chow’s suit. Suit choices follow
+        the order selected in Display.
+      </p>
+
+      <p>
+        <strong><span style="color:#6b3fa0;">113</span>
+          Starting Tile</strong><br>
+        Selects the lowest-numbered tile of the Chow.
+        Choosing 3, for example, selects 3–4–5.
+        Only 1 through 7 can start a Chow.
+      </p>
+
+      <p>
+        <strong><span style="color:#6b3fa0;">114</span>
+          Hidden</strong><br>
+        Records the new Chow as hidden.
+      </p>
+
+      <p>
+        <strong><span style="color:#6b3fa0;">115</span>
+          Exposed</strong><br>
+        Records the new Chow as exposed.
+      </p>
+
+      <p>
+        <strong><span style="color:#6b3fa0;">116</span>
+          Add Chow</strong><br>
+        Adds the selected Chow to Added Melds
+        when the selection is valid.
+      </p>
+
+      <h4>Meld Builder — Pong Selection</h4>
+
+      <p>
+        The Pong builder uses a number pad and suit
+        choices, or an honor-tile selection.
+        This simplified example shows number 5 selected.
+        Names replace tile images.
+      </p>
+
+      <div style="border:1px solid #ccc; border-radius:12px;
+                  padding:12px; margin:16px 0;">
+
+        <div style="text-align:center; font-weight:bold;">
+          Set Your Pong Meld
+        </div>
+
+        <div style="display:grid;
+                    grid-template-columns:repeat(2, minmax(0, 1fr));
+                    gap:12px; font-size:14px;">
+
+          <div>
+            <p>
+              <span style="color:#6b3fa0;">117</span>
+              Number ▼
+            </p>
+            <div style="display:grid;
+                        grid-template-columns:repeat(3, minmax(0, 1fr));
+                        gap:4px; text-align:center;">
+              <span style="background:#eee; padding:10px 2px;">1</span>
+              <span style="background:#eee; padding:10px 2px;">2</span>
+              <span style="background:#eee; padding:10px 2px;">3</span>
+              <span style="background:#eee; padding:10px 2px;">4</span>
+              <span style="background:#ddd; padding:10px 2px;">5</span>
+              <span style="background:#eee; padding:10px 2px;">6</span>
+              <span style="background:#eee; padding:10px 2px;">7</span>
+              <span style="background:#eee; padding:10px 2px;">8</span>
+              <span style="background:#eee; padding:10px 2px;">9</span>
+            </div>
+          </div>
+
+          <div>
+            <p>
+              <span style="color:#6b3fa0;">118</span>
+              Suit ▼
+            </p>
+            <div style="display:grid; gap:6px;
+                        text-align:center;">
+              <span style="background:#f8f5e9; padding:10px 2px;">
+                5 Char
+              </span>
+              <span style="background:#f8f5e9; padding:10px 2px;">
+                5 Bam
+              </span>
+              <span style="background:#f8f5e9; padding:10px 2px;">
+                5 Dot
+              </span>
+            </div>
+          </div>
+
+        </div>
+
+        <p>
+          <span style="color:#6b3fa0;">119</span>
+          <strong>Winds / Dragons</strong>
+        </p>
+
+        <div style="background:#f5f5f5; padding:12px;
+                    border-radius:8px; font-size:14px;">
+          East · South · West · North<br><br>
+          Red · Green · White
+        </div>
+
+        <p style="text-align:center; font-size:14px;">
+          <span style="color:#6b3fa0;">120</span>
+          ◉ Hidden &nbsp; ○ Exposed
+        </p>
+
+        <div style="text-align:center; margin-top:16px;">
+          <span style="display:inline-block; background:#ddd;
+                       border-radius:8px; padding:12px 20px;">
+            <span style="color:#6b3fa0;">121</span>
+            Add Pong
+          </span>
+        </div>
+
+      </div>
+
+      <p>
+        <strong><span style="color:#6b3fa0;">117</span>
+          Number</strong><br>
+        Displays the selected number in each suit.
+      </p>
+
+      <p>
+        <strong><span style="color:#6b3fa0;">118</span>
+          Suit Choices</strong><br>
+        Selects the numbered tile used for the Pong.
+      </p>
+
+      <p>
+        <strong><span style="color:#6b3fa0;">119</span>
+          Honor Choices</strong><br>
+        Selects a Wind or Dragon for the Pong.
+      </p>
+
+      <p>
+        <strong><span style="color:#6b3fa0;">120</span>
+          Hidden / Exposed</strong><br>
+        Sets how the new Pong is recorded.
+      </p>
+
+      <p>
+        <strong><span style="color:#6b3fa0;">121</span>
+          Add Pong</strong><br>
+        Adds three copies of the selected tile
+        as a Pong when the selection is valid.
+      </p>
+
+      <h4>Meld Builder — Kang Selection</h4>
+
+      <p>
+        Kang uses the same number, suit, and honor
+        selection layout illustrated for Pong.
+        Choose the tile to be repeated four times,
+        then set its visibility and add the Kang.
+      </p>
+
+      <div style="border:1px solid #ccc; border-radius:12px;
+                  padding:16px; margin:16px 0;
+                  text-align:center;">
+
+        <strong>Set Your Kang Meld</strong>
+
+        <div style="background:#f5f5f5; border-radius:8px;
+                    padding:14px; margin-top:16px;">
+          <span style="color:#6b3fa0;">122</span>
+          Number / Suit / Honor Choices
+          <p style="font-size:14px; color:#666;
+                    margin-bottom:0;">
+            Same selector layout as Pong.
+          </p>
+        </div>
+
+        <p style="font-size:14px;">
+          <span style="color:#6b3fa0;">123</span>
+          ◉ Hidden &nbsp; ○ Exposed
+        </p>
+
+        <div style="margin-top:16px;">
+          <span style="display:inline-block; background:#ddd;
+                       border-radius:8px; padding:12px 20px;">
+            <span style="color:#6b3fa0;">124</span>
+            Add Kang
+          </span>
+        </div>
+
+      </div>
+
+      <p>
+        <strong><span style="color:#6b3fa0;">122</span>
+          Kang Tile Selection</strong><br>
+        Selects the numbered tile or honor used
+        for the four matching tiles of the Kang.
+      </p>
+
+      <p>
+        <strong><span style="color:#6b3fa0;">123</span>
+          Hidden / Exposed</strong><br>
+        Sets how the new Kang is recorded.
+      </p>
+
+      <p>
+        <strong><span style="color:#6b3fa0;">124</span>
+          Add Kang</strong><br>
+        Adds four copies of the selected tile
+        as a Kang when the selection is valid.
+      </p>
+
+      <h4>Meld Builder — NEWS</h4>
+
+      <p>
+        NEWS uses a fixed set of four Winds.
+        No number or suit selection is needed.
+      </p>
+
+      <div style="border:1px solid #ccc; border-radius:12px;
+                  padding:16px; margin:16px 0;
+                  text-align:center;">
+
+        <strong>Set Your NEWS Meld</strong>
+
+        <p style="color:#6b3fa0;">125</p>
+
+        <div style="display:grid;
+                    grid-template-columns:repeat(4, minmax(0, 1fr));
+                    gap:6px; font-size:12px;">
+          <span style="background:#f8f5e9; padding:16px 2px;">
+            North
+          </span>
+          <span style="background:#f8f5e9; padding:16px 2px;">
+            East
+          </span>
+          <span style="background:#f8f5e9; padding:16px 2px;">
+            West
+          </span>
+          <span style="background:#f8f5e9; padding:16px 2px;">
+            South
+          </span>
+        </div>
+
+        <p style="font-size:14px;">
+          <span style="color:#6b3fa0;">126</span>
+          ◉ Hidden &nbsp; ○ Exposed
+        </p>
+
+        <div style="margin-top:16px;">
+          <span style="display:inline-block; background:#ddd;
+                       border-radius:8px; padding:12px 20px;">
+            <span style="color:#6b3fa0;">127</span>
+            Add NEWS
+          </span>
+        </div>
+
+        <p style="font-size:14px; color:#666;">
+          Names replace tile images in this illustration.
+        </p>
+
+      </div>
+
+      <p>
+        <strong><span style="color:#6b3fa0;">125</span>
+          NEWS Tiles</strong><br>
+        Displays North, East, West, and South.
+        These are fixed tiles, not selection buttons.
+      </p>
+
+      <p>
+        <strong><span style="color:#6b3fa0;">126</span>
+          Hidden / Exposed</strong><br>
+        Sets how the new NEWS grouping is recorded.
+      </p>
+
+      <p>
+        <strong><span style="color:#6b3fa0;">127</span>
+          Add NEWS</strong><br>
+        Adds the four Winds as a NEWS grouping
+        when allowed by your ruleset settings.
+      </p>
+
 
 
 
