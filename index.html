@@ -1517,7 +1517,26 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
             Understanding Your Hand Display
           </a>
         </li>
-        <li><a href="#">Understanding the Boxes</a></li>
+                <li>
+          <a href="#"
+             onclick="
+               event.preventDefault();
+               event.stopPropagation();
+               closeDialog('userGuideDialog');
+               openDialog('userGuideChapter4Dialog');
+
+               requestAnimationFrame(function() {
+                 document.getElementById(
+                   'userGuideChapter4Body'
+                 ).scrollTo({
+                   top: 0,
+                   behavior: 'instant'
+                 });
+               });
+             ">
+            Understanding the Boxes
+          </a>
+        </li>
         <li><a href="#">Following the Turn Cycle</a></li>
         <li><a href="#">Chow, Pong, Kang, and Secret</a></li>
         <li><a href="#">Understanding Pathways</a></li>
@@ -5930,6 +5949,523 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     </div>
   </div>
 </div>
+<!-- USER GUIDE — CHAPTER 4 -->
+<div id="userGuideChapter4Dialog"
+     class="dialog-backdrop hidden">
+  <div class="dialog"
+       style="display:flex; flex-direction:column;
+              max-height:85vh; overflow:hidden;">
+
+    <h2>Understanding the Boxes</h2>
+
+    <div id="userGuideChapter4Body"
+         style="overflow-y:auto; min-height:0; flex:1;">
+
+      <nav aria-label="Chapter 4 sections"
+           style="background:#f0f4f8; border-radius:10px;
+                  padding:14px; margin-bottom:20px;"
+           onclick="
+             const link =
+               event.target.closest('a[data-section]');
+             if (!link) return;
+             event.preventDefault();
+
+             const scroller = this.parentElement;
+             const heading = Array.from(
+               scroller.querySelectorAll('h3')
+             ).find(function(item) {
+               return item.textContent.trim() ===
+                 link.dataset.section;
+             });
+
+             if (heading) {
+               scroller.scrollTo({
+                 top: scroller.scrollTop +
+                   heading.getBoundingClientRect().top -
+                   scroller.getBoundingClientRect().top,
+                 behavior: 'smooth'
+               });
+             }
+           ">
+
+        <strong>In this chapter</strong>
+        <ul style="padding-left:1.3em; line-height:1.6;
+                   margin-bottom:0;">
+          <li>
+            <a href="#" data-section="1. The Six-Box Goal">
+              The Six-Box Goal
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="2. Complete Boxes">
+              Complete Boxes
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="3. Chow Candidates">
+              Chow Candidates
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="4. Other Developing Boxes">
+              Other Developing Boxes
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="5. Reserves">
+              Reserves
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="6. Reading Your Structure">
+              Reading Your Structure
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <p>
+        Six Box Theory™ is a method for understanding
+        Mahjong hand structure. In Coaching View,
+        MJC shows which groupings are complete,
+        which are developing, and which tiles
+        remain outside those groupings.
+      </p>
+
+      <p>
+        The examples below use tile names and
+        numbers in place of tile images.
+        Where a suit is named, every numbered
+        tile in that example belongs to that suit.
+      </p>
+
+      <h3>1. The Six-Box Goal</h3>
+
+      <p>
+        For the usual 16-tile hand structure,
+        the goal is <strong>five melds and one
+        Eye</strong>: six Complete Boxes.
+        The winning hand normally contains
+        17 tiles, with additional tiles for
+        four-tile melds such as Kangs.
+      </p>
+
+      <div role="img"
+           aria-label="Six-box goal:
+             five melds and one Eye."
+           style="border:1px solid #ccc;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0;">
+
+        <div style="display:grid;
+                    grid-template-columns:repeat(3, minmax(0, 1fr));
+                    gap:8px; text-align:center;
+                    font-size:14px;">
+          <div style="background:#eaf4e8;
+                      border-radius:8px; padding:12px 4px;">
+            Meld 1
+          </div>
+          <div style="background:#eaf4e8;
+                      border-radius:8px; padding:12px 4px;">
+            Meld 2
+          </div>
+          <div style="background:#eaf4e8;
+                      border-radius:8px; padding:12px 4px;">
+            Meld 3
+          </div>
+          <div style="background:#eaf4e8;
+                      border-radius:8px; padding:12px 4px;">
+            Meld 4
+          </div>
+          <div style="background:#eaf4e8;
+                      border-radius:8px; padding:12px 4px;">
+            Meld 5
+          </div>
+          <div style="background:#f0eafa;
+                      border-radius:8px; padding:12px 4px;">
+            Eye
+          </div>
+        </div>
+      </div>
+
+      <p>
+        A box represents a structural grouping,
+        not a fixed number of tiles.
+        An Eye has two tiles, a Chow or Pong
+        has three, and a Kang has four.
+      </p>
+
+      <p>
+        Special hands such as Siete Pares /
+        Seven Pairs and Escalera / Straight
+        use different structural targets.
+        MJC adjusts the displayed box target
+        when you pursue those hands.
+      </p>
+
+      <h3>2. Complete Boxes</h3>
+
+      <p>
+        A <strong>Complete Box (CB)</strong>
+        contains a completed grouping.
+        The main examples are:
+      </p>
+
+      <div style="background:#eaf4e8;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0;">
+
+        <p style="margin-top:0;">
+          <strong>Chow</strong><br>
+          Three consecutive tiles of one suit.
+        </p>
+        <div style="background:white;
+                    border-radius:8px; padding:12px;
+                    text-align:center;">
+          3 Bam · 4 Bam · 5 Bam
+        </div>
+
+        <p>
+          <strong>Pong</strong><br>
+          Three matching tiles.
+        </p>
+        <div style="background:white;
+                    border-radius:8px; padding:12px;
+                    text-align:center;">
+          Red · Red · Red
+        </div>
+
+        <p>
+          <strong>Kang</strong><br>
+          Four matching tiles.
+        </p>
+        <div style="background:white;
+                    border-radius:8px; padding:12px;
+                    text-align:center;">
+          7 Dot · 7 Dot · 7 Dot · 7 Dot
+        </div>
+
+        <p>
+          <strong>Eye</strong><br>
+          Two matching tiles serving as
+          the hand’s required pair.
+        </p>
+        <div style="background:white;
+                    border-radius:8px; padding:12px;
+                    text-align:center;">
+          White · White
+        </div>
+      </div>
+
+      <p>
+        When allowed by the selected rules,
+        <strong>NEWS</strong> groups North,
+        East, West, and South as a four-tile meld.
+      </p>
+
+      <p>
+        Meld headings show
+        <strong>Hidden</strong> or
+        <strong>Exposed</strong>.
+        A complete grouping can still be hidden
+        in your hand; being structurally complete
+        does not mean you have exposed it.
+      </p>
+
+      <h3>3. Chow Candidates</h3>
+
+      <p>
+        A <strong>Developing Box (DB)</strong>
+        holds a grouping that is working toward
+        completion. A Chow Candidate contains
+        two suited tiles that need another
+        tile to form a Chow.
+      </p>
+
+      <div style="background:#fff4df;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0;">
+
+        <p style="margin-top:0;">
+          <strong>Double-Sided Wait (DSW)</strong><br>
+          Two consecutive tiles that can complete
+          a Chow at either end.
+        </p>
+        <div style="background:white;
+                    border-radius:8px; padding:12px;
+                    text-align:center;">
+          <strong>4 Char · 5 Char</strong><br>
+          Needs 3 Char or 6 Char
+        </div>
+
+        <p>
+          <strong>Middle Wait (MW)</strong><br>
+          Two tiles with one number between them.
+        </p>
+        <div style="background:white;
+                    border-radius:8px; padding:12px;
+                    text-align:center;">
+          <strong>4 Bam · 6 Bam</strong><br>
+          Needs 5 Bam
+        </div>
+
+        <p>
+          <strong>Edge Wait (EW)</strong><br>
+          A 1–2 or 8–9 grouping with only one
+          completing number.
+        </p>
+        <div style="background:white;
+                    border-radius:8px; padding:12px;
+                    text-align:center;">
+          <strong>1 Dot · 2 Dot</strong><br>
+          Needs 3 Dot
+        </div>
+      </div>
+
+      <p>
+        Each example describes tiles that would
+        complete that grouping. Whether a needed
+        tile can be drawn or claimed depends
+        on the game situation and rules.
+      </p>
+
+      <h3>4. Other Developing Boxes</h3>
+
+      <p>
+        Candidates hold the potential to become
+        Complete Boxes. Some have more than
+        one possible role.
+      </p>
+
+      <h4>Eye Candidate (EC)</h4>
+
+      <p>
+        Two matching tiles being held as
+        the Eye. The pair is present, but MJC
+        identifies it as a candidate while
+        the hand’s structure is developing.
+      </p>
+
+      <div style="background:#fff4df;
+                  border-radius:8px; padding:12px;
+                  text-align:center; margin:12px 0;">
+        <strong>8 Dot · 8 Dot</strong><br>
+        A possible Eye
+      </div>
+
+      <h4>Eye-Pong Candidate (EPC)</h4>
+
+      <p>
+        Two matching tiles that can serve as
+        the Eye or develop into a Pong.
+        The tiles look like an Eye Candidate;
+        the label identifies their structural
+        role in MJC’s current arrangement.
+      </p>
+
+      <div style="background:#fff4df;
+                  border-radius:8px; padding:12px;
+                  text-align:center; margin:12px 0;">
+        <strong>Green · Green</strong><br>
+        Eye option, or add Green for a Pong
+      </div>
+
+      <h4>Chow-Pong Candidate (CPC)</h4>
+
+      <p>
+        Three or four suited tiles that can
+        develop into either a Chow or a Pong.
+        A matching pair provides a Pong option,
+        while nearby tiles provide Chow options.
+      </p>
+
+      <div style="background:#fff4df;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0;">
+
+        <strong>Three-tile example</strong>
+        <div style="background:white;
+                    border-radius:8px; padding:12px;
+                    text-align:center; margin-top:10px;">
+          2 Char · 2 Char · 3 Char
+        </div>
+        <p>
+          A 1 Char or 4 Char can form a Chow
+          using one 2 Char and the 3 Char.
+          Another 2 Char can form a Pong.
+          Either completion leaves one tile
+          outside that completed meld.
+        </p>
+
+        <strong>Four-tile example</strong>
+        <div style="background:white;
+                    border-radius:8px; padding:12px;
+                    text-align:center; margin-top:10px;">
+          2 Bam · 2 Bam · 3 Bam · 4 Bam
+        </div>
+        <p style="margin-bottom:0;">
+          These tiles offer overlapping Chow
+          and Pong possibilities. A tile used
+          in one grouping cannot also be used
+          in another at the same time.
+        </p>
+      </div>
+
+      <h4>Pong-Kang Candidate (PKC)</h4>
+
+      <p>
+        A four-tile Developing Box that can
+        be declared as a Kang or NEWS.
+        Having the tiles available and recording
+        the declaration are separate steps.
+        Follow MJC’s declaration controls
+        when the grouping is offered.
+      </p>
+
+      <h4>Half Eye (HE)</h4>
+
+      <p>
+        A single tile being held as a possible
+        half of the Eye. A matching tile
+        would form a pair.
+      </p>
+
+      <div style="background:#fff4df;
+                  border-radius:8px; padding:12px;
+                  text-align:center; margin:12px 0;">
+        <strong>White</strong><br>
+        Needs another White to form a pair
+      </div>
+
+      <h3>5. Reserves</h3>
+
+      <p>
+        <strong>Reserves</strong> are tiles
+        outside MJC’s displayed Developing
+        and Complete Boxes.
+        They may later join a grouping as
+        new tiles enter your hand.
+      </p>
+
+      <p>
+        A Reserve and a Half Eye may each
+        contain a single tile. Their placement
+        tells you the difference: a Half Eye
+        occupies a Developing Box as a possible
+        Eye, while a Reserve sits outside
+        the displayed boxes.
+      </p>
+
+      <div style="background:#f4f4f4;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0;">
+        <strong>Example</strong>
+        <p style="margin-bottom:0;">
+          A lone 5 Bam in Reserves might
+          gain a partner when you draw
+          4 Bam or 6 Bam. MJC can then
+          display the two tiles together
+          as a developing grouping.
+        </p>
+      </div>
+
+      <p>
+        Being a Reserve does not automatically
+        make a tile the best discard.
+        Use the current recommendation and
+        its Insight explanation to understand
+        MJC’s assessment.
+      </p>
+
+      <h3>6. Reading Your Structure</h3>
+
+      <p>
+        Start with the Complete Boxes.
+        Then look at the Developing Boxes
+        and what each needs.
+        Finally, examine the Reserves.
+        This gives you a practical way
+        to review your hand’s structure.
+      </p>
+
+      <p>
+        <strong>CB</strong> and
+        <strong>DB</strong> headings include
+        box numbers. Those numbers identify
+        positions in the displayed structure;
+        they are not tile quantities
+        or strength ratings.
+      </p>
+
+      <p>
+        An <strong>Empty</strong> Developing
+        Box marks an unfilled structural
+        position. It contains no tiles.
+      </p>
+
+      <p>
+        The displayed arrangement can change
+        as tiles enter or leave your hand.
+        A candidate may complete, change type,
+        or give way to another grouping.
+        A tile belongs to only one displayed
+        grouping at a time.
+      </p>
+
+      <p>
+        Use <strong>Labels: Full</strong>
+        while learning the names.
+        Once the abbreviations become familiar,
+        shortened labels offer a more compact
+        display.
+      </p>
+
+      <p>
+        Chapter 7 explains the completion
+        opportunities shown by Pathways.
+        Chapter 8 explains how Release Tile
+        lets you explore eligible alternate
+        groupings involving a hidden
+        Complete Box.
+      </p>
+
+    </div>
+
+    <div class="dialog-actions"
+         style="flex-shrink:0; flex-wrap:wrap;">
+
+      <button type="button"
+              class="dialog-button"
+              onclick="
+                document.getElementById(
+                  'userGuideChapter4Body'
+                ).scrollTo({
+                  top: 0,
+                  behavior: 'smooth'
+                });
+              ">
+        Chapter Sections
+      </button>
+
+      <button type="button"
+              class="dialog-button"
+              onclick="
+                closeDialog('userGuideChapter4Dialog');
+                openDialog('userGuideDialog');
+              ">
+        Back to Contents
+      </button>
+
+      <button type="button"
+              class="dialog-button primary"
+              onclick="closeDialog('userGuideChapter4Dialog');">
+        Close
+      </button>
+
+    </div>
+  </div>
+</div>
+
 <div id="acknowledgmentsDialog" class="dialog-backdrop hidden">
   <div class="dialog">
     <h2>Acknowledgments</h2>
