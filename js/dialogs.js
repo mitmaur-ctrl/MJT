@@ -55,6 +55,675 @@ function closeDialog(id) {
   document.getElementById(id).classList.add("hidden");
 }
 
+const mjcGlossaryEntries = [
+  {
+    term: "Siete Pares",
+    definition:
+      "Seven Pairs. A special-hand pattern available under rulesets " +
+      "that permit it. The complete winning hand must satisfy " +
+      "the requirements of the selected ruleset."
+  },
+  {
+    term: "Escalera",
+    definition:
+      "A straight: tiles numbered 1 through 9 in the same suit. " +
+      "Its role in a special winning hand depends on the ruleset."
+  },
+  {
+    term: "Straight",
+    definition:
+      "Another name for Escalera: tiles numbered 1 through 9 " +
+      "in the same suit."
+  },
+  {
+    term: "Pursuing Siete Pares",
+    definition:
+      "An indicator that MJC is organizing your hand toward " +
+      "the Seven Pairs special-hand pattern."
+  },
+  {
+    term: "Pursuing Escalera",
+    definition:
+      "An indicator that MJC is organizing your hand toward " +
+      "the Escalera special-hand pattern."
+  },
+  {
+    term: "Ruleset",
+    definition:
+      "The Mahjong rules selected for your hand. The ruleset " +
+      "determines which declarations and winning patterns " +
+      "MJC permits."
+  },
+
+  {
+    term: "Mahjong Coach",
+    abbreviation: "MJC",
+    definition:
+      "A learning tool that introduces Six Box Theory to beginning " +
+      "and intermediate players and helps them apply it to make " +
+      "better playing decisions."
+  },
+  {
+    term: "Six Box Theory",
+    abbreviation: "6BT",
+    definition:
+      "A method for understanding Mahjong hand structure. " +
+      "In a normal winning 16-Tile hand, five melds and an Eye " +
+      "form six completed boxes."
+  },
+  {
+    term: "Box",
+    definition:
+      "A way of identifying a completed or developing structure " +
+      "within your hand."
+  },
+  {
+    term: "Hand Structure",
+    definition:
+      "The relationships among your tiles, including completed " +
+      "groups, developing groups, and Reserves. MJC reveals the " +
+      "structure hidden within a Mahjong hand."
+  },
+  {
+    term: "Organized",
+    definition:
+      "Arranged into groups that make your hand's structure easier " +
+      "to see. Organized is the act; structure is the thing."
+  },
+  {
+    term: "Release Tile",
+    abbreviation: "RT",
+    definition:
+      "A control for exploring how an eligible tile in a hidden " +
+      "Complete Box can be reassigned to another grouping. " +
+      "Available choices depend on your hand and the ruleset."
+  },
+  {
+    term: "BOLO for Eyes",
+    definition:
+      "Be On the Lookout for Eyes. A reminder to watch for " +
+      "opportunities to form the pair your hand needs."
+  },
+  {
+    term: "Replacement Draw",
+    definition:
+      "An additional draw required after certain declarations, " +
+      "such as a Kang, according to the ruleset."
+  },
+
+  {
+    term: "Meld",
+    definition:
+      "A completed tile group, such as a Chow, Pong, or Kang."
+  },
+  {
+    term: "Chow",
+    definition:
+      "Three consecutively numbered tiles of the same suit. " +
+      "For example, 3, 4, 5 of Characters."
+  },
+  {
+    term: "Pong",
+    definition:
+      "Three identical tiles."
+  },
+  {
+    term: "Kang",
+    definition:
+      "Four identical tiles declared as a meld. A Kang requires " +
+      "a replacement draw under the applicable rules."
+  },
+  {
+    term: "Eye",
+    definition:
+      "The pair of identical tiles required alongside the five " +
+      "melds in a normal winning 16-Tile hand."
+  },
+  {
+    term: "Half Eye",
+    abbreviation: "HE",
+    definition:
+      "A single tile being held toward forming the Eye. " +
+      "It needs another identical tile to become a pair."
+  },
+  {
+    term: "Hidden",
+    definition:
+      "Describes tiles or a meld kept concealed from the other " +
+      "players. Declaration requirements depend on the ruleset."
+  },
+  {
+    term: "Exposed",
+    definition:
+      "Describes a meld revealed to the other players, usually " +
+      "after claiming a discard."
+  },
+  {
+    term: "Terminal",
+    definition:
+      "A suited tile numbered 1 or 9."
+  },
+  {
+    term: "Ordinal",
+    definition:
+      "MJC's term for a suited tile numbered 2 through 8."
+  },
+  {
+    term: "Lone Honor",
+    definition:
+      "An honor tile with no matching companion in your hand. " +
+      "Honor tiles are Winds and Dragons; they cannot form Chows."
+  },
+  {
+    term: "Orphaned Tile",
+    definition:
+      "A suited tile without Connectivity to nearby numbers " +
+      "of the same suit in your hand."
+  },
+
+  {
+    term: "Correct Last Entry",
+    abbreviation: "CLE",
+    definition:
+      "A control for correcting your most recent tile entry. " +
+      "Use it when the last draw, discard, or claim was entered " +
+      "incorrectly."
+  },
+  {
+    term: "Fix Hand",
+    abbreviation: "FH",
+    definition:
+      "A tool for correcting MJC's recorded hand to match the " +
+      "tiles you actually hold. Set your melds, enter your " +
+      "remaining tiles, then review and accept the corrected hand."
+  },
+  {
+    term: "Free Tiles",
+    definition:
+      "Tiles not assigned to melds in Fix Hand. Enter these " +
+      "separately from the melds you have already set."
+  },
+  {
+    term: "Save Hand",
+    definition:
+      "Stores the current hand and its transcript in Hand History " +
+      "for later review. You can save an incomplete hand as well " +
+      "as a winning hand."
+  },
+  {
+    term: "Hand History",
+    definition:
+      "The collection of hands saved in this browser on this " +
+      "device. MJC keeps the most recent 20 saved hands."
+  },
+  {
+    term: "New Hand",
+    definition:
+      "Clears the current hand and returns you to starting tile " +
+      "entry. Save the current hand first if you want to keep " +
+      "its transcript."
+  },
+  {
+    term: "Transcript",
+    definition:
+      "A record of a hand for later review. It includes the " +
+      "starting tiles, recorded actions, discard recommendations, " +
+      "and hand summary."
+  },
+  {
+    term: "Discard Recommendation",
+    abbreviation: "DR",
+    definition:
+      "MJC's suggested discard based on its evaluation of your " +
+      "current hand. Open Insight to understand the reason. " +
+      "The playing decision remains yours."
+  },
+
+  {
+    term: "Current Hand Display",
+    abbreviation: "CHD",
+    definition:
+      "The main screen used during play. It shows your hand's " +
+      "current structure, including Complete Boxes, Developing " +
+      "Boxes, and Reserves, along with available actions."
+  },
+  {
+    term: "Starting Hand Display",
+    abbreviation: "SHD",
+    definition:
+      "The first organized view of your starting hand after you " +
+      "press Play On!"
+  },
+  {
+    term: "Tile Selection Screen",
+    abbreviation: "TSS",
+    definition:
+      "The screen where you select your settings and enter your " +
+      "starting tiles before pressing Play On!"
+  },
+  {
+    term: "Draw Tile Screen",
+    definition:
+      "The screen where you enter the tile you have drawn."
+  },
+  {
+    term: "Discard Tile Screen",
+    definition:
+      "The screen where you select the tile you are discarding."
+  },
+  {
+    term: "Standard View",
+    abbreviation: "SV",
+    definition:
+      "A simpler presentation of your hand's structure with fewer " +
+      "coaching details."
+  },
+  {
+    term: "Coaching View",
+    abbreviation: "CV",
+    definition:
+      "A more detailed presentation of your hand's structure, " +
+      "with coaching information such as Pathways, Acceptance, " +
+      "and Sources."
+  },
+  {
+    term: "Indices",
+    definition:
+      "The identifying numbers or letters shown on tiles to help " +
+      "you recognize them."
+  },
+  {
+    term: "Labels",
+    definition:
+      "The names shown for box types, such as Chow-Pong Candidate " +
+      "or Double-Sided Wait."
+  },
+  {
+    term: "Tiles In Hand",
+    abbreviation: "TIH",
+    definition:
+      "The tile count reported for your current hand, including " +
+      "tiles assigned to melds."
+  },
+
+  {
+    term: "Pathways",
+    abbreviation: "PW",
+    definition:
+      "Ways a Developing Box can advance toward completion. " +
+      "Green arrows indicate a needed tile of the same suit with " +
+      "a different number. Orange arrows indicate a matching tile."
+  },
+  {
+    term: "Acceptance",
+    definition:
+      "The number of tile copies that can advance a Developing Box " +
+      "toward completion, before accounting for known unavailable copies."
+  },
+  {
+    term: "Effective Acceptance",
+    abbreviation: "EA",
+    definition:
+      "The number above each arrow. It represents the remaining " +
+      "tile opportunities that can advance the Developing Box " +
+      "toward completion through that pathway."
+  },
+  {
+    term: "Sources",
+    definition:
+      "How a needed tile can enter your hand: through your own " +
+      "draw or an opponent's discard that you can legally claim. " +
+      "A Chow has two sources: your draw and the player to your " +
+      "left. A Pong has four: your draw and any of the other players."
+  },
+  {
+    term: "Connectivity",
+    definition:
+      "The support a suited tile has from nearby numbers in the " +
+      "same suit that may help it form a Chow."
+  },
+  {
+    term: "Centricity",
+    definition:
+      "How close a tile's number is to the middle of its suit. " +
+      "Central numbers can participate in more Chow combinations " +
+      "than numbers near the ends."
+  },
+  {
+    term: "Partner",
+    definition:
+      "A tile that works with another tile to form a developing " +
+      "group. For example, a 5 can partner with a 4 of the same " +
+      "suit to form a Double-Sided Wait."
+  },
+  {
+    term: "Groupings",
+    definition:
+      "Ways of arranging tiles into useful structures. The same " +
+      "tiles may allow different combinations of Complete Boxes, " +
+      "Developing Boxes, and Reserves."
+  },
+
+  {
+    term: "Chow Candidate",
+    definition:
+      "Two tiles of the same suit that need one more tile to form " +
+      "a Chow. Chow Candidates include Double-Sided Waits, " +
+      "Middle Waits, and Edge Waits."
+  },
+  {
+    term: "Chow-Pong Candidate",
+    abbreviation: "CPC",
+    definition:
+      "A developing group with both Chow and Pong possibilities. " +
+      "For example, 2, 2, 3 of the same suit can use a 1 or 4 " +
+      "to form a Chow, or another 2 to form a Pong."
+  },
+  {
+    term: "Double-Sided Wait",
+    abbreviation: "DSW",
+    definition:
+      "Two consecutive tiles of the same suit that can form a " +
+      "Chow at either end. For example, 4 and 5 can use a 3 or 6. " +
+      "The possible pairs run from 2, 3 through 7, 8."
+  },
+  {
+    term: "Middle Wait",
+    abbreviation: "MW",
+    definition:
+      "Two tiles of the same suit with one missing number between " +
+      "them. For example, 4 and 6 need a 5 to form a Chow."
+  },
+  {
+    term: "Edge Wait",
+    abbreviation: "EW",
+    definition:
+      "A 1, 2 or 8, 9 combination of the same suit. " +
+      "The 1, 2 needs a 3; the 8, 9 needs a 7 to form a Chow."
+  },
+  {
+    term: "Eye Candidate",
+    abbreviation: "EC",
+    definition:
+      "A pair being considered for the Eye required in a normal " +
+      "winning hand."
+  },
+  {
+    term: "Eye-Pong Candidate",
+    abbreviation: "EPC",
+    definition:
+      "A pair that can serve as the Eye or develop into a Pong " +
+      "with another matching tile."
+  },
+
+  {
+    term: "Complete Box",
+    abbreviation: "CB",
+    definition:
+      "A completed structure, such as a Chow, Pong, or declared Kang. " +
+      "The Eye completes the sixth box in a normal winning 16-Tile hand."
+  },
+  {
+    term: "Developing Box",
+    abbreviation: "DB",
+    definition:
+      "A group of tiles that can develop into a completed structure. " +
+      "Examples include a Double-Sided Wait, an Eye-Pong Candidate, " +
+      "and a Chow-Pong Candidate."
+  },
+  {
+    term: "Reserve",
+    abbreviation: "R",
+    definition:
+      "A tile not currently assigned to a Complete Box, Developing Box, " +
+      "or Half Eye. A Reserve may still have Connectivity and may " +
+      "become useful after a later draw or claim."
+    },
+  {
+    term: "Insight",
+    definition:
+      "An explanation of why MJC recommends a particular discard. " +
+      "Insight helps you understand the recommendation while " +
+      "leaving the playing decision to you."
+  }
+];
+
+function openGlossaryDialog() {
+  closeDialog("about6BTDialog");
+  showGlossaryIndex();
+  openDialog("glossaryDialog");
+}
+
+function showGlossaryIndex() {
+  const content = document.getElementById("glossaryContent");
+  content.replaceChildren();
+
+  const heading = document.createElement("h3");
+  heading.textContent = "Alphabetical Index";
+  content.appendChild(heading);
+
+  const links = [];
+
+    mjcGlossaryEntries.forEach(function(entry, index) {
+    links.push({
+      label: entry.abbreviation
+        ? entry.term + " (" + entry.abbreviation + ")"
+        : entry.term,
+      index: index
+    });
+
+    if (entry.abbreviation) {
+      links.push({
+        label: entry.abbreviation,
+        index: index
+      });
+    }
+  });
+
+  const aliases = {
+    "Save Game": "Save Hand",
+    "Game History": "Hand History",
+    "New Game": "New Hand"
+  };
+
+  Object.keys(aliases).forEach(function(label) {
+    const index = mjcGlossaryEntries.findIndex(function(entry) {
+      return entry.term === aliases[label];
+    });
+
+    if (index !== -1) {
+      links.push({
+        label: label,
+        index: index
+      });
+    }
+  });
+
+  links.sort(function(a, b) {
+    return a.label.localeCompare(b.label);
+  });
+
+  links.forEach(function(item) {
+    const row = document.createElement("p");
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "six-box-link";
+    button.textContent = item.label;
+    button.onclick = function() {
+      showGlossaryEntry(item.index);
+    };
+    row.appendChild(button);
+    content.appendChild(row);
+  });
+
+  content.scrollTop = 0;
+}
+
+function showGlossaryEntry(index) {
+  const entry = mjcGlossaryEntries[index];
+  if (!entry) return;
+
+  const content = document.getElementById("glossaryContent");
+  content.replaceChildren();
+
+  const heading = document.createElement("h3");
+    heading.textContent = entry.abbreviation
+    ? entry.term + " (" + entry.abbreviation + ")"
+    : entry.term;
+  content.appendChild(heading);
+
+  const definition = document.createElement("p");
+  definition.textContent = entry.definition;
+  content.appendChild(definition);
+
+  const groupName = Object.keys(mjcGlossaryGroups).find(
+    function(name) {
+      return mjcGlossaryGroups[name].includes(entry.term);
+    }
+  );
+
+  if (groupName) {
+    const row = document.createElement("p");
+    const link = document.createElement("button");
+    link.type = "button";
+    link.className = "six-box-link";
+    link.textContent = "Explore: " + groupName;
+    link.onclick = function() {
+      showGlossaryGroup(groupName);
+    };
+    row.appendChild(link);
+    content.appendChild(row);
+  }
+
+  const backButton = document.createElement("button");
+  backButton.type = "button";
+  backButton.className = "dialog-button";
+  backButton.textContent = "Back to Index";
+  backButton.onclick = showGlossaryIndex;
+  content.appendChild(backButton);
+
+  content.scrollTop = 0;
+}
+
+const mjcGlossaryGroups = {
+  "Candidates and Waits": [
+    "Chow Candidate",
+    "Chow-Pong Candidate",
+    "Double-Sided Wait",
+    "Middle Wait",
+    "Edge Wait",
+    "Eye Candidate",
+    "Eye-Pong Candidate",
+    "Half Eye"
+  ],
+  "Understanding Hand Structure": [
+    "Mahjong Coach",
+    "Six Box Theory",
+    "Hand Structure",
+    "Organized",
+    "Box",
+    "Complete Box",
+    "Developing Box",
+    "Reserve",
+    "Groupings"
+  ],
+  "Understanding Pathways": [
+    "Pathways",
+    "Acceptance",
+    "Effective Acceptance",
+    "Sources",
+    "Partner"
+  ],
+  "Coaching and Recommendations": [
+    "Discard Recommendation",
+    "Insight",
+    "Connectivity",
+    "Centricity",
+    "Orphaned Tile",
+    "Lone Honor",
+    "Release Tile",
+    "BOLO for Eyes"
+  ],
+  "Screens and Display Controls": [
+    "Tile Selection Screen",
+    "Starting Hand Display",
+    "Current Hand Display",
+    "Draw Tile Screen",
+    "Discard Tile Screen",
+    "Standard View",
+    "Coaching View",
+    "Indices",
+    "Labels",
+    "Tiles In Hand"
+  ],
+  "Corrections and Hand History": [
+    "Correct Last Entry",
+    "Fix Hand",
+    "Free Tiles",
+    "Save Hand",
+    "Hand History",
+    "New Hand",
+    "Transcript"
+  ],
+  "Melds and Tile Terms": [
+    "Meld",
+    "Chow",
+    "Pong",
+    "Kang",
+    "Eye",
+    "Hidden",
+    "Exposed",
+    "Terminal",
+    "Ordinal",
+    "Replacement Draw"
+  ],
+  "Special Hands and Rules": [
+    "Ruleset",
+    "Siete Pares",
+    "Escalera",
+    "Straight",
+    "Pursuing Siete Pares",
+    "Pursuing Escalera"
+  ]
+};
+
+function showGlossaryGroup(groupName) {
+  const terms = mjcGlossaryGroups[groupName];
+  if (!terms) return;
+
+  const content = document.getElementById("glossaryContent");
+  content.replaceChildren();
+
+  const heading = document.createElement("h3");
+  heading.textContent = groupName;
+  content.appendChild(heading);
+
+  terms.forEach(function(term) {
+    const entry = mjcGlossaryEntries.find(function(item) {
+      return item.term === term;
+    });
+    if (!entry) return;
+
+    const title = document.createElement("h4");
+    title.textContent = entry.abbreviation
+      ? entry.term + " (" + entry.abbreviation + ")"
+      : entry.term;
+    content.appendChild(title);
+
+    const definition = document.createElement("p");
+    definition.textContent = entry.definition;
+    content.appendChild(definition);
+  });
+
+  const backButton = document.createElement("button");
+  backButton.type = "button";
+  backButton.className = "dialog-button";
+  backButton.textContent = "Back to Index";
+  backButton.onclick = showGlossaryIndex;
+  content.appendChild(backButton);
+
+  content.scrollTop = 0;
+}
 
 function getDeclarationPrimaryLabel(
   meldType,
