@@ -1588,6 +1588,23 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
               Footer Links
             </a>
           </li>
+          <li>
+            <a href="#" data-section="Release Tile Dialog">
+              Release Tile Dialog
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="Discard Tile Screen">
+              Discard Tile Screen
+            </a>
+          </li>
+          <li>
+            <a href="#"
+               data-section="Control Availability and Guide Navigation">
+              Control Availability and Guide Navigation
+            </a>
+          </li>
+
         </ul>
       </nav>
 
@@ -4816,6 +4833,326 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
         changes made in this form.
       </p>
 
+      <h3>Release Tile Dialog</h3>
+
+      <p>
+        RT opens a dialog for exploring an alternate
+        grouping using a tile from a hidden meld.
+        Its choices change as you move from tile
+        selection to grouping selection and preview.
+      </p>
+
+      <div style="border:1px solid #ccc; border-radius:12px;
+                  padding:16px; margin:16px 0;">
+
+        <div style="text-align:center; font-weight:bold;">
+          Select Tile to Release
+        </div>
+
+        <p style="color:#6b3fa0; text-align:center;">161</p>
+
+        <div style="background:#f8f5e9; border-radius:8px;
+                    padding:14px; text-align:center;">
+          Tiles from the selected hidden meld
+        </div>
+
+        <p>
+          <strong><span style="color:#6b3fa0;">162</span>
+            Alternate Groupings</strong>
+        </p>
+
+        <div style="background:#f5f5f5; border:1px solid #bbb;
+                    border-radius:8px; padding:14px;">
+          Available destination grouping
+        </div>
+
+        <p>
+          <strong><span style="color:#6b3fa0;">163</span>
+            Expected Results</strong>
+        </p>
+
+        <div style="background:#f0f4f8; border-radius:8px;
+                    padding:14px;">
+          Preview of affected boxes
+        </div>
+
+        <p style="font-size:14px; color:#666;">
+          Overview of successive stages.
+          These areas do not all appear at once.
+          Tile images are omitted.
+        </p>
+
+        <div style="display:grid;
+                    grid-template-columns:repeat(2, minmax(0, 1fr));
+                    gap:8px; text-align:center; font-size:14px;">
+
+          <div style="background:#ddd; border-radius:8px;
+                      padding:12px 4px;">
+            <span style="color:#6b3fa0;">164</span> Back
+          </div>
+
+          <div style="background:#ddd; border-radius:8px;
+                      padding:12px 4px;">
+            <span style="color:#6b3fa0;">165</span> Cancel
+          </div>
+
+          <div style="background:#222; color:white;
+                      border-radius:8px; padding:12px 4px;">
+            <span style="color:#6b3fa0;">166</span> Confirm
+          </div>
+
+          <div style="background:#ddd; border-radius:8px;
+                      padding:12px 4px;">
+            <span style="color:#6b3fa0;">167</span> OK
+          </div>
+
+        </div>
+      </div>
+
+      <p>
+        <strong><span style="color:#6b3fa0;">161</span>
+          Tile Choices</strong><br>
+        Selects a tile from the hidden meld
+        to explore its available alternate groupings.
+      </p>
+
+      <p>
+        <strong><span style="color:#6b3fa0;">162</span>
+          Alternate Groupings</strong><br>
+        Lists available destination groupings
+        for the selected tile.
+        Selecting one opens its preview.
+      </p>
+
+      <p>
+        <strong><span style="color:#6b3fa0;">163</span>
+          Expected Results</strong><br>
+        Previews the affected boxes before
+        you commit the regrouping.
+      </p>
+
+      <p>
+        <strong><span style="color:#6b3fa0;">164</span>
+          Back</strong><br>
+        Returns to the previous selection stage:
+        from preview to grouping selection,
+        or from grouping selection to tile selection.
+      </p>
+
+      <p>
+        <strong><span style="color:#6b3fa0;">165</span>
+          Cancel</strong><br>
+        Closes Release Tile without applying
+        the proposed regrouping.
+      </p>
+
+      <p>
+        <strong><span style="color:#6b3fa0;">166</span>
+          Confirm</strong><br>
+        Applies the previewed regrouping
+        and closes the dialog.
+      </p>
+
+      <p>
+        <strong><span style="color:#6b3fa0;">167</span>
+          OK</strong><br>
+        Closes the notice when no viable alternate
+        grouping is available for the selected tile.
+      </p>
+
+      <h3>Discard Tile Screen</h3>
+
+      <p>
+        Correcting a discard opens this screen.
+        The previous entry is highlighted red.
+        This simplified illustration omits the
+        remaining tile choices.
+      </p>
+
+      <div style="border:1px solid #ccc; border-radius:12px;
+                  padding:16px; margin:16px 0;
+                  text-align:center;">
+
+        <strong>Discard Tile</strong>
+
+        <p>
+          <span style="color:#6b3fa0;">168</span>
+          Enter the tile you discarded.
+        </p>
+
+        <p style="color:#6b3fa0;">169</p>
+
+        <div style="display:inline-block;
+                    background:#ffd6d6;
+                    border:2px solid #c40000;
+                    border-radius:8px; padding:24px;">
+          5 Char
+        </div>
+
+        <p style="color:#666; font-size:14px;">
+          Example previous entry.
+          Tile names replace images.
+        </p>
+
+        <div style="display:grid;
+                    grid-template-columns:repeat(2, minmax(0, 1fr));
+                    gap:8px; margin-top:20px; font-size:14px;">
+
+          <div style="background:#ddd; border-radius:8px;
+                      padding:12px 4px;">
+            <span style="color:#6b3fa0;">170</span>
+            Cancel
+          </div>
+
+          <div style="background:#ddd; border-radius:8px;
+                      padding:12px 4px;">
+            <span style="color:#6b3fa0;">171</span>
+            Insight
+          </div>
+
+        </div>
+      </div>
+
+      <p>
+        <strong><span style="color:#6b3fa0;">168</span>
+          Discard Instructions</strong><br>
+        Identifies the tile-entry task:
+        record the tile you actually discarded.
+      </p>
+
+      <p>
+        <strong><span style="color:#6b3fa0;">169</span>
+          Discard Tile Choices</strong><br>
+        Tapping a tile records it as the corrected
+        discard. There is no separate Confirm button
+        on this screen.
+        Red identifies the previous entry.
+      </p>
+
+      <p>
+        <strong><span style="color:#6b3fa0;">170</span>
+          Cancel</strong><br>
+        Leaves the correction and restores
+        the previously recorded hand and history.
+      </p>
+
+      <p>
+        <strong><span style="color:#6b3fa0;">171</span>
+          Insight</strong><br>
+        Currently displays a coming-soon message
+        on this screen. Discard recommendation
+        explanations are available through Insight
+        on the Coaching View hand display.
+      </p>
+
+      <h3>Control Availability and Guide Navigation</h3>
+
+      <h4>Available and Unavailable Controls</h4>
+
+      <p>
+        MJC enables controls when they apply to
+        your current task. A disabled control
+        cannot be used until its requirements are met.
+        Some controls appear only when relevant.
+      </p>
+
+      <div style="border:1px solid #ccc; border-radius:12px;
+                  padding:16px; margin:16px 0;">
+
+        <div style="display:grid;
+                    grid-template-columns:repeat(2, minmax(0, 1fr));
+                    gap:12px; text-align:center; font-size:14px;">
+
+          <div>
+            <p style="color:#6b3fa0;">172</p>
+            <div style="background:#222; color:white;
+                        border-radius:8px; padding:14px 4px;">
+              Play On!
+            </div>
+            <p>Available</p>
+          </div>
+
+          <div>
+            <p style="color:#6b3fa0;">173</p>
+            <div style="background:#bbb; color:#666;
+                        border-radius:8px; padding:14px 4px;">
+              Play On!
+            </div>
+            <p>Unavailable</p>
+          </div>
+
+        </div>
+      </div>
+
+      <p>
+        <strong><span style="color:#6b3fa0;">172</span>
+          Available Control</strong><br>
+        Can be used for the current task.
+        For example, Play On! becomes available
+        when the required starting tile count is entered.
+        Available controls do not all use the same color.
+      </p>
+
+      <p>
+        <strong><span style="color:#6b3fa0;">173</span>
+          Unavailable Control</strong><br>
+        Is disabled for the current state.
+        For example, Play On! is unavailable when
+        the starting tile count is incorrect.
+        Pathways: NA is unavailable in Standard View.
+      </p>
+
+      <h4>Moving Around the User Guide</h4>
+
+      <div style="border:1px solid #ccc; border-radius:12px;
+                  padding:12px; margin:16px 0;
+                  text-align:center; font-size:14px;">
+
+        <div style="background:#ddd; border-radius:8px;
+                    padding:12px; margin-bottom:8px;">
+          <span style="color:#6b3fa0;">174</span>
+          Chapter Sections
+        </div>
+
+        <div style="background:#ddd; border-radius:8px;
+                    padding:12px; margin-bottom:8px;">
+          <span style="color:#6b3fa0;">175</span>
+          Back to Contents
+        </div>
+
+        <div style="background:#222; color:white;
+                    border-radius:8px; padding:12px;">
+          <span style="color:#6b3fa0;">176</span>
+          Close
+        </div>
+
+        <p style="color:#666;">
+          Controls remain visible below the scrolling
+          chapter. Their arrangement adapts
+          to the available width.
+        </p>
+      </div>
+
+      <p>
+        <strong><span style="color:#6b3fa0;">174</span>
+          Chapter Sections</strong><br>
+        Returns to the “In this chapter” index.
+        Select a link there to jump to a section.
+      </p>
+
+      <p>
+        <strong><span style="color:#6b3fa0;">175</span>
+          Back to Contents</strong><br>
+        Returns to the User Guide’s main
+        Table of Contents.
+      </p>
+
+      <p>
+        <strong><span style="color:#6b3fa0;">176</span>
+          Close</strong><br>
+        Closes the chapter and returns
+        to the app screen underneath.
+      </p>
 
 
 
