@@ -1456,10 +1456,24 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
             showToast('This chapter is a work in progress.');
           }">
        <li>
-  <a href="#"
-     onclick="event.preventDefault(); event.stopPropagation();
-              closeDialog('userGuideDialog');
-              openDialog('userGuideChapter1Dialog');">
+    <a href="#"
+     onclick="
+       event.preventDefault();
+       event.stopPropagation();
+       closeDialog('userGuideDialog');
+       openDialog('userGuideChapter1Dialog');
+
+       requestAnimationFrame(function() {
+         const scroller = document.querySelector(
+           '#userGuideChapter1Dialog nav'
+         ).parentElement;
+
+         scroller.scrollTo({
+           top: 0,
+           behavior: 'instant'
+         });
+       });
+     ">
     Getting to Know MJC: Screens and Controls
   </a>
 </li>
