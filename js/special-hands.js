@@ -1056,9 +1056,9 @@ const pairCount =
     excludedCounts
   ).length;
 
-const overPairedThreshold = 4;
+const overPairedThreshold = 5;
 
-  if (pairCount >= overPairedThreshold) {
+    if (pairCount >= 4) {
     sevenPairsStatusAsked = false;
   }
 
@@ -1067,6 +1067,7 @@ const overPairedThreshold = 4;
   overPairedDelayOneEvaluation = false;
 
     if (
+            pairCount < 4 &&
       sevenPairsMode &&
       !sevenPairsStatusAsked
     ) {
