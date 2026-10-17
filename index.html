@@ -1822,11 +1822,13 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
       </p>
 
       <p>
-        <strong><span style="color:#6b3fa0;">⑱</span>
-          Tile Groups</strong><br>
-        Identifies each occupied suit or honor group.
-        Your starting tiles appear beneath its heading.
-      </p>
+  <strong><span style="color:#6b3fa0;">⑱</span>
+    Tile Groups</strong><br>
+  Identifies each occupied suit or honor group.
+  Your starting tiles appear beneath its heading.
+  Groups appear in the suit and honors order
+  you selected in Display.
+</p>
 
        <h4>Hand Area — Coaching View</h4>
 
@@ -2080,6 +2082,139 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
         your starting tiles and available settings.
       </p>
 
+      <h4>Dealer’s First Discard — Coaching View</h4>
+
+      <p>
+        A Dealer begins with 17 tiles and selects a tile
+        to discard. When available, MJC displays a
+        discard recommendation above the hand.
+      </p>
+
+      <div style="border:1px solid #ccc; border-radius:12px;
+                  padding:12px; margin:16px 0;">
+
+        <div style="text-align:center; font-weight:bold;
+                    color:#2459b4; margin-bottom:16px;">
+          Select a tile to discard.
+        </div>
+
+        <div style="background:#eef4ee;
+                    border:1px solid #a5bba5;
+                    border-radius:10px; padding:12px;">
+
+          <div style="margin-bottom:12px;">
+            <span style="display:inline-block;
+                         background:#ddd; border-radius:16px;
+                         padding:4px 12px; font-size:14px;">
+              <span style="color:#6b3fa0;">㉝</span> Hide
+            </span>
+          </div>
+
+          <div style="text-align:center; font-weight:bold;">
+            <span style="color:#6b3fa0;">㉞</span>
+            Recommended Discard: White.
+          </div>
+
+          <div style="text-align:center; color:#2459b4;
+                      margin-top:12px;">
+            <span style="color:#6b3fa0;">㉟</span>
+            <u>Insight</u>
+          </div>
+
+        </div>
+
+        <p style="color:#666; font-size:14px;
+                  text-align:center; margin-bottom:0;">
+          Example recommendation; your recommended
+          tile depends on your hand.
+        </p>
+
+      </div>
+
+      <p>
+        <strong><span style="color:#6b3fa0;">㉝</span>
+          Hide / Show Recommended Discards</strong><br>
+        Hides the recommendation and its Insight link.
+        The control changes to “Show Recommended Discards”
+        so you can display them again.
+      </p>
+
+      <p>
+        <strong><span style="color:#6b3fa0;">㉞</span>
+          Recommended Discard</strong><br>
+        Names the tile or alternative tiles MJC recommends
+        discarding. The recommendation does not select
+        or discard a tile for you.
+      </p>
+
+      <p>
+        <strong><span style="color:#6b3fa0;">㉟</span>
+          Insight</strong><br>
+        Opens an explanation of the current
+        discard recommendation.
+      </p>
+
+      <h4>Discard Confirmation</h4>
+
+      <p>
+        In Coaching View, tapping a tile in your hand
+        opens a confirmation dialog.
+      </p>
+
+      <div style="border:1px solid #ccc; border-radius:12px;
+                  padding:16px; margin:16px 0;
+                  text-align:center;">
+
+        <div style="font-weight:bold; margin-bottom:16px;">
+          Discard Tile?
+        </div>
+
+        <p>
+          <span style="color:#6b3fa0;">㊱</span>
+          Selected tile: White
+        </p>
+
+        <div style="display:grid;
+                    grid-template-columns:repeat(2, minmax(0, 1fr));
+                    gap:8px; margin-top:20px;">
+
+          <span style="background:#ddd; border-radius:8px;
+                       padding:12px 4px;">
+            <span style="color:#6b3fa0;">㊲</span>
+            Cancel
+          </span>
+
+          <span style="background:#222; color:white;
+                       border-radius:8px; padding:12px 4px;">
+            <span style="color:#6b3fa0;">㊳</span>
+            Discard
+          </span>
+
+        </div>
+
+      </div>
+
+      <p>
+        <strong><span style="color:#6b3fa0;">㊱</span>
+          Selected Tile</strong><br>
+        Identifies the tile you are about to discard.
+        Check it before confirming.
+      </p>
+
+      <p>
+        <strong><span style="color:#6b3fa0;">㊲</span>
+          Cancel</strong><br>
+        Closes the confirmation without discarding
+        the tile.
+      </p>
+
+      <p>
+        <strong><span style="color:#6b3fa0;">㊳</span>
+          Discard</strong><br>
+        Confirms the selected discard and updates
+        your hand. After the Dealer’s first discard,
+        MJC changes from Starting Hand to Current Hand.
+      </p>
 
       <p><em>
         Additional screen illustrations are being added
