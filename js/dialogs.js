@@ -543,12 +543,15 @@ const mjcGlossaryEntries = [
       "or Half Eye. A Reserve may still have Connectivity and may " +
       "become useful after a later draw or claim."
     },
-  {
+    {
     term: "Insight",
     definition:
-      "An explanation of why MJC recommends a particular discard. " +
-      "Insight helps you understand the recommendation while " +
-      "leaving the playing decision to you."
+      "An explanation of the reasoning behind an MJC recommendation. " +
+      "For discards, Insight explains why MJC favors the suggested tiles. " +
+      "For multiple meld choices, it compares the structure left behind " +
+      "by each grouping and explains the recommendations, including ties. " +
+      "Insight helps you understand the choices while leaving " +
+      "the playing decision to you."
   }
 ];
 
