@@ -3224,7 +3224,8 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
           Playing MJC</strong><br>
           Opens a conversational coaching companion
         for learning and playing with MJC.
-        Chapters are being added as they are completed.
+        Covers practice habits, reading your hand,
+        making decisions, and learning from saved hands.
       </p>
 
       <p>
@@ -10271,10 +10272,9 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
         through the footer links.
         The footer also includes
         <strong>Playing MJC</strong>,
-        a conversational coaching companion.
-        Open its contents to find the
-        available chapters; unfinished
-        chapters display a work-in-progress message.
+                a conversational coaching companion
+        with seven chapters about learning
+        and playing with MJC.
       </p>
 
       <p>
@@ -11164,7 +11164,24 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
         </li>
 
         <li>
-          <a href="#">Have Fun. Play On!</a>
+                    <a href="#"
+             onclick="
+               event.preventDefault();
+               event.stopPropagation();
+               closeDialog('playingMJCDialog');
+               openDialog('playingMJCChapter7Dialog');
+
+               requestAnimationFrame(function() {
+                 document.getElementById(
+                   'playingMJCChapter7Body'
+                 ).scrollTo({
+                   top: 0,
+                   behavior: 'instant'
+                 });
+               });
+             ">
+            Have Fun. Play On!
+          </a>
         </li>
 
       </ol>
@@ -13237,7 +13254,311 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     </div>
   </div>
 </div>
+<!-- PLAYING MJC — CHAPTER 7 -->
+<div id="playingMJCChapter7Dialog"
+     class="dialog-backdrop hidden">
+  <div class="dialog"
+       style="display:flex; flex-direction:column;
+              max-height:85vh; overflow:hidden;">
 
+    <h2>Have Fun. Play On!</h2>
+
+    <div id="playingMJCChapter7Body"
+         style="overflow-y:auto; min-height:0; flex:1;">
+
+      <nav aria-label="Playing MJC Chapter 7 sections"
+           style="background:#f0f4f8; border-radius:10px;
+                  padding:14px; margin-bottom:20px;"
+           onclick="
+             const link =
+               event.target.closest('a[data-section]');
+             if (!link) return;
+             event.preventDefault();
+
+             const scroller = this.parentElement;
+             const heading = Array.from(
+               scroller.querySelectorAll('h3')
+             ).find(function(item) {
+               return item.textContent.trim() ===
+                 link.dataset.section;
+             });
+
+             if (heading) {
+               scroller.scrollTo({
+                 top: scroller.scrollTop +
+                   heading.getBoundingClientRect().top -
+                   scroller.getBoundingClientRect().top,
+                 behavior: 'smooth'
+               });
+             }
+           ">
+
+        <strong>In this chapter</strong>
+
+        <ul style="padding-left:1.3em; line-height:1.6;
+                   margin-bottom:0;">
+          <li>
+            <a href="#" data-section="Save the Hands That Make You Think">
+              Save the Hands That Make You Think
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="Give Yourself Credit for Learning">
+              Give Yourself Credit for Learning
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="A Few Things to Take to the Table">
+              A Few Things to Take to the Table
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="Have Fun. Play On!">
+              Have Fun. Play On!
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <p>
+        We’ve covered quite a bit:
+        getting settled, seeing your hand
+        in boxes, recording your turns,
+        and thinking through a discard.
+      </p>
+
+      <p>
+        You don’t have to remember
+        every word before you play.
+        Start with a practice hand.
+        Let the experience give
+        these ideas somewhere to land.
+      </p>
+
+      <h3>Save the Hands That Make You Think</h3>
+
+      <p>
+        Some hands will leave you
+        with questions.
+        Could I have chosen another Chow?
+        When did I lose my Eye?
+        Why did MJC recommend that tile?
+      </p>
+
+      <p>
+        That’s what
+        <strong>Save Hand</strong>
+        is for.
+      </p>
+
+      <p>
+        Keep a hand that made you
+        think, then revisit its transcript
+        when you have time.
+        Add a note about the decision
+        you want to examine while
+        it’s still fresh in your mind.
+      </p>
+
+      <p>
+        You don’t have to save
+        only your wins.
+        Sometimes you can learn more
+        from a hand you didn’t win
+        than from one you did.
+      </p>
+
+      <div style="background:#f0f4f8;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0;">
+        <strong>Questions worth returning to</strong>
+
+        <ul style="padding-left:1.3em; line-height:1.6;
+                   margin-bottom:0;">
+          <li>What was I trying to build?</li>
+          <li>Which tile changed my plan?</li>
+          <li>What did my discard preserve?</li>
+          <li>What might I try differently next time?</li>
+        </ul>
+      </div>
+
+      <p>
+        Talk through the hand with
+        a practice partner.
+        Share it when that helps
+        the discussion.
+        Another person may notice
+        a possibility you overlooked,
+        and you may notice something
+        they missed.
+      </p>
+
+      <p>
+        The User Guide’s Chapter 11
+        explains saving, transcripts,
+        notes, and sharing.
+        You can return to those
+        instructions whenever you need them.
+      </p>
+
+      <h3>Give Yourself Credit for Learning</h3>
+
+      <p>
+        Winning feels good.
+        I’m certainly not going
+        to argue with that.
+        But it isn’t the only sign
+        that you’re improving.
+      </p>
+
+      <p>
+        Maybe you recognized a
+        Double-Sided Wait without
+        checking the label.
+        Maybe you noticed that
+        your only pair needed protecting.
+        Maybe you could explain
+        your discard instead of
+        just hoping it was right.
+      </p>
+
+      <p>
+        Those are things you’re learning.
+        Give yourself credit for them.
+      </p>
+
+      <p>
+        You can make a thoughtful
+        decision and still lose.
+        You can also win a hand
+        without fully understanding
+        why it worked.
+        The useful question afterward
+        is, “What did I learn?”
+      </p>
+
+      <p>
+        As 6BT becomes more familiar,
+        you may start noticing
+        the boxes in your physical hand
+        before looking at the screen.
+        That’s the understanding
+        we’re practicing.
+      </p>
+
+      <h3>A Few Things to Take to the Table</h3>
+
+      <ul style="padding-left:1.3em; line-height:1.6;">
+        <li>
+          <strong>Give yourself time.</strong>
+          You’re learning a way
+          of seeing your hand and
+          getting comfortable with an app.
+        </li>
+        <li>
+          <strong>Keep the record accurate.</strong>
+          MJC only knows what
+          you tell it.
+        </li>
+        <li>
+          <strong>Give your groupings room.</strong>
+          Arrange your rack so you
+          can recognize what’s complete,
+          what’s developing, and
+          what’s in Reserves.
+        </li>
+        <li>
+          <strong>Ask why.</strong>
+          Use Insight to understand
+          a recommendation.
+        </li>
+        <li>
+          <strong>Keep watching the table.</strong>
+          Your hand is part
+          of a larger game.
+        </li>
+        <li>
+          <strong>Keep a useful hand.</strong>
+          Save something you’d like
+          to revisit, win or lose.
+        </li>
+      </ul>
+
+      <p>
+        And if a question comes up,
+        use the User Guide or Glossary.
+        If something still isn’t clear,
+        let us know through Feedback.
+        Your questions help us understand
+        where another explanation
+        or example would help.
+      </p>
+
+      <h3>Have Fun. Play On!</h3>
+
+      <p>
+        I hope MJC helps you feel
+        more comfortable looking
+        at your hand, recognizing
+        its possibilities, and making
+        your own decisions.
+      </p>
+
+      <p>
+        Play some relaxed hands.
+        Talk through a choice.
+        Try again when something
+        doesn’t work out.
+        Enjoy those moments when
+        a grouping finally makes sense.
+      </p>
+
+      <p>
+        Most of all, have fun
+        as you’re learning and improving.
+      </p>
+
+      <p style="text-align:center;
+                font-size:1.2em; margin-top:24px;">
+        <strong>Play On! 🀄</strong>
+      </p>
+
+    </div>
+
+    <div class="dialog-actions"
+         style="flex-shrink:0; flex-wrap:wrap;">
+
+      <button type="button"
+              class="dialog-button"
+              onclick="
+                document.getElementById(
+                  'playingMJCChapter7Body'
+                ).scrollTo({
+                  top: 0,
+                  behavior: 'smooth'
+                });
+              ">
+        Chapter Sections
+      </button>
+
+      <button type="button"
+              class="dialog-button"
+              onclick="
+                closeDialog('playingMJCChapter7Dialog');
+                openDialog('playingMJCDialog');
+              ">
+        Back to Contents
+      </button>
+
+      <button type="button"
+              class="dialog-button primary"
+              onclick="closeDialog('playingMJCChapter7Dialog');">
+        Close
+      </button>
+
+    </div>
+  </div>
+</div>
 
 
 <div id="acknowledgmentsDialog" class="dialog-backdrop hidden">
