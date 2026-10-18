@@ -56,6 +56,19 @@ function closeDialog(id) {
 }
 
 const mjcGlossaryEntries = [
+
+  {
+    term: "Finishing Potential",
+    abbreviation: "FP",
+    definition:
+      "A Six Box Theory™ concept for assessing a Developing Box’s " +
+      "opportunities to become complete, taking into account factors " +
+      "such as Effective Acceptance, available Sources, and Timing. " +
+      "It helps compare how readily different Candidates may develop " +
+      "as the hand progresses. MJC does not display a single " +
+      "Finishing Potential score."
+  },
+
   {
     term: "Candidate",
     definition:
