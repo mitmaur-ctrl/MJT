@@ -854,6 +854,167 @@ console.log(
   return "Select Meld";
 }
 
+function buildMMRInsight() {
+  const evaluated =
+    mmrState.candidates.map(function(candidate) {
+      return evaluateMMRCandidate(
+        MJC_STATE.getEngineInput(),
+        mmrState.tileKey,
+        candidate
+      );
+    });
+
+  const ranked =
+    [...evaluated].sort(compareMMRResults);
+
+  const best = ranked[0];
+  const bestMetrics =
+    getMMRStructureMetrics(best);
+
+  const area = document.createElement("div");
+  area.style.textAlign = "left";
+  area.style.lineHeight = "1.5";
+
+  function addParagraph(text, bold) {
+    const paragraph = document.createElement("p");
+
+    if (bold) {
+      const strong = document.createElement("strong");
+      strong.textContent = text;
+      paragraph.appendChild(strong);
+    } else {
+      paragraph.textContent = text;
+    }
+
+    area.appendChild(paragraph);
+  }
+
+  function tileName(tileKey) {
+    return tileLabels[tileKey] || tileKey;
+  }
+
+  function describeBox(box) {
+    const names = {
+      ec: "Eye Candidate",
+      epc: "Eye-Pong Candidate",
+      cpc: "Chow-Pong Candidate",
+      dsw: "Double-Sided Wait",
+      mw: "Middle Wait",
+      ew: "Edge Wait",
+      he: "Half Eye",
+      pc: "Pong Candidate"
+    };
+
+    return (
+      (names[box.type] || box.type) +
+      ": " +
+      box.tiles.map(tileName).join(", ")
+    );
+  }
+
+  addParagraph(
+    "MJC compares the structure left behind by each meld choice."
+  );
+
+  evaluated.forEach(function(result) {
+    const metrics =
+      getMMRStructureMetrics(result);
+
+    const recommended =
+      compareMMRResults(result, best) === 0;
+
+    addParagraph(
+      result.candidate.type.toUpperCase() +
+      ": " +
+      result.candidate.tiles.map(tileName).join(", ") +
+      (recommended ? " — MJC Recommended" : ""),
+      true
+    );
+
+    addParagraph(
+      "Complete Boxes: " +
+      metrics.completeBoxCount +
+      ". Developing Boxes: " +
+      (
+        result.developingBoxes.length
+          ? result.developingBoxes
+              .map(describeBox)
+              .join("; ")
+          : "None"
+      ) +
+      ". Reserves: " +
+      (
+        result.reserves.length
+          ? result.reserves.map(tileName).join(", ")
+          : "None"
+      ) +
+      "."
+    );
+
+    if (!recommended) {
+      const comparisons = [
+        [
+          "completeBoxCount",
+          "The recommended choices leave more Complete Boxes."
+        ],
+        [
+          "developingTileCount",
+          "The recommended choices keep more tiles participating in Developing Boxes."
+        ],
+        [
+          "dswCount",
+          "The recommended choices preserve more Double-Sided Waits."
+        ],
+        [
+          "mwCount",
+          "The recommended choices preserve more Middle Waits."
+        ],
+        [
+          "ewCount",
+          "The recommended choices preserve more Edge Waits."
+        ],
+        [
+          "reserveCount",
+          "The recommended choices leave fewer Reserves."
+        ],
+        [
+          "reserveCentricity",
+          "With the other comparisons tied, MJC favors keeping more central Reserve tiles."
+        ]
+      ];
+
+      const difference =
+        comparisons.find(function(comparison) {
+          return (
+            metrics[comparison[0]] !==
+            bestMetrics[comparison[0]]
+          );
+        });
+
+      if (difference) {
+        addParagraph(difference[1]);
+      }
+    }
+  });
+
+  const tiedBest =
+    evaluated.filter(function(result) {
+      return compareMMRResults(result, best) === 0;
+    }).length;
+
+  if (tiedBest > 1) {
+    addParagraph(
+      "The marked choices are tied under MJC’s current structural comparisons."
+    );
+  }
+
+  addParagraph(
+    "This comparison uses your recorded hand. Keep watching the table when making your choice."
+  );
+
+  return area;
+}
+
 
 function openMMRDialog() {
 
@@ -943,23 +1104,37 @@ if (
   );
 }
 
+const recommendedCandidates =
+  isSingleSpecialMeld
+    ? []
+    : getMMRRecommendedCandidates(
+        MJC_STATE.getEngineInput(),
+        mmrState.tileKey,
+        mmrState.candidates
+      );
 
+const recommendedSignatures =
+  new Set(
+    recommendedCandidates.map(function(candidate) {
+      return getCompleteBoxSignature(candidate);
+    })
+  );
 
-if (
-  !isSingleSpecialMeld &&
-  !mmrState.recommendedCandidate
-) {
+if (recommendedCandidates.length > 1) {
   const tieMessage =
     document.createElement("div");
 
-  tieMessage.textContent =
-    "MJC: Either choice is structurally sound.";
+  const allChoicesTied =
+    recommendedCandidates.length ===
+    mmrState.candidates.length;
+
+  tieMessage.textContent = allChoicesTied
+    ? "MJC: All available choices are structurally tied."
+    : "MJC: The marked choices are equally recommended.";
 
   tieMessage.style.marginBottom = "12px";
 
-  optionsContainer.appendChild(
-    tieMessage
-  );
+  optionsContainer.appendChild(tieMessage);
 }
 
   mmrState.candidates.forEach(function(candidate, index) {
@@ -974,11 +1149,9 @@ if (
     button.style.marginBottom = "10px";
 
 
-   const isRecommended =
-    mmrState.recommendedCandidate &&
-    getCompleteBoxSignature(candidate) ===
-      getCompleteBoxSignature(
-        mmrState.recommendedCandidate
+       const isRecommended =
+      recommendedSignatures.has(
+        getCompleteBoxSignature(candidate)
       );
 
 
@@ -1075,6 +1248,50 @@ if (
   );
 }
 
+if (
+  !isSingleSpecialMeld &&
+  mmrState.candidates.length > 1
+) {
+  const insightButton =
+    document.createElement("button");
+
+  insightButton.type = "button";
+  insightButton.className =
+    "dialog-button secondary";
+  insightButton.textContent = "Insight";
+  insightButton.style.display = "block";
+  insightButton.style.width = "100%";
+  insightButton.style.marginBottom = "10px";
+  insightButton.setAttribute("aria-expanded", "false");
+  insightButton.setAttribute("aria-controls", "mmrInsight");
+
+  const insightArea =
+    document.createElement("div");
+
+  insightArea.id = "mmrInsight";
+  insightArea.hidden = true;
+  insightArea.style.padding = "0 12px";
+
+  insightButton.onclick = function() {
+    const opening = insightArea.hidden;
+
+    if (opening && !insightArea.firstChild) {
+      insightArea.appendChild(buildMMRInsight());
+    }
+
+    insightArea.hidden = !opening;
+    insightButton.textContent =
+      opening ? "Hide Insight" : "Insight";
+
+    insightButton.setAttribute(
+      "aria-expanded",
+      String(opening)
+    );
+  };
+
+  optionsContainer.appendChild(insightButton);
+  optionsContainer.appendChild(insightArea);
+}
 
   {
   const ignoreButton =

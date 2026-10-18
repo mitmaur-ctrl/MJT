@@ -2861,13 +2861,13 @@ if (
 return 0;
 }
 
-function recommendMMRCandidate(
+function getMMRRecommendedCandidates(
   engineInput,
   incomingTileKey,
   candidates
 ) {
   if (!candidates || candidates.length === 0) {
-    return null;
+    return [];
   }
 
   const evaluatedCandidates =
@@ -2879,34 +2879,38 @@ function recommendMMRCandidate(
       );
     });
 
-  evaluatedCandidates.sort(
-    compareMMRResults
-  );
+  evaluatedCandidates.sort(compareMMRResults);
 
-  console.log(
-    "MMR evaluated candidates:",
-    evaluatedCandidates
-  );
+  const bestResult = evaluatedCandidates[0];
 
-  // Only one candidate exists.
-  if (evaluatedCandidates.length === 1) {
-    return evaluatedCandidates[0].candidate;
-  }
+  return evaluatedCandidates
+    .filter(function(result) {
+      return compareMMRResults(
+        result,
+        bestResult
+      ) === 0;
+    })
+    .map(function(result) {
+      return result.candidate;
+    });
+}
 
-  // Compare the two strongest results.
-  const comparison =
-    compareMMRResults(
-      evaluatedCandidates[0],
-      evaluatedCandidates[1]
+function recommendMMRCandidate(
+  engineInput,
+  incomingTileKey,
+  candidates
+) {
+  const recommended =
+    getMMRRecommendedCandidates(
+      engineInput,
+      incomingTileKey,
+      candidates
     );
 
-  // If the two strongest structures are tied,
-  // MJC does not make an arbitrary recommendation.
-  if (comparison === 0) {
-    return null;
-  }
-
-  return evaluatedCandidates[0].candidate;
+  // Preserve the existing single-choice interface.
+  return recommended.length === 1
+    ? recommended[0]
+    : null;
 }
 
 function getTileCentricityScore(tileKey) {
