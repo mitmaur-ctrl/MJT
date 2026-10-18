@@ -1677,7 +1677,26 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
             Saving and Reviewing Hands
           </a>
         </li>
-        <li><a href="#">Correcting an Entry</a></li>
+                <li>
+          <a href="#"
+             onclick="
+               event.preventDefault();
+               event.stopPropagation();
+               closeDialog('userGuideDialog');
+               openDialog('userGuideChapter12Dialog');
+
+               requestAnimationFrame(function() {
+                 document.getElementById(
+                   'userGuideChapter12Body'
+                 ).scrollTo({
+                   top: 0,
+                   behavior: 'instant'
+                 });
+               });
+             ">
+            Correcting an Entry
+          </a>
+        </li>
         <li><a href="#">Finding Help and Sharing Feedback</a></li>
         <li><a href="#">Quick Reference</a></li>
       </ol>
@@ -9592,7 +9611,501 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     </div>
   </div>
 </div>
+<!-- USER GUIDE — CHAPTER 12 -->
+<div id="userGuideChapter12Dialog"
+     class="dialog-backdrop hidden">
+  <div class="dialog"
+       style="display:flex; flex-direction:column;
+              max-height:85vh; overflow:hidden;">
 
+    <h2>Correcting an Entry</h2>
+
+    <div id="userGuideChapter12Body"
+         style="overflow-y:auto; min-height:0; flex:1;">
+
+      <nav aria-label="Chapter 12 sections"
+           style="background:#f0f4f8; border-radius:10px;
+                  padding:14px; margin-bottom:20px;"
+           onclick="
+             const link =
+               event.target.closest('a[data-section]');
+             if (!link) return;
+             event.preventDefault();
+
+             const scroller = this.parentElement;
+             const heading = Array.from(
+               scroller.querySelectorAll('h3')
+             ).find(function(item) {
+               return item.textContent.trim() ===
+                 link.dataset.section;
+             });
+
+             if (heading) {
+               scroller.scrollTo({
+                 top: scroller.scrollTop +
+                   heading.getBoundingClientRect().top -
+                   scroller.getBoundingClientRect().top,
+                 behavior: 'smooth'
+               });
+             }
+           ">
+
+        <strong>In this chapter</strong>
+        <ul style="padding-left:1.3em; line-height:1.6;
+                   margin-bottom:0;">
+          <li>
+            <a href="#" data-section="1. Choose a Correction Tool">
+              Choose a Correction Tool
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="2. Revise Your Starting Hand">
+              Revise Your Starting Hand
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="3. Correct the Last Entry">
+              Correct the Last Entry
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="4. Begin Fix Hand">
+              Begin Fix Hand
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="5. Correct the Melds">
+              Correct the Melds
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="6. Correct the Free Tiles">
+              Correct the Free Tiles
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="7. Review and Accept">
+              Review and Accept
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <p>
+        If MJC’s recorded hand no longer
+        matches your actual hand, correct
+        the record before continuing play.
+        Choose the tool that matches
+        the kind of mistake.
+      </p>
+
+      <h3>1. Choose a Correction Tool</h3>
+
+      <div style="background:#f0f4f8;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0;">
+
+        <p style="margin-top:0;">
+          <strong>Revise</strong><br>
+          Your starting tiles need correction
+          while you are still on the
+          Starting Hand Display.
+        </p>
+
+        <p>
+          <strong>Correct Last Entry</strong><br>
+          The most recent recorded action
+          needs correction and this control
+          is available.
+        </p>
+
+        <p style="margin-bottom:0;">
+          <strong>Fix Hand</strong><br>
+          Your current tiles, melds,
+          or next-action state need
+          to be brought back into agreement
+          with your actual hand.
+        </p>
+      </div>
+
+      <p>
+        A different visual arrangement
+        is not necessarily an entry mistake.
+        Compare tile identities, quantities,
+        and exposed melds with your actual hand.
+        MJC may group the same hidden tiles
+        differently as the structure develops.
+      </p>
+
+      <h3>2. Revise Your Starting Hand</h3>
+
+      <ol style="padding-left:1.5em; line-height:1.6;">
+        <li>
+          Tap <strong>Revise</strong>
+          on the Starting Hand Display.
+        </li>
+        <li>
+          Adjust the starting tile quantities
+          on the tile-entry screen.
+        </li>
+        <li>
+          Check your role and required
+          starting total.
+        </li>
+        <li>
+          Tap <strong>Play On!</strong>
+          when the entry is correct.
+        </li>
+      </ol>
+
+      <p>
+        Tap a tile to cycle its quantity.
+        Long-press it to clear its count.
+        Use <strong>Clear Tiles</strong>
+        if you need to enter the starting
+        hand again.
+      </p>
+
+      <p>
+        Revision returns you to the
+        Starting Hand Display using
+        your corrected entry.
+        Its completion control is
+        <strong>Play On!</strong>,
+        rather than Fix Hand’s Accept.
+      </p>
+
+      <h3>3. Correct the Last Entry</h3>
+
+      <p>
+        Use <strong>Correct Last Entry</strong>
+        promptly when you notice a mistake
+        in the most recent recorded action.
+        Its availability depends on whether
+        MJC has a correctable previous action.
+      </p>
+
+      <ol style="padding-left:1.5em; line-height:1.6;">
+        <li>
+          Tap <strong>Correct Last Entry</strong>.
+        </li>
+        <li>
+          Read the correction instruction
+          to identify the action being corrected.
+        </li>
+        <li>
+          Locate the previous entry,
+          marked with a red highlight.
+        </li>
+        <li>
+          Select the correct replacement tile.
+        </li>
+      </ol>
+
+      <div role="img"
+           aria-label="Previous entry example:
+             red-highlighted 5 Char marks
+             the tile being corrected."
+           style="border:1px solid #ccc;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0; text-align:center;">
+
+        <strong>Previous entry</strong>
+
+        <div style="display:inline-block;
+                    background:#f8d7d7;
+                    border:3px solid #c62828;
+                    border-radius:10px;
+                    padding:20px; margin-top:16px;">
+          5 Char
+        </div>
+
+        <p style="color:#666; margin-bottom:0;">
+          Red identifies the previous entry.
+          The tile name replaces its image.
+        </p>
+      </div>
+
+      <p>
+        Draw and claim corrections use
+        the Draw Tile selection layout.
+        Discard corrections use the
+        Discard Tile Screen.
+        Follow the displayed instruction
+        for the action being corrected.
+      </p>
+
+      <p>
+        Tapping the replacement tile records
+        the corrected tile directly.
+        A discard correction does not use
+        the ordinary hand-display
+        discard-confirmation dialog.
+      </p>
+
+      <p>
+        <strong>Cancel</strong> leaves
+        the correction and restores
+        the previously recorded hand
+        and history.
+      </p>
+
+      <h3>4. Begin Fix Hand</h3>
+
+      <p>
+        Use <strong>Fix Hand</strong>
+        when a broader correction is needed,
+        such as a missing meld, incorrect
+        exposed status, or a mismatch
+        involving several tiles.
+      </p>
+
+      <p>
+        First decide what your actual hand
+        is preparing to do:
+      </p>
+
+      <div style="background:#f0f4f8;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0;">
+        <p style="margin-top:0;">
+          <strong>Preparing to Draw</strong><br>
+          You have completed your discard
+          and are waiting to acquire again.
+        </p>
+        <p style="margin-bottom:0;">
+          <strong>Preparing to Discard</strong><br>
+          You have acquired a tile
+          and still need to discard.
+        </p>
+      </div>
+
+      <p>
+        Select the state that matches
+        the actual point in your game.
+        It determines the tile target
+        and the next action after correction.
+      </p>
+
+      <p>
+        Use <strong>How to Fix Your Hand</strong>
+        on the correction screen
+        if you need a quick reminder
+        while working.
+      </p>
+
+      <h3>5. Correct the Melds</h3>
+
+      <p>
+        Review the melds listed in Fix Hand
+        before entering the remaining tiles.
+        Compare each grouping with
+        your actual hand.
+      </p>
+
+      <ul style="padding-left:1.3em; line-height:1.6;">
+        <li>
+          Keep melds that are recorded correctly.
+        </li>
+        <li>
+          Set each meld’s
+          <strong>Hidden</strong> or
+          <strong>Exposed</strong> status correctly.
+        </li>
+        <li>
+          Use <strong>Remove</strong>
+          for a meld that should not
+          remain in the recorded hand.
+        </li>
+        <li>
+          Use <strong>Add Meld</strong>
+          for a missing grouping.
+        </li>
+      </ul>
+
+      <p>
+        Removing a meld also removes
+        its tiles from the correction’s
+        recorded melds. Those tiles
+        are not automatically transferred
+        into Free Tiles.
+        If you still hold them,
+        include them in the appropriate
+        corrected grouping or free-tile entry.
+      </p>
+
+      <h4>Add a Missing Meld</h4>
+
+      <ol style="padding-left:1.5em; line-height:1.6;">
+        <li>
+          Tap <strong>Add Meld</strong>.
+        </li>
+        <li>
+          Choose Chow, Pong, Kang,
+          or NEWS when available.
+        </li>
+        <li>
+          Select the tiles using
+          the displayed builder controls.
+        </li>
+        <li>
+          Choose Hidden or Exposed.
+        </li>
+        <li>
+          Use the builder’s Add control
+          to add the grouping.
+        </li>
+      </ol>
+
+      <p>
+        For a Chow, choose the suit
+        and the starting tile of
+        the three-tile sequence.
+        For a Pong or Kang,
+        choose the matching tile.
+        NEWS uses the fixed four Winds
+        and is available only when
+        allowed by the ruleset settings.
+      </p>
+
+      <h3>6. Correct the Free Tiles</h3>
+
+      <p>
+        Free Tiles are the tiles you hold
+        outside the melds already listed
+        in Fix Hand.
+        Enter each remaining tile
+        with the correct quantity.
+      </p>
+
+      <div style="background:#fff4df;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0;">
+        <strong>Avoid counting tiles twice</strong>
+        <p style="margin-bottom:0;">
+          If a Pong is already listed
+          in the meld area, do not enter
+          those same three copies again
+          as Free Tiles.
+        </p>
+      </div>
+
+      <p>
+        Green entries come from MJC’s
+        last recorded hand and may
+        no longer match your actual hand.
+        Check them rather than assuming
+        they are already correct.
+      </p>
+
+      <p>
+        Tap a tile to cycle its count
+        from zero through four.
+        Long-press to clear its count.
+        Work through your actual tiles
+        one group at a time.
+      </p>
+
+      <p>
+        Read the tile-count guidance
+        above the Free Tiles section.
+        It accounts for your next-action
+        state and recorded melds,
+        then shows how many Free Tiles
+        are required and any adjustment needed.
+      </p>
+
+      <p>
+        Four-tile melds affect the total.
+        Follow the displayed target
+        rather than assuming every
+        corrected hand must contain
+        exactly 16 or 17 physical tiles.
+      </p>
+
+      <h3>7. Review and Accept</h3>
+
+      <p>
+        Before accepting, compare
+        the whole correction with
+        your actual hand:
+      </p>
+
+      <ul style="padding-left:1.3em; line-height:1.6;">
+        <li>The next-action state is correct.</li>
+        <li>Every meld has the correct tiles.</li>
+        <li>Hidden and Exposed statuses are correct.</li>
+        <li>All remaining tiles are entered as Free Tiles.</li>
+        <li>No physical tile is counted twice.</li>
+        <li>The tile total matches the displayed target.</li>
+      </ul>
+
+      <p>
+        If MJC displays a validation message,
+        resolve the stated issue.
+        Checks include the required count
+        and the limit of four copies
+        of a tile across the recorded hand.
+      </p>
+
+      <p>
+        Tap <strong>Accept</strong>
+        when the correction is valid
+        and matches your actual hand.
+        MJC rebuilds the display from
+        the corrected record.
+      </p>
+
+      <p>
+        Tap <strong>Cancel</strong>
+        if you want to leave Fix Hand
+        without applying the correction.
+      </p>
+
+      <p>
+        After accepting, read the hand
+        instruction before resuming.
+        Confirm that MJC is expecting
+        the same next action as your
+        actual game.
+      </p>
+
+    </div>
+
+    <div class="dialog-actions"
+         style="flex-shrink:0; flex-wrap:wrap;">
+
+      <button type="button"
+              class="dialog-button"
+              onclick="
+                document.getElementById(
+                  'userGuideChapter12Body'
+                ).scrollTo({
+                  top: 0,
+                  behavior: 'smooth'
+                });
+              ">
+        Chapter Sections
+      </button>
+
+      <button type="button"
+              class="dialog-button"
+              onclick="
+                closeDialog('userGuideChapter12Dialog');
+                openDialog('userGuideDialog');
+              ">
+        Back to Contents
+      </button>
+
+      <button type="button"
+              class="dialog-button primary"
+              onclick="closeDialog('userGuideChapter12Dialog');">
+        Close
+      </button>
+
+    </div>
+  </div>
+</div>
 
 
 
