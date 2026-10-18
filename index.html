@@ -1717,7 +1717,26 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
             Finding Help and Sharing Feedback
           </a>
         </li>
-        <li><a href="#">Quick Reference</a></li>
+                <li>
+          <a href="#"
+             onclick="
+               event.preventDefault();
+               event.stopPropagation();
+               closeDialog('userGuideDialog');
+               openDialog('userGuideChapter14Dialog');
+
+               requestAnimationFrame(function() {
+                 document.getElementById(
+                   'userGuideChapter14Body'
+                 ).scrollTo({
+                   top: 0,
+                   behavior: 'instant'
+                 });
+               });
+             ">
+            Quick Reference
+          </a>
+        </li>
       </ol>
     </div>
 
@@ -10475,7 +10494,515 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     </div>
   </div>
 </div>
+<!-- USER GUIDE — CHAPTER 14 -->
+<div id="userGuideChapter14Dialog"
+     class="dialog-backdrop hidden">
+  <div class="dialog"
+       style="display:flex; flex-direction:column;
+              max-height:85vh; overflow:hidden;">
 
+    <h2>Quick Reference</h2>
+
+    <div id="userGuideChapter14Body"
+         style="overflow-y:auto; min-height:0; flex:1;">
+
+      <nav aria-label="Chapter 14 sections"
+           style="background:#f0f4f8; border-radius:10px;
+                  padding:14px; margin-bottom:20px;"
+           onclick="
+             const link =
+               event.target.closest('a[data-section]');
+             if (!link) return;
+             event.preventDefault();
+
+             const scroller = this.parentElement;
+             const heading = Array.from(
+               scroller.querySelectorAll('h3')
+             ).find(function(item) {
+               return item.textContent.trim() ===
+                 link.dataset.section;
+             });
+
+             if (heading) {
+               scroller.scrollTo({
+                 top: scroller.scrollTop +
+                   heading.getBoundingClientRect().top -
+                   scroller.getBoundingClientRect().top,
+                 behavior: 'smooth'
+               });
+             }
+           ">
+
+        <strong>In this chapter</strong>
+        <ul style="padding-left:1.3em; line-height:1.6;
+                   margin-bottom:0;">
+          <li>
+            <a href="#" data-section="1. Start a Hand">
+              Start a Hand
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="2. Record an Action">
+              Record an Action
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="3. Read the Display">
+              Read the Display
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="4. Recognize the Groupings">
+              Recognize the Groupings
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="5. Correct or Save a Hand">
+              Correct or Save a Hand
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="6. Find More Help">
+              Find More Help
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <p>
+        Use this chapter for quick reminders.
+        For illustrations and full procedures,
+        open the corresponding chapter
+        from the main Table of Contents.
+      </p>
+
+      <h3>1. Start a Hand</h3>
+
+      <div style="background:#f0f4f8;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0;">
+        <p style="margin-top:0;">
+          <strong>Player:</strong> 16 starting tiles.<br>
+          <strong>Dealer:</strong> 17 starting tiles.
+        </p>
+
+        <p style="margin-bottom:0;">
+          Role → Ruleset → Display →
+          Enter tiles → Review →
+          <strong>Play On!</strong>
+        </p>
+      </div>
+
+      <p>
+        <strong>Tile-entry tap:</strong>
+        cycles the quantity from zero
+        through four, then back to zero.
+      </p>
+
+      <p>
+        <strong>Long-press:</strong>
+        clears that tile’s quantity.
+      </p>
+
+      <p>
+        <strong>Clear Tiles:</strong>
+        clears the entered tiles.
+        <strong>Undo Clear</strong>
+        appears temporarily afterward.
+      </p>
+
+      <p>
+        Check tile identities and quantities,
+        not just the total.
+        See Chapter 2 for the full setup procedure.
+      </p>
+
+      <h3>2. Record an Action</h3>
+
+      <p>
+        <strong>Draw</strong><br>
+        Record a tile taken from the wall.
+        Select its number and suit,
+        or its honor name, then tap
+        the tile image.
+      </p>
+
+      <p>
+        <strong>Chow / Pong / Kang</strong><br>
+        Record the corresponding claim
+        using an opponent’s discarded tile.
+        Resolve any grouping or declaration
+        choices offered.
+      </p>
+
+      <p>
+        <strong>Discard</strong><br>
+        Select a tile in the hand display,
+        check the confirmation, then
+        tap Discard.
+      </p>
+
+      <p>
+        <strong>Replacement Draw</strong><br>
+        After the applicable declaration,
+        record the required replacement
+        through Draw before continuing.
+      </p>
+
+      <p>
+        <strong>Mahjong</strong><br>
+        Use the Mahjong Watch control
+        to record an opponent’s discard
+        claimed to complete your hand.
+        A winning tile from the wall
+        is recorded through Draw.
+      </p>
+
+      <div style="background:#fff4df;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0;">
+        <strong>Which taps record immediately?</strong>
+        <p>
+          Draw Tile selection:
+          tapping the tile image records it.
+        </p>
+        <p>
+          Ordinary meld choice:
+          tapping the grouping selects it.
+        </p>
+        <p>
+          Hand-display discard:
+          uses a confirmation dialog.
+        </p>
+        <p style="margin-bottom:0;">
+          Discard correction:
+          tapping the replacement tile
+          records the correction directly.
+        </p>
+      </div>
+
+      <p>
+        Follow the current instruction.
+        See Chapters 5, 6, and 10
+        for the turn cycle, melds,
+        and completing a hand.
+      </p>
+
+      <h3>3. Read the Display</h3>
+
+      <p>
+        <strong>TSS:</strong>
+        Tile Selection Screen.<br>
+        <strong>SHD:</strong>
+        Starting Hand Display.<br>
+        <strong>CHD:</strong>
+        Current Hand Display.
+      </p>
+
+      <p>
+        <strong>Standard View:</strong>
+        presents tile groups and, in
+        Current Hand, separates Loose Tiles,
+        Hidden Melds, and Exposed Melds.
+      </p>
+
+      <p>
+        <strong>Coaching View:</strong>
+        presents Reserves, Developing Boxes,
+        and Completed Boxes.
+      </p>
+
+      <p>
+        <strong>Boxes Complete:</strong>
+        completed boxes toward the
+        current structural target.
+      </p>
+
+      <p>
+        <strong>Tiles In Hand:</strong>
+        tiles outside Complete Boxes,
+        rather than the whole hand’s
+        physical tile total.
+      </p>
+
+      <p>
+        <strong>Indices:</strong>
+        identifying numbers and letters
+        added to tile images.<br>
+        <strong>Labels:</strong>
+        full or shortened box-type names.
+      </p>
+
+      <div style="background:#f0f4f8;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0;">
+        <p style="margin-top:0;">
+          <strong style="color:#2e8b57;">
+            Green tile highlight
+          </strong><br>
+          Last-drawn tile.
+        </p>
+        <p>
+          <strong>Yellow tile outline</strong><br>
+          Tile selected for discard.
+        </p>
+        <p style="margin-bottom:0;">
+          <strong style="color:#c62828;">
+            Red correction highlight
+          </strong><br>
+          Previous entry being corrected.
+        </p>
+      </div>
+
+      <p>
+        <strong>Pathways:</strong>
+        development opportunities for
+        supported Developing Boxes.
+        Green markers indicate a different
+        numbered tile of the same suit;
+        orange markers indicate a matching tile.
+        EA appears above the marker.
+      </p>
+
+      <p>
+        <strong>Insight:</strong>
+        explains the current hand-display
+        discard recommendation.
+        If several tiles are recommended,
+        discard only one.
+      </p>
+
+      <p>
+        <strong>RT:</strong>
+        explores eligible alternate groupings
+        involving a hidden Complete Box.
+        Preview before confirming.
+        RT does not discard the released tile.
+      </p>
+
+      <p>
+        See Chapters 3, 7, 8, and 9
+        for display, Pathways, RT,
+        and coaching details.
+      </p>
+
+      <h3>4. Recognize the Groupings</h3>
+
+      <p>
+        <strong>CB — Complete Box</strong><br>
+        A completed structural grouping.
+      </p>
+
+      <p>
+        <strong>DB — Developing Box</strong><br>
+        A grouping working toward completion.
+      </p>
+
+      <p>
+        <strong>Reserves</strong><br>
+        Tiles outside the displayed
+        Developing and Complete Boxes.
+      </p>
+
+      <div style="background:#eaf4e8;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0;">
+        <p style="margin-top:0;">
+          <strong>Chow:</strong>
+          three consecutive tiles of one suit.
+        </p>
+        <p>
+          <strong>Pong:</strong>
+          three matching tiles.
+        </p>
+        <p>
+          <strong>Kang:</strong>
+          four matching tiles.
+        </p>
+        <p>
+          <strong>Eye:</strong>
+          the required matching pair.
+        </p>
+        <p style="margin-bottom:0;">
+          <strong>NEWS:</strong>
+          North, East, West, and South
+          as a four-tile meld when allowed.
+        </p>
+      </div>
+
+      <p>
+        <strong>DSW — Double-Sided Wait</strong><br>
+        Example: 4 · 5 needs 3 or 6
+        of the same suit.
+      </p>
+
+      <p>
+        <strong>MW — Middle Wait</strong><br>
+        Example: 4 · 6 needs 5
+        of the same suit.
+      </p>
+
+      <p>
+        <strong>EW — Edge Wait</strong><br>
+        1 · 2 needs 3, or 8 · 9 needs 7,
+        of the same suit.
+      </p>
+
+      <p>
+        <strong>EC — Eye Candidate</strong><br>
+        A matching pair being held as the Eye.
+      </p>
+
+      <p>
+        <strong>EPC — Eye-Pong Candidate</strong><br>
+        A matching pair with Eye or Pong potential.
+      </p>
+
+      <p>
+        <strong>CPC — Chow-Pong Candidate</strong><br>
+        Three or four suited tiles
+        with Chow and Pong possibilities.
+      </p>
+
+      <p>
+        <strong>PKC — Pong-Kang Candidate</strong><br>
+        A four-tile Developing Box
+        that can be declared as Kang or NEWS.
+      </p>
+
+      <p>
+        <strong>HE — Half Eye</strong><br>
+        A single tile held as a possible
+        half of the Eye.
+      </p>
+
+      <p>
+        See Chapter 4 for illustrated
+        grouping examples.
+      </p>
+
+      <h3>5. Correct or Save a Hand</h3>
+
+      <p>
+        <strong>Revise</strong><br>
+        Correct your starting entry
+        from the Starting Hand Display.
+        Finish with Play On!
+      </p>
+
+      <p>
+        <strong>Correct Last Entry</strong><br>
+        Correct the most recent recorded
+        action when available.
+      </p>
+
+      <p>
+        <strong>Fix Hand</strong><br>
+        Match the current recorded hand
+        to your actual melds, Free Tiles,
+        and next-action state.
+        Review the tile target, then Accept.
+      </p>
+
+      <p>
+        <strong>Save Hand</strong><br>
+        Keep a completed or unfinished
+        recorded hand for review.
+      </p>
+
+      <p>
+        <strong>Hand History</strong><br>
+        Find saved hands, view transcripts,
+        edit details, and share hand files.
+        MJC keeps the 20 most recent
+        saved hands in the browser
+        on that device.
+      </p>
+
+      <p>
+        <strong>New Hand</strong><br>
+        Begin another hand.
+        Save the current record first
+        if you want to keep it.
+      </p>
+
+      <p>
+        See Chapter 11 for saved hands
+        and Chapter 12 for corrections.
+      </p>
+
+      <h3>6. Find More Help</h3>
+
+      <p>
+        <strong>Getting Started:</strong>
+        quick setup instructions.<br>
+        <strong>User Guide:</strong>
+        illustrated controls and procedures.<br>
+        <strong>Glossary:</strong>
+        terminology definitions.
+      </p>
+
+      <p>
+        <strong>Chapter Sections:</strong>
+        return to this chapter’s index.<br>
+        <strong>Back to Contents:</strong>
+        return to the main chapter list.<br>
+        <strong>Close:</strong>
+        return to the underlying app screen.
+      </p>
+
+      <p>
+        For questions, problem reports,
+        or suggestions, use
+        <strong>Feedback</strong>
+        in the footer or email
+        <a href="mailto:mjcfeedbackteam@gmail.com">
+          mjcfeedbackteam@gmail.com
+        </a>.
+        See Chapter 13 for what to include.
+      </p>
+
+      <p style="text-align:center; margin-top:24px;">
+        <strong>Learn. Understand. Improve.</strong><br>
+        Play On! 🀄
+      </p>
+
+    </div>
+
+    <div class="dialog-actions"
+         style="flex-shrink:0; flex-wrap:wrap;">
+
+      <button type="button"
+              class="dialog-button"
+              onclick="
+                document.getElementById(
+                  'userGuideChapter14Body'
+                ).scrollTo({
+                  top: 0,
+                  behavior: 'smooth'
+                });
+              ">
+        Chapter Sections
+      </button>
+
+      <button type="button"
+              class="dialog-button"
+              onclick="
+                closeDialog('userGuideChapter14Dialog');
+                openDialog('userGuideDialog');
+              ">
+        Back to Contents
+      </button>
+
+      <button type="button"
+              class="dialog-button primary"
+              onclick="closeDialog('userGuideChapter14Dialog');">
+        Close
+      </button>
+
+    </div>
+  </div>
+</div>
 
 <div id="acknowledgmentsDialog" class="dialog-backdrop hidden">
   <div class="dialog">
