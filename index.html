@@ -14308,6 +14308,140 @@ document.addEventListener("touchend", function(e) {
   }
 </script>
 
+<!-- PLAYING MJC — PREVIOUS / NEXT CHAPTER NAVIGATION -->
+<script>
+(function() {
+  const chapters = [];
+
+  for (let number = 1; number <= 7; number++) {
+    const dialog = document.getElementById(
+      "playingMJCChapter" + number + "Dialog"
+    );
+
+    const body = document.getElementById(
+      "playingMJCChapter" + number + "Body"
+    );
+
+    if (!dialog || !body) return;
+
+    chapters.push({
+      dialog: dialog,
+      body: body,
+      title: dialog.querySelector("h2").textContent.trim()
+    });
+  }
+
+  function openChapter(currentIndex, targetIndex) {
+    closeDialog(chapters[currentIndex].dialog.id);
+    openDialog(chapters[targetIndex].dialog.id);
+
+    requestAnimationFrame(function() {
+      chapters[targetIndex].body.scrollTo({
+        top: 0,
+        behavior: "instant"
+      });
+    });
+  }
+
+  function makeChapterLink(
+    currentIndex,
+    targetIndex,
+    buttonText,
+    alignment
+  ) {
+    const destination = chapters[targetIndex];
+
+    const container = document.createElement("div");
+    container.style.minWidth = "0";
+    container.style.textAlign = alignment;
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "dialog-button";
+    button.textContent = buttonText;
+
+    button.setAttribute(
+      "aria-label",
+      buttonText.replace(/[‹›]/g, "").trim() +
+        " chapter: " + destination.title
+    );
+
+    button.addEventListener("click", function() {
+      openChapter(currentIndex, targetIndex);
+    });
+
+    const title = document.createElement("div");
+    title.textContent = destination.title;
+    title.style.fontSize = "0.85em";
+    title.style.color = "#666";
+    title.style.lineHeight = "1.4";
+    title.style.marginTop = "8px";
+    title.style.overflowWrap = "break-word";
+
+    container.appendChild(button);
+    container.appendChild(title);
+
+    return container;
+  }
+
+  chapters.forEach(function(chapter, index) {
+    if (
+      chapter.body.querySelector(
+        '[data-playing-mjc-chapter-nav]'
+      )
+    ) {
+      return;
+    }
+
+    const navigation = document.createElement("nav");
+    navigation.setAttribute(
+      "aria-label",
+      "Previous and next chapters"
+    );
+    navigation.setAttribute(
+      "data-playing-mjc-chapter-nav",
+      ""
+    );
+
+    navigation.style.display = "grid";
+    navigation.style.gridTemplateColumns =
+      "repeat(2, minmax(0, 1fr))";
+    navigation.style.gap = "16px";
+    navigation.style.borderTop = "1px solid #ddd";
+    navigation.style.paddingTop = "20px";
+    navigation.style.marginTop = "28px";
+    navigation.style.marginBottom = "20px";
+
+    if (index > 0) {
+      navigation.appendChild(
+        makeChapterLink(
+          index,
+          index - 1,
+          "‹ Previous",
+          "left"
+        )
+      );
+    } else {
+      const emptyPosition = document.createElement("div");
+      emptyPosition.setAttribute("aria-hidden", "true");
+      navigation.appendChild(emptyPosition);
+    }
+
+    if (index < chapters.length - 1) {
+      navigation.appendChild(
+        makeChapterLink(
+          index,
+          index + 1,
+          "Next ›",
+          "right"
+        )
+      );
+    }
+
+    chapter.body.appendChild(navigation);
+  });
+})();
+</script>
 
 </body>
 </html>
