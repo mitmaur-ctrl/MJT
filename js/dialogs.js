@@ -58,6 +58,41 @@ function closeDialog(id) {
 const mjcGlossaryEntries = [
 
   {
+    term: "Game State",
+    definition:
+      "A Six Box Theory™ concept describing approximately how far " +
+      "play has progressed through a hand: early, middle, or late. " +
+      "Also called Timing. It provides context for evaluating " +
+      "opportunities and making decisions. Game State describes " +
+      "progress through play; Developing Stage and Completion Stage " +
+      "describe structural progress."
+  },
+  {
+    term: "Timing",
+    definition:
+      "The approximate point reached during play: early, middle, " +
+      "or late in the hand. In Six Box Theory™, Timing provides " +
+      "context for assessing Finishing Potential and making decisions. " +
+      "Also see Game State."
+  },
+  {
+    term: "Developing Stage",
+    definition:
+      "The stage of a hand focused on forming and improving the " +
+      "groupings needed for a complete hand. It describes structural " +
+      "progress rather than how early or late it is in the game. " +
+      "A hand may still be in the Developing Stage late in play."
+  },
+  {
+    term: "Completion Stage",
+    definition:
+      "The stage of a hand focused on completing the remaining " +
+      "unfinished groupings and securing Mahjong. It describes " +
+      "structural progress rather than how early or late it is " +
+      "in the game."
+  },
+
+  {
     term: "Finishing Potential",
     abbreviation: "FP",
     definition:
