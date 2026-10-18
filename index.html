@@ -11101,7 +11101,24 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
         </li>
 
         <li>
-          <a href="#">Give Your Tiles Their Places</a>
+                    <a href="#"
+             onclick="
+               event.preventDefault();
+               event.stopPropagation();
+               closeDialog('playingMJCDialog');
+               openDialog('playingMJCChapter4Dialog');
+
+               requestAnimationFrame(function() {
+                 document.getElementById(
+                   'playingMJCChapter4Body'
+                 ).scrollTo({
+                   top: 0,
+                   behavior: 'instant'
+                 });
+               });
+             ">
+            Give Your Tiles Their Places
+          </a>
         </li>
 
         <li>
@@ -12063,6 +12080,323 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     </div>
   </div>
 </div>
+
+<!-- PLAYING MJC — CHAPTER 4 -->
+<div id="playingMJCChapter4Dialog"
+     class="dialog-backdrop hidden">
+  <div class="dialog"
+       style="display:flex; flex-direction:column;
+              max-height:85vh; overflow:hidden;">
+
+    <h2>Give Your Tiles Their Places</h2>
+
+    <div id="playingMJCChapter4Body"
+         style="overflow-y:auto; min-height:0; flex:1;">
+
+      <nav aria-label="Playing MJC Chapter 4 sections"
+           style="background:#f0f4f8; border-radius:10px;
+                  padding:14px; margin-bottom:20px;"
+           onclick="
+             const link =
+               event.target.closest('a[data-section]');
+             if (!link) return;
+             event.preventDefault();
+
+             const scroller = this.parentElement;
+             const heading = Array.from(
+               scroller.querySelectorAll('h3')
+             ).find(function(item) {
+               return item.textContent.trim() ===
+                 link.dataset.section;
+             });
+
+             if (heading) {
+               scroller.scrollTo({
+                 top: scroller.scrollTop +
+                   heading.getBoundingClientRect().top -
+                   scroller.getBoundingClientRect().top,
+                 behavior: 'smooth'
+               });
+             }
+           ">
+
+        <strong>In this chapter</strong>
+
+        <ul style="padding-left:1.3em; line-height:1.6;
+                   margin-bottom:0;">
+          <li>
+            <a href="#" data-section="Bring the Structure onto Your Rack">
+              Bring the Structure onto Your Rack
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="Give the Middle Your Attention">
+              Give the Middle Your Attention
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="Leave Room for Change">
+              Leave Room for Change
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <p>
+        MJC has organized your recorded
+        tiles into boxes. Now let’s make
+        that structure easier to recognize
+        in the tiles sitting in front of you.
+      </p>
+
+      <p>
+        Once you’ve entered your starting
+        tiles and opened Coaching View,
+        I recommend arranging your physical
+        hand to complement what you see.
+        Do this as soon as it’s practical.
+        There’s no need to rearrange
+        everything in a panic while
+        someone is waiting for your discard.
+      </p>
+
+      <h3>Bring the Structure onto Your Rack</h3>
+
+      <p>
+        Here’s the arrangement I recommend:
+      </p>
+
+      <ul style="padding-left:1.3em; line-height:1.6;">
+        <li>
+          <strong>On the left:</strong>
+          keep completed hidden melds
+          on your rack. Exposed melds
+          stay on the table, visible
+          as required by your rules.
+        </li>
+        <li>
+          <strong>In the middle:</strong>
+          arrange your Developing Boxes.
+        </li>
+        <li>
+          <strong>On the right:</strong>
+          keep your Reserves.
+        </li>
+      </ul>
+
+      <div role="img"
+           aria-label="Suggested physical arrangement:
+             exposed melds on the table;
+             rack arranged with completed hidden
+             melds on the left, Developing Boxes
+             in the middle, and Reserves on the right."
+           style="border:1px solid #ccc;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0;">
+
+        <strong>Your physical hand</strong>
+
+        <div style="background:#eaf4e8;
+                    border-radius:8px; padding:12px;
+                    margin-top:16px; text-align:center;">
+          <strong>On the table</strong><br>
+          Exposed melds
+        </div>
+
+        <p><strong>On your rack — left to right</strong></p>
+
+        <div style="display:grid;
+                    grid-template-columns:
+                      minmax(0, 1fr)
+                      minmax(0, 1.3fr)
+                      minmax(0, 1fr);
+                    gap:6px; text-align:center;
+                    font-size:14px;">
+
+          <div style="background:#eaf4e8;
+                      border-radius:8px; padding:12px 4px;">
+            <strong>Left</strong><br>
+            Completed hidden melds
+          </div>
+
+          <div style="background:#fff4df;
+                      border-radius:8px; padding:12px 4px;">
+            <strong>Middle</strong><br>
+            Developing Boxes
+          </div>
+
+          <div style="background:#f4f4f4;
+                      border-radius:8px; padding:12px 4px;">
+            <strong>Right</strong><br>
+            Reserves
+          </div>
+
+        </div>
+
+        <p style="color:#666; margin-bottom:0;">
+          Suggested organization, not a requirement
+          to copy MJC’s screen positions.
+        </p>
+      </div>
+
+      <p>
+        Notice I said
+        <em>complement</em> the display.
+        Your rack doesn’t have to copy
+        MJC’s screen from top to bottom.
+        We’re giving each part of
+        the physical hand a place
+        that’s easy to recognize.
+      </p>
+
+      <p>
+        If you have enough room,
+        leave a small space between
+        groupings. Even a little separation
+        can help you see three tiles
+        as a Chow rather than as
+        three more tiles in a long row.
+      </p>
+
+      <h3>Give the Middle Your Attention</h3>
+
+      <p>
+        Your completed melds already
+        have their jobs.
+        Keep them together on the left,
+        where you can check them
+        without continually sorting
+        through them.
+      </p>
+
+      <p>
+        Most of your attention can
+        go to the middle of the rack.
+        That’s where the Developing Boxes
+        are—the groupings you’re
+        still working on.
+      </p>
+
+      <p>
+        A 4 Bam · 5 Bam grouping
+        is easier to think about
+        when those tiles sit together.
+        You can look at it and ask,
+        “Am I looking for 3 Bam
+        or 6 Bam?”
+      </p>
+
+      <p>
+        Keep an Eye Candidate together
+        there too, while it is still
+        part of your developing structure.
+        You want to recognize that pair
+        before casually using one
+        of its tiles somewhere else.
+      </p>
+
+      <p>
+        Over on the right, your Reserves
+        have their own space.
+        They’re easy to find when
+        you consider a discard,
+        but they’re still available
+        to help the hand develop.
+        Remember: Reserve means
+        “outside the displayed boxes
+        for now,” not “throw this away.”
+      </p>
+
+      <h3>Leave Room for Change</h3>
+
+      <p>
+        These places are useful,
+        but the groupings aren’t permanent.
+        A draw may give a Reserve
+        a partner. A Developing Box
+        may become a Complete Box.
+        Or a different arrangement
+        may become worth considering.
+      </p>
+
+      <p>
+        As your hand changes,
+        adjust your rack when practical.
+        Keep completed groupings together,
+        keep developing tiles easy to see,
+        and move remaining Reserves
+        back toward the right.
+      </p>
+
+      <p>
+        Moving hidden tiles around
+        on your rack does not expose them.
+        A hidden Chow stays hidden
+        even when you’ve neatly grouped
+        its three tiles together.
+        Expose tiles only when
+        the actual game calls for it.
+      </p>
+
+      <p>
+        And don’t feel you have to
+        copy every new screen arrangement
+        immediately. The point is
+        to understand your hand,
+        not to spend the whole game
+        rearranging it.
+      </p>
+
+      <p>
+        Give the groupings their places,
+        take a look at what each needs,
+        and keep watching the table.
+      </p>
+
+      <p>
+        All right. Your hand is settled.
+        Let’s play a turn.
+      </p>
+
+    </div>
+
+    <div class="dialog-actions"
+         style="flex-shrink:0; flex-wrap:wrap;">
+
+      <button type="button"
+              class="dialog-button"
+              onclick="
+                document.getElementById(
+                  'playingMJCChapter4Body'
+                ).scrollTo({
+                  top: 0,
+                  behavior: 'smooth'
+                });
+              ">
+        Chapter Sections
+      </button>
+
+      <button type="button"
+              class="dialog-button"
+              onclick="
+                closeDialog('playingMJCChapter4Dialog');
+                openDialog('playingMJCDialog');
+              ">
+        Back to Contents
+      </button>
+
+      <button type="button"
+              class="dialog-button primary"
+              onclick="closeDialog('playingMJCChapter4Dialog');">
+        Close
+      </button>
+
+    </div>
+  </div>
+</div>
+
+
+
 
 <div id="acknowledgmentsDialog" class="dialog-backdrop hidden">
   <div class="dialog">
