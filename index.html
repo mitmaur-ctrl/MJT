@@ -11059,7 +11059,24 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
         </li>
 
         <li>
-          <a href="#">Get Comfortable at the Table</a>
+                    <a href="#"
+             onclick="
+               event.preventDefault();
+               event.stopPropagation();
+               closeDialog('playingMJCDialog');
+               openDialog('playingMJCChapter2Dialog');
+
+               requestAnimationFrame(function() {
+                 document.getElementById(
+                   'playingMJCChapter2Body'
+                 ).scrollTo({
+                   top: 0,
+                   behavior: 'instant'
+                 });
+               });
+             ">
+            Get Comfortable at the Table
+          </a>
         </li>
 
         <li>
@@ -11348,7 +11365,257 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     </div>
   </div>
 </div>
+<!-- PLAYING MJC — CHAPTER 2 -->
+<div id="playingMJCChapter2Dialog"
+     class="dialog-backdrop hidden">
+  <div class="dialog"
+       style="display:flex; flex-direction:column;
+              max-height:85vh; overflow:hidden;">
 
+    <h2>Get Comfortable at the Table</h2>
+
+    <div id="playingMJCChapter2Body"
+         style="overflow-y:auto; min-height:0; flex:1;">
+
+      <nav aria-label="Playing MJC Chapter 2 sections"
+           style="background:#f0f4f8; border-radius:10px;
+                  padding:14px; margin-bottom:20px;"
+           onclick="
+             const link =
+               event.target.closest('a[data-section]');
+             if (!link) return;
+             event.preventDefault();
+
+             const scroller = this.parentElement;
+             const heading = Array.from(
+               scroller.querySelectorAll('h3')
+             ).find(function(item) {
+               return item.textContent.trim() ===
+                 link.dataset.section;
+             });
+
+             if (heading) {
+               scroller.scrollTo({
+                 top: scroller.scrollTop +
+                   heading.getBoundingClientRect().top -
+                   scroller.getBoundingClientRect().top,
+                 behavior: 'smooth'
+               });
+             }
+           ">
+
+        <strong>In this chapter</strong>
+
+        <ul style="padding-left:1.3em; line-height:1.6;
+                   margin-bottom:0;">
+          <li>
+            <a href="#" data-section="Make the Screen Feel Familiar">
+              Make the Screen Feel Familiar
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="Real Tiles First, MJC Second">
+              Real Tiles First, MJC Second
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="Give Yourself a Clear View">
+              Give Yourself a Clear View
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="Ready? Let’s Put It into Practice">
+              Ready? Let’s Put It into Practice
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <p>
+        Before we get into the hand,
+        let me share a couple of pro tips.
+        A little preparation now can save
+        you a lot of looking back and forth
+        once the game gets going.
+      </p>
+
+      <h3>Make the Screen Feel Familiar</h3>
+
+      <p>
+        You probably already have a preferred
+        way to arrange your tiles.
+        Maybe you put Chars first,
+        then Bams, then Dots.
+        Maybe you use a different order.
+        Either way, let MJC follow your lead.
+      </p>
+
+      <p>
+        Before entering your starting tiles,
+        set MJC’s <strong>Display</strong>
+        order to match the way you normally
+        arrange the suits and honors
+        on your rack.
+      </p>
+
+      <p>
+        This makes it easier to find
+        the corresponding group on the screen
+        while you’re looking at your
+        physical tiles. Your eyes have
+        enough to do during a Mahjong game.
+        Let’s give them one less thing
+        to hunt for.
+      </p>
+
+      <p>
+        You’ll thank me for this later.
+        You’re welcome.
+      </p>
+
+      <p>
+        If you need the steps for changing
+        Display, they’re in
+        <strong>User Guide, Chapter 2:
+        Getting Your Hand Ready</strong>.
+      </p>
+
+      <h3>Real Tiles First, MJC Second</h3>
+
+      <p>
+        Get your actual tiles settled
+        before you start entering them.
+        Set up your rack, replace any flowers
+        if that’s part of your rules,
+        and arrange your starting tiles
+        in your usual order.
+      </p>
+
+      <p>
+        Then enter them into MJC.
+      </p>
+
+      <p>
+        Why that order? Because it’s easier
+        to record a hand that has stopped
+        changing. If you’re still exchanging
+        flowers or moving tiles around,
+        it’s easy to lose your place
+        and enter something twice—or
+        miss it altogether.
+      </p>
+
+      <p>
+        I’d work through the rack
+        one group at a time.
+        Enter the Chars, for example,
+        then move on to the next suit.
+        Check the quantities as you go.
+        Two copies of a tile on your rack
+        should mean two copies in MJC.
+        Simple enough, but worth checking.
+      </p>
+
+      <p>
+        Before you press
+        <strong>Play On!</strong>,
+        take one last look.
+        Does the recorded hand match
+        the one sitting in front of you?
+        A matching total is a good start,
+        but the right tiles matter too.
+      </p>
+
+      <h3>Give Yourself a Clear View</h3>
+
+      <p>
+        Put your phone or tablet somewhere
+        you can see and reach comfortably,
+        without blocking your view
+        of the table.
+        You’ll be moving between your tiles,
+        MJC, and the other players.
+        Make that as easy on yourself
+        as you can.
+      </p>
+
+      <p>
+        And let your practice partners know
+        you’re learning to use MJC.
+        A little patience around the table
+        goes a long way.
+        You may even find yourselves
+        discussing a grouping or discard
+        together. That’s a useful
+        part of practice.
+      </p>
+
+      <p>
+        Once your starting hand is recorded,
+        we’ll look at how arranging
+        your physical tiles into groupings
+        can complement what MJC shows you.
+        For now, just get the starting
+        record right.
+      </p>
+
+      <h3>Ready? Let’s Put It into Practice</h3>
+
+      <p>
+        Your tiles are settled,
+        MJC’s Display order feels familiar,
+        and your starting hand is entered.
+        Press <strong>Play On!</strong>
+        when you’re ready.
+      </p>
+
+      <p>
+        Now that you’ve got MJC
+        set up and running,
+        let’s put it into practice.
+      </p>
+
+      <p>
+        Take a look at your hand.
+        What do you see?
+      </p>
+
+    </div>
+
+    <div class="dialog-actions"
+         style="flex-shrink:0; flex-wrap:wrap;">
+
+      <button type="button"
+              class="dialog-button"
+              onclick="
+                document.getElementById(
+                  'playingMJCChapter2Body'
+                ).scrollTo({
+                  top: 0,
+                  behavior: 'smooth'
+                });
+              ">
+        Chapter Sections
+      </button>
+
+      <button type="button"
+              class="dialog-button"
+              onclick="
+                closeDialog('playingMJCChapter2Dialog');
+                openDialog('playingMJCDialog');
+              ">
+        Back to Contents
+      </button>
+
+      <button type="button"
+              class="dialog-button primary"
+              onclick="closeDialog('playingMJCChapter2Dialog');">
+        Close
+      </button>
+
+    </div>
+  </div>
+</div>
 
 
 <div id="acknowledgmentsDialog" class="dialog-backdrop hidden">
