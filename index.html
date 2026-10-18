@@ -1657,7 +1657,26 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
             Completing a Hand
           </a>
         </li>
-        <li><a href="#">Saving and Reviewing Hands</a></li>
+                <li>
+          <a href="#"
+             onclick="
+               event.preventDefault();
+               event.stopPropagation();
+               closeDialog('userGuideDialog');
+               openDialog('userGuideChapter11Dialog');
+
+               requestAnimationFrame(function() {
+                 document.getElementById(
+                   'userGuideChapter11Body'
+                 ).scrollTo({
+                   top: 0,
+                   behavior: 'instant'
+                 });
+               });
+             ">
+            Saving and Reviewing Hands
+          </a>
+        </li>
         <li><a href="#">Correcting an Entry</a></li>
         <li><a href="#">Finding Help and Sharing Feedback</a></li>
         <li><a href="#">Quick Reference</a></li>
@@ -9174,7 +9193,405 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     </div>
   </div>
 </div>
+<!-- USER GUIDE — CHAPTER 11 -->
+<div id="userGuideChapter11Dialog"
+     class="dialog-backdrop hidden">
+  <div class="dialog"
+       style="display:flex; flex-direction:column;
+              max-height:85vh; overflow:hidden;">
 
+    <h2>Saving and Reviewing Hands</h2>
+
+    <div id="userGuideChapter11Body"
+         style="overflow-y:auto; min-height:0; flex:1;">
+
+      <nav aria-label="Chapter 11 sections"
+           style="background:#f0f4f8; border-radius:10px;
+                  padding:14px; margin-bottom:20px;"
+           onclick="
+             const link =
+               event.target.closest('a[data-section]');
+             if (!link) return;
+             event.preventDefault();
+
+             const scroller = this.parentElement;
+             const heading = Array.from(
+               scroller.querySelectorAll('h3')
+             ).find(function(item) {
+               return item.textContent.trim() ===
+                 link.dataset.section;
+             });
+
+             if (heading) {
+               scroller.scrollTo({
+                 top: scroller.scrollTop +
+                   heading.getBoundingClientRect().top -
+                   scroller.getBoundingClientRect().top,
+                 behavior: 'smooth'
+               });
+             }
+           ">
+
+        <strong>In this chapter</strong>
+        <ul style="padding-left:1.3em; line-height:1.6;
+                   margin-bottom:0;">
+          <li>
+            <a href="#" data-section="1. Save a Hand">
+              Save a Hand
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="2. Find a Saved Hand">
+              Find a Saved Hand
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="3. Review the Transcript">
+              Review the Transcript
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="4. Edit Hand Details">
+              Edit Hand Details
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="5. Share a Hand">
+              Share a Hand
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="6. Manage Saved Hands">
+              Manage Saved Hands
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <p>
+        Reviewing a recorded hand lets you
+        revisit your choices after the game.
+        Save a completed hand or an unfinished
+        one, then use its transcript to
+        follow what happened.
+      </p>
+
+      <h3>1. Save a Hand</h3>
+
+      <p>
+        Tap <strong>Save Hand</strong>
+        when you want to keep the current
+        recorded hand. MJC displays a
+        confirmation message after saving.
+      </p>
+
+      <p>
+        Save before starting a new hand
+        if you want to retain the current
+        record. You do not need to win
+        before saving an unfinished hand.
+      </p>
+
+      <div style="background:#f0f4f8;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0;">
+        <strong>Useful hands to keep</strong>
+        <ul style="padding-left:1.3em; line-height:1.6;
+                   margin-bottom:0;">
+          <li>A winning hand you want to study.</li>
+          <li>A difficult discard decision.</li>
+          <li>A hand with competing meld choices.</li>
+          <li>An unfinished hand you want to discuss.</li>
+        </ul>
+      </div>
+
+      <h3>2. Find a Saved Hand</h3>
+
+      <ol style="padding-left:1.5em; line-height:1.6;">
+        <li>
+          Tap <strong>Hand History</strong>.
+          It is also accessible from
+          the Tile Selection Screen.
+        </li>
+        <li>
+          Locate the saved entry using
+          its date, time, status, and
+          ruleset information.
+        </li>
+        <li>
+          Tap <strong>View Transcript</strong>
+          for the hand you want to review.
+        </li>
+      </ol>
+
+      <div role="img"
+           aria-label="Simplified saved-hand entry:
+             date and time, status, ruleset,
+             and View Transcript."
+           style="border:1px solid #ccc;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0;">
+
+        <strong>Saved hand</strong>
+        <p>Date and time · Status · Ruleset</p>
+
+        <div style="background:#ddd;
+                    border-radius:8px; padding:12px;
+                    text-align:center;">
+          View Transcript
+        </div>
+
+        <p style="color:#666; margin-bottom:0;">
+          Simplified illustration of
+          the information used to find a hand.
+        </p>
+      </div>
+
+      <p>
+        Opening a transcript is a review
+        action. It does not load the
+        saved hand into live play
+        or resume an unfinished game.
+      </p>
+
+      <h3>3. Review the Transcript</h3>
+
+      <p>
+        The transcript records the hand’s
+        starting information, recorded
+        actions, and resulting hand.
+        Scroll within the transcript
+        to read the full record.
+      </p>
+
+      <div role="img"
+           aria-label="Transcript reading order:
+             initial tiles, turn-by-turn actions,
+             final melds and recorded status."
+           style="background:#f0f4f8;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0;">
+
+        <p style="margin-top:0;">
+          <strong>Initial Tiles</strong><br>
+          The recorded starting hand.
+        </p>
+
+        <p>
+          <strong>Turn-by-Turn</strong><br>
+          Draws, claims, discards,
+          and other recorded actions.
+        </p>
+
+        <p style="margin-bottom:0;">
+          <strong>Final Melds and Status</strong><br>
+          The resulting recorded groupings
+          and whether the hand was saved
+          as incomplete or Mahjong.
+        </p>
+      </div>
+
+      <p>
+        Start with the initial tiles,
+        then follow the actions in order.
+        Watch how incoming tiles changed
+        your candidates, completed melds,
+        and discard choices.
+      </p>
+
+      <p>
+        Ask yourself:
+      </p>
+
+      <ul style="padding-left:1.3em; line-height:1.6;">
+        <li>Which draw changed the hand most?</li>
+        <li>What did each claim preserve or give up?</li>
+        <li>When did the Eye become important?</li>
+        <li>Which decision would you like to revisit?</li>
+      </ul>
+
+      <p>
+        Use <strong>Back to History</strong>
+        to return to the saved-hand list.
+        Transcript review currently presents
+        the recorded sequence; it is not
+        an interactive replay.
+      </p>
+
+      <h3>4. Edit Hand Details</h3>
+
+      <p>
+        From the transcript, tap
+        <strong>Edit Details</strong>
+        to add context to the saved hand.
+      </p>
+
+      <ul style="padding-left:1.3em; line-height:1.6;">
+        <li>
+          <strong>Name or Nickname:</strong>
+          identifies the player.
+        </li>
+        <li>
+          <strong>Seat Wind:</strong>
+          optional context for the hand.
+        </li>
+        <li>
+          <strong>Round Wind:</strong>
+          optional round information.
+        </li>
+        <li>
+          <strong>Notes:</strong>
+          your observations or questions.
+        </li>
+      </ul>
+
+      <div style="background:#fff4df;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0;">
+        <strong>Example note</strong>
+        <p style="margin-bottom:0;">
+          “Review the Chow choice after
+          drawing 3 Char. Could I have
+          preserved a better wait?”
+        </p>
+      </div>
+
+      <p>
+        Tap <strong>Save Details</strong>
+        to keep your changes,
+        or <strong>Cancel</strong>
+        to leave without applying them.
+        Editing these details does not
+        rewrite the hand’s recorded
+        tiles or action sequence.
+      </p>
+
+      <h3>5. Share a Hand</h3>
+
+      <ol style="padding-left:1.5em; line-height:1.6;">
+        <li>
+          Open the saved hand’s transcript.
+        </li>
+        <li>
+          Tap <strong>Share</strong>.
+        </li>
+        <li>
+          Enter the required name or nickname
+          in the sharing form.
+        </li>
+        <li>
+          Tap <strong>Share Hand</strong>.
+        </li>
+        <li>
+          Choose a destination from
+          your device’s sharing options,
+          when available.
+        </li>
+      </ol>
+
+      <p>
+        MJC shares a hand-data file
+        in JSON format.
+        If file sharing is unavailable
+        through the browser, MJC downloads
+        the file so you can share it
+        using your device’s file controls.
+      </p>
+
+      <p>
+        The available sharing destinations
+        depend on your device, browser,
+        and installed apps.
+        Review the saved details and notes
+        before sending the file.
+      </p>
+
+      <p>
+        <strong>Cancel</strong> leaves
+        the sharing form without proceeding.
+        Sharing a file does not remove
+        the saved hand from Hand History.
+      </p>
+
+      <h3>6. Manage Saved Hands</h3>
+
+      <p>
+        MJC keeps your
+        <strong>20 most recent saved hands</strong>.
+        Keep a shared or downloaded copy
+        of records you want to retain
+        beyond that rolling collection.
+      </p>
+
+      <p>
+        Saved hands are stored in the
+        browser on the device where
+        you saved them.
+        They do not automatically appear
+        in another browser or on another
+        device. Clearing the site’s
+        browser data can remove them.
+      </p>
+
+      <p>
+        <strong>Delete</strong><br>
+        Removes the selected saved hand.
+        Read the confirmation before
+        completing the deletion.
+      </p>
+
+      <p>
+        <strong>Clear All</strong><br>
+        Removes the saved-hand collection
+        after confirmation.
+        Use it only when you intend
+        to clear the full list.
+      </p>
+
+      <p>
+        Save regularly, add a useful note,
+        and revisit the decisions that
+        taught you something.
+        Hand History gives those lessons
+        a record you can return to.
+      </p>
+
+    </div>
+
+    <div class="dialog-actions"
+         style="flex-shrink:0; flex-wrap:wrap;">
+
+      <button type="button"
+              class="dialog-button"
+              onclick="
+                document.getElementById(
+                  'userGuideChapter11Body'
+                ).scrollTo({
+                  top: 0,
+                  behavior: 'smooth'
+                });
+              ">
+        Chapter Sections
+      </button>
+
+      <button type="button"
+              class="dialog-button"
+              onclick="
+                closeDialog('userGuideChapter11Dialog');
+                openDialog('userGuideDialog');
+              ">
+        Back to Contents
+      </button>
+
+      <button type="button"
+              class="dialog-button primary"
+              onclick="closeDialog('userGuideChapter11Dialog');">
+        Close
+      </button>
+
+    </div>
+  </div>
+</div>
 
 
 
