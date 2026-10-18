@@ -579,8 +579,18 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
       User Guide
     </button>
 
-    <button type="button"
-            onclick="showToast('Playing MJC is a work in progress.');">
+        <button type="button"
+            onclick="
+              openDialog('playingMJCDialog');
+              requestAnimationFrame(function() {
+                document.getElementById(
+                  'playingMJCContents'
+                ).scrollTo({
+                  top: 0,
+                  behavior: 'instant'
+                });
+              });
+            ">
       Playing MJC
     </button>
 
@@ -3212,9 +3222,9 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
       <p>
         <strong><span style="color:#6b3fa0;">64</span>
           Playing MJC</strong><br>
-        Reserved for a conversational walkthrough
-        of using MJC during a game.
-        Currently displays a work-in-progress message.
+          Opens a conversational coaching companion
+        for learning and playing with MJC.
+        Chapters are being added as they are completed.
       </p>
 
       <p>
@@ -10257,13 +10267,14 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
       </div>
 
       <p>
-        These references are available
+                These references are available
         through the footer links.
         The footer also includes
-        <strong>Playing MJC</strong>;
-        follow its displayed availability
-        message if that resource is
-        still being prepared.
+        <strong>Playing MJC</strong>,
+        a conversational coaching companion.
+        Open its contents to find the
+        available chapters; unfinished
+        chapters display a work-in-progress message.
       </p>
 
       <p>
@@ -11004,6 +11015,341 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     </div>
   </div>
 </div>
+<!-- PLAYING MJC — TABLE OF CONTENTS -->
+<div id="playingMJCDialog"
+     class="dialog-backdrop hidden">
+  <div class="dialog"
+       style="display:flex; flex-direction:column;
+              max-height:85vh; overflow:hidden;">
+
+    <h2>Playing MJC</h2>
+
+    <div id="playingMJCContents"
+         style="overflow-y:auto; min-height:0; flex:1;">
+
+      <h3>Table of Contents</h3>
+
+      <ol style="padding-left:2.5em; line-height:1.6;"
+          onclick="
+            if (event.target.closest('a')) {
+              event.preventDefault();
+              showToast('This chapter is a work in progress.');
+            }
+          ">
+
+        <li>
+          <a href="#"
+             onclick="
+               event.preventDefault();
+               event.stopPropagation();
+               closeDialog('playingMJCDialog');
+               openDialog('playingMJCChapter1Dialog');
+
+               requestAnimationFrame(function() {
+                 document.getElementById(
+                   'playingMJCChapter1Body'
+                 ).scrollTo({
+                   top: 0,
+                   behavior: 'instant'
+                 });
+               });
+             ">
+            Before We Begin
+          </a>
+        </li>
+
+        <li>
+          <a href="#">Get Comfortable at the Table</a>
+        </li>
+
+        <li>
+          <a href="#">See Your Hand Differently</a>
+        </li>
+
+        <li>
+          <a href="#">Give Your Tiles Their Places</a>
+        </li>
+
+        <li>
+          <a href="#">Let’s Play a Turn</a>
+        </li>
+
+        <li>
+          <a href="#">Think Through Your Discard</a>
+        </li>
+
+        <li>
+          <a href="#">Have Fun. Play On!</a>
+        </li>
+
+      </ol>
+    </div>
+
+    <div class="dialog-actions"
+         style="flex-shrink:0;">
+      <button type="button"
+              class="dialog-button primary"
+              onclick="closeDialog('playingMJCDialog');">
+        Close
+      </button>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- PLAYING MJC — CHAPTER 1 -->
+<div id="playingMJCChapter1Dialog"
+     class="dialog-backdrop hidden">
+  <div class="dialog"
+       style="display:flex; flex-direction:column;
+              max-height:85vh; overflow:hidden;">
+
+    <h2>Before We Begin</h2>
+
+    <div id="playingMJCChapter1Body"
+         style="overflow-y:auto; min-height:0; flex:1;">
+
+      <nav aria-label="Playing MJC Chapter 1 sections"
+           style="background:#f0f4f8; border-radius:10px;
+                  padding:14px; margin-bottom:20px;"
+           onclick="
+             const link =
+               event.target.closest('a[data-section]');
+             if (!link) return;
+             event.preventDefault();
+
+             const scroller = this.parentElement;
+             const heading = Array.from(
+               scroller.querySelectorAll('h3')
+             ).find(function(item) {
+               return item.textContent.trim() ===
+                 link.dataset.section;
+             });
+
+             if (heading) {
+               scroller.scrollTo({
+                 top: scroller.scrollTop +
+                   heading.getBoundingClientRect().top -
+                   scroller.getBoundingClientRect().top,
+                 behavior: 'smooth'
+               });
+             }
+           ">
+
+        <strong>In this chapter</strong>
+
+        <ul style="padding-left:1.3em; line-height:1.6;
+                   margin-bottom:0;">
+          <li>
+            <a href="#" data-section="Give Yourself Time">
+              Give Yourself Time
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="MJC Only Knows What You Tell It">
+              MJC Only Knows What You Tell It
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="Keep Watching the Table">
+              Keep Watching the Table
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="Better Decisions, One Hand at a Time">
+              Better Decisions, One Hand at a Time
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <p>
+        Before we sit down and play,
+        let me tell you what I hope
+        you’ll get out of MJC.
+      </p>
+
+      <p>
+        MJC is here to help you learn
+        Six Box Theory™—to understand
+        the structure of your hand
+        and use that understanding
+        to make better decisions.
+        It doesn’t play your hand for you.
+        You’re still the one at the table,
+        making the choices.
+      </p>
+
+      <h3>Give Yourself Time</h3>
+
+      <p>
+        And getting comfortable with it
+        takes a little time.
+      </p>
+
+      <p>
+        You’re learning to see your hand
+        through 6BT while also getting
+        used to recording your tiles
+        in MJC. That’s a lot to take
+        in at once! Give yourself room
+        to practice. You don’t have
+        to understand everything
+        in your first hand.
+      </p>
+
+      <p>
+        I recommend starting with relaxed
+        practice games, ideally with others
+        who are learning Mahjong or
+        getting familiar with MJC too.
+        Give yourselves permission to pause,
+        look at your hands, and talk
+        through a decision. MJC isn’t
+        designed for tournament play
+        or the pace of experienced players
+        racing through a hand.
+      </p>
+
+      <p>
+        There’s no prize here for being
+        the fastest person to tap Draw.
+      </p>
+
+      <h3>MJC Only Knows What You Tell It</h3>
+
+      <p>
+        I get it. Entering your starting
+        tiles, then recording every draw,
+        claim, and discard can feel
+        like a hassle at first.
+        But that’s how MJC knows
+        what’s in your hand.
+        It can only work with
+        what you tell it.
+      </p>
+
+      <p>
+        If you draw a 5 Bam but record
+        a 5 Dot, MJC will faithfully
+        help you understand a hand
+        you don’t actually have.
+        So keep its record in step
+        with your real tiles.
+        If you make an entry mistake,
+        use the correction tools.
+        That’s what they’re there for.
+      </p>
+
+      <p>
+        With practice, recording becomes
+        more familiar, and so does
+        recognizing your hand’s structure.
+        Give yourself time to get
+        comfortable with both.
+      </p>
+
+      <h3>Keep Watching the Table</h3>
+
+      <p>
+        This is something I’ll remind
+        you of throughout:
+        <strong>keep watching the table.</strong>
+      </p>
+
+      <p>
+        MJC knows your recorded hand—what
+        you have and what you need.
+        But only you can see what’s
+        happening around you.
+        What are the other players
+        discarding? What are they claiming?
+        Which melds have they exposed?
+      </p>
+
+      <p>
+        Those things matter.
+        Let MJC help you understand
+        your hand, but remember to
+        look up from the screen.
+        There’s a whole game
+        happening out there.
+      </p>
+
+      <h3>Better Decisions, One Hand at a Time</h3>
+
+      <p>
+        MJC can’t guarantee you’ll
+        win every hand.
+        Luck has plenty to say
+        about Mahjong.
+        You can make a thoughtful
+        decision and still lose.
+      </p>
+
+      <p>
+        What MJC can do is help you
+        see your hand more clearly
+        and understand the choices
+        in front of you.
+        As you become familiar with 6BT,
+        the goal is for you to start
+        recognizing those possibilities
+        yourself.
+      </p>
+
+      <p>
+        So take your time.
+        Ask questions. Try things.
+        We’ve got practice hands to play.
+      </p>
+
+      <p>
+        First, though, let me share
+        a couple of tips that will
+        make getting settled at the table
+        a whole lot easier.
+      </p>
+
+    </div>
+
+    <div class="dialog-actions"
+         style="flex-shrink:0; flex-wrap:wrap;">
+
+      <button type="button"
+              class="dialog-button"
+              onclick="
+                document.getElementById(
+                  'playingMJCChapter1Body'
+                ).scrollTo({
+                  top: 0,
+                  behavior: 'smooth'
+                });
+              ">
+        Chapter Sections
+      </button>
+
+      <button type="button"
+              class="dialog-button"
+              onclick="
+                closeDialog('playingMJCChapter1Dialog');
+                openDialog('playingMJCDialog');
+              ">
+        Back to Contents
+      </button>
+
+      <button type="button"
+              class="dialog-button primary"
+              onclick="closeDialog('playingMJCChapter1Dialog');">
+        Close
+      </button>
+
+    </div>
+  </div>
+</div>
+
+
 
 <div id="acknowledgmentsDialog" class="dialog-backdrop hidden">
   <div class="dialog">
