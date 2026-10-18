@@ -857,6 +857,107 @@ console.log(
   return "Select Meld";
 }
 
+function buildMMRAffectedBoxes() {
+  const structure =
+    lastActionSnapshot?.canonicalStructureState;
+
+  if (!structure || !mmrState) return null;
+
+  // Collect the existing tiles used by the meld choices.
+  // Remove one copy of the incoming tile from each choice.
+  const involvedTileKeys = new Set();
+
+  mmrState.candidates.forEach(function(candidate) {
+    const existingTiles = [...candidate.tiles];
+    const incomingIndex =
+      existingTiles.indexOf(mmrState.tileKey);
+
+    if (incomingIndex !== -1) {
+      existingTiles.splice(incomingIndex, 1);
+    }
+
+    existingTiles.forEach(function(tileKey) {
+      involvedTileKeys.add(tileKey);
+    });
+  });
+
+  const affectedBoxes =
+    structure.developingBoxes
+      .map(function(box, index) {
+        return {
+          box: box,
+          number:
+            structure.completeBoxes.length + index + 1
+        };
+      })
+      .filter(function(item) {
+        return item.box.tiles.some(function(tileKey) {
+          return involvedTileKeys.has(tileKey);
+        });
+      });
+
+  if (!affectedBoxes.length) return null;
+
+  const area = document.createElement("section");
+  area.style.margin = "18px 0";
+  area.setAttribute(
+    "aria-label",
+    "Affected Developing Boxes"
+  );
+
+  const heading = document.createElement("div");
+  heading.className = "rt-expected-results-title";
+  heading.textContent = "Affected Developing Boxes";
+  area.appendChild(heading);
+
+  const explanation = document.createElement("p");
+  explanation.textContent =
+    "These boxes show your tiles before the incoming tile is added.";
+  area.appendChild(explanation);
+
+  const incoming = document.createElement("div");
+  incoming.style.margin = "12px 0";
+  incoming.innerHTML =
+    '<div class="hand-section-title">' +
+      'Incoming Tile' +
+    '</div>' +
+    '<span class="mmr-candidate-tile mmr-key-tile">' +
+      renderCoachTile(mmrState.tileKey) +
+    '</span>';
+  area.appendChild(incoming);
+
+  const boxes = document.createElement("div");
+  boxes.className = "developing-area";
+
+  affectedBoxes.forEach(function(item) {
+    const card = document.createElement("div");
+
+    card.className =
+      "hand-section box-card developing-box" +
+      (item.box.type === "cpc" ? " wide-box" : "");
+
+    const title = document.createElement("div");
+    title.className = "hand-section-title";
+    title.textContent =
+      "DB" + item.number + " — " +
+      getBoxTypeLabel(item.box.type);
+
+    card.appendChild(title);
+
+    const tiles = document.createElement("div");
+    tiles.innerHTML =
+      item.box.tiles.map(function(tileKey) {
+        return renderCoachTile(tileKey);
+      }).join("");
+
+    card.appendChild(tiles);
+    boxes.appendChild(card);
+  });
+
+  area.appendChild(boxes);
+  return area;
+}
+
 function buildMMRInsight() {
   const evaluated =
     mmrState.candidates.map(function(candidate) {
@@ -1259,7 +1360,15 @@ if (
   !isSingleSpecialMeld &&
   mmrState.candidates.length > 1
 ) {
+  const affectedBoxes =
+    buildMMRAffectedBoxes();
+
+  if (affectedBoxes) {
+    optionsContainer.appendChild(affectedBoxes);
+  }
+
   const insightButton =
+
     document.createElement("button");
 
   insightButton.type = "button";
