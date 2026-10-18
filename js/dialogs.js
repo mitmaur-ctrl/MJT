@@ -57,6 +57,15 @@ function closeDialog(id) {
 
 const mjcGlossaryEntries = [
   {
+    term: "Candidate",
+    definition:
+      "A tile or grouping with the potential to become a Complete Box. " +
+      "As your hand develops, a Candidate may complete, change into " +
+      "another grouping, or be replaced. Examples include an Eye " +
+      "Candidate, Chow Candidate, and Chow-Pong Candidate."
+  },
+
+  {
     term: "Display",
     definition:
       "A setting that lets you choose the order in which the " +
