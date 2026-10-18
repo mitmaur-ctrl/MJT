@@ -11143,7 +11143,24 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
         </li>
 
         <li>
-          <a href="#">Think Through Your Discard</a>
+                    <a href="#"
+             onclick="
+               event.preventDefault();
+               event.stopPropagation();
+               closeDialog('playingMJCDialog');
+               openDialog('playingMJCChapter6Dialog');
+
+               requestAnimationFrame(function() {
+                 document.getElementById(
+                   'playingMJCChapter6Body'
+                 ).scrollTo({
+                   top: 0,
+                   behavior: 'instant'
+                 });
+               });
+             ">
+            Think Through Your Discard
+          </a>
         </li>
 
         <li>
@@ -12815,6 +12832,412 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     </div>
   </div>
 </div>
+
+<!-- PLAYING MJC — CHAPTER 6 -->
+<div id="playingMJCChapter6Dialog"
+     class="dialog-backdrop hidden">
+  <div class="dialog"
+       style="display:flex; flex-direction:column;
+              max-height:85vh; overflow:hidden;">
+
+    <h2>Think Through Your Discard</h2>
+
+    <div id="playingMJCChapter6Body"
+         style="overflow-y:auto; min-height:0; flex:1;">
+
+      <nav aria-label="Playing MJC Chapter 6 sections"
+           style="background:#f0f4f8; border-radius:10px;
+                  padding:14px; margin-bottom:20px;"
+           onclick="
+             const link =
+               event.target.closest('a[data-section]');
+             if (!link) return;
+             event.preventDefault();
+
+             const scroller = this.parentElement;
+             const heading = Array.from(
+               scroller.querySelectorAll('h3')
+             ).find(function(item) {
+               return item.textContent.trim() ===
+                 link.dataset.section;
+             });
+
+             if (heading) {
+               scroller.scrollTo({
+                 top: scroller.scrollTop +
+                   heading.getBoundingClientRect().top -
+                   scroller.getBoundingClientRect().top,
+                 behavior: 'smooth'
+               });
+             }
+           ">
+
+        <strong>In this chapter</strong>
+
+        <ul style="padding-left:1.3em; line-height:1.6;
+                   margin-bottom:0;">
+          <li>
+            <a href="#" data-section="First, What Changed?">
+              First, What Changed?
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="What Can You Let Go?">
+              What Can You Let Go?
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="Ask MJC Why">
+              Ask MJC Why
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="Look Up Before You Decide">
+              Look Up Before You Decide
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="Make Your Choice">
+              Make Your Choice
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <p>
+        You’ve recorded the incoming tile.
+        Any meld choices or declarations
+        are resolved, and it’s time
+        to discard.
+      </p>
+
+      <p>
+        This is where I’d like you
+        to do a little thinking
+        alongside MJC.
+        A recommendation is useful.
+        Understanding the reason behind it
+        is what you can carry into
+        your next hand.
+      </p>
+
+      <h3>First, What Changed?</h3>
+
+      <p>
+        Before reaching for a discard,
+        look at the updated structure.
+        What did that incoming tile
+        do for your hand?
+      </p>
+
+      <p>
+        Perhaps it completed a Chow.
+        Perhaps it gave a Reserve
+        a partner. Perhaps it created
+        two possibilities, and now
+        you have to choose what
+        you want to preserve.
+      </p>
+
+      <p>
+        Start with the boxes.
+        Which are complete?
+        Which are still developing?
+        Do you have an Eye Candidate?
+        What does each developing
+        grouping need?
+      </p>
+
+      <p>
+        Pathways can help you examine
+        the supported groupings.
+        Look at the completing tiles
+        and their opportunities.
+        You don’t have to calculate
+        everything in your head.
+        That’s part of what MJC
+        is helping you visualize.
+      </p>
+
+      <p>
+        If a label or marker is
+        unfamiliar, the Glossary and
+        User Guide are there for you.
+        This is a practice hand.
+        You’re allowed to look things up.
+      </p>
+
+      <h3>What Can You Let Go?</h3>
+
+      <p>
+        Now look at your Reserves.
+        Is there a tile you can
+        release while keeping your
+        developing groupings intact?
+      </p>
+
+      <p>
+        Remember what we said earlier:
+        every tile has value.
+        Sometimes its value is
+        helping complete a grouping.
+        Sometimes its value is
+        giving you a discard while
+        you preserve something useful.
+      </p>
+
+      <div style="background:#f0f4f8;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0;">
+        <strong>A useful question</strong>
+        <p style="margin-bottom:0;">
+          “If I discard this tile,
+          what am I keeping,
+          and what am I giving up?”
+        </p>
+      </div>
+
+      <p>
+        Don’t assume every Reserve
+        is equally useful.
+        One may have nearby same-suit
+        support; another may be isolated.
+        MJC considers those differences
+        when comparing its discard choices.
+      </p>
+
+      <p>
+        And what if there are
+        no Reserves?
+        Then something in a developing
+        grouping may have to change.
+        That’s a good time to slow
+        down and read the explanation.
+        Breaking a candidate has
+        a different effect from
+        removing a Reserve.
+      </p>
+
+      <h3>Ask MJC Why</h3>
+
+      <p>
+        Read the
+        <strong>Recommended Discard</strong>,
+        then open <strong>Insight</strong>.
+        Think of it as asking,
+        “All right, MJC.
+        Why that tile?”
+      </p>
+
+      <p>
+        Look for what the explanation
+        says will remain intact,
+        which grouping changes,
+        and what possibilities
+        the hand retains.
+      </p>
+
+      <div role="img"
+           aria-label="Questions to ask when reading Insight:
+             which tile is recommended;
+             what changes if it is discarded;
+             what remains intact."
+           style="background:#fff4df;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0;">
+
+        <strong>Read beyond the tile name</strong>
+
+        <ul style="padding-left:1.3em; line-height:1.6;
+                   margin-bottom:0;">
+          <li>Which tile is recommended?</li>
+          <li>What changes if I discard it?</li>
+          <li>What stays intact?</li>
+          <li>Why is that useful for this hand?</li>
+        </ul>
+      </div>
+
+      <p>
+        When you feel comfortable,
+        try <strong>Hide</strong>
+        and consider your own choice
+        before revealing the recommendation.
+        Then compare your reasoning
+        with MJC’s.
+      </p>
+
+      <p>
+        If you chose the same tile,
+        can you explain why?
+        If you chose a different one,
+        what were you trying to preserve?
+        You can learn something
+        from either conversation.
+      </p>
+
+      <p>
+        Sometimes MJC gives equal
+        preference to several tiles.
+        That means you have alternatives,
+        not several discards to make.
+        Choose <strong>one</strong>.
+        Open Insight to see
+        the choices and reasoning.
+      </p>
+
+      <p>
+        A recommendation won’t be
+        available in every situation.
+        Ordinary discard recommendations
+        are not shown during the
+        current special-hand pursuits.
+        Keep reading the hand structure
+        and following the current
+        action instruction.
+      </p>
+
+      <h3>Look Up Before You Decide</h3>
+
+      <p>
+        Here comes that reminder:
+        <strong>keep watching the table.</strong>
+      </p>
+
+      <p>
+        MJC knows your recorded hand.
+        It doesn’t record every
+        opponent’s ordinary discard
+        or exposed meld in this workflow.
+        Those observations come from you.
+      </p>
+
+      <p>
+        What have other players
+        been discarding?
+        What have they claimed?
+        What melds can you see?
+        Has someone’s play given you
+        a reason to reconsider
+        the tile you were about
+        to release?
+      </p>
+
+      <p>
+        MJC’s structural recommendation
+        is not a promise that a tile
+        is safe to discard.
+        A tile that contributes little
+        to your hand might still
+        be useful to someone else.
+      </p>
+
+      <p>
+        And seeing an exposed meld
+        doesn’t reveal everything
+        in that player’s hidden hand.
+        Observe, think, and make
+        the best decision you can
+        with the information available.
+      </p>
+
+      <p>
+        This is where your judgment
+        and MJC’s help come together.
+        Let the app help you understand
+        your hand while you stay
+        aware of the game around it.
+      </p>
+
+      <h3>Make Your Choice</h3>
+
+      <p>
+        Once you’ve decided,
+        select the tile in MJC
+        and check the discard
+        confirmation carefully.
+        Make sure the tile you record
+        is the tile you actually
+        release at the table.
+      </p>
+
+      <p>
+        Then settle your rack
+        when practical and return
+        your attention to the game.
+        You don’t need to keep
+        debating the same choice
+        while the next player
+        is taking a turn.
+      </p>
+
+      <p>
+        If the decision was interesting,
+        save the hand for later.
+        A transcript gives you
+        something concrete to discuss
+        when there’s more time.
+      </p>
+
+      <p>
+        And if the hand doesn’t
+        turn out the way you hoped,
+        that doesn’t automatically
+        make the discard a bad one.
+        Remember, luck gets a turn too.
+      </p>
+
+      <p>
+        What matters for learning
+        is being able to say,
+        “Here’s what I saw,
+        here’s what I was trying
+        to keep, and here’s why
+        I made that choice.”
+      </p>
+
+      <p>
+        That’s a lot more useful
+        than “I tapped the tile
+        MJC told me to.”
+      </p>
+
+    </div>
+
+    <div class="dialog-actions"
+         style="flex-shrink:0; flex-wrap:wrap;">
+
+      <button type="button"
+              class="dialog-button"
+              onclick="
+                document.getElementById(
+                  'playingMJCChapter6Body'
+                ).scrollTo({
+                  top: 0,
+                  behavior: 'smooth'
+                });
+              ">
+        Chapter Sections
+      </button>
+
+      <button type="button"
+              class="dialog-button"
+              onclick="
+                closeDialog('playingMJCChapter6Dialog');
+                openDialog('playingMJCDialog');
+              ">
+        Back to Contents
+      </button>
+
+      <button type="button"
+              class="dialog-button primary"
+              onclick="closeDialog('playingMJCChapter6Dialog');">
+        Close
+      </button>
+
+    </div>
+  </div>
+</div>
+
 
 
 <div id="acknowledgmentsDialog" class="dialog-backdrop hidden">
