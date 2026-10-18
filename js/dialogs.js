@@ -1051,8 +1051,12 @@ console.log(
       document.getElementById("mmrTitle");
 
     title.textContent =
-  mmrState.action === "sagasa-after-draw"
-    ? "Sagasa Available"
+    mmrState.action === "sagasa-after-draw"
+    ? (
+        ruleset === "filipino16"
+          ? "Sagasa Available"
+          : "Kang Available"
+      )
     : (
         specialMeldType === "kang"
           ? "Kang Available"
@@ -1308,8 +1312,12 @@ if (
   ignoreButton.style.marginTop = "6px";
 
   ignoreButton.textContent =
-    mmrState.action === "sagasa-after-draw"
-      ? "Ignore Sagasa"
+       mmrState.action === "sagasa-after-draw"
+      ? (
+          ruleset === "filipino16"
+            ? "Ignore Sagasa"
+            : "Ignore Kang"
+        )
       : (
           specialMeldType === "kang"
             ? "Ignore Kang"
