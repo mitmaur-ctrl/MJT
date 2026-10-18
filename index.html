@@ -11122,7 +11122,24 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
         </li>
 
         <li>
-          <a href="#">Let’s Play a Turn</a>
+                    <a href="#"
+             onclick="
+               event.preventDefault();
+               event.stopPropagation();
+               closeDialog('playingMJCDialog');
+               openDialog('playingMJCChapter5Dialog');
+
+               requestAnimationFrame(function() {
+                 document.getElementById(
+                   'playingMJCChapter5Body'
+                 ).scrollTo({
+                   top: 0,
+                   behavior: 'instant'
+                 });
+               });
+             ">
+            Let’s Play a Turn
+          </a>
         </li>
 
         <li>
@@ -12395,7 +12412,409 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
   </div>
 </div>
 
+<!-- PLAYING MJC — CHAPTER 5 -->
+<div id="playingMJCChapter5Dialog"
+     class="dialog-backdrop hidden">
+  <div class="dialog"
+       style="display:flex; flex-direction:column;
+              max-height:85vh; overflow:hidden;">
 
+    <h2>Let’s Play a Turn</h2>
+
+    <div id="playingMJCChapter5Body"
+         style="overflow-y:auto; min-height:0; flex:1;">
+
+      <nav aria-label="Playing MJC Chapter 5 sections"
+           style="background:#f0f4f8; border-radius:10px;
+                  padding:14px; margin-bottom:20px;"
+           onclick="
+             const link =
+               event.target.closest('a[data-section]');
+             if (!link) return;
+             event.preventDefault();
+
+             const scroller = this.parentElement;
+             const heading = Array.from(
+               scroller.querySelectorAll('h3')
+             ).find(function(item) {
+               return item.textContent.trim() ===
+                 link.dataset.section;
+             });
+
+             if (heading) {
+               scroller.scrollTo({
+                 top: scroller.scrollTop +
+                   heading.getBoundingClientRect().top -
+                   scroller.getBoundingClientRect().top,
+                 behavior: 'smooth'
+               });
+             }
+           ">
+
+        <strong>In this chapter</strong>
+
+        <ul style="padding-left:1.3em; line-height:1.6;
+                   margin-bottom:0;">
+          <li>
+            <a href="#" data-section="Before You Reach for the Wall">
+              Before You Reach for the Wall
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="Record It While It’s Clear">
+              Record It While It’s Clear
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="Make Your Claim First">
+              Make Your Claim First
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="Give Replacement Draws Their Turn">
+              Give Replacement Draws Their Turn
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="Find Your Rhythm">
+              Find Your Rhythm
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <p>
+        Your starting hand is recorded,
+        your tiles have their places,
+        and the game is moving.
+        Now we want recording in MJC
+        to become a comfortable part
+        of your turn.
+      </p>
+
+      <p>
+        If you’re the Dealer,
+        you begin with your first discard.
+        We’ll think through discards
+        in the next chapter.
+        For now, let’s imagine you’re
+        preparing to draw.
+      </p>
+
+      <h3>Before You Reach for the Wall</h3>
+
+      <p>
+        It’s your turn, and no one
+        has discarded a tile you’re
+        going to claim for a Chow,
+        Pong, or Kang.
+        You’re about to draw.
+      </p>
+
+      <p>
+        Here’s a habit I recommend:
+        <strong>tap Draw in MJC
+        before you take your tile
+        from the wall.</strong>
+      </p>
+
+      <p>
+        That opens the tile-selection
+        screen so it’s ready when
+        you see what you’ve drawn.
+        You haven’t recorded a tile yet.
+        You’ve simply got MJC ready
+        for the next step.
+      </p>
+
+      <p>
+        Then draw your actual tile,
+        identify it, and record it.
+        One less tap to think about
+        while you’re holding a new tile
+        and deciding what to do with it.
+      </p>
+
+      <div role="img"
+           aria-label="Suggested draw routine:
+             open Draw in MJC;
+             draw the actual tile;
+             identify and record it;
+             examine the updated hand."
+           style="background:#f0f4f8;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0; text-align:center;">
+
+        <strong>A little preparation helps</strong>
+
+        <p>
+          Open Draw in MJC<br>
+          ↓<br>
+          Draw your tile from the wall<br>
+          ↓<br>
+          Identify and record it<br>
+          ↓<br>
+          Look at the updated hand
+        </p>
+
+        <p style="color:#666; margin-bottom:0;">
+          Opening the screen prepares the app.
+          Selecting the tile records the draw.
+        </p>
+      </div>
+
+      <p>
+        Of course, keep following
+        the actual game.
+        Having the Draw screen open
+        doesn’t make it your turn
+        at the table.
+      </p>
+
+      <h3>Record It While It’s Clear</h3>
+
+      <p>
+        Let’s say you draw 5 Bam.
+        Record 5 Bam as soon as practical,
+        while there’s no doubt about
+        which tile just arrived.
+      </p>
+
+      <p>
+        I’d do that before mixing it
+        into the rest of the rack.
+        It’s surprisingly easy to
+        admire a useful tile, move
+        a few groupings around,
+        and then wonder which tile
+        you were supposed to enter.
+      </p>
+
+      <p>
+        Once you record it, MJC updates
+        the hand. If a grouping choice
+        or declaration appears,
+        resolve that first.
+        When a discard recommendation
+        is available, you can then
+        read it and its Insight.
+      </p>
+
+      <p>
+        Recording promptly gives you
+        more of your turn to consider
+        the updated hand and recommendation.
+        MJC can’t consider the new tile
+        until you tell it what you drew.
+      </p>
+
+      <p>
+        The green highlight helps you
+        locate the last-drawn tile.
+        Look at where it landed
+        and what changed around it.
+        Did a box complete?
+        Did a Reserve gain a partner?
+        Did a new possibility appear?
+      </p>
+
+      <h3>Make Your Claim First</h3>
+
+      <p>
+        Now suppose an opponent discards
+        a tile you want to claim.
+        <strong>Make your claim
+        at the table first.</strong>
+      </p>
+
+      <p>
+        Don’t let the opportunity pass
+        while you’re busy telling
+        your phone about it.
+        The other players need
+        to hear from you first.
+      </p>
+
+      <p>
+        Then, as you lay out
+        the exposed meld, tap
+        <strong>Chow</strong>,
+        <strong>Pong</strong>, or
+        <strong>Kang</strong> in MJC
+        to match your claim.
+        Record the claimed tile
+        as soon as practical.
+      </p>
+
+      <p>
+        If MJC offers more than
+        one grouping, check the tiles
+        and select the meld you
+        actually intend to play.
+        Your physical meld and
+        MJC’s recorded meld should agree.
+      </p>
+
+      <div role="img"
+           aria-label="Suggested claim routine:
+             make the claim at the table;
+             use the corresponding MJC claim button
+             while laying out the meld;
+             record the claimed tile
+             and resolve any offered choices."
+           style="background:#f0f4f8;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0; text-align:center;">
+
+        <strong>Table first, then record</strong>
+
+        <p style="margin-bottom:0;">
+          Make your claim<br>
+          ↓<br>
+          Lay out the meld and
+          open the matching claim control<br>
+          ↓<br>
+          Record the claimed tile<br>
+          ↓<br>
+          Resolve any grouping
+          or declaration choices
+        </p>
+      </div>
+
+      <p>
+        For a Chow or Pong,
+        that gets MJC ready to
+        help you consider your discard.
+        A Kang has another step first:
+        the replacement draw.
+      </p>
+
+      <h3>Give Replacement Draws Their Turn</h3>
+
+      <p>
+        A declared Kang, NEWS,
+        or Sagasa can require
+        a replacement draw under
+        the applicable rules.
+        Follow MJC’s instruction
+        and record the replacement tile.
+      </p>
+
+      <p>
+        Don’t rush straight to a discard
+        just because you’ve finished
+        laying out the meld.
+        That replacement tile may
+        change the hand again.
+        It might even complete Mahjong.
+      </p>
+
+      <p>
+        If another choice or declaration
+        appears, resolve it and follow
+        the next instruction.
+        Get the full sequence recorded
+        before considering the ordinary
+        discard step.
+      </p>
+
+      <p>
+        The User Guide has the detailed
+        procedures in Chapters 5 and 6.
+        Here, the habit to remember is:
+        <strong>finish recording the
+        acquisition before deciding
+        from the updated hand.</strong>
+      </p>
+
+      <h3>Find Your Rhythm</h3>
+
+      <p>
+        At first, it may feel like
+        you’re managing two hands:
+        the one on the rack and
+        the one on the screen.
+        That’s understandable.
+        You’re building a new habit.
+      </p>
+
+      <p>
+        Keep the sequence simple.
+        Identify the action,
+        identify the tile,
+        record it, then look
+        at what changed.
+      </p>
+
+      <p>
+        If you notice a wrong entry,
+        correct it before continuing.
+        Trying to remember an unrecorded
+        correction while the game
+        moves on makes the next
+        decision harder than it needs
+        to be.
+      </p>
+
+      <p>
+        And keep watching the table.
+        Recording should help you
+        follow your hand while you
+        stay involved in the game.
+        If you need a moment during
+        a practice hand, take it.
+        That’s why we started
+        with practice games.
+      </p>
+
+      <p>
+        All right. The incoming tile
+        is recorded, any choices
+        are resolved, and MJC
+        is asking for a discard.
+      </p>
+
+      <p>
+        Now let’s think about
+        which tile should go.
+      </p>
+
+    </div>
+
+    <div class="dialog-actions"
+         style="flex-shrink:0; flex-wrap:wrap;">
+
+      <button type="button"
+              class="dialog-button"
+              onclick="
+                document.getElementById(
+                  'playingMJCChapter5Body'
+                ).scrollTo({
+                  top: 0,
+                  behavior: 'smooth'
+                });
+              ">
+        Chapter Sections
+      </button>
+
+      <button type="button"
+              class="dialog-button"
+              onclick="
+                closeDialog('playingMJCChapter5Dialog');
+                openDialog('playingMJCDialog');
+              ">
+        Back to Contents
+      </button>
+
+      <button type="button"
+              class="dialog-button primary"
+              onclick="closeDialog('playingMJCChapter5Dialog');">
+        Close
+      </button>
+
+    </div>
+  </div>
+</div>
 
 
 <div id="acknowledgmentsDialog" class="dialog-backdrop hidden">
