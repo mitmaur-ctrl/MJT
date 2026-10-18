@@ -177,8 +177,14 @@ function makeSnapshot() {
     screenMode: screenMode,
     hdMode: hdMode,
     gameAction: gameAction,
-    playerDiscardCount: playerDiscardCount,
+
+        playerDiscardCount: playerDiscardCount,
+
+    currentDiscardRecommendation:
+      [...(window.currentDiscardRecommendation || [])],
+
     lastDrawnTileKey: lastDrawnTileKey,
+
     revisionReturnHDMode: revisionReturnHDMode,
     revisionTarget: revisionTarget,
     revisionTouched: revisionTouched,
@@ -324,8 +330,11 @@ mmrCommittedBoxes =
   document.getElementById("seatWindSelect").value = seatWind;
   document.getElementById("prevailingWindSelect").value = prevailingWind;
 
-  updateWindIcons();
+    updateWindIcons();
   updateDisplay();
+
+  window.currentDiscardRecommendation =
+    [...(snapshot.currentDiscardRecommendation || [])];
 }
 
 function applyDisplayOrderToScreens() {
