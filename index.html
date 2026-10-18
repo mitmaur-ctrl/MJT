@@ -11080,7 +11080,24 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
         </li>
 
         <li>
-          <a href="#">See Your Hand Differently</a>
+                    <a href="#"
+             onclick="
+               event.preventDefault();
+               event.stopPropagation();
+               closeDialog('playingMJCDialog');
+               openDialog('playingMJCChapter3Dialog');
+
+               requestAnimationFrame(function() {
+                 document.getElementById(
+                   'playingMJCChapter3Body'
+                 ).scrollTo({
+                   top: 0,
+                   behavior: 'instant'
+                 });
+               });
+             ">
+            See Your Hand Differently
+          </a>
         </li>
 
         <li>
@@ -11616,7 +11633,436 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     </div>
   </div>
 </div>
+<!-- PLAYING MJC — CHAPTER 3 -->
+<div id="playingMJCChapter3Dialog"
+     class="dialog-backdrop hidden">
+  <div class="dialog"
+       style="display:flex; flex-direction:column;
+              max-height:85vh; overflow:hidden;">
 
+    <h2>See Your Hand Differently</h2>
+
+    <div id="playingMJCChapter3Body"
+         style="overflow-y:auto; min-height:0; flex:1;">
+
+      <nav aria-label="Playing MJC Chapter 3 sections"
+           style="background:#f0f4f8; border-radius:10px;
+                  padding:14px; margin-bottom:20px;"
+           onclick="
+             const link =
+               event.target.closest('a[data-section]');
+             if (!link) return;
+             event.preventDefault();
+
+             const scroller = this.parentElement;
+             const heading = Array.from(
+               scroller.querySelectorAll('h3')
+             ).find(function(item) {
+               return item.textContent.trim() ===
+                 link.dataset.section;
+             });
+
+             if (heading) {
+               scroller.scrollTo({
+                 top: scroller.scrollTop +
+                   heading.getBoundingClientRect().top -
+                   scroller.getBoundingClientRect().top,
+                 behavior: 'smooth'
+               });
+             }
+           ">
+
+        <strong>In this chapter</strong>
+
+        <ul style="padding-left:1.3em; line-height:1.6;
+                   margin-bottom:0;">
+          <li>
+            <a href="#" data-section="The Hand You Recognize">
+              The Hand You Recognize
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="Same Tiles, Different Arrangement">
+              Same Tiles, Different Arrangement
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="Why Six Boxes?">
+              Why Six Boxes?
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="Every Tile Has Value">
+              Every Tile Has Value
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <p>
+        Now that you’ve got MJC set up
+        and running, let’s look at
+        your hand a little differently.
+      </p>
+
+      <p>
+        MJC is here to teach you
+        Six Box Theory™—to help you
+        understand it and use it
+        to play better.
+        A big part of that is
+        helping you see what’s
+        already there.
+      </p>
+
+      <h3>The Hand You Recognize</h3>
+
+      <p>
+        You probably arrange your tiles
+        by suit and number.
+        It keeps things tidy and makes
+        individual tiles easy to find.
+        Something like this:
+      </p>
+
+      <div role="img"
+           aria-label="Sixteen starting tiles grouped
+             by suit and number:
+             Chars 1, 2, 3, 5, 5, 6;
+             Bams 4, 5, 6, 7, 8;
+             Dots 2, 4, 9, 9;
+             one White Dragon."
+           style="border:1px solid #ccc;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0;">
+
+        <strong>A familiar starting-hand arrangement</strong>
+
+        <p><strong>Chars</strong></p>
+        <div style="display:flex; flex-wrap:wrap; gap:6px;">
+          <span style="background:#f8f6e9; border:1px solid #bbb; border-radius:5px; padding:10px;">1</span>
+          <span style="background:#f8f6e9; border:1px solid #bbb; border-radius:5px; padding:10px;">2</span>
+          <span style="background:#f8f6e9; border:1px solid #bbb; border-radius:5px; padding:10px;">3</span>
+          <span style="background:#f8f6e9; border:1px solid #bbb; border-radius:5px; padding:10px;">5</span>
+          <span style="background:#f8f6e9; border:1px solid #bbb; border-radius:5px; padding:10px;">5</span>
+          <span style="background:#f8f6e9; border:1px solid #bbb; border-radius:5px; padding:10px;">6</span>
+        </div>
+
+        <p><strong>Bams</strong></p>
+        <div style="display:flex; flex-wrap:wrap; gap:6px;">
+          <span style="background:#f8f6e9; border:1px solid #bbb; border-radius:5px; padding:10px;">4</span>
+          <span style="background:#f8f6e9; border:1px solid #bbb; border-radius:5px; padding:10px;">5</span>
+          <span style="background:#f8f6e9; border:1px solid #bbb; border-radius:5px; padding:10px;">6</span>
+          <span style="background:#f8f6e9; border:1px solid #bbb; border-radius:5px; padding:10px;">7</span>
+          <span style="background:#f8f6e9; border:1px solid #bbb; border-radius:5px; padding:10px;">8</span>
+        </div>
+
+        <p><strong>Dots</strong></p>
+        <div style="display:flex; flex-wrap:wrap; gap:6px;">
+          <span style="background:#f8f6e9; border:1px solid #bbb; border-radius:5px; padding:10px;">2</span>
+          <span style="background:#f8f6e9; border:1px solid #bbb; border-radius:5px; padding:10px;">4</span>
+          <span style="background:#f8f6e9; border:1px solid #bbb; border-radius:5px; padding:10px;">9</span>
+          <span style="background:#f8f6e9; border:1px solid #bbb; border-radius:5px; padding:10px;">9</span>
+        </div>
+
+        <p><strong>Dragons</strong></p>
+        <div>
+          <span style="display:inline-block;
+                       background:#f8f6e9;
+                       border:1px solid #bbb;
+                       border-radius:5px; padding:10px;">
+            White
+          </span>
+        </div>
+
+        <p style="color:#666; margin-bottom:0;">
+          Teaching illustration: one 16-tile
+          hand, with numbers and names
+          replacing tile images.
+        </p>
+      </div>
+
+      <p>
+        Switch to <strong>Standard View</strong>
+        on your Starting Hand Display,
+        and you’ll see your starting tiles
+        grouped by suit and number,
+        much like your rack.
+      </p>
+
+      <p>
+        There’s nothing wrong with
+        that arrangement.
+        But finding a tile and understanding
+        what that tile is doing for
+        your hand are two different things.
+      </p>
+
+      <h3>Same Tiles, Different Arrangement</h3>
+
+      <p>
+        Now switch back to
+        <strong>Coaching View</strong>.
+        Same tiles, different arrangement!
+      </p>
+
+      <p>
+        Six Box Theory™ gives you
+        a method for organizing and
+        understanding your hand.
+        MJC helps with the visualization
+        by automatically arranging
+        your tiles into boxes.
+      </p>
+
+      <p>
+        Here’s how we can look at
+        those same 16 tiles through
+        the lens of boxes:
+      </p>
+
+      <div role="img"
+           aria-label="The same sixteen tiles
+             organized into two Complete Boxes,
+             four Developing Boxes, and one Reserve.
+             Complete Chows: 1, 2, 3 Char
+             and 4, 5, 6 Bam.
+             Developing groups: 5, 5, 6 Char;
+             7, 8 Bam; 2, 4 Dot; 9, 9 Dot.
+             Reserve: White."
+           style="border:1px solid #ccc;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0;">
+
+        <strong>The same hand, viewed as groupings</strong>
+
+        <div style="background:#f4f4f4;
+                    border-radius:10px; padding:12px;
+                    margin-top:16px;">
+          <strong>Reserves</strong>
+          <div style="background:#f8f6e9;
+                      border:1px solid #bbb;
+                      border-radius:5px; padding:10px;
+                      margin-top:10px; width:fit-content;">
+            White
+          </div>
+        </div>
+
+        <div style="background:#fff4df;
+                    border-radius:10px; padding:12px;
+                    margin-top:12px;">
+          <strong>Developing Boxes</strong>
+
+          <div style="background:white;
+                      border-radius:8px; padding:12px;
+                      margin-top:10px;">
+            <strong>Chow-Pong Candidate</strong><br>
+            5 Char · 5 Char · 6 Char
+          </div>
+
+          <div style="background:white;
+                      border-radius:8px; padding:12px;
+                      margin-top:10px;">
+            <strong>Double-Sided Wait</strong><br>
+            7 Bam · 8 Bam
+          </div>
+
+          <div style="background:white;
+                      border-radius:8px; padding:12px;
+                      margin-top:10px;">
+            <strong>Middle Wait</strong><br>
+            2 Dot · 4 Dot
+          </div>
+
+          <div style="background:white;
+                      border-radius:8px; padding:12px;
+                      margin-top:10px;">
+            <strong>Eye Candidate</strong><br>
+            9 Dot · 9 Dot
+          </div>
+        </div>
+
+        <div style="background:#eaf4e8;
+                    border-radius:10px; padding:12px;
+                    margin-top:12px;">
+          <strong>Completed Boxes</strong>
+
+          <div style="background:white;
+                      border-radius:8px; padding:12px;
+                      margin-top:10px;">
+            <strong>Chow</strong><br>
+            1 Char · 2 Char · 3 Char
+          </div>
+
+          <div style="background:white;
+                      border-radius:8px; padding:12px;
+                      margin-top:10px;">
+            <strong>Chow</strong><br>
+            4 Bam · 5 Bam · 6 Bam
+          </div>
+        </div>
+
+        <p style="color:#666; margin-bottom:0;">
+          A teaching arrangement of the same
+          tiles. MJC’s live grouping choices
+          depend on its evaluation of
+          the full hand.
+        </p>
+      </div>
+
+      <p>
+        Notice what happened.
+        We haven’t drawn anything.
+        We haven’t discarded anything.
+        We’ve simply made the groupings
+        easier to see.
+      </p>
+
+      <p>
+        Two Chows are already complete.
+        The other boxes give us something
+        to work on. And that White Dragon
+        is sitting in Reserves for now.
+      </p>
+
+      <p>
+        That’s the structure we’re
+        trying to recognize.
+        MJC makes it visible so you
+        can practice seeing it yourself.
+      </p>
+
+      <h3>Why Six Boxes?</h3>
+
+      <p>
+        To win a regular 16-tile Mahjong
+        hand, you need
+        <strong>six Complete Boxes:
+        five melds and one Eye</strong>.
+        Hence the name—Six Box Theory™!
+      </p>
+
+      <p>
+        Think of those as the six groupings
+        you’re working toward.
+        Some may already be complete.
+        Others are only partway there.
+      </p>
+
+      <p>
+        A Developing Box might contain
+        two tiles waiting for a third
+        to make a Chow.
+        It might contain a pair
+        that could become a Pong.
+        Or it might hold the pair
+        you’re considering for your Eye.
+      </p>
+
+      <p>
+        In our example, 7 Bam · 8 Bam
+        could become a Chow with
+        6 Bam or 9 Bam.
+        And 2 Dot · 4 Dot
+        needs 3 Dot.
+        Already, you have something
+        specific to look for.
+      </p>
+
+      <p>
+        Special hands use different
+        structures, but we’ll keep
+        our attention on the regular
+        six-box hand here.
+        One thing at a time.
+      </p>
+
+      <h3>Every Tile Has Value</h3>
+
+      <p>
+        Then there are the tiles
+        that don’t fit into the displayed
+        boxes yet. MJC places them
+        in <strong>Reserves</strong>,
+        for now.
+      </p>
+
+      <p>
+        “For now” is worth remembering.
+        A Reserve may find a partner
+        as the game progresses and
+        help develop your hand.
+        Or it may become a useful
+        discard choice.
+      </p>
+
+      <p>
+        The key is that
+        <strong>every tile has value</strong>.
+        Some help you complete a grouping.
+        Others give you something to discard
+        while preserving the groupings
+        you’re building.
+      </p>
+
+      <p>
+        So when you look at your hand,
+        try asking more than
+        “What tiles do I have?”
+        Ask, “What are these tiles
+        doing for my hand?”
+      </p>
+
+      <p>
+        Which groupings are complete?
+        Which are developing?
+        What does each one need?
+        And which tiles are still
+        waiting for a job?
+      </p>
+
+      <p>
+        Now let’s give those groupings
+        their own places on your
+        physical rack, too.
+      </p>
+
+    </div>
+
+    <div class="dialog-actions"
+         style="flex-shrink:0; flex-wrap:wrap;">
+
+      <button type="button"
+              class="dialog-button"
+              onclick="
+                document.getElementById(
+                  'playingMJCChapter3Body'
+                ).scrollTo({
+                  top: 0,
+                  behavior: 'smooth'
+                });
+              ">
+        Chapter Sections
+      </button>
+
+      <button type="button"
+              class="dialog-button"
+              onclick="
+                closeDialog('playingMJCChapter3Dialog');
+                openDialog('playingMJCDialog');
+              ">
+        Back to Contents
+      </button>
+
+      <button type="button"
+              class="dialog-button primary"
+              onclick="closeDialog('playingMJCChapter3Dialog');">
+        Close
+      </button>
+
+    </div>
+  </div>
+</div>
 
 <div id="acknowledgmentsDialog" class="dialog-backdrop hidden">
   <div class="dialog">
