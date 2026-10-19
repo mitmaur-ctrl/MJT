@@ -13736,13 +13736,1224 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
 </div>
 
 
-<div id="acknowledgmentsDialog" class="dialog-backdrop hidden">
-  <div class="dialog">
+<div id="acknowledgmentsDialog"
+     class="dialog-backdrop hidden">
+  <div class="dialog"
+       style="display:flex; flex-direction:column;
+              max-height:85vh; overflow:hidden;">
+
     <h2>Acknowledgments</h2>
-    <p>Special thanks to my friends in JEZEMS, a close circle of friends whose camaraderie and games introduced me to the wonderful world of Filipino Mahjong and helped inspire the creation of Six Box Theory™ and the Mahjong Coach app.</p>
-    <p style="text-align:center;"><em>“Cha na lang!”</em></p>
+
+    <div style="overflow-y:auto; min-height:0; flex:1;">
+      <p>
+        Special thanks to my friends in JEZEMS,
+        a close circle of friends whose camaraderie
+        and games introduced me to the wonderful
+        world of Filipino Mahjong and helped inspire
+        the creation of Six Box Theory™ and the
+        Mahjong Coach app.
+      </p>
+
+      <p style="text-align:center;">
+        <em>“Cha na lang!”</em>
+      </p>
+
+      <div style="background:#f0f4f8;
+                  border-radius:12px; padding:16px;
+                  margin:20px 0; text-align:center;">
+        <p style="margin-top:0;">
+          <strong>
+            Want to learn to play JEZEMS style?
+          </strong>
+        </p>
+
+        <p>
+          Here’s how we set up our table
+          and get a hand underway.
+        </p>
+
+        <button type="button"
+                class="dialog-button secondary"
+                onclick="
+                  closeDialog('acknowledgmentsDialog');
+                  openDialog('jezemsSetupDialog');
+                  document.getElementById(
+                    'jezemsSetupContents'
+                  ).scrollTop = 0;
+                ">
+          View Setup Guide
+        </button>
+      </div>
+    </div>
+
     <div class="dialog-actions">
-      <button class="dialog-button primary" onclick="closeDialog('acknowledgmentsDialog')">Close</button>
+      <button type="button"
+              class="dialog-button primary"
+              onclick="closeDialog('acknowledgmentsDialog');">
+        Close
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- JEZEMS SETUP GUIDE — CONTENTS -->
+<div id="jezemsSetupDialog"
+     class="dialog-backdrop hidden">
+  <div class="dialog"
+       style="display:flex; flex-direction:column;
+              max-height:85vh; overflow:hidden;">
+
+    <h2>JEZEMS Setup Guide</h2>
+
+    <div id="jezemsSetupContents"
+         style="overflow-y:auto; min-height:0; flex:1;">
+
+      <h3>Table of Contents</h3>
+
+      <ol style="padding-left:1.5em; line-height:1.6;">
+        <li>
+          <a href="#"
+             onclick="
+               event.preventDefault();
+               closeDialog('jezemsSetupDialog');
+               openDialog('jezemsSetupChapter1Dialog');
+               document.getElementById(
+                 'jezemsSetupChapter1Body'
+               ).scrollTop = 0;
+             ">
+            Welcome to Our Table
+          </a>
+        </li>
+
+               <li>
+          <a href="#"
+             onclick="
+               event.preventDefault();
+               closeDialog('jezemsSetupDialog');
+               openDialog('jezemsSetupChapter2Dialog');
+               document.getElementById(
+                 'jezemsSetupChapter2Body'
+               ).scrollTop = 0;
+             ">
+            Let’s Get Set Up
+          </a>
+        </li>
+
+                <li>
+          <a href="#"
+             onclick="
+               event.preventDefault();
+               closeDialog('jezemsSetupDialog');
+               openDialog('jezemsSetupChapter3Dialog');
+               document.getElementById(
+                 'jezemsSetupChapter3Body'
+               ).scrollTop = 0;
+             ">
+            Getting Your Tiles Ready
+          </a>
+        </li>
+      </ol>
+    </div>
+
+    <div class="dialog-actions"
+         style="flex-shrink:0; display:flex;
+                flex-wrap:wrap; justify-content:center;
+                gap:8px; padding-top:16px;">
+      <button type="button"
+              class="dialog-button secondary"
+              onclick="
+                closeDialog('jezemsSetupDialog');
+                openDialog('acknowledgmentsDialog');
+              ">
+        Back to Acknowledgments
+      </button>
+
+      <button type="button"
+              class="dialog-button primary"
+              onclick="closeDialog('jezemsSetupDialog');">
+        Close
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- JEZEMS SETUP GUIDE — CHAPTER 1 -->
+<div id="jezemsSetupChapter1Dialog"
+     class="dialog-backdrop hidden">
+  <div class="dialog"
+       style="display:flex; flex-direction:column;
+              max-height:85vh; overflow:hidden;">
+
+    <h2>Welcome to Our Table</h2>
+
+    <div id="jezemsSetupChapter1Body"
+         style="overflow-y:auto; min-height:0; flex:1;">
+
+      <p>
+        If you’ve joined us for Mahjong, you’ve
+        probably heard “Cha na lang!” before
+        the tiles have even settled.
+        Welcome to JEZEMS.
+      </p>
+
+      <p>
+        This guide shows you how we set up
+        our table and get a hand underway.
+        We play Filipino 16-tile Mahjong
+        with our own table conventions.
+        Other groups may do things differently,
+        so if you’ve played elsewhere,
+        a few details might be new to you.
+      </p>
+
+      <p>
+        And if you’re just learning,
+        that’s fine too. Ask questions.
+        We’ve all had to learn where to sit,
+        how many tiles to take, and what
+        to do when a flower turns up.
+      </p>
+
+      <p>
+        We’ll walk through it together,
+        with pictures along the way.
+                First, let’s get the table ready.
+      </p>
+
+      <div style="border-top:1px solid #ddd;
+                  padding-top:16px; margin-top:24px;
+                  text-align:right;">
+        <button type="button"
+                class="dialog-button secondary"
+                onclick="
+                  closeDialog('jezemsSetupChapter1Dialog');
+                  openDialog('jezemsSetupChapter2Dialog');
+                  document.getElementById(
+                    'jezemsSetupChapter2Body'
+                  ).scrollTop = 0;
+                ">
+          Next ›
+        </button>
+        <p style="color:#666;">Let’s Get Set Up</p>
+      </div>
+    </div>
+
+    <div class="dialog-actions"
+         style="flex-shrink:0; display:flex;
+                flex-wrap:wrap; justify-content:center;
+                gap:8px; padding-top:16px;">
+      <button type="button"
+              class="dialog-button secondary"
+              onclick="
+                closeDialog('jezemsSetupChapter1Dialog');
+                openDialog('jezemsSetupDialog');
+                document.getElementById(
+                  'jezemsSetupContents'
+                ).scrollTop = 0;
+              ">
+        Back to Contents
+      </button>
+
+      <button type="button"
+              class="dialog-button primary"
+              onclick="closeDialog('jezemsSetupChapter1Dialog');">
+        Close
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- JEZEMS SETUP GUIDE — CHAPTER 2 -->
+<div id="jezemsSetupChapter2Dialog"
+     class="dialog-backdrop hidden">
+  <div class="dialog"
+       style="display:flex; flex-direction:column;
+              max-height:85vh; overflow:hidden;">
+
+    <h2>Let’s Get Set Up</h2>
+
+    <div id="jezemsSetupChapter2Body"
+         style="overflow-y:auto; min-height:0; flex:1;">
+
+      <p>
+        Before we start admiring our tiles,
+        let’s get the table ready.
+        Everyone has a part in this—and
+        a little attention now makes
+        everything that follows easier.
+      </p>
+
+      <h3>1. What Goes on the Table?</h3>
+
+      <p>
+        You’ll need a table, four chairs,
+        and a mat in the middle.
+        Our mat has Wind markings already.
+        Yours doesn’t have to; we’ll explain
+        how to handle that when we choose seats.
+      </p>
+
+      <div style="background:#f0f4f8;
+                  border-radius:12px; padding:16px;">
+        <strong>Our Equipment Checklist</strong>
+        <ul style="padding-left:1.3em; line-height:1.6;">
+          <li>
+            <strong>144 Mahjong tiles:</strong>
+            108 suit tiles, 28 honor tiles,
+            and 8 Flowers and Seasons.
+          </li>
+          <li><strong>Three dice.</strong></li>
+          <li>
+            <strong>Four separate seating tiles:</strong>
+            East, South, West, and North.
+          </li>
+          <li><strong>Four wooden pushers.</strong></li>
+          <li><strong>A center mat.</strong></li>
+        </ul>
+        <p style="margin-bottom:0;">
+          We call the eight Flowers and Seasons
+          simply <strong>flowers</strong>.
+          Our seating tiles are separate from
+          the 144 tiles used in the game.
+        </p>
+      </div>
+
+      <p>
+        No chips, counters, or separate dealer
+        marker are needed at our table.
+        We play for enjoyment and camaraderie.
+      </p>
+
+      <h3>2. Meet the Pushers</h3>
+
+      <p>
+        Ours are plain wooden bars,
+        about <strong>1½ inches square
+        and 21 inches long</strong>.
+        We bought square wooden stock
+        and cut it to the length we wanted.
+        Nothing fancy—and very useful.
+      </p>
+
+      <figure style="margin:16px 0; padding:12px;
+                     border:1px solid #ccc;
+                     border-radius:12px;">
+        <svg viewBox="0 0 560 150"
+             role="img"
+             aria-label="A wooden pusher approximately
+               21 inches long, with a square end
+               measuring one and a half inches on each side."
+             style="display:block; width:100%; height:auto;">
+          <rect x="20" y="40" width="390" height="42"
+                rx="2" fill="#d8ad76" stroke="#87633c"/>
+          <path d="M30 55 H397 M30 70 H397"
+                stroke="#bd8c55" fill="none"/>
+          <path d="M20 100 H410 M20 94 V106 M410 94 V106"
+                stroke="#444"/>
+          <text x="215" y="128" text-anchor="middle"
+                font-size="19" fill="#222">About 21 inches</text>
+          <rect x="465" y="40" width="42" height="42"
+                fill="#e7c392" stroke="#87633c"/>
+          <text x="486" y="112" text-anchor="middle"
+                font-size="18" fill="#222">1½ × 1½ in</text>
+          <text x="486" y="25" text-anchor="middle"
+                font-size="17" fill="#222">Square end</text>
+        </svg>
+        <figcaption style="color:#666; text-align:center;">
+          A plain square bar: no groove or slanted face.
+          Illustration is schematic.
+        </figcaption>
+      </figure>
+
+      <p>
+        First, the pushers help us build
+        and move the walls. Later, we bring
+        them back in front of us to support
+        our hands. The tiles rest on the table,
+        leaning upright with their backs
+        against the wood and faces toward us.
+      </p>
+
+      <h3>3. Wash, Stack, and Build</h3>
+
+      <p>
+        Take a seat for now.
+        We’ll establish the official seats
+        after building the Great Wall.
+      </p>
+
+      <p>
+        Put all 144 tiles face down on the mat
+        and mix them thoroughly.
+        That’s the <strong>wash</strong>.
+        Each player has a pusher on the mat,
+        ready to serve as a backstop.
+      </p>
+
+      <p>
+        Build your wall against your pusher:
+        <strong>18 stacks, two tiles high</strong>.
+        Keep the tiles face down,
+        with their bottom edges against the wood.
+        That gives each player a wall
+        of <strong>36 tiles</strong>.
+      </p>
+
+      <figure style="margin:18px 0; padding:16px;
+               background:#edf5e9; border-radius:16px;">
+
+  <strong style="display:block; text-align:center;">
+    One wall: 18 stacks, two tiles high
+  </strong>
+
+  <!-- TOP VIEW: only the upper tile of each stack is visible. -->
+  <svg viewBox="0 0 560 160"
+       role="img"
+       aria-label="Top view: eighteen tile backs in one row against
+                   a wooden pusher. Each visible tile has another
+                   tile directly underneath it."
+       style="display:block; width:100%; height:auto;
+              margin-top:14px;">
+
+    <text x="280" y="22" text-anchor="middle"
+          font-size="19" font-weight="bold" fill="#222">
+      Top view
+    </text>
+
+    <defs>
+      <pattern id="jezemsWallTopTiles"
+               x="28" y="40"
+               width="28" height="42"
+               patternUnits="userSpaceOnUse">
+        <rect x="1" y="1" width="25" height="39"
+              rx="3" fill="#9ab7ac"
+              stroke="#58796c" stroke-width="1"/>
+      </pattern>
+    </defs>
+
+    <rect x="28" y="40" width="504" height="42"
+          fill="url(#jezemsWallTopTiles)"/>
+
+    <rect x="20" y="83" width="520" height="25"
+          fill="#d0b37a" stroke="#927342"
+          stroke-width="1.5"/>
+
+    <text x="280" y="102" text-anchor="middle"
+          font-size="16" fill="#342817">
+      Wooden pusher / backstop
+    </text>
+
+    <text x="280" y="140" text-anchor="middle"
+          font-size="17" fill="#444">
+      18 visible tiles—18 more directly underneath
+    </text>
+  </svg>
+
+  <!-- END VIEW: look along the length of the wall. -->
+  <svg viewBox="0 0 560 210"
+       role="img"
+       aria-label="Side view looking along the wall: two tiles
+                   stacked on the table, with their bottom edges
+                   against the wooden pusher."
+       style="display:block; width:100%; height:auto;
+              margin-top:12px;">
+
+    <text x="280" y="25" text-anchor="middle"
+          font-size="19" font-weight="bold" fill="#222">
+      Side view—looking along the wall
+    </text>
+
+    <!-- Square end of the pusher, resting on the table. -->
+    <rect x="345" y="58" width="100" height="100"
+          fill="#d0b37a" stroke="#927342"
+          stroke-width="2"/>
+
+    <text x="395" y="105" text-anchor="middle"
+          font-size="16" fill="#342817">
+      Wooden
+    </text>
+    <text x="395" y="126" text-anchor="middle"
+          font-size="16" fill="#342817">
+      pusher
+    </text>
+
+    <!-- Both tiles rest in one stack, beside the wood. -->
+    <rect x="180" y="126" width="165" height="32"
+          rx="4" fill="#dce9e1" stroke="#58796c"
+          stroke-width="2"/>
+
+    <rect x="180" y="94" width="165" height="32"
+          rx="4" fill="#dce9e1" stroke="#58796c"
+          stroke-width="2"/>
+
+    <!-- Green backs face upward. -->
+    <path d="M185 96 H340 M185 128 H340"
+          stroke="#58796c" stroke-width="5"/>
+
+    <text x="262" y="116" text-anchor="middle"
+          font-size="16" fill="#222">
+      Upper tile
+    </text>
+    <text x="262" y="148" text-anchor="middle"
+          font-size="16" fill="#222">
+      Lower tile
+    </text>
+
+    <!-- Table surface supports both the stack and pusher. -->
+    <path d="M85 160 H475"
+          stroke="#777" stroke-width="3"/>
+
+    <text x="280" y="190" text-anchor="middle"
+          font-size="17" fill="#444">
+      Table surface
+    </text>
+  </svg>
+
+  <figcaption style="text-align:center; color:#555;
+                     margin-top:8px;">
+    Each stack contains two face-down tiles.
+    The table supports the tiles; the pusher keeps
+    their bottom edges aligned.
+    <strong>18 stacks × 2 tiles = 36 tiles.</strong>
+  </figcaption>
+
+</figure>
+
+      <p>
+        Once all four walls are ready,
+        use the pushers to move them forward
+        into a square in the middle.
+        There it is: the <strong>Great Wall</strong>.
+        Four walls, 36 tiles each—144 altogether.
+      </p>
+
+      <figure style="margin:16px 0; padding:12px;
+                     border:1px solid #ccc;
+                     border-radius:12px;">
+        <svg viewBox="0 0 360 270"
+             role="img"
+             aria-label="Four equal walls arranged
+               as a square in the middle of the mat."
+             style="display:block; width:100%;
+                    max-width:360px; margin:auto; height:auto;">
+          <rect x="20" y="10" width="320" height="250"
+                rx="12" fill="#eaf4e8"/>
+          <g fill="#8bb0a4" stroke="#34594c" stroke-width="2">
+            <rect x="75" y="45" width="210" height="24"/>
+            <rect x="75" y="201" width="210" height="24"/>
+            <rect x="48" y="72" width="24" height="126"/>
+            <rect x="288" y="72" width="24" height="126"/>
+          </g>
+          <text x="180" y="123" text-anchor="middle"
+                font-size="23" fill="#222">The Great Wall</text>
+          <text x="180" y="153" text-anchor="middle"
+                font-size="18" fill="#222">4 walls · 144 tiles</text>
+        </svg>
+        <figcaption style="color:#666; text-align:center;">
+          Schematic overhead view.
+          Each wall contains 18 double stacks.
+        </figcaption>
+      </figure>
+
+      <p>
+        Now pull your pusher back in front
+        of you. Its next job is to support
+        the starting tiles you’ll receive.
+      </p>
+
+      <h3>4. Who Sits Where?</h3>
+
+      <p>
+        Shuffle the four separate seating
+        Wind tiles face down in the middle.
+        Everyone picks one, in no particular
+        order. No dice roll is needed.
+      </p>
+
+      <p>
+        We use one of two seating methods.
+        Agree on which one you’re using
+        before the tiles are revealed.
+      </p>
+
+      <div style="background:#f0f4f8; padding:16px;
+                  border-radius:10px; margin:16px 0;">
+        <strong>Everyone Moves</strong>
+        <p style="margin-bottom:0;">
+          Each player moves to the seat matching
+          the Wind tile they drew.
+          Our mat marks the four positions.
+          If yours doesn’t, the house designates
+          the physical East seat, and the other
+          Winds follow counterclockwise.
+        </p>
+      </div>
+
+      <div style="background:#f0f4f8; padding:16px;
+                  border-radius:10px; margin:16px 0;">
+        <strong>No One Moves</strong>
+        <p style="margin-bottom:0;">
+          Whoever draws East establishes
+          East where they’re already sitting,
+          regardless of the mat’s markings.
+          Everyone stays put.
+          The other seats are assigned relative
+          to East, rather than by the tiles
+          those players picked.
+        </p>
+      </div>
+
+      <figure style="margin:16px 0; padding:12px;
+                     border:1px solid #ccc;
+                     border-radius:12px;">
+        <svg viewBox="0 0 360 290"
+             role="img"
+             aria-label="East at the bottom,
+               South on the right, West at the top,
+               North on the left. Seat order is
+               East, South, West, North counterclockwise."
+             style="display:block; width:100%;
+                    max-width:360px; margin:auto; height:auto;">
+          <rect x="85" y="65" width="190" height="160"
+                rx="12" fill="#eaf4e8" stroke="#aaa"/>
+          <g font-size="21" text-anchor="middle" fill="#222">
+            <text x="180" y="40">West</text>
+            <text x="180" y="260">East</text>
+            <text x="180" y="283" font-size="16">First dealer</text>
+            <text x="43" y="151">North</text>
+            <text x="317" y="151">South</text>
+            <text x="180" y="135" font-size="17">Counterclockwise</text>
+            <text x="180" y="163" font-size="17">E → S → W → N</text>
+          </g>
+        </svg>
+        <figcaption style="color:#666; text-align:center;">
+          From East’s perspective: South is
+          to the right, West opposite,
+          and North to the left.
+        </figcaption>
+      </figure>
+
+      <p>
+        East is our first dealer.
+        We draw seating tiles only once,
+        at the start of the game.
+        The deal passes after every hand,
+        with no dealer repeats.
+        Four hands make a round;
+        four rounds make a full game.
+        Later seat changes follow
+        our between-round rotation.
+      </p>
+
+      <h3>5. Two Throws, Two Jobs</h3>
+
+      <p>
+        East throws all three dice twice.
+        Keep the two totals separate:
+        the first chooses <strong>whose wall</strong>;
+        the second chooses <strong>where to break it</strong>.
+      </p>
+
+      <div style="background:#f0f4f8; padding:16px;
+                  border-radius:10px; margin:16px 0;">
+        <strong>First throw: 7</strong>
+        <p style="margin-bottom:0;">
+          Start with East as 1 and count
+          counterclockwise:
+          East, South, West, North,
+          East, South, <strong>West</strong>.
+          We’ll break West’s wall.
+        </p>
+      </div>
+
+      <div style="background:#fff8cc; padding:16px;
+                  border-radius:10px; margin:16px 0;">
+        <strong>Second throw: 12</strong>
+        <p style="margin-bottom:0;">
+          West counts 12 double stacks from
+          <strong>West’s own right</strong>.
+          Count stacks, not individual tiles.
+          The break is after stack 12,
+          between stacks 12 and 13.
+        </p>
+      </div>
+
+      <h3>6. Mark the Flower Wall</h3>
+
+      <p>
+        In our example, West lifts both tiles
+        from stack 12 and places them on
+        stack 11. That creates a
+        <strong>four-tile-high tail</strong>
+        marking the Flower Wall.
+      </p>
+
+      <figure style="margin:16px 0; padding:12px;
+                     border:1px solid #ccc;
+                     border-radius:12px;">
+        <svg viewBox="0 0 520 255"
+             role="img"
+             aria-label="Close-up of the wall break.
+               Count from West's right.
+               Move the two tiles of stack twelve
+               onto stack eleven, creating a four-high
+               Flower Wall tail. Stack thirteen
+               begins the Playing Wall."
+             style="display:block; width:100%; height:auto;">
+          <g font-size="18" text-anchor="middle" fill="#222">
+            <text x="260" y="23">Count from West’s right: ←</text>
+            <text x="80" y="65">13</text>
+            <text x="260" y="65">12</text>
+            <text x="440" y="65">11</text>
+          </g>
+
+          <g fill="#8bb0a4" stroke="#34594c">
+            <rect x="50" y="114" width="60" height="24" rx="2"/>
+            <rect x="50" y="142" width="60" height="24" rx="2"/>
+            <rect x="410" y="58" width="60" height="24" rx="2"/>
+            <rect x="410" y="86" width="60" height="24" rx="2"/>
+            <rect x="410" y="114" width="60" height="24" rx="2"/>
+            <rect x="410" y="142" width="60" height="24" rx="2"/>
+          </g>
+
+          <path d="M230 86 H290 V166 H230 Z"
+                fill="none" stroke="#aaa" stroke-dasharray="5 4"/>
+          <g font-size="17" text-anchor="middle" fill="#222">
+            <text x="260" y="192">Stack 12 moved onto 11</text>
+            <text x="90" y="222">Playing Wall</text>
+            <text x="90" y="245">starts at 13</text>
+            <text x="430" y="222">Flower Wall</text>
+            <text x="430" y="245">raised tail</text>
+          </g>
+        </svg>
+        <figcaption style="color:#666; text-align:center;">
+          Close-up only: the other stacks are omitted.
+          The numbered positions refer to
+          West’s count before moving stack 12.
+        </figcaption>
+      </figure>
+
+      <p>
+        The <strong>Playing Wall</strong>
+        supplies the starting hands and
+        ordinary draws. The
+        <strong>Flower Wall</strong>
+        supplies flower replacements.
+        We’ll follow both ends carefully
+        in the next chapter.
+      </p>
+
+      <div style="background:#f0f4f8; padding:16px;
+                  border-radius:10px; margin:20px 0;">
+        <strong>Pro Tip: Have MJC Ready</strong>
+        <p style="margin-bottom:0;">
+          Set your Ruleset and Display order
+          before the wash and dealing begin.
+          Confirm your Role once seating
+          establishes who is East.
+          Save tile entry until your flowers
+          have been fully exchanged.
+          Right now, keep your attention
+          on the table.
+        </p>
+      </div>
+
+      <p>
+        The walls are ready, everyone has
+        a seat, and we know where to begin.
+        Now let’s get those tiles
+        into everyone’s hands.
+      </p>
+
+      <div style="border-top:1px solid #ddd;
+                  padding-top:16px; margin-top:24px;
+                  display:flex; justify-content:space-between;
+                  gap:16px;">
+        <div style="flex:1;">
+          <button type="button"
+                  class="dialog-button secondary"
+                  onclick="
+                    closeDialog('jezemsSetupChapter2Dialog');
+                    openDialog('jezemsSetupChapter1Dialog');
+                    document.getElementById(
+                      'jezemsSetupChapter1Body'
+                    ).scrollTop = 0;
+                  ">
+            ‹ Previous
+          </button>
+          <p style="color:#666;">Welcome to Our Table</p>
+        </div>
+
+                <div style="flex:1; text-align:right;">
+          <button type="button"
+                  class="dialog-button secondary"
+                  onclick="
+                    closeDialog('jezemsSetupChapter2Dialog');
+                    openDialog('jezemsSetupChapter3Dialog');
+                    document.getElementById(
+                      'jezemsSetupChapter3Body'
+                    ).scrollTop = 0;
+                  ">
+            Next ›
+          </button>
+          <p style="color:#666;">
+            Getting Your Tiles Ready
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="dialog-actions"
+         style="flex-shrink:0; display:flex;
+                flex-wrap:wrap; justify-content:center;
+                gap:8px; padding-top:16px;">
+      <button type="button"
+              class="dialog-button secondary"
+              onclick="
+                document.getElementById(
+                  'jezemsSetupChapter2Body'
+                ).scrollTo({top:0, behavior:'smooth'});
+              ">
+        Chapter Start
+      </button>
+
+      <button type="button"
+              class="dialog-button secondary"
+              onclick="
+                closeDialog('jezemsSetupChapter2Dialog');
+                openDialog('jezemsSetupDialog');
+                document.getElementById(
+                  'jezemsSetupContents'
+                ).scrollTop = 0;
+              ">
+        Back to Contents
+      </button>
+
+      <button type="button"
+              class="dialog-button primary"
+              onclick="closeDialog('jezemsSetupChapter2Dialog');">
+        Close
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="jezemsSetupChapter3Dialog"
+     class="dialog-backdrop hidden">
+  <div class="dialog"
+       style="display:flex; flex-direction:column;
+              max-height:85vh; overflow:hidden;">
+
+    <h2>Getting Your Tiles Ready</h2>
+
+    <div id="jezemsSetupChapter3Body"
+         style="overflow-y:auto; min-height:0; flex:1;">
+
+      <p>
+        The Great Wall is built, the seats are settled,
+        and the wall is broken. Now comes the part
+        where a little teamwork makes everything
+        run smoothly.
+      </p>
+
+      <h3>Eight Tiles at a Time</h3>
+
+      <p>
+        Let’s stay with our example: West’s wall was
+        selected, and stack 12 was moved onto stack 11.
+        The Playing Wall begins at stack 13.
+      </p>
+
+      <p>
+        West takes <strong>four double stacks—eight
+        tiles</strong>—from the start of the Playing Wall
+        and passes them to East. The next eight go to
+        South, then West, then North. Repeat that
+        sequence once more, until everyone has
+        <strong>16 tiles</strong>.
+      </p>
+
+      <figure style="margin:18px 0; padding:16px;
+                     background:#edf5e9; border-radius:16px;">
+        <strong style="display:block; text-align:center;">
+          One delivery: four stacks, eight tiles
+        </strong>
+
+        <svg viewBox="0 0 480 150"
+             role="img"
+             aria-label="Four stacks with two tiles in each
+                         stack, making one delivery of eight tiles."
+             style="display:block; width:100%; height:auto;">
+          <g fill="#dce9e1" stroke="#58796c" stroke-width="2">
+            <rect x="60"  y="72" width="75" height="28" rx="3"/>
+            <rect x="60"  y="44" width="75" height="28" rx="3"/>
+            <rect x="155" y="72" width="75" height="28" rx="3"/>
+            <rect x="155" y="44" width="75" height="28" rx="3"/>
+            <rect x="250" y="72" width="75" height="28" rx="3"/>
+            <rect x="250" y="44" width="75" height="28" rx="3"/>
+            <rect x="345" y="72" width="75" height="28" rx="3"/>
+            <rect x="345" y="44" width="75" height="28" rx="3"/>
+          </g>
+          <text x="240" y="132" text-anchor="middle"
+                font-size="19" fill="#333">
+            4 stacks × 2 tiles = 8 tiles
+          </text>
+        </svg>
+
+        <figcaption style="text-align:center; color:#555;">
+          Side view of one delivery.
+          Each player receives two deliveries.
+        </figcaption>
+      </figure>
+
+      <div style="padding:16px; background:#f0f4f8;
+                  border-radius:14px; margin:18px 0;">
+        <p style="margin-top:0;">
+          <strong>Players receive tiles counter-clockwise:</strong><br>
+          East → South → West → North
+        </p>
+        <p style="margin-bottom:0;">
+          <strong>The Playing Wall is used clockwise.</strong><br>
+          These are two different directions.
+          Follow the next stacks along the wall while
+          keeping the deliveries in player order.
+        </p>
+      </div>
+
+      <h3>A Little Service Goes a Long Way</h3>
+
+      <p>
+        West won’t necessarily distribute every delivery.
+        As the start of the Playing Wall moves in front
+        of another player, that player continues
+        handing out the tiles. We call this
+        <strong>giving service</strong>.
+      </p>
+
+      <p>
+        It’s easy to get absorbed in arranging your own
+        tiles. We’ve all done it. Just keep an eye on
+        the wall, too. If the next tiles are in front
+        of you, someone may be waiting for your help.
+      </p>
+
+      <p>
+        Once everyone has 16 tiles, the player closest
+        to the new start of the Playing Wall uses
+        their pusher to move it forward and angle
+        its starting end toward the middle of the mat.
+        Make it easy for everyone to reach.
+      </p>
+
+      <h3>Flowers to the Left</h3>
+
+      <p>
+        As your deliveries arrive, pull out any flowers
+        and place them <strong>face up on the table,
+        in front of and to the left of your pusher</strong>.
+        Remember, we call all eight flower and season
+        tiles “flowers.”
+      </p>
+
+      <p>
+        Call out how many you have:
+        <strong>“Two flowers!”</strong>
+        That lets the dealer know you’ll need
+        two replacement tiles.
+      </p>
+
+      <figure style="margin:18px 0; padding:16px;
+                     background:#edf5e9; border-radius:16px;">
+        <strong style="display:block; text-align:center;">
+          Your side of the table
+        </strong>
+
+        <svg viewBox="0 0 520 220"
+             role="img"
+             aria-label="Overhead placement diagram: exposed
+                         flowers are in front of and to the left
+                         of the pusher. Your hand is on your side
+                         of the pusher."
+             style="display:block; width:100%; height:auto;">
+
+          <text x="260" y="28" text-anchor="middle"
+                font-size="18" fill="#555">
+            Toward the middle of the table
+          </text>
+
+          <g fill="#fff9e9" stroke="#b49d68" stroke-width="2">
+            <rect x="35" y="52" width="48" height="56" rx="4"/>
+            <rect x="91" y="52" width="48" height="56" rx="4"/>
+          </g>
+          <g font-size="25" text-anchor="middle" fill="#a2526e">
+            <text x="59" y="87">✿</text>
+            <text x="115" y="87">✿</text>
+          </g>
+
+          <text x="170" y="85" font-size="18" fill="#333">
+            Flowers face up
+          </text>
+
+          <rect x="35" y="122" width="450" height="27"
+                fill="#d0b37a" stroke="#927342"
+                stroke-width="2"/>
+          <text x="260" y="142" text-anchor="middle"
+                font-size="17" fill="#342817">
+            Your pusher
+          </text>
+
+          <text x="260" y="180" text-anchor="middle"
+                font-size="19" fill="#333">
+            Your hand rests on the table here,
+          </text>
+          <text x="260" y="204" text-anchor="middle"
+                font-size="19" fill="#333">
+            leaning against your side of the pusher.
+          </text>
+        </svg>
+
+        <figcaption style="text-align:center; color:#555;">
+          Placement diagram viewed from above.
+          The flowers stay separate from your playing tiles.
+        </figcaption>
+      </figure>
+
+      <h3>The Dealer Handles the Exchanges</h3>
+
+      <p>
+        East manages the initial flower exchange,
+        starting with their own flowers and then
+        proceeding counter-clockwise around the table.
+      </p>
+
+      <p>
+        Replacement tiles come from the
+        <strong>Flower Wall</strong>, starting at
+        its raised tail. Take the top tile first,
+        then work down through that stack before
+        moving to the next stack.
+      </p>
+
+      <figure style="margin:18px 0; padding:16px;
+                     background:#f0f4f8; border-radius:16px;">
+        <strong style="display:block; text-align:center;">
+          The first four replacement tiles
+        </strong>
+
+        <svg viewBox="0 0 440 230"
+             role="img"
+             aria-label="The initial four-tile Flower Wall tail:
+                         take the top tile first, then the second,
+                         third, and bottom tile."
+             style="display:block; width:100%; height:auto;">
+
+          <g fill="#dce9e1" stroke="#58796c" stroke-width="2">
+            <rect x="150" y="35"  width="140" height="35" rx="3"/>
+            <rect x="150" y="70"  width="140" height="35" rx="3"/>
+            <rect x="150" y="105" width="140" height="35" rx="3"/>
+            <rect x="150" y="140" width="140" height="35" rx="3"/>
+          </g>
+
+          <g text-anchor="middle" font-size="20" fill="#222">
+            <text x="220" y="59">1st</text>
+            <text x="220" y="94">2nd</text>
+            <text x="220" y="129">3rd</text>
+            <text x="220" y="164">4th</text>
+          </g>
+
+          <text x="220" y="210" text-anchor="middle"
+                font-size="18" fill="#555">
+            Work from the top down.
+          </text>
+        </svg>
+
+        <figcaption style="text-align:center; color:#555;">
+          The raised tail begins four tiles high.
+          Its height changes as tiles are taken.
+        </figcaption>
+      </figure>
+
+      <p>
+        After those four tiles, take the top tile
+        from the next double stack. When only its
+        bottom tile remains, move that tile onto
+        the following double stack. That makes
+        a raised tail of three tiles.
+        The tail doesn’t have to stay four tiles high.
+      </p>
+
+      <p>
+        If your replacement is another flower,
+        put it with your other flowers and say so.
+        It needs replacing, too.
+      </p>
+
+      <p>
+        The dealer waits while you check your
+        replacements. Once you have playing tiles
+        in place of all your flowers, the dealer
+        moves on to the next player who needs
+        an exchange.
+      </p>
+
+      <h3>One More Tile for the Dealer</h3>
+
+      <p>
+        Everyone begins with 16 playing tiles,
+        but East needs <strong>17</strong> to make
+        the first discard.
+      </p>
+
+      <p>
+        The easiest time for East to take that extra
+        tile is after the flower exchanges are
+        complete. East takes the
+        <strong>top tile from the start of the
+        Playing Wall</strong> and announces it:
+        “I’m taking my 17th tile.”
+      </p>
+
+      <p>
+        East can also take it during the flower
+        exchange, as long as everyone knows.
+        It’s a separate step from taking
+        flower replacements.
+      </p>
+
+      <div style="padding:16px; background:#f0f4f8;
+                  border-radius:14px; margin:18px 0;">
+        <strong>A useful little clue</strong>
+        <p style="margin-bottom:0;">
+          Once East has taken that top tile,
+          the start of the Playing Wall has
+          just its bottom tile showing.
+          That helps everyone see that the
+          dealer’s extra tile has already been taken.
+        </p>
+      </div>
+
+      <p>
+        If East’s extra tile is a flower, expose it
+        and replace it from the Flower Wall.
+        Keep replacing any further flowers until
+        East has 17 playing tiles.
+      </p>
+
+      <h3>Using MJC? Now Enter Your Tiles</h3>
+
+      <p>
+        Wait until <strong>all your flowers have
+        been exchanged</strong> before entering
+        your starting tiles into MJC.
+        Get your physical hand settled first,
+        then record it.
+      </p>
+
+      <p>
+        Players enter 16 tiles. The dealer enters 17.
+        Check that MJC’s Role matches your seat,
+        and review the tiles against your actual hand.
+      </p>
+
+      <p>
+        And give the dealer a little breathing room.
+        East has been handling flower exchanges
+        and is also expected to make the first
+        discard. Entering a starting hand takes
+        a moment, especially when you’re learning.
+      </p>
+
+      <p>
+        That’s one reason I recommend friendly
+        practice games while you get comfortable
+        with MJC. We’re here to learn together.
+        A little patience belongs at the table, too.
+      </p>
+
+      <h3>Ready? Let’s Play</h3>
+
+      <p>
+        East checks that the flower exchanges are
+        finished and everyone is ready.
+        The hand begins with
+        <strong>the dealer’s first discard</strong>.
+      </p>
+
+      <p>
+        From there, we follow our usual
+        draw, claim, and discard cycle.
+        You’ll hear some JEZEMS table terms along
+        the way, including <strong>Secret</strong>
+        for a hidden Kang and <strong>Sagasa</strong>
+        when upgrading an exposed Pong with
+        the fourth tile. We also allow
+        <strong>NEWS</strong>, a grouping containing
+        North, East, West, and South.
+      </p>
+
+      <p>
+        You don’t have to remember every detail
+        on your first visit. Ask questions,
+        watch the table, and lend a hand when
+        it’s time to give service.
+      </p>
+
+      <p>
+        The tiles are ready. So are we.
+        <strong>Cha na lang! Play On!</strong>
+      </p>
+
+      <div style="border-top:1px solid #ddd;
+                  padding-top:16px; margin-top:24px;">
+        <button type="button"
+                class="dialog-button secondary"
+                onclick="
+                  closeDialog('jezemsSetupChapter3Dialog');
+                  openDialog('jezemsSetupChapter2Dialog');
+                  document.getElementById(
+                    'jezemsSetupChapter2Body'
+                  ).scrollTop = 0;
+                ">
+          ‹ Previous
+        </button>
+        <p style="color:#666;">Let’s Get Set Up</p>
+      </div>
+
+    </div>
+
+    <div class="dialog-actions"
+         style="flex-shrink:0; display:flex;
+                flex-wrap:wrap; justify-content:center;
+                gap:8px; padding-top:16px;">
+
+      <button type="button"
+              class="dialog-button secondary"
+              onclick="
+                document.getElementById(
+                  'jezemsSetupChapter3Body'
+                ).scrollTo({top:0, behavior:'smooth'});
+              ">
+        Chapter Start
+      </button>
+
+      <button type="button"
+              class="dialog-button secondary"
+              onclick="
+                closeDialog('jezemsSetupChapter3Dialog');
+                openDialog('jezemsSetupDialog');
+                document.getElementById(
+                  'jezemsSetupContents'
+                ).scrollTop = 0;
+              ">
+        Back to Contents
+      </button>
+
+      <button type="button"
+              class="dialog-button primary"
+              onclick="closeDialog('jezemsSetupChapter3Dialog');">
+        Close
+      </button>
+
     </div>
   </div>
 </div>
