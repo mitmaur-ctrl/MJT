@@ -418,6 +418,20 @@ const mjcGlossaryEntries = [
       "Green arrows indicate a needed tile of the same suit with " +
       "a different number. Orange arrows indicate a matching tile."
   },
+
+  {
+    term: "Tile Opportunities",
+    definition:
+      "Copies of tiles that could help a Developing Box advance " +
+      "toward completion. Count individual copies, rather than " +
+      "just tile names. For example, a 3–4 Double-Sided Wait can " +
+      "become a Chow with a 2 or a 5 of the same suit. With four " +
+      "copies of each, that gives eight potential tile opportunities. " +
+      "These are possibilities, not a guarantee that those tiles " +
+      "are still available or will reach your hand. " +
+      "Also see Acceptance, Effective Acceptance, Sources, and Pathways."
+  },
+
   {
     term: "Acceptance",
     definition:
