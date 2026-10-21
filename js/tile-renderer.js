@@ -86,3 +86,31 @@ function renderCoachTile(tileKey, options = {}) {
     '</span>'
   );
 }
+
+function renderChiclets(root = document) {
+  root.querySelectorAll("[data-chiclets]").forEach(function(group) {
+    const tileKeys = group.dataset.chiclets.trim().split(/\s+/);
+
+    group.replaceChildren();
+
+    tileKeys.forEach(function(tileKey, index) {
+      const tile = document.createElement("span");
+      tile.className = "chiclet-tile";
+
+      const image = document.createElement("img");
+      image.src = getTileImagePath(tileKey);
+      image.alt = tileLabels[tileKey] || tileKey;
+
+      if (group.dataset.highlightIndex === String(index)) {
+        tile.classList.add("chiclet-incoming");
+      }
+
+      tile.appendChild(image);
+      group.appendChild(tile);
+    });
+  });
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+  renderChiclets();
+});
