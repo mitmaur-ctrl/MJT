@@ -558,49 +558,44 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
   
 <div class="footer">
   <div class="footer-row">
-    
-<button
-  type="button"
-  id="gettingStartedFooterBtn"
-  onclick="handleGettingStartedFooterClick(event)"
-  onpointerdown="startWelcomeLongPress(event)"
-  onpointerup="endWelcomeLongPress()"
-  onpointerleave="endWelcomeLongPress()"
-  onpointercancel="endWelcomeLongPress()"
-  oncontextmenu="event.preventDefault()"
->Getting Started</button>
+    <button
+      type="button"
+      onclick="
+        openDialog('playingMJCDialog');
+        requestAnimationFrame(function() {
+          document.getElementById('playingMJCContents')
+            .scrollTo({ top: 0, behavior: 'instant' });
+        });
+      "
+    >Learn to Use MJC</button>
 
-    <button onclick="openAboutDialog()">About MJC</button>
-    <button onclick="openAbout6BTDialog()">About 6BT</button>
+    <button
+      type="button"
+      id="gettingStartedFooterBtn"
+      onclick="handleGettingStartedFooterClick(event)"
+      onpointerdown="startWelcomeLongPress(event)"
+      onpointerup="endWelcomeLongPress()"
+      onpointerleave="endWelcomeLongPress()"
+      onpointercancel="endWelcomeLongPress()"
+      oncontextmenu="event.preventDefault()"
+    >Quick Start</button>
   </div>
 
   <div class="footer-row">
+    <button onclick="openAboutDialog()">About MJC</button>
+    <button onclick="openAbout6BTDialog()">About 6BT</button>
     <button type="button" onclick="openUserGuideDialog()">
       User Guide
     </button>
-
-        <button type="button"
-            onclick="
-              openDialog('playingMJCDialog');
-              requestAnimationFrame(function() {
-                document.getElementById(
-                  'playingMJCContents'
-                ).scrollTo({
-                  top: 0,
-                  behavior: 'instant'
-                });
-              });
-            ">
-      Playing MJC
-    </button>
-
     <button type="button" onclick="openGlossaryDialog()">
       Glossary
     </button>
   </div>
 
   <div class="footer-row">
-    <button onclick="openAcknowledgmentsDialog()">Acknowledgments</button>
+    <button onclick="openAcknowledgmentsDialog()">
+      Acknowledgments
+    </button>
     <button onclick="openFeedbackDialog()">Feedback</button>
     <button onclick="openSupportDialog()">Support MJC</button>
   </div>
@@ -1052,6 +1047,13 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     <p>
       MJC reveals the structure hidden within a Mahjong hand.
     </p>
+
+    <p>
+      Built on Six Box Theory™ (6BT), originally developed
+      for Filipino and Taiwanese 16-Tile Mahjong, MJC
+      will also bring this approach to Chinese 13-Tile
+      Mahjong in an upcoming adaptation.
+    </p>
    
 
     <div class="dialog-actions">
@@ -1081,43 +1083,51 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
       <strong>Learn. Understand. Improve.</strong>
     </p>
 
-            <p>
-      The purpose of Mahjong Coach (MJC) is to introduce
-      beginning and intermediate Mahjong players to
-      Six Box Theory™ (6BT), a method for understanding
-      Mahjong hand structure, and help them put it into
-      practice to make better playing decisions.
+    <p>
+      <strong>First time visiting? We’re glad you’re here!</strong>
     </p>
 
     <p>
-      Currently, MJC supports 16-Tile Mahjong
-      styles such as Filipino and Taiwanese, with a
-      version adapted for Chinese 13-Tile Mahjong
-      coming soon.
+      Have you ever sat down to play Mahjong and wondered
+      if there was a better way to look at your hand—to
+      recognize its strengths, spot its weaknesses, and
+      see its opportunities?
     </p>
 
     <p>
-      <strong>New here?</strong><br>
-      Getting Started shows you how to begin.
-      You can return to it anytime from the footer.
+      <strong>If so, this app’s for you!</strong>
+    </p>
+
+    <p>
+      Mahjong Coach shows you your hand in a different
+      light—revealing its structure and helping you
+      make better playing decisions.
+    </p>
+
+    <p>
+      Before starting your next game, let’s walk through
+      a hand together.
     </p>
 
     <div class="dialog-actions">
       <button
         type="button"
         class="dialog-button primary"
-        onclick="closeDialog('welcomeDialog'); openGettingStartedDialog();"
-      >
-        Getting Started
-      </button>
+        onclick="
+          closeDialog('welcomeDialog');
+          openDialog('playingMJCDialog');
+          requestAnimationFrame(function() {
+            document.getElementById('playingMJCContents')
+              .scrollTo({ top: 0, behavior: 'instant' });
+          });
+        "
+      >Learn to Use MJC</button>
 
       <button
         type="button"
         class="dialog-button"
         onclick="closeDialog('welcomeDialog')"
-      >
-        Continue to App
-      </button>
+      >Continue to App</button>
     </div>
   </div>
 </div>
@@ -1125,11 +1135,11 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
 
 <div id="gettingStartedDialog" class="dialog-backdrop hidden">
   <div class="dialog">
-    <h2>Getting Started</h2>
+    <h2>Quick Start</h2>
 
     <p>Welcome to Mahjong Coach!</p>
 
-    <p><strong>To get started:</strong></p>
+    <p><strong>Let’s get you started!</strong></p>
 
     <ol>
       <li><strong>Select your Role:</strong> Player or Dealer.</li>
@@ -1161,6 +1171,16 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     <h2>About 6BT</h2>
 
     <p>Six Box Theory™ (6BT) provides a method for understanding Mahjong hand structure.</p>
+
+    <p>
+      Originally developed for 16-Tile Mahjong styles
+      such as Filipino and Taiwanese, 6BT uses five
+      meld boxes and one Eye box to explain the
+      structure of a completed hand.
+      An adaptation for Chinese 13-Tile Mahjong,
+      using four meld boxes and one Eye box,
+      is coming soon.
+    </p>
 
     <p>Rather than viewing a hand as individual tiles, 6BT organizes it into boxes, offering a simpler way to visualize, understand, and develop your hand.</p> 
 
@@ -2214,10 +2234,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
        <h4>Hand Area — Coaching View</h4>
 
       <p>
-        Coaching View shows your hand organized into
-        Reserves, Developing Boxes, and Complete Boxes.
-        The illustration below shows the main areas;
-        tile images are omitted.
+        Coaching View reveals the structure of your hand by organizing its tiles into Reserves, Developing Boxes, and Complete Boxes. The illustration below identifies these three areas without displaying individual tiles.
       </p>
 
       <div style="border:1px solid #ccc; border-radius:12px;
@@ -2933,8 +2950,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
         Opens when you press Draw. Use its selection
         controls to record the tile you drew.
         This illustration shows the numbered-tile area
-        after selecting 5. Tile names stand in for
-        tile images.
+        after selecting 5.
       </p>
 
       <div style="border:1px solid #ccc; border-radius:12px;
@@ -2980,24 +2996,35 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
               Suit ▼
             </p>
 
-            <div style="display:grid; gap:8px;
-                        text-align:center;">
-              <span style="background:#f8f5e9;
-                           border:1px solid #bbb;
-                           border-radius:6px; padding:12px 2px;">
-                5 Char
-              </span>
-              <span style="background:#f8f5e9;
-                           border:1px solid #bbb;
-                           border-radius:6px; padding:12px 2px;">
-                5 Bam
-              </span>
-              <span style="background:#f8f5e9;
-                           border:1px solid #bbb;
-                           border-radius:6px; padding:12px 2px;">
-                5 Dot
-              </span>
-            </div>
+ <div style="display:grid; gap:8px;
+            text-align:center;">
+
+  <div style="background:#f8f5e9;
+              border:1px solid #bbb;
+              border-radius:6px; padding:6px 2px;">
+    <div class="chiclet-tiles"
+         data-chiclets="char5"
+         style="justify-content:center; margin-top:0;"></div>
+  </div>
+
+  <div style="background:#f8f5e9;
+              border:1px solid #bbb;
+              border-radius:6px; padding:6px 2px;">
+    <div class="chiclet-tiles"
+         data-chiclets="bam5"
+         style="justify-content:center; margin-top:0;"></div>
+  </div>
+
+  <div style="background:#f8f5e9;
+              border:1px solid #bbb;
+              border-radius:6px; padding:6px 2px;">
+    <div class="chiclet-tiles"
+         data-chiclets="dot5"
+         style="justify-content:center; margin-top:0;"></div>
+  </div>
+
+</div>
+  
           </div>
 
         </div>
@@ -3076,10 +3103,14 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
                       justify-content:center; text-align:center;">
             <div style="color:#6b3fa0; margin-bottom:8px;">58</div>
             <div style="background:#f8f5e9;
-                        border:1px solid #bbb;
-                        border-radius:6px; padding:24px 2px;">
-              White
-            </div>
+            border:1px solid #bbb;
+            border-radius:6px; padding:8px 2px;">
+
+  <div class="chiclet-tiles"
+       data-chiclets="white"
+       style="justify-content:center; margin-top:0;"></div>
+
+</div>
           </div>
 
         </div>
@@ -3136,66 +3167,65 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
       </p>
 
       <div style="border:1px solid #ccc; border-radius:12px;
-                  padding:12px; margin:16px 0;">
+                  padding:12px; margin:16px 0;
+                  text-align:center; font-size:12px;
+                  line-height:1.4; color:#2459b4;">
 
-        <div style="display:grid;
-                    grid-template-columns:repeat(3, minmax(0, 1fr));
-                    gap:18px 8px; text-align:center;
-                    font-size:12px; line-height:1.4;
-                    color:#2459b4;">
-
+        <div style="display:flex; justify-content:center;
+                    gap:20px; margin-bottom:18px;">
+          <div>
+            <span style="color:#6b3fa0;">64</span><br>
+            <u>Learn to Use MJC</u>
+          </div>
           <div>
             <span style="color:#6b3fa0;">60</span><br>
-            <u>Getting Started</u>
+            <u>Quick Start</u>
           </div>
+        </div>
 
+        <div style="display:grid;
+                    grid-template-columns:repeat(4, minmax(0, 1fr));
+                    gap:8px; margin-bottom:18px;">
           <div>
             <span style="color:#6b3fa0;">61</span><br>
             <u>About MJC</u>
           </div>
-
           <div>
             <span style="color:#6b3fa0;">62</span><br>
             <u>About 6BT</u>
           </div>
-
           <div>
             <span style="color:#6b3fa0;">63</span><br>
             <u>User Guide</u>
           </div>
-
-          <div>
-            <span style="color:#6b3fa0;">64</span><br>
-            <u>Playing MJC</u>
-          </div>
-
           <div>
             <span style="color:#6b3fa0;">65</span><br>
             <u>Glossary</u>
           </div>
+        </div>
 
+        <div style="display:flex; justify-content:center;
+                    gap:16px;">
           <div>
             <span style="color:#6b3fa0;">66</span><br>
             <u>Acknowledgments</u>
           </div>
-
           <div>
             <span style="color:#6b3fa0;">67</span><br>
             <u>Feedback</u>
           </div>
-
           <div>
             <span style="color:#6b3fa0;">68</span><br>
             <u>Support MJC</u>
           </div>
-
         </div>
+
       </div>
 
       <p>
         <strong><span style="color:#6b3fa0;">60</span>
-          Getting Started</strong><br>
-        Opens the quick setup instructions for
+          Quick Start</strong><br>
+        Opens the Quick Start instructions for
         entering your starting hand and beginning play.
       </p>
 
@@ -3221,7 +3251,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
 
       <p>
         <strong><span style="color:#6b3fa0;">64</span>
-          Playing MJC</strong><br>
+          Learn to Use MJC</strong><br>
           Opens a conversational coaching companion
         for learning and playing with MJC.
         Covers practice habits, reading your hand,
@@ -3314,8 +3344,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
 
       <p>
         Colored highlights help identify the last-drawn
-        tile and a tile selected for discard.
-        Tile names replace images in these examples.
+        tile and a tile selected for discard.       
       </p>
 
       <div style="border:1px solid #ccc; border-radius:12px;
@@ -3330,11 +3359,15 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
               71
             </div>
             <div style="background:#d8f5d0;
-                        border:2px solid #2e8b57;
-                        border-radius:8px; padding:24px 4px;
-                        box-shadow:0 0 0 2px rgba(46,139,87,.16);">
-              5 Char
-            </div>
+            border:2px solid #2e8b57;
+            border-radius:8px; padding:12px 4px;
+            box-shadow:0 0 0 2px rgba(46,139,87,.16);">
+
+  <div class="chiclet-tiles"
+       data-chiclets="char5"
+       style="justify-content:center; margin-top:0;"></div>
+
+</div>
             <p style="font-size:14px; margin-bottom:0;">
               Last drawn
             </p>
@@ -3345,12 +3378,16 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
               72
             </div>
             <div style="background:#f8f5e9;
-                        border:1px solid #bbb;
-                        border-radius:8px; padding:24px 4px;
-                        outline:4px solid #ffd400;
-                        outline-offset:2px;">
-              White
-            </div>
+            border:1px solid #bbb;
+            border-radius:8px; padding:12px 4px;
+            outline:4px solid #ffd400;
+            outline-offset:2px;">
+
+  <div class="chiclet-tiles"
+       data-chiclets="white"
+       style="justify-content:center; margin-top:0;"></div>
+
+</div>
             <p style="font-size:14px; margin-bottom:0;">
               Selected for discard
             </p>
@@ -4079,7 +4116,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
 
       <p>
         This example shows the Chow builder after
-        choosing Chars. Tile numbers stand in for images.
+        choosing Chars.
       </p>
 
       <div style="border:1px solid #ccc; border-radius:12px;
@@ -4108,18 +4145,64 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
         </p>
 
         <div style="display:grid;
-                    grid-template-columns:repeat(3, minmax(0, 1fr));
-                    gap:6px; text-align:center;">
-          <span style="background:#f8f5e9; padding:12px;">1</span>
-          <span style="background:#f8f5e9; padding:12px;">2</span>
-          <span style="background:#f8f5e9; padding:12px;">3</span>
-          <span style="background:#f8f5e9; padding:12px;">4</span>
-          <span style="background:#f8f5e9; padding:12px;">5</span>
-          <span style="background:#f8f5e9; padding:12px;">6</span>
-          <span style="background:#f8f5e9; padding:12px;">7</span>
-          <span style="background:#eee; color:#777; padding:12px;">8</span>
-          <span style="background:#eee; color:#777; padding:12px;">9</span>
-        </div>
+            grid-template-columns:repeat(3, minmax(0, 1fr));
+            gap:6px; text-align:center;">
+
+  <div style="background:#f8f5e9; padding:6px 2px;">
+    <div class="chiclet-tiles"
+         data-chiclets="char1"
+         style="justify-content:center; margin-top:0;"></div>
+  </div>
+
+  <div style="background:#f8f5e9; padding:6px 2px;">
+    <div class="chiclet-tiles"
+         data-chiclets="char2"
+         style="justify-content:center; margin-top:0;"></div>
+  </div>
+
+  <div style="background:#f8f5e9; padding:6px 2px;">
+    <div class="chiclet-tiles"
+         data-chiclets="char3"
+         style="justify-content:center; margin-top:0;"></div>
+  </div>
+
+  <div style="background:#f8f5e9; padding:6px 2px;">
+    <div class="chiclet-tiles"
+         data-chiclets="char4"
+         style="justify-content:center; margin-top:0;"></div>
+  </div>
+
+  <div style="background:#f8f5e9; padding:6px 2px;">
+    <div class="chiclet-tiles"
+         data-chiclets="char5"
+         style="justify-content:center; margin-top:0;"></div>
+  </div>
+
+  <div style="background:#f8f5e9; padding:6px 2px;">
+    <div class="chiclet-tiles"
+         data-chiclets="char6"
+         style="justify-content:center; margin-top:0;"></div>
+  </div>
+
+  <div style="background:#f8f5e9; padding:6px 2px;">
+    <div class="chiclet-tiles"
+         data-chiclets="char7"
+         style="justify-content:center; margin-top:0;"></div>
+  </div>
+
+  <div style="background:#eee; opacity:0.45; padding:6px 2px;">
+    <div class="chiclet-tiles"
+         data-chiclets="char8"
+         style="justify-content:center; margin-top:0;"></div>
+  </div>
+
+  <div style="background:#eee; opacity:0.45; padding:6px 2px;">
+    <div class="chiclet-tiles"
+         data-chiclets="char9"
+         style="justify-content:center; margin-top:0;"></div>
+  </div>
+
+</div>
 
         <p style="text-align:center; font-size:14px;">
           <span style="color:#6b3fa0;">114</span>
@@ -4179,7 +4262,6 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
         The Pong builder uses a number pad and suit
         choices, or an honor-tile selection.
         This simplified example shows number 5 selected.
-        Names replace tile images.
       </p>
 
       <div style="border:1px solid #ccc; border-radius:12px;
@@ -4218,19 +4300,32 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
               <span style="color:#6b3fa0;">118</span>
               Suit ▼
             </p>
-            <div style="display:grid; gap:6px;
-                        text-align:center;">
-              <span style="background:#f8f5e9; padding:10px 2px;">
-                5 Char
-              </span>
-              <span style="background:#f8f5e9; padding:10px 2px;">
-                5 Bam
-              </span>
-              <span style="background:#f8f5e9; padding:10px 2px;">
-                5 Dot
-              </span>
-            </div>
-          </div>
+
+           <div style="display:grid; gap:6px;
+            text-align:center;">
+
+  <div style="background:#f8f5e9; padding:6px 2px;">
+    <div class="chiclet-tiles"
+         data-chiclets="char5"
+         style="justify-content:center; margin-top:0;"></div>
+  </div>
+
+  <div style="background:#f8f5e9; padding:6px 2px;">
+    <div class="chiclet-tiles"
+         data-chiclets="bam5"
+         style="justify-content:center; margin-top:0;"></div>
+  </div>
+
+  <div style="background:#f8f5e9; padding:6px 2px;">
+    <div class="chiclet-tiles"
+         data-chiclets="dot5"
+         style="justify-content:center; margin-top:0;"></div>
+  </div>
+
+</div>
+ 
+
+         </div>
 
         </div>
 
@@ -4239,11 +4334,22 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
           <strong>Winds / Dragons</strong>
         </p>
 
-        <div style="background:#f5f5f5; padding:12px;
-                    border-radius:8px; font-size:14px;">
-          East · South · West · North<br><br>
-          Red · Green · White
-        </div>
+        <div style="background:#f5f5f5;
+            padding:12px;
+            border-radius:8px;">
+
+  <div class="chiclet-tiles"
+       data-chiclets="east south west north"
+       style="justify-content:center;
+              margin-top:0;
+              margin-bottom:10px;"></div>
+
+  <div class="chiclet-tiles"
+       data-chiclets="red green white"
+       style="justify-content:center;
+              margin-top:0;"></div>
+
+</div>
 
         <p style="text-align:center; font-size:14px;">
           <span style="color:#6b3fa0;">120</span>
@@ -4367,21 +4473,34 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
         <p style="color:#6b3fa0;">125</p>
 
         <div style="display:grid;
-                    grid-template-columns:repeat(4, minmax(0, 1fr));
-                    gap:6px; font-size:12px;">
-          <span style="background:#f8f5e9; padding:16px 2px;">
-            North
-          </span>
-          <span style="background:#f8f5e9; padding:16px 2px;">
-            East
-          </span>
-          <span style="background:#f8f5e9; padding:16px 2px;">
-            West
-          </span>
-          <span style="background:#f8f5e9; padding:16px 2px;">
-            South
-          </span>
-        </div>
+            grid-template-columns:repeat(4, minmax(0, 1fr));
+            gap:6px;">
+
+  <div style="background:#f8f5e9; padding:6px 0;">
+    <div class="chiclet-tiles"
+         data-chiclets="north"
+         style="justify-content:center; margin-top:0;"></div>
+  </div>
+
+  <div style="background:#f8f5e9; padding:6px 0;">
+    <div class="chiclet-tiles"
+         data-chiclets="east"
+         style="justify-content:center; margin-top:0;"></div>
+  </div>
+
+  <div style="background:#f8f5e9; padding:6px 0;">
+    <div class="chiclet-tiles"
+         data-chiclets="west"
+         style="justify-content:center; margin-top:0;"></div>
+  </div>
+
+  <div style="background:#f8f5e9; padding:6px 0;">
+    <div class="chiclet-tiles"
+         data-chiclets="south"
+         style="justify-content:center; margin-top:0;"></div>
+  </div>
+
+</div>
 
         <p style="font-size:14px;">
           <span style="color:#6b3fa0;">126</span>
@@ -4395,11 +4514,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
             Add NEWS
           </span>
         </div>
-
-        <p style="font-size:14px; color:#666;">
-          Names replace tile images in this illustration.
-        </p>
-
+    
       </div>
 
       <p>
@@ -4546,16 +4661,21 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
         <p style="color:#6b3fa0;">133</p>
 
         <div style="display:inline-block;
-                    background:#ffd6d6;
-                    border:2px solid #c40000;
-                    box-shadow:0 0 0 2px rgba(196,0,0,.18);
-                    border-radius:8px; padding:24px;">
-          5 Char
-        </div>
+            background:#ffd6d6;
+            border:2px solid #c40000;
+            box-shadow:0 0 0 2px rgba(196,0,0,.18);
+            border-radius:8px;
+            padding:8px;">
+
+  <div class="chiclet-tiles"
+       data-chiclets="char5"
+       style="justify-content:center;
+              margin-top:0;"></div>
+
+</div>
 
         <p style="font-size:14px; color:#666;">
           Example previous entry.
-          The tile name replaces its image.
         </p>
 
         <div style="background:#f5f5f5; border-radius:8px;
@@ -4604,9 +4724,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
 
       <p>
         When MJC offers multiple meld groupings,
-        each available grouping appears as a choice.
-        This simplified example uses tile names
-        instead of images.
+        each available grouping appears as a choice.       
       </p>
 
       <div style="border:1px solid #ccc; border-radius:12px;
@@ -4621,9 +4739,13 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
                     background:#f5f5f5; padding:14px;">
 
           <strong>
-            <span style="color:#6b3fa0;">136</span>
-            CHOW: 1 Char · 2 Char · 3 Char
-          </strong>
+  <span style="color:#6b3fa0;">136</span>
+  CHOW:
+</strong>
+
+<div class="chiclet-tiles"
+     data-chiclets="char1 char2 char3"
+     style="justify-content:center;"></div>
 
           <p style="margin-bottom:0;">
             <span style="color:#6b3fa0;">137</span>
@@ -4634,7 +4756,11 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
         <div style="border:1px solid #bbb; border-radius:8px;
                     background:#f5f5f5; padding:14px;
                     margin-top:10px;">
-          <strong>CHOW: 2 Char · 3 Char · 4 Char</strong>
+          <strong>CHOW:</strong>
+
+<div class="chiclet-tiles"
+     data-chiclets="char2 char3 char4"
+     style="justify-content:center;"></div>
         </div>
 
         <div style="background:#fff8cc; border-radius:8px;
@@ -4810,7 +4936,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
           <span style="color:#6b3fa0;">142</span>
           Saved Hands: 1<br>
           <span style="font-size:14px;">
-            (Keeps your 20 most recent hands.)
+            (MJC Keeps your 80 most recent hands.)
           </span>
         </p>
 
@@ -4853,7 +4979,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
         <strong><span style="color:#6b3fa0;">142</span>
           Saved-Hand Count</strong><br>
         Shows how many hands are saved.
-        History retains your 20 most recent saved hands.
+        MJC keeps your 80 most recent hands.
         When empty, it displays “No saved hands.”
       </p>
 
@@ -5313,15 +5439,18 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
         <p style="color:#6b3fa0;">169</p>
 
         <div style="display:inline-block;
-                    background:#ffd6d6;
-                    border:2px solid #c40000;
-                    border-radius:8px; padding:24px;">
-          5 Char
-        </div>
+            background:#ffd6d6;
+            border:2px solid #c40000;
+            border-radius:8px; padding:12px;">
+
+  <div class="chiclet-tiles"
+       data-chiclets="char5"
+       style="justify-content:center; margin-top:0;"></div>
+
+</div>
 
         <p style="color:#666; font-size:14px;">
-          Example previous entry.
-          Tile names replace images.
+          Example previous entry.        
         </p>
 
         <div style="display:grid;
@@ -6283,9 +6412,9 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
         remain outside those groupings.
       </p>
 
-      <p>
-        The examples below use tile names and
-        numbers in place of tile images.
+            <p>
+        The illustrations below show examples
+        of Mahjong hand structures.
         Where a suit is named, every numbered
         tile in that example belongs to that suit.
       </p>
@@ -6370,42 +6499,34 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
           <strong>Chow</strong><br>
           Three consecutive tiles of one suit.
         </p>
-        <div style="background:white;
-                    border-radius:8px; padding:12px;
-                    text-align:center;">
-          3 Bam · 4 Bam · 5 Bam
-        </div>
+        <div class="chiclet-tiles"
+     data-chiclets="bam3 bam4 bam5"
+     style="justify-content:center;"></div>
 
         <p>
           <strong>Pong</strong><br>
           Three matching tiles.
         </p>
-        <div style="background:white;
-                    border-radius:8px; padding:12px;
-                    text-align:center;">
-          Red · Red · Red
-        </div>
+        <div class="chiclet-tiles"
+     data-chiclets="red red red"
+     style="justify-content:center;"></div>
 
         <p>
           <strong>Kang</strong><br>
           Four matching tiles.
         </p>
-        <div style="background:white;
-                    border-radius:8px; padding:12px;
-                    text-align:center;">
-          7 Dot · 7 Dot · 7 Dot · 7 Dot
-        </div>
+        <div class="chiclet-tiles"
+     data-chiclets="dot7 dot7 dot7 dot7"
+     style="justify-content:center;"></div>
 
         <p>
           <strong>Eye</strong><br>
           Two matching tiles serving as
           the hand’s required pair.
         </p>
-        <div style="background:white;
-                    border-radius:8px; padding:12px;
-                    text-align:center;">
-          White · White
-        </div>
+        <div class="chiclet-tiles"
+     data-chiclets="white white"
+     style="justify-content:center;"></div>
       </div>
 
       <p>
@@ -6442,12 +6563,13 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
           Two consecutive tiles that can complete
           a Chow at either end.
         </p>
-        <div style="background:white;
-                    border-radius:8px; padding:12px;
-                    text-align:center;">
-          <strong>4 Char · 5 Char</strong><br>
-          Needs 3 Char or 6 Char
-        </div>
+        <div class="chiclet-tiles"
+     data-chiclets="char4 char5"
+     style="justify-content:center;"></div>
+
+<div style="text-align:center; margin-top:8px;">
+  Needs 3 Char or 6 Char
+</div>
 
         <p>
           <strong>Middle Wait (MW)</strong><br>
@@ -6456,8 +6578,13 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
         <div style="background:white;
                     border-radius:8px; padding:12px;
                     text-align:center;">
-          <strong>4 Bam · 6 Bam</strong><br>
-          Needs 5 Bam
+          <div class="chiclet-tiles"
+     data-chiclets="bam4 bam6"
+     style="justify-content:center;"></div>
+
+<div style="margin-top:8px;">
+  Needs 5 Bam
+</div>
         </div>
 
         <p>
@@ -6468,8 +6595,13 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
         <div style="background:white;
                     border-radius:8px; padding:12px;
                     text-align:center;">
-          <strong>1 Dot · 2 Dot</strong><br>
-          Needs 3 Dot
+          <div class="chiclet-tiles"
+     data-chiclets="dot1 dot2"
+     style="justify-content:center;"></div>
+
+<div style="margin-top:8px;">
+  Needs 3 Dot
+</div>
         </div>
       </div>
 
@@ -6500,8 +6632,13 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
       <div style="background:#fff4df;
                   border-radius:8px; padding:12px;
                   text-align:center; margin:12px 0;">
-        <strong>8 Dot · 8 Dot</strong><br>
-        A possible Eye
+        <div class="chiclet-tiles"
+     data-chiclets="dot8 dot8"
+     style="justify-content:center;"></div>
+
+<div style="margin-top:8px;">
+  A possible Eye
+</div>
       </div>
 
       <h4>Eye-Pong Candidate (EPC)</h4>
@@ -6517,8 +6654,13 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
       <div style="background:#fff4df;
                   border-radius:8px; padding:12px;
                   text-align:center; margin:12px 0;">
-        <strong>Green · Green</strong><br>
-        Eye option, or add Green for a Pong
+        <div class="chiclet-tiles"
+     data-chiclets="green green"
+     style="justify-content:center;"></div>
+
+<div style="margin-top:8px;">
+  Eye option, or add Green for a Pong
+</div>
       </div>
 
       <h4>Chow-Pong Candidate (CPC)</h4>
@@ -6538,7 +6680,9 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
         <div style="background:white;
                     border-radius:8px; padding:12px;
                     text-align:center; margin-top:10px;">
-          2 Char · 2 Char · 3 Char
+          <div class="chiclet-tiles"
+     data-chiclets="char2 char2 char3"
+     style="justify-content:center;"></div>
         </div>
         <p>
           A 1 Char or 4 Char can form a Chow
@@ -6552,7 +6696,9 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
         <div style="background:white;
                     border-radius:8px; padding:12px;
                     text-align:center; margin-top:10px;">
-          2 Bam · 2 Bam · 3 Bam · 4 Bam
+          <div class="chiclet-tiles"
+     data-chiclets="bam2 bam2 bam3 bam4"
+     style="justify-content:center;"></div>
         </div>
         <p style="margin-bottom:0;">
           These tiles offer overlapping Chow
@@ -6584,8 +6730,13 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
       <div style="background:#fff4df;
                   border-radius:8px; padding:12px;
                   text-align:center; margin:12px 0;">
-        <strong>White</strong><br>
-        Needs another White to form a pair
+        <div class="chiclet-tiles"
+     data-chiclets="white"
+     style="justify-content:center;"></div>
+
+<div style="margin-top:8px;">
+  Needs another White to form a pair
+</div>
       </div>
 
       <h3>5. Reserves</h3>
@@ -7018,7 +7169,16 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
                   margin:16px 0; text-align:center;">
 
         <strong>Discard Tile?</strong>
-        <p>Selected tile: White</p>
+
+
+        <p style="margin-bottom:0;">Selected tile:</p>
+
+<div class="chiclet-tiles"
+     data-chiclets="white"
+     style="justify-content:center;
+            margin-top:8px;
+            margin-bottom:12px;"></div>
+
 
         <div style="display:grid;
                     grid-template-columns:repeat(2, minmax(0, 1fr));
@@ -7325,17 +7485,50 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
 
       <div role="img"
            aria-label="Chow example:
-             4 Bam and 5 Bam in hand;
+             hold 4 Bam and 5 Bam;
              claim 6 Bam to form 4, 5, 6 Bam."
            style="background:#eaf4e8;
                   border-radius:12px; padding:16px;
                   margin:16px 0; text-align:center;">
         <strong>Chow example</strong>
-        <p>You hold: 4 Bam · 5 Bam</p>
-        <p>Claim: 6 Bam</p>
+
+        <p>You hold:</p>
+        <div class="chiclet-tiles"
+             data-chiclets="bam4 bam5"
+             style="justify-content:center;">
+        </div>
+
+        <p><strong>Tap Chow.</strong></p>
+
+        <div class="guide-acquire-row"
+             role="img"
+             aria-label="Illustration of the four acquire buttons:
+               Draw, Chow, Pong, Kang. Chow is highlighted.">
+          <span>Draw</span>
+          <span class="guide-acquire-highlight">Chow</span>
+          <span>Pong</span>
+          <span>Kang</span>
+        </div>
+
+        <p style="font-size:12px; color:#666;">
+          Button illustration only.
+        </p>
+
+        <p>Claim:</p>
+        <div class="chiclet-tiles"
+             data-chiclets="bam6"
+             data-highlight-index="0"
+             style="justify-content:center;">
+        </div>
+
+        <p>Completed Chow:</p>
         <div style="background:white;
                     border-radius:8px; padding:12px;">
-          4 Bam · 5 Bam · 6 Bam
+          <div class="chiclet-tiles"
+               data-chiclets="bam4 bam5 bam6"
+               data-highlight-index="2"
+               style="justify-content:center; margin-top:0;">
+          </div>
         </div>
       </div>
 
@@ -7351,17 +7544,51 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
 
       <div role="img"
            aria-label="Pong example:
-             two Red Dragons in hand;
-             claim a Red Dragon to form a Pong."
+             hold two Red Dragons;
+             tap Pong and claim a Red Dragon
+             to complete the Pong."
            style="background:#eaf4e8;
                   border-radius:12px; padding:16px;
                   margin:16px 0; text-align:center;">
         <strong>Pong example</strong>
-        <p>You hold: Red · Red</p>
-        <p>Claim: Red</p>
+
+        <p>You hold:</p>
+        <div class="chiclet-tiles"
+             data-chiclets="red red"
+             style="justify-content:center;">
+        </div>
+
+        <p><strong>Tap Pong.</strong></p>
+
+        <div class="guide-acquire-row"
+             role="img"
+             aria-label="Illustration of the four acquire buttons:
+               Draw, Chow, Pong, Kang. Pong is highlighted.">
+          <span>Draw</span>
+          <span>Chow</span>
+          <span class="guide-acquire-highlight">Pong</span>
+          <span>Kang</span>
+        </div>
+
+        <p style="font-size:12px; color:#666;">
+          Button illustration only.
+        </p>
+
+        <p>Claim:</p>
+        <div class="chiclet-tiles"
+             data-chiclets="red"
+             data-highlight-index="0"
+             style="justify-content:center;">
+        </div>
+
+        <p>Completed Pong:</p>
         <div style="background:white;
                     border-radius:8px; padding:12px;">
-          Red · Red · Red
+          <div class="chiclet-tiles"
+               data-chiclets="red red red"
+               data-highlight-index="2"
+               style="justify-content:center; margin-top:0;">
+          </div>
         </div>
       </div>
 
@@ -7393,23 +7620,37 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
                   margin:16px 0; text-align:center;">
 
         <strong>Incoming tile: 3 Char</strong>
+        <div class="chiclet-tiles"
+             data-chiclets="char3"
+             data-highlight-index="0"
+             style="justify-content:center;">
+        </div>
+
         <p>Possible Chow choices</p>
 
         <div style="background:#f0f4f8;
                     border-radius:8px; padding:12px;
                     margin-bottom:10px;">
-          1 Char · 2 Char · 3 Char
+          <div class="chiclet-tiles"
+               data-chiclets="char1 char2 char3"
+               data-highlight-index="2"
+               style="justify-content:center; margin-top:0;">
+          </div>
         </div>
 
         <div style="background:#f0f4f8;
                     border-radius:8px; padding:12px;">
-          2 Char · 3 Char · 4 Char
+          <div class="chiclet-tiles"
+               data-chiclets="char2 char3 char4"
+               data-highlight-index="1"
+               style="justify-content:center; margin-top:0;">
+          </div>
         </div>
 
         <p style="color:#666; margin-bottom:0;">
-          Example choices; the actual options
-          depend on your recorded hand.
-          Tile names replace images.
+          The yellow outline identifies the incoming tile
+          in each grouping. Example choices; the actual
+          options depend on your recorded hand.
         </p>
       </div>
 
@@ -7467,14 +7708,56 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
       </p>
 
       <div role="img"
-           aria-label="Kang example:
-             four matching 7 Dot tiles."
+           aria-label="Claimed Kang example:
+             hold three 7 Dot tiles;
+             tap Kang and claim the fourth 7 Dot."
            style="background:#eaf4e8;
                   border-radius:12px; padding:16px;
                   margin:16px 0; text-align:center;">
-        <strong>Kang</strong>
+        <strong>Claimed Kang example</strong>
+
+        <p>You hold:</p>
+        <div class="chiclet-tiles"
+             data-chiclets="dot7 dot7 dot7"
+             style="justify-content:center;">
+        </div>
+
+        <p><strong>Tap Kang.</strong></p>
+
+        <div class="guide-acquire-row"
+             role="img"
+             aria-label="Illustration of the four acquire buttons:
+               Draw, Chow, Pong, Kang. Kang is highlighted.">
+          <span>Draw</span>
+          <span>Chow</span>
+          <span>Pong</span>
+          <span class="guide-acquire-highlight">Kang</span>
+        </div>
+
+        <p style="font-size:12px; color:#666;">
+          Button illustration only.
+        </p>
+
+        <p>Claim:</p>
+        <div class="chiclet-tiles"
+             data-chiclets="dot7"
+             data-highlight-index="0"
+             style="justify-content:center;">
+        </div>
+
+        <p>Completed Kang after confirmation:</p>
+        <div style="background:white;
+                    border-radius:8px; padding:12px;">
+          <div class="chiclet-tiles"
+               data-chiclets="dot7 dot7 dot7 dot7"
+               data-highlight-index="3"
+               style="justify-content:center; margin-top:0;">
+          </div>
+        </div>
+
         <p style="margin-bottom:0;">
-          7 Dot · 7 Dot · 7 Dot · 7 Dot
+          Then follow MJC’s instruction
+          to enter your replacement draw.
         </p>
       </div>
 
@@ -7506,6 +7789,76 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
         such as Kang.
       </p>
 
+      <div role="img"
+           aria-label="Filipino Secret example:
+             three hidden 7 Dot tiles;
+             draw the fourth, then choose Declare Secret."
+           style="background:#eaf4e8;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0; text-align:center;">
+        <strong>Secret example — Filipino rules</strong>
+
+        <p>You hold these tiles hidden:</p>
+        <div class="chiclet-tiles"
+             data-chiclets="dot7 dot7 dot7"
+             style="justify-content:center;">
+        </div>
+
+        <p><strong>Tap Draw and enter the fourth tile.</strong></p>
+
+        <div class="guide-acquire-row"
+             role="img"
+             aria-label="Illustration of the four acquire buttons:
+               Draw, Chow, Pong, Kang. Draw is highlighted.">
+          <span class="guide-acquire-highlight">Draw</span>
+          <span>Chow</span>
+          <span>Pong</span>
+          <span>Kang</span>
+        </div>
+
+        <p style="font-size:12px; color:#666;">
+          Button illustration only.
+        </p>
+
+        <p>Drawn tile:</p>
+        <div class="chiclet-tiles"
+             data-chiclets="dot7"
+             data-highlight-index="0"
+             style="justify-content:center;">
+        </div>
+
+        <p>MJC offers the declaration:</p>
+        <div class="chiclet-tiles"
+             data-chiclets="dot7 dot7 dot7 dot7"
+             data-highlight-index="3"
+             style="justify-content:center;">
+        </div>
+
+        <p><strong>Tap Declare Secret.</strong></p>
+
+        <div role="img"
+             aria-label="Illustration of the Declare Secret button."
+             style="display:inline-block;
+                    background:#eee; color:#222;
+                    border:1px solid #bbb;
+                    border-radius:8px;
+                    padding:12px 20px;
+                    font-weight:bold;
+                    outline:3px solid #f6d74a;
+                    outline-offset:1px;">
+          Declare Secret
+        </div>
+
+        <p style="font-size:12px; color:#666;">
+          Button illustration only.
+        </p>
+
+        <p style="margin-bottom:0;">
+          Then follow MJC’s instruction
+          to enter your replacement draw.
+        </p>
+      </div>
+
       <p>
         After recording the declaration,
         follow the replacement-draw instruction.
@@ -7526,15 +7879,73 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
         is selected in Ruleset.
       </p>
 
-      <div role="img"
-           aria-label="NEWS grouping:
-             North, East, West, South."
+            <div role="img"
+           aria-label="Hidden NEWS example under Filipino rules:
+             hold North, East, and West;
+             draw South, then choose Declare Secret."
            style="background:#eaf4e8;
                   border-radius:12px; padding:16px;
                   margin:16px 0; text-align:center;">
-        <strong>NEWS</strong>
+        <strong>NEWS example — Filipino rules</strong>
+
+        <p>You hold these tiles hidden:</p>
+        <div class="chiclet-tiles"
+             data-chiclets="north east west"
+             style="justify-content:center;">
+        </div>
+
+        <p><strong>Tap Draw and enter South.</strong></p>
+
+        <div class="guide-acquire-row"
+             role="img"
+             aria-label="Illustration of the four acquire buttons:
+               Draw, Chow, Pong, Kang. Draw is highlighted.">
+          <span class="guide-acquire-highlight">Draw</span>
+          <span>Chow</span>
+          <span>Pong</span>
+          <span>Kang</span>
+        </div>
+
+        <p style="font-size:12px; color:#666;">
+          Button illustration only.
+        </p>
+
+        <p>Drawn tile:</p>
+        <div class="chiclet-tiles"
+             data-chiclets="south"
+             data-highlight-index="0"
+             style="justify-content:center;">
+        </div>
+
+        <p>MJC offers the NEWS declaration:</p>
+        <div class="chiclet-tiles"
+             data-chiclets="north east west south"
+             data-highlight-index="3"
+             style="justify-content:center;">
+        </div>
+
+        <p><strong>Tap Declare Secret.</strong></p>
+
+        <div role="img"
+             aria-label="Illustration of the Declare Secret button."
+             style="display:inline-block;
+                    background:#eee; color:#222;
+                    border:1px solid #bbb;
+                    border-radius:8px;
+                    padding:12px 20px;
+                    font-weight:bold;
+                    outline:3px solid #f6d74a;
+                    outline-offset:1px;">
+          Declare Secret
+        </div>
+
+        <p style="font-size:12px; color:#666;">
+          Button illustration only.
+        </p>
+
         <p style="margin-bottom:0;">
-          North · East · West · South
+          Then follow MJC’s instruction
+          to enter your replacement draw.
         </p>
       </div>
 
@@ -7560,15 +7971,79 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
         <strong>Declare Sagasa</strong>.
       </p>
 
-      <div style="background:#f0f4f8;
+            <div role="img"
+           aria-label="Filipino Sagasa example:
+             an exposed Pong of three 7 Dot tiles;
+             draw the fourth, then choose Declare Sagasa."
+           style="background:#f0f4f8;
                   border-radius:12px; padding:16px;
                   margin:16px 0; text-align:center;">
-        <strong>Sagasa example</strong>
-        <p>Exposed Pong: 7 Dot · 7 Dot · 7 Dot</p>
+        <strong>Sagasa example — Filipino rules</strong>
+
+        <p>Your existing exposed Pong:</p>
+        <div style="background:white;
+                    border-radius:8px; padding:12px;">
+          <div class="chiclet-tiles"
+               data-chiclets="dot7 dot7 dot7"
+               style="justify-content:center; margin-top:0;">
+          </div>
+        </div>
+
+        <p><strong>Tap Draw and enter the fourth tile.</strong></p>
+
+        <div class="guide-acquire-row"
+             role="img"
+             aria-label="Illustration of the four acquire buttons:
+               Draw, Chow, Pong, Kang. Draw is highlighted.">
+          <span class="guide-acquire-highlight">Draw</span>
+          <span>Chow</span>
+          <span>Pong</span>
+          <span>Kang</span>
+        </div>
+
+        <p style="font-size:12px; color:#666;">
+          Button illustration only.
+        </p>
+
+        <p>Drawn tile:</p>
+        <div class="chiclet-tiles"
+             data-chiclets="dot7"
+             data-highlight-index="0"
+             style="justify-content:center;">
+        </div>
+
+        <p><strong>Tap Declare Sagasa.</strong></p>
+
+        <div role="img"
+             aria-label="Illustration of the Declare Sagasa button."
+             style="display:inline-block;
+                    background:#eee; color:#222;
+                    border:1px solid #bbb;
+                    border-radius:8px;
+                    padding:12px 20px;
+                    font-weight:bold;
+                    outline:3px solid #f6d74a;
+                    outline-offset:1px;">
+          Declare Sagasa
+        </div>
+
+        <p style="font-size:12px; color:#666;">
+          Button illustration only.
+        </p>
+
+        <p>Your exposed Pong becomes a Kang:</p>
+        <div style="background:white;
+                    border-radius:8px; padding:12px;">
+          <div class="chiclet-tiles"
+               data-chiclets="dot7 dot7 dot7 dot7"
+               data-highlight-index="3"
+               style="justify-content:center; margin-top:0;">
+          </div>
+        </div>
+
         <p style="margin-bottom:0;">
-          Draw another 7 Dot<br>
-          → Declare Sagasa<br>
-          → Record a replacement draw
+          Then follow MJC’s instruction
+          to enter your replacement draw.
         </p>
       </div>
 
@@ -7912,43 +8387,61 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
         complete the Chow?
       </p>
 
-      <div role="img"
-           aria-label="Double-Sided Wait example:
-             4 Bam and 5 Bam can complete
-             with 3 Bam or 6 Bam.
-             Pathway figures are omitted."
-           style="background:#fff4df;
+       <div style="background:#fff4df;
                   border-radius:12px; padding:16px;
                   margin:16px 0; text-align:center;">
 
         <strong>Double-Sided Wait</strong>
 
-        <div style="display:grid;
-                    grid-template-columns:repeat(2, minmax(0, 1fr));
-                    gap:10px; margin-top:16px;">
+        <p>Starting grouping:</p>
+
+        <div class="chiclet-tiles"
+             data-chiclets="bam4 bam5"
+             style="justify-content:center;"></div>
+
+        <div style="display:flex; flex-wrap:wrap;
+                    justify-content:center;
+                    gap:12px; margin-top:16px;">
+
           <div style="background:white;
                       border-radius:8px; padding:12px;">
-            <strong style="color:#2e8b57;">3 Bam</strong><br>
-            <span style="color:#2e8b57;">↓</span><br>
-            3 · 4 · 5 Bam
+            <strong>With 3 Bam</strong>
+
+            <div class="chiclet-tiles"
+                 data-chiclets="bam3"
+                 data-highlight-index="0"
+                 style="justify-content:center;"></div>
+
+            <p style="color:#2e8b57; margin:8px 0;">▼</p>
+
+            <div class="chiclet-tiles"
+                 data-chiclets="bam3 bam4 bam5"
+                 data-highlight-index="0"
+                 style="justify-content:center;"></div>
           </div>
+
           <div style="background:white;
                       border-radius:8px; padding:12px;">
-            <strong style="color:#2e8b57;">6 Bam</strong><br>
-            <span style="color:#2e8b57;">↓</span><br>
-            4 · 5 · 6 Bam
+            <strong>With 6 Bam</strong>
+
+            <div class="chiclet-tiles"
+                 data-chiclets="bam6"
+                 data-highlight-index="0"
+                 style="justify-content:center;"></div>
+
+            <p style="color:#2e8b57; margin:8px 0;">▼</p>
+
+            <div class="chiclet-tiles"
+                 data-chiclets="bam4 bam5 bam6"
+                 data-highlight-index="2"
+                 style="justify-content:center;"></div>
           </div>
+
         </div>
 
-        <p>
-          Starting grouping:
-          <strong>4 Bam · 5 Bam</strong>
-        </p>
-
         <p style="color:#666; margin-bottom:0;">
-          Teaching illustration. Needed tile names
-          replace the live EA figures above
-          the markers; tile images are omitted.
+          Teaching illustration. Yellow outlines identify
+          the incoming tile. Live EA figures are omitted.
         </p>
       </div>
 
@@ -7962,11 +8455,22 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
 
       <h4>Middle Wait</h4>
 
-      <div style="background:#f0f4f8;
+            <div style="background:#f0f4f8;
                   border-radius:8px; padding:12px;
                   text-align:center; margin:12px 0;">
-        <strong>4 Char · 6 Char</strong><br>
-        Needs 5 Char
+
+        <strong>Starting grouping</strong>
+
+        <div class="chiclet-tiles"
+             data-chiclets="char4 char6"
+             style="justify-content:center;"></div>
+
+        <p>Needs <strong>5 Char</strong></p>
+
+        <div class="chiclet-tiles"
+             data-chiclets="char4 char5 char6"
+             data-highlight-index="1"
+             style="justify-content:center;"></div>
       </div>
 
       <p>
@@ -7978,11 +8482,22 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
 
       <h4>Edge Wait</h4>
 
-      <div style="background:#f0f4f8;
+            <div style="background:#f0f4f8;
                   border-radius:8px; padding:12px;
                   text-align:center; margin:12px 0;">
-        <strong>1 Dot · 2 Dot</strong><br>
-        Needs 3 Dot
+
+        <strong>Starting grouping</strong>
+
+        <div class="chiclet-tiles"
+             data-chiclets="dot1 dot2"
+             style="justify-content:center;"></div>
+
+        <p>Needs <strong>3 Dot</strong></p>
+
+        <div class="chiclet-tiles"
+             data-chiclets="dot1 dot2 dot3"
+             data-highlight-index="2"
+             style="justify-content:center;"></div>
       </div>
 
       <p>
@@ -8003,39 +8518,56 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
         ways to develop the grouping.
       </p>
 
-      <div role="img"
-           aria-label="Three-tile Chow-Pong Candidate:
-             2 Char, 2 Char, 3 Char.
-             Adding 1 or 4 Char offers a Chow;
-             adding 2 Char offers a Pong."
-           style="border:1px solid #ccc;
+      <div style="border:1px solid #ccc;
                   border-radius:12px; padding:16px;
-                  margin:16px 0;">
+                  margin:16px 0; text-align:center;">
 
-        <p style="text-align:center; margin-top:0;">
-          <strong>2 Char · 2 Char · 3 Char</strong>
-        </p>
+        <strong>Chow-Pong Candidate</strong>
+
+        <div class="chiclet-tiles"
+             data-chiclets="char2 char2 char3"
+             style="justify-content:center;"></div>
 
         <div style="background:#eaf4e8;
                     border-radius:8px; padding:12px;
-                    margin-bottom:10px;">
+                    margin-top:16px; margin-bottom:10px;">
+
           <strong style="color:#2e8b57;">
             Chow pathways
-          </strong><br>
-          Add 1 Char → 1 · 2 · 3 Char<br>
-          Add 4 Char → 2 · 3 · 4 Char
+          </strong>
+
+          <p>Add <strong>1 Char</strong></p>
+
+          <div class="chiclet-tiles"
+               data-chiclets="char1 char2 char3"
+               data-highlight-index="0"
+               style="justify-content:center;"></div>
+
+          <p>Add <strong>4 Char</strong></p>
+
+          <div class="chiclet-tiles"
+               data-chiclets="char2 char3 char4"
+               data-highlight-index="2"
+               style="justify-content:center;"></div>
         </div>
 
         <div style="background:#fff4df;
                     border-radius:8px; padding:12px;">
+
           <strong style="color:#d97706;">
             Pong pathway
-          </strong><br>
-          Add 2 Char → 2 · 2 · 2 Char
+          </strong>
+
+          <p>Add <strong>2 Char</strong></p>
+
+          <div class="chiclet-tiles"
+               data-chiclets="char2 char2 char2"
+               data-highlight-index="2"
+               style="justify-content:center;"></div>
         </div>
 
         <p style="color:#666; margin-bottom:0;">
-          Tile names replace images.
+          Yellow outlines identify the incoming tile.
           Each alternative uses only the tiles
           needed for its completed meld.
         </p>
@@ -8251,14 +8783,20 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
                     border-radius:8px; padding:12px;
                     margin-bottom:10px;">
           Hidden Chow:<br>
-          1 Char · 2 Char ·
-          <strong style="color:#6b3fa0;">3 Char</strong>
+
+<div class="chiclet-tiles"
+     data-chiclets="char1 char2 char3"
+     data-highlight-index="2"
+     style="justify-content:center;"></div>
         </div>
 
         <div style="background:#fff4df;
                     border-radius:8px; padding:12px;">
           Developing grouping:<br>
-          4 Char · 5 Char
+
+<div class="chiclet-tiles"
+     data-chiclets="char4 char5"
+     style="justify-content:center;"></div>
         </div>
 
         <p><strong>After regrouping</strong></p>
@@ -8267,20 +8805,26 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
                     border-radius:8px; padding:12px;
                     margin-bottom:10px;">
           Developing grouping:<br>
-          1 Char · 2 Char
+
+<div class="chiclet-tiles"
+     data-chiclets="char1 char2"
+     style="justify-content:center;"></div>
         </div>
 
         <div style="background:#eaf4e8;
                     border-radius:8px; padding:12px;">
           Hidden Chow:<br>
-          <strong style="color:#6b3fa0;">3 Char</strong>
-          · 4 Char · 5 Char
+
+<div class="chiclet-tiles"
+     data-chiclets="char3 char4 char5"
+     data-highlight-index="0"
+     style="justify-content:center;"></div>
         </div>
 
         <p style="color:#666; margin-bottom:0;">
-          Teaching example; tile names replace
-          images. Available RT choices depend
-          on the full recorded hand.
+          Teaching example; yellow outlines identify the
+relocated tile. Available RT choices depend
+on the full recorded hand.
         </p>
       </div>
 
@@ -8859,8 +9403,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
 
         <p style="color:#666; margin-top:0;">
           All numbered tiles in this example
-          are Characters. Numbers replace tile images.
-          Other boxes in the hand are omitted.
+          are Characters. Other boxes in the hand are omitted.
         </p>
 
         <div style="background:#fff8cc;
@@ -8874,52 +9417,92 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
             <div style="background:white;
                         border:1px solid #ddd;
                         border-radius:8px; padding:12px;">
-              <strong>3 · 4</strong><br>
-              Double-Sided Wait
+              <div class="chiclet-tiles"
+     data-chiclets="char3 char4"
+     style="justify-content:center; margin-top:0;
+            margin-bottom:8px;"></div>
+Double-Sided Wait
             </div>
 
             <div style="background:white;
                         border:1px solid #ddd;
                         border-radius:8px; padding:12px;">
-              <strong>6 · 7</strong><br>
-              Double-Sided Wait
+              <div class="chiclet-tiles"
+     data-chiclets="char6 char7"
+     style="justify-content:center; margin-top:0;
+            margin-bottom:8px;"></div>
+Double-Sided Wait
             </div>
           </div>
 
           <p style="margin-bottom:0;">
-            Incoming tile:
-            <strong style="display:inline-block;
-                           background:#faf7ec;
-                           border:3px solid #ffd43b;
-                           border-radius:8px;
-                           padding:6px 12px;">5</strong>
-          </p>
+  Incoming tile:
+</p>
+
+<div style="display:inline-block;
+            background:#faf7ec;
+            border:3px solid #ffd43b;
+            border-radius:8px;
+            padding:6px;">
+
+  <div class="chiclet-tiles"
+       data-chiclets="char5"
+       style="justify-content:center; margin-top:0;"></div>
+
+</div>
         </div>
 
         <div style="background:#eaf4e8;
                     border-radius:8px; padding:14px;
                     margin-top:14px;">
-          <strong>Choose 3 · 4 · 5</strong><br>
-          MJC Recommended<br>
-          Leaves <strong>6 · 7</strong>
-          as a Double-Sided Wait.
+          <strong>Choose:</strong>
+
+<div class="chiclet-tiles"
+     data-chiclets="char3 char4 char5"
+     data-highlight-index="2"
+     style="justify-content:center; margin-bottom:8px;"></div>
+
+MJC Recommended<br>
+Leaves this Double-Sided Wait:
+
+<div class="chiclet-tiles"
+     data-chiclets="char6 char7"
+     style="justify-content:center; margin-top:8px;"></div>
         </div>
 
         <div style="background:#f5f5f5;
                     border-radius:8px; padding:14px;
                     margin-top:10px;">
-          <strong>Choose 4 · 5 · 6</strong><br>
-          Leaves <strong>3</strong> and
-          <strong>7</strong> as Reserves.
+          <strong>Choose:</strong>
+
+<div class="chiclet-tiles"
+     data-chiclets="char4 char5 char6"
+     data-highlight-index="1"
+     style="justify-content:center; margin-bottom:8px;"></div>
+
+Leaves these two Reserves:
+
+<div class="chiclet-tiles"
+     data-chiclets="char3 char7"
+     style="justify-content:center; margin-top:8px;"></div>
         </div>
 
         <div style="background:#eaf4e8;
                     border-radius:8px; padding:14px;
                     margin-top:10px;">
-          <strong>Choose 5 · 6 · 7</strong><br>
-          MJC Recommended<br>
-          Leaves <strong>3 · 4</strong>
-          as a Double-Sided Wait.
+          <strong>Choose:</strong>
+
+<div class="chiclet-tiles"
+     data-chiclets="char5 char6 char7"
+     data-highlight-index="0"
+     style="justify-content:center; margin-bottom:8px;"></div>
+
+MJC Recommended<br>
+Leaves this Double-Sided Wait:
+
+<div class="chiclet-tiles"
+     data-chiclets="char3 char4"
+     style="justify-content:center; margin-top:8px;"></div>
         </div>
 
         <p style="margin-bottom:0;">
@@ -9761,7 +10344,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
 
       <p>
         MJC keeps your
-        <strong>20 most recent saved hands</strong>.
+        <strong>80 most recent hands</strong>.
         Keep a shared or downloaded copy
         of records you want to retain
         beyond that rolling collection.
@@ -10412,7 +10995,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
                   margin:16px 0;">
 
         <p style="margin-top:0;">
-          <strong>Getting Started</strong><br>
+          <strong>Quick Start</strong><br>
           Quick instructions for entering
           your starting hand and beginning play.
         </p>
@@ -10446,7 +11029,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
                 These references are available
         through the footer links.
         The footer also includes
-        <strong>Playing MJC</strong>,
+        <strong>Learn to Use MJC</strong>,
                 a conversational coaching companion
         with seven chapters about learning
         and playing with MJC.
@@ -11101,7 +11684,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
         <strong>Hand History</strong><br>
         Find saved hands, view transcripts,
         edit details, and share hand files.
-        MJC keeps the 20 most recent
+        MJC keeps the 80 most recent
         saved hands in the browser
         on that device.
       </p>
@@ -11121,8 +11704,8 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
       <h3>6. Find More Help</h3>
 
       <p>
-        <strong>Getting Started:</strong>
-        quick setup instructions.<br>
+        <strong>Quick Start:</strong>
+        Quick Start instructions.<br>
         <strong>User Guide:</strong>
         illustrated controls and procedures.<br>
         <strong>Glossary:</strong>
@@ -11190,14 +11773,14 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     </div>
   </div>
 </div>
-<!-- PLAYING MJC — TABLE OF CONTENTS -->
+<!-- Learn to Use MJC — TABLE OF CONTENTS -->
 <div id="playingMJCDialog"
      class="dialog-backdrop hidden">
   <div class="dialog"
        style="display:flex; flex-direction:column;
               max-height:85vh; overflow:hidden;">
 
-    <h2>Playing MJC</h2>
+    <h2>Learn to Use MJC</h2>
 
     <div id="playingMJCContents"
          style="overflow-y:auto; min-height:0; flex:1;">
@@ -11375,7 +11958,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
 </div>
 
 
-<!-- PLAYING MJC — CHAPTER 1 -->
+<!-- Learn to Use MJC — CHAPTER 1 -->
 <div id="playingMJCChapter1Dialog"
      class="dialog-backdrop hidden">
   <div class="dialog"
@@ -11387,7 +11970,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     <div id="playingMJCChapter1Body"
          style="overflow-y:auto; min-height:0; flex:1;">
 
-      <nav aria-label="Playing MJC Chapter 1 sections"
+      <nav aria-label="Learn to Use MJC Chapter 1 sections"
            style="background:#f0f4f8; border-radius:10px;
                   padding:14px; margin-bottom:20px;"
            onclick="
@@ -11449,13 +12032,30 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
 
       <p>
         MJC is here to help you learn
-        Six Box Theory™—to understand
+        Six Box Theory™ (6BT)—to understand
         the structure of your hand
         and use that understanding
         to make better decisions.
         It doesn’t play your hand for you.
         You’re still the one at the table,
         making the choices.
+      </p>
+
+      <p>
+        MJC currently supports Filipino and Taiwanese
+        16-tile Mahjong. An adaptation for
+        Chinese (Hong Kong) 13-tile Mahjong is coming soon.
+      </p>
+
+      <p>
+        Six Box Theory™ began with 16-tile Mahjong,
+        where a standard completed hand contains
+        five melds and a pair—six boxes.
+        That’s where the name comes from.
+        The Chinese 13-tile adaptation will use
+        four melds and a pair—five boxes,
+        applying the same approach to understanding
+        your hand.
       </p>
 
       <h3>Give Yourself Time</h3>
@@ -11562,7 +12162,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
         Luck has plenty to say
         about Mahjong.
         You can make a thoughtful
-        decision and still lose.
+        decision and still not win.
       </p>
 
       <p>
@@ -11625,7 +12225,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     </div>
   </div>
 </div>
-<!-- PLAYING MJC — CHAPTER 2 -->
+<!-- Learn to Use MJC — CHAPTER 2 -->
 <div id="playingMJCChapter2Dialog"
      class="dialog-backdrop hidden">
   <div class="dialog"
@@ -11637,7 +12237,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     <div id="playingMJCChapter2Body"
          style="overflow-y:auto; min-height:0; flex:1;">
 
-      <nav aria-label="Playing MJC Chapter 2 sections"
+      <nav aria-label="Learn to Use MJC Chapter 2 sections"
            style="background:#f0f4f8; border-radius:10px;
                   padding:14px; margin-bottom:20px;"
            onclick="
@@ -11876,7 +12476,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     </div>
   </div>
 </div>
-<!-- PLAYING MJC — CHAPTER 3 -->
+<!-- Learn to Use MJC — CHAPTER 3 -->
 <div id="playingMJCChapter3Dialog"
      class="dialog-backdrop hidden">
   <div class="dialog"
@@ -11888,7 +12488,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     <div id="playingMJCChapter3Body"
          style="overflow-y:auto; min-height:0; flex:1;">
 
-      <nav aria-label="Playing MJC Chapter 3 sections"
+      <nav aria-label="Learn to Use MJC Chapter 3 sections"
            style="background:#f0f4f8; border-radius:10px;
                   padding:14px; margin-bottom:20px;"
            onclick="
@@ -11929,6 +12529,13 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
               Same Tiles, Different Arrangement
             </a>
           </li>
+
+          <li>
+            <a href="#" data-section="Box Power, Baby!">
+              Box Power, Baby!
+            </a>
+          </li>
+
           <li>
             <a href="#" data-section="Why Six Boxes?">
               Why Six Boxes?
@@ -11982,47 +12589,30 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
         <strong>A familiar starting-hand arrangement</strong>
 
         <p><strong>Chars</strong></p>
-        <div style="display:flex; flex-wrap:wrap; gap:6px;">
-          <span style="background:#f8f6e9; border:1px solid #bbb; border-radius:5px; padding:10px;">1</span>
-          <span style="background:#f8f6e9; border:1px solid #bbb; border-radius:5px; padding:10px;">2</span>
-          <span style="background:#f8f6e9; border:1px solid #bbb; border-radius:5px; padding:10px;">3</span>
-          <span style="background:#f8f6e9; border:1px solid #bbb; border-radius:5px; padding:10px;">5</span>
-          <span style="background:#f8f6e9; border:1px solid #bbb; border-radius:5px; padding:10px;">5</span>
-          <span style="background:#f8f6e9; border:1px solid #bbb; border-radius:5px; padding:10px;">6</span>
+        <div class="chiclet-tiles"
+             data-chiclets="char1 char2 char3 char5 char5 char6">
         </div>
 
         <p><strong>Bams</strong></p>
-        <div style="display:flex; flex-wrap:wrap; gap:6px;">
-          <span style="background:#f8f6e9; border:1px solid #bbb; border-radius:5px; padding:10px;">4</span>
-          <span style="background:#f8f6e9; border:1px solid #bbb; border-radius:5px; padding:10px;">5</span>
-          <span style="background:#f8f6e9; border:1px solid #bbb; border-radius:5px; padding:10px;">6</span>
-          <span style="background:#f8f6e9; border:1px solid #bbb; border-radius:5px; padding:10px;">7</span>
-          <span style="background:#f8f6e9; border:1px solid #bbb; border-radius:5px; padding:10px;">8</span>
+        <div class="chiclet-tiles"
+             data-chiclets="bam4 bam5 bam6 bam7 bam8">
         </div>
 
         <p><strong>Dots</strong></p>
-        <div style="display:flex; flex-wrap:wrap; gap:6px;">
-          <span style="background:#f8f6e9; border:1px solid #bbb; border-radius:5px; padding:10px;">2</span>
-          <span style="background:#f8f6e9; border:1px solid #bbb; border-radius:5px; padding:10px;">4</span>
-          <span style="background:#f8f6e9; border:1px solid #bbb; border-radius:5px; padding:10px;">9</span>
-          <span style="background:#f8f6e9; border:1px solid #bbb; border-radius:5px; padding:10px;">9</span>
+        <div class="chiclet-tiles"
+             data-chiclets="dot2 dot4 dot9 dot9">
         </div>
 
         <p><strong>Dragons</strong></p>
-        <div>
-          <span style="display:inline-block;
-                       background:#f8f6e9;
-                       border:1px solid #bbb;
-                       border-radius:5px; padding:10px;">
-            White
-          </span>
+        <div class="chiclet-tiles"
+             data-chiclets="white">
         </div>
 
         <p style="color:#666; margin-bottom:0;">
-          Teaching illustration: one 16-tile
-          hand, with numbers and names
-          replacing tile images.
+          Teaching illustration: one 16-tile hand,
+          arranged by suit and number.
         </p>
+
       </div>
 
       <p>
@@ -12083,11 +12673,8 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
                     border-radius:10px; padding:12px;
                     margin-top:16px;">
           <strong>Reserves</strong>
-          <div style="background:#f8f6e9;
-                      border:1px solid #bbb;
-                      border-radius:5px; padding:10px;
-                      margin-top:10px; width:fit-content;">
-            White
+          <div class="chiclet-tiles"
+               data-chiclets="white">
           </div>
         </div>
 
@@ -12099,29 +12686,37 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
           <div style="background:white;
                       border-radius:8px; padding:12px;
                       margin-top:10px;">
-            <strong>Chow-Pong Candidate</strong><br>
-            5 Char · 5 Char · 6 Char
+            <strong>Chow-Pong Candidate</strong>
+            <div class="chiclet-tiles"
+                 data-chiclets="char5 char5 char6">
+            </div>
           </div>
 
           <div style="background:white;
                       border-radius:8px; padding:12px;
                       margin-top:10px;">
-            <strong>Double-Sided Wait</strong><br>
-            7 Bam · 8 Bam
+            <strong>Double-Sided Wait</strong>
+            <div class="chiclet-tiles"
+                 data-chiclets="bam7 bam8">
+            </div>
           </div>
 
           <div style="background:white;
                       border-radius:8px; padding:12px;
                       margin-top:10px;">
-            <strong>Middle Wait</strong><br>
-            2 Dot · 4 Dot
+            <strong>Middle Wait</strong>
+            <div class="chiclet-tiles"
+                 data-chiclets="dot2 dot4">
+            </div>
           </div>
 
           <div style="background:white;
                       border-radius:8px; padding:12px;
                       margin-top:10px;">
-            <strong>Eye Candidate</strong><br>
-            9 Dot · 9 Dot
+            <strong>Eye Candidate</strong>
+            <div class="chiclet-tiles"
+                 data-chiclets="dot9 dot9">
+            </div>
           </div>
         </div>
 
@@ -12133,18 +12728,21 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
           <div style="background:white;
                       border-radius:8px; padding:12px;
                       margin-top:10px;">
-            <strong>Chow</strong><br>
-            1 Char · 2 Char · 3 Char
+            <strong>Chow</strong>
+            <div class="chiclet-tiles"
+                 data-chiclets="char1 char2 char3">
+            </div>
           </div>
 
           <div style="background:white;
                       border-radius:8px; padding:12px;
                       margin-top:10px;">
-            <strong>Chow</strong><br>
-            4 Bam · 5 Bam · 6 Bam
+            <strong>Chow</strong>
+            <div class="chiclet-tiles"
+                 data-chiclets="bam4 bam5 bam6">
+            </div>
           </div>
         </div>
-
         <p style="color:#666; margin-bottom:0;">
           A teaching arrangement of the same
           tiles. MJC’s live grouping choices
@@ -12173,6 +12771,52 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
         trying to recognize.
         MJC makes it visible so you
         can practice seeing it yourself.
+      </p>
+
+      <h3>Box Power, Baby!</h3>
+
+      <p>
+        Here’s the power of organizing
+        your tiles into boxes:
+        you can see what each grouping
+        needs, instead of searching
+        through your entire hand
+        after every draw.
+      </p>
+
+      <p>
+        Look at those
+        <strong>7 and 8 Bam</strong>.
+        They’re together in a
+        Double-Sided Wait, so you
+        know what you’re watching for:
+        <strong>6 or 9 Bam</strong>.
+        Your <strong>2 and 4 Dot</strong>
+        need a <strong>3 Dot</strong>.
+        Each box gives you something
+        specific to look for.
+      </p>
+
+      <p>
+        Now turn <strong>Pathways On</strong>
+        in Coaching View.
+        For supported Developing Boxes,
+        MJC shows the tiles that can
+        advance the grouping and the
+        tile opportunities it calculates
+        from your recorded hand.
+        The possibilities become
+        easier to see and compare.
+      </p>
+
+      <p>
+        As your hand changes,
+        your boxes may change too.
+        Keep looking at what each
+        grouping needs—and keep
+        watching the table.
+        A useful tile on the screen
+        still has to reach your hand!
       </p>
 
       <h3>Why Six Boxes?</h3>
@@ -12307,7 +12951,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
   </div>
 </div>
 
-<!-- PLAYING MJC — CHAPTER 4 -->
+<!-- Learn to Use MJC — CHAPTER 4 -->
 <div id="playingMJCChapter4Dialog"
      class="dialog-backdrop hidden">
   <div class="dialog"
@@ -12319,7 +12963,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     <div id="playingMJCChapter4Body"
          style="overflow-y:auto; min-height:0; flex:1;">
 
-      <nav aria-label="Playing MJC Chapter 4 sections"
+      <nav aria-label="Learn to Use MJC Chapter 4 sections"
            style="background:#f0f4f8; border-radius:10px;
                   padding:14px; margin-bottom:20px;"
            onclick="
@@ -12621,7 +13265,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
   </div>
 </div>
 
-<!-- PLAYING MJC — CHAPTER 5 -->
+<!-- Learn to Use MJC — CHAPTER 5 -->
 <div id="playingMJCChapter5Dialog"
      class="dialog-backdrop hidden">
   <div class="dialog"
@@ -12633,7 +13277,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     <div id="playingMJCChapter5Body"
          style="overflow-y:auto; min-height:0; flex:1;">
 
-      <nav aria-label="Playing MJC Chapter 5 sections"
+      <nav aria-label="Learn to Use MJC Chapter 5 sections"
            style="background:#f0f4f8; border-radius:10px;
                   padding:14px; margin-bottom:20px;"
            onclick="
@@ -13025,7 +13669,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
   </div>
 </div>
 
-<!-- PLAYING MJC — CHAPTER 6 -->
+<!-- Learn to Use MJC — CHAPTER 6 -->
 <div id="playingMJCChapter6Dialog"
      class="dialog-backdrop hidden">
   <div class="dialog"
@@ -13037,7 +13681,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     <div id="playingMJCChapter6Body"
          style="overflow-y:auto; min-height:0; flex:1;">
 
-      <nav aria-label="Playing MJC Chapter 6 sections"
+      <nav aria-label="Learn to Use MJC Chapter 6 sections"
            style="background:#f0f4f8; border-radius:10px;
                   padding:14px; margin-bottom:20px;"
            onclick="
@@ -13303,6 +13947,78 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
         Those observations come from you.
       </p>
 
+      <div style="background:#f0f4f8;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0;">
+        <strong>Your Eyes on the Table Change the Picture</strong>
+
+        <p>
+          Suppose you hold two Red Dragons.
+          They could become a Pong,
+          or serve as your Eye.
+        </p>
+
+        <p><strong>In your hand:</strong></p>
+        <div class="chiclet-tiles"
+             data-chiclets="red red">
+        </div>
+
+        <p>
+          There are four Red Dragons
+          in the set. You already hold
+          two, leaving two potential
+          tile opportunities for the Pong.
+        </p>
+
+        <p>
+          But you spot the other two
+          in the discard pile.
+        </p>
+
+        <p><strong>Already discarded:</strong></p>
+        <div class="chiclet-tiles"
+             data-chiclets="red red">
+        </div>
+
+        <p>
+          What is the
+          <strong>Effective Acceptance (EA)
+          of that Pong pathway?</strong>
+          Zero. No further Red Dragon
+          can reach your hand.
+        </p>
+
+        <p>
+          MJC may still label your pair
+          an Eye-Pong Candidate because
+          those table discards aren’t
+          recorded in its analysis.
+          You supply that missing
+          <strong>Table Awareness (TA)</strong>
+          by watching the game.
+        </p>
+
+        <p>
+          The pair still has value:
+          it can serve as your Eye.
+          Treat it as an Eye option
+          rather than waiting for
+          an unavailable third Red.
+          Whether you keep it depends
+          on the rest of your hand.
+        </p>
+
+        <p style="margin-bottom:0;">
+          Whether tile availability is
+          tracked by you or recorded
+          in a tool, its usefulness
+          depends on accurate observation
+          and entry. MJC helps you
+          read your hand; you keep
+          reading the table.
+        </p>
+      </div>
+
       <p>
         What have other players
         been discarding?
@@ -13339,6 +14055,26 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
         your hand while you stay
         aware of the game around it.
       </p>
+
+      <div style="background:#fff4df;
+                  border-radius:12px; padding:16px;
+                  margin:16px 0;">
+        <strong>
+          Mahjong skill isn’t measured by
+          the speed of your discard,
+          but by the quality of your decisions.
+        </strong>
+
+        <p style="margin-bottom:0;">
+          Give yourself time to understand
+          the choice. Read Insight,
+          consider what you see at the table,
+          then decide. You may agree with
+          MJC’s recommendation or choose
+          differently. What matters is
+          understanding your reason.
+        </p>
+      </div>
 
       <h3>Make Your Choice</h3>
 
@@ -13429,7 +14165,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     </div>
   </div>
 </div>
-<!-- PLAYING MJC — CHAPTER 7 -->
+<!-- Learn to Use MJC — CHAPTER 7 -->
 <div id="playingMJCChapter7Dialog"
      class="dialog-backdrop hidden">
   <div class="dialog"
@@ -13441,7 +14177,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     <div id="playingMJCChapter7Body"
          style="overflow-y:auto; min-height:0; flex:1;">
 
-      <nav aria-label="Playing MJC Chapter 7 sections"
+      <nav aria-label="Learn to Use MJC Chapter 7 sections"
            style="background:#f0f4f8; border-radius:10px;
                   padding:14px; margin-bottom:20px;"
            onclick="
@@ -13604,7 +14340,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
 
       <p>
         You can make a thoughtful
-        decision and still lose.
+        decision and still not win.
         You can also win a hand
         without fully understanding
         why it worked.
@@ -13853,6 +14589,23 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
           </a>
         </li>
       </ol>
+      <h3>Appendix</h3>
+
+      <button type="button"
+              class="dialog-button secondary"
+              onclick="
+                document.getElementById(
+                  'jezemsSeatRotationDialog'
+                ).dataset.returnTo = 'jezemsSetupDialog';
+                closeDialog('jezemsSetupDialog');
+                openDialog('jezemsSeatRotationDialog');
+                document.getElementById(
+                  'jezemsSeatRotationBody'
+                ).scrollTop = 0;
+              ">
+        View Seat Rotations
+      </button>
+
     </div>
 
     <div class="dialog-actions"
@@ -14024,14 +14777,33 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
         We play for enjoyment and camaraderie.
       </p>
 
-      <h3>2. Meet the Pushers</h3>
+      <p>
+        The pushers and separate seating tiles are
+        part of how we play at JEZEMS.
+        They’re useful, but you don’t need those
+        particular accessories to play Mahjong.
+      </p>
 
       <p>
+        Our extra-large tiles measure approximately
+        <strong>1 5/12 inches tall × 1 1/8 inches wide
+        × 7/8 inch thick</strong>
+        (3.6 × 2.8 × 2.2 cm).
+        Their size helps explain the dimensions
+        of our pushers.
+      </p>
+
+      <h3>2. Meet the Pushers</h3>
+
+            <p>
         Ours are plain wooden bars,
-        about <strong>1½ inches square
-        and 21 inches long</strong>.
+        <strong>1½ inches square and approximately
+        21½ inches long</strong>.
         We bought square wooden stock
         and cut it to the length we wanted.
+        That leaves room at both ends of an
+        18-stack wall for our fingers to grip
+        the pusher when moving the tiles.
         Nothing fancy—and very useful.
       </p>
 
@@ -14041,7 +14813,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
         <svg viewBox="0 0 560 150"
              role="img"
              aria-label="A wooden pusher approximately
-               21 inches long, with a square end
+               21½ inches long, with a square end
                measuring one and a half inches on each side."
              style="display:block; width:100%; height:auto;">
           <rect x="20" y="40" width="390" height="42"
@@ -14051,7 +14823,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
           <path d="M20 100 H410 M20 94 V106 M410 94 V106"
                 stroke="#444"/>
           <text x="215" y="128" text-anchor="middle"
-                font-size="19" fill="#222">About 21 inches</text>
+                font-size="19" fill="#222">About 21½ inches</text>
           <rect x="465" y="40" width="42" height="42"
                 fill="#e7c392" stroke="#87633c"/>
           <text x="486" y="112" text-anchor="middle"
@@ -14149,12 +14921,12 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     </text>
   </svg>
 
-  <!-- END VIEW: look along the length of the wall. -->
+    <!-- END VIEW: look along the length of the wall. -->
   <svg viewBox="0 0 560 210"
        role="img"
-       aria-label="Side view looking along the wall: two tiles
-                   stacked on the table, with their bottom edges
-                   against the wooden pusher."
+       aria-label="Side view: two face-down tiles stacked
+                   against a square wooden pusher,
+                   shown in approximate measured proportions."
        style="display:block; width:100%; height:auto;
               margin-top:12px;">
 
@@ -14163,47 +14935,46 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
       Side view—looking along the wall
     </text>
 
-    <!-- Square end of the pusher, resting on the table. -->
-    <rect x="345" y="58" width="100" height="100"
+    <!-- Pusher: 1½ inches square. -->
+    <rect x="300" y="60" width="100" height="100"
           fill="#d0b37a" stroke="#927342"
           stroke-width="2"/>
 
-    <text x="395" y="105" text-anchor="middle"
+    <text x="350" y="106" text-anchor="middle"
           font-size="16" fill="#342817">
       Wooden
     </text>
-    <text x="395" y="126" text-anchor="middle"
+    <text x="350" y="127" text-anchor="middle"
           font-size="16" fill="#342817">
       pusher
     </text>
 
-    <!-- Both tiles rest in one stack, beside the wood. -->
-    <rect x="180" y="126" width="165" height="32"
+    <!-- Each flat tile: 1 5/12 inches long, 7/8 inch thick. -->
+    <rect x="205.6" y="101.7" width="94.4" height="58.3"
           rx="4" fill="#dce9e1" stroke="#58796c"
           stroke-width="2"/>
 
-    <rect x="180" y="94" width="165" height="32"
+    <rect x="205.6" y="43.4" width="94.4" height="58.3"
           rx="4" fill="#dce9e1" stroke="#58796c"
           stroke-width="2"/>
 
     <!-- Green backs face upward. -->
-    <path d="M185 96 H340 M185 128 H340"
-          stroke="#58796c" stroke-width="5"/>
+    <path d="M210 46 H295 M210 104 H295"
+          stroke="#58796c" stroke-width="4"/>
 
-    <text x="262" y="116" text-anchor="middle"
-          font-size="16" fill="#222">
+    <text x="252.8" y="78" text-anchor="middle"
+          font-size="15" fill="#222">
       Upper tile
     </text>
-    <text x="262" y="148" text-anchor="middle"
-          font-size="16" fill="#222">
+    <text x="252.8" y="137" text-anchor="middle"
+          font-size="15" fill="#222">
       Lower tile
     </text>
 
-    <!-- Table surface supports both the stack and pusher. -->
-    <path d="M85 160 H475"
+    <path d="M155 162 H445"
           stroke="#777" stroke-width="3"/>
 
-    <text x="280" y="190" text-anchor="middle"
+    <text x="300" y="192" text-anchor="middle"
           font-size="17" fill="#444">
       Table surface
     </text>
@@ -14230,25 +15001,56 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
       <figure style="margin:16px 0; padding:12px;
                      border:1px solid #ccc;
                      border-radius:12px;">
-        <svg viewBox="0 0 360 270"
+
+                <svg viewBox="0 0 360 360"
              role="img"
-             aria-label="Four equal walls arranged
-               as a square in the middle of the mat."
+             aria-label="Square Great Wall: four walls,
+               each with 18 stacks of two tiles."
              style="display:block; width:100%;
                     max-width:360px; margin:auto; height:auto;">
-          <rect x="20" y="10" width="320" height="250"
+
+          <defs>
+            <pattern id="jezemsGreatWallTiles"
+                     width="14" height="18"
+                     patternUnits="userSpaceOnUse">
+              <rect width="14" height="18"
+                    fill="#8bb0a4" stroke="#34594c"
+                    stroke-width="1"/>
+            </pattern>
+
+            <g id="jezemsGreatWallRow">
+              <rect width="252" height="18"
+                    fill="url(#jezemsGreatWallTiles)"
+                    stroke="#34594c" stroke-width="1"/>
+            </g>
+          </defs>
+
+          <rect x="15" y="15" width="330" height="330"
                 rx="12" fill="#eaf4e8"/>
-          <g fill="#8bb0a4" stroke="#34594c" stroke-width="2">
-            <rect x="75" y="45" width="210" height="24"/>
-            <rect x="75" y="201" width="210" height="24"/>
-            <rect x="48" y="72" width="24" height="126"/>
-            <rect x="288" y="72" width="24" height="126"/>
-          </g>
-          <text x="180" y="123" text-anchor="middle"
-                font-size="23" fill="#222">The Great Wall</text>
-          <text x="180" y="153" text-anchor="middle"
-                font-size="18" fill="#222">4 walls · 144 tiles</text>
+
+          <use href="#jezemsGreatWallRow"
+               transform="translate(54 34)"/>
+          <use href="#jezemsGreatWallRow"
+               transform="translate(326 54) rotate(90)"/>
+          <use href="#jezemsGreatWallRow"
+               transform="translate(306 326) rotate(180)"/>
+          <use href="#jezemsGreatWallRow"
+               transform="translate(34 306) rotate(-90)"/>
+
+          <text x="180" y="163" text-anchor="middle"
+                font-size="23" fill="#222">
+            The Great Wall
+          </text>
+          <text x="180" y="193" text-anchor="middle"
+                font-size="18" fill="#222">
+            4 walls · 144 tiles
+          </text>
+          <text x="180" y="220" text-anchor="middle"
+                font-size="15" fill="#444">
+            Each wall: 18 stacks, two high
+          </text>
         </svg>
+
         <figcaption style="color:#666; text-align:center;">
           Schematic overhead view.
           Each wall contains 18 double stacks.
@@ -14559,6 +15361,16 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
       <h3>Eight Tiles at a Time</h3>
 
       <p>
+        <strong>The dealer always receives the first
+        eight tiles.</strong>
+        It doesn’t matter whose wall was broken
+        or who is giving service.
+        Distribution begins with the dealer
+        and continues counterclockwise.
+        In our opening hand, East is the dealer.
+      </p>
+
+      <p>
         Let’s stay with our example: West’s wall was
         selected, and stack 12 was moved onto stack 11.
         The Playing Wall begins at stack 13.
@@ -14585,14 +15397,14 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
                          stack, making one delivery of eight tiles."
              style="display:block; width:100%; height:auto;">
           <g fill="#dce9e1" stroke="#58796c" stroke-width="2">
-            <rect x="60"  y="72" width="75" height="28" rx="3"/>
-            <rect x="60"  y="44" width="75" height="28" rx="3"/>
-            <rect x="155" y="72" width="75" height="28" rx="3"/>
-            <rect x="155" y="44" width="75" height="28" rx="3"/>
-            <rect x="250" y="72" width="75" height="28" rx="3"/>
-            <rect x="250" y="44" width="75" height="28" rx="3"/>
-            <rect x="345" y="72" width="75" height="28" rx="3"/>
-            <rect x="345" y="44" width="75" height="28" rx="3"/>
+            <rect x="90"  y="72" width="75" height="28" rx="3"/>
+            <rect x="90"  y="44" width="75" height="28" rx="3"/>
+            <rect x="165" y="72" width="75" height="28" rx="3"/>
+            <rect x="165" y="44" width="75" height="28" rx="3"/>
+            <rect x="240" y="72" width="75" height="28" rx="3"/>
+            <rect x="240" y="44" width="75" height="28" rx="3"/>
+            <rect x="315" y="72" width="75" height="28" rx="3"/>
+            <rect x="315" y="44" width="75" height="28" rx="3"/>
           </g>
           <text x="240" y="132" text-anchor="middle"
                 font-size="19" fill="#333">
@@ -14609,14 +15421,18 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
       <div style="padding:16px; background:#f0f4f8;
                   border-radius:14px; margin:18px 0;">
         <p style="margin-top:0;">
-          <strong>Players receive tiles counter-clockwise:</strong><br>
-          East → South → West → North
+          <strong>Take tiles from the Playing Wall
+          clockwise.</strong><br>
+          Starting at the break, take four double stacks
+          together, then continue clockwise along
+          the wall for the next group.
         </p>
         <p style="margin-bottom:0;">
-          <strong>The Playing Wall is used clockwise.</strong><br>
-          These are two different directions.
-          Follow the next stacks along the wall while
-          keeping the deliveries in player order.
+          <strong>Deliver tiles to the players
+          counterclockwise, starting with the dealer.</strong><br>
+          In our opening hand:
+          East → South → West → North.
+          Repeat once so everyone receives 16 tiles.
         </p>
       </div>
 
@@ -14880,6 +15696,26 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
       </p>
 
       <p>
+        <strong>Say every discard aloud.</strong>
+        At our JEZEMS table, everyone announces
+        the tile they discard—for example,
+        “7 Bam” or “Red Dragon.”
+        Say it clearly as you place the tile
+        face up in the discard area.
+        This helps everyone follow the game
+        and recognize tiles they may want to claim.
+      </p>
+
+      <p>
+        Didn’t catch the announcement, or can’t
+        quite see the tile? It’s always okay to ask,
+        “What was discarded?”
+        Some players rely more on hearing than sight.
+        Repeat the tile’s name clearly when asked.
+        We want everyone to be able to follow along.
+      </p>
+
+      <p>
         From there, we follow our usual
         draw, claim, and discard cycle.
         You’ll hear some JEZEMS table terms along
@@ -14890,6 +15726,53 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
         <strong>NEWS</strong>, a grouping containing
         North, East, West, and South.
       </p>
+
+      <h3>Changing Seats Between Rounds</h3>
+
+      <p>
+        We draw seating tiles only once,
+        at the start of a full game.
+        After that, we follow a set rotation.
+      </p>
+
+      <p>
+        After each hand, the deal passes
+        counterclockwise to the next player,
+        with no dealer repeats.
+        After four hands, the round is complete
+        and everyone changes seats.
+      </p>
+
+      <p>
+        A full game has four rounds:
+        <strong>East, South, West, and North</strong>.
+        The player in the East seat starts
+        the dealing for each new round.
+      </p>
+
+      <p>
+        You don’t have to play all four rounds.
+        Sometimes we stop after three when
+        we’re ready to call it a night.
+        Play as long as everyone is enjoying it—
+        the remaining round can wait!
+      </p>
+
+      <button type="button"
+              class="dialog-button secondary"
+              onclick="
+                document.getElementById(
+                  'jezemsSeatRotationDialog'
+                ).dataset.returnTo = 'jezemsSetupChapter3Dialog';
+                closeDialog('jezemsSetupChapter3Dialog');
+                openDialog('jezemsSeatRotationDialog');
+                document.getElementById(
+                  'jezemsSeatRotationBody'
+                ).scrollTop = 0;
+              ">
+        View Seat Rotations
+      </button>
+
 
       <p>
         You don’t have to remember every detail
@@ -14954,6 +15837,460 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
         Close
       </button>
 
+    </div>
+  </div>
+</div>
+
+<!-- JEZEMS SETUP GUIDE — SEAT ROTATION APPENDIX -->
+<div id="jezemsSeatRotationDialog"
+     class="dialog-backdrop hidden">
+  <div class="dialog"
+       style="display:flex; flex-direction:column;
+              max-height:85vh; overflow:hidden;">
+
+    <h2>Seat Rotation Reference</h2>
+
+    <div style="display:flex; flex-wrap:wrap;
+                justify-content:center; gap:6px;
+                flex-shrink:0; padding-bottom:12px;"
+         onclick="
+           const button = event.target.closest('button[data-rotation]');
+           if (!button) return;
+           const body = document.getElementById('jezemsSeatRotationBody');
+           const target = document.getElementById(button.dataset.rotation);
+           body.scrollTo({
+             top: body.scrollTop
+               + target.getBoundingClientRect().top
+               - body.getBoundingClientRect().top
+               - body.clientTop,
+             behavior: 'smooth'
+           });
+         ">
+
+      <button type="button"
+              class="dialog-button secondary"
+              data-rotation="jezemsRotation1">
+        After First Round
+      </button>
+
+      <button type="button"
+              class="dialog-button secondary"
+              data-rotation="jezemsRotation2">
+        After Second Round
+      </button>
+
+      <button type="button"
+              class="dialog-button secondary"
+              data-rotation="jezemsRotation3">
+        After Third Round
+      </button>
+    </div>
+
+    <div id="jezemsSeatRotationBody"
+         style="overflow-y:auto; min-height:0; flex:1;">
+
+      <p>
+        Use this reference after each round of four hands.
+        Each rotation shows where everyone starts,
+        followed by their new seats.
+        East stays at the bottom of every diagram.
+        A, B, C, and D identify the same four players
+        throughout the game.
+      </p>
+
+                  <figure id="jezemsRotation1"
+              style="margin:18px 0; padding:16px;
+                     background:#f0f4f8; border-radius:14px;">
+
+        <strong style="display:block; text-align:center;">
+          First Rotation: East Round → South Round
+        </strong>
+
+        <p>
+          After the first four hands, change seats
+          as shown. The letters identify players;
+          the physical seat positions stay fixed.
+        </p>
+
+        <svg viewBox="0 0 360 360"
+             role="img"
+             aria-label="First rotation: A moves from East
+               to South, B from South to East, C from West
+               to North, and D from North to West."
+             style="display:block; width:100%;
+                    max-width:360px; margin:auto; height:auto;">
+
+          <defs>
+            <marker id="jezemsRotate1Gold"
+                    viewBox="0 0 10 10"
+                    refX="8" refY="5"
+                    markerWidth="3" markerHeight="3"
+                    orient="auto">
+              <path d="M0 0 L10 5 L0 10 Z" fill="#d4a72c"/>
+            </marker>
+            <marker id="jezemsRotate1Blue"
+                    viewBox="0 0 10 10"
+                    refX="8" refY="5"
+                    markerWidth="3" markerHeight="3"
+                    orient="auto">
+              <path d="M0 0 L10 5 L0 10 Z" fill="#548bc1"/>
+            </marker>
+          </defs>
+
+          <rect x="90" y="90" width="180" height="180"
+                rx="6" fill="#eaf4e8"
+                stroke="#58796c" stroke-width="2"/>
+
+          <path d="M180 252 V220 Q180 180 220 180 H250"
+                fill="none" stroke="#d4a72c" stroke-width="10"
+                marker-end="url(#jezemsRotate1Gold)"/>
+          <path d="M180 108 V140 Q180 180 140 180 H110"
+                fill="none" stroke="#d4a72c" stroke-width="10"
+                marker-end="url(#jezemsRotate1Gold)"/>
+
+          <path d="M302 215 V252 Q302 302 252 302 H215"
+                fill="none" stroke="#548bc1" stroke-width="10"
+                marker-end="url(#jezemsRotate1Blue)"/>
+          <path d="M58 145 V108 Q58 58 108 58 H145"
+                fill="none" stroke="#548bc1" stroke-width="10"
+                marker-end="url(#jezemsRotate1Blue)"/>
+
+          <g text-anchor="middle" fill="#222">
+            <text x="180" y="39" font-size="25"
+                  font-weight="bold">C</text>
+            <text x="180" y="61" font-size="15">West</text>
+
+            <text x="314" y="177" font-size="25"
+                  font-weight="bold">B</text>
+            <text x="314" y="199" font-size="15">South</text>
+
+            <text x="180" y="315" font-size="25"
+                  font-weight="bold">A</text>
+            <text x="180" y="339" font-size="15">East</text>
+
+            <text x="46" y="177" font-size="25"
+                  font-weight="bold">D</text>
+            <text x="46" y="199" font-size="15">North</text>
+          </g>
+        </svg>
+
+        <figcaption>
+          <strong>New positions for the South Round:</strong><br>
+          East: B · South: A · West: D · North: C.<br>
+          B starts as dealer.
+        </figcaption>
+
+        <div style="border-top:1px solid #ccd4dc;
+                    margin-top:20px; padding-top:16px;">
+
+          <strong style="display:block; text-align:center;">
+            After Rotation: South Round (Round 2)
+          </strong>
+
+          <svg viewBox="0 0 360 360"
+               role="img"
+               aria-label="South Round seating:
+                 B at East, A at South,
+                 D at West, C at North."
+               style="display:block; width:100%;
+                      max-width:360px; margin:auto; height:auto;">
+
+            <rect x="90" y="90" width="180" height="180"
+                  rx="6" fill="#eaf4e8"
+                  stroke="#58796c" stroke-width="2"/>
+
+            <g text-anchor="middle" fill="#222">
+              <text x="180" y="39" font-size="25"
+                    font-weight="bold">D</text>
+              <text x="180" y="61" font-size="15">West</text>
+
+              <text x="314" y="177" font-size="25"
+                    font-weight="bold">A</text>
+              <text x="314" y="199" font-size="15">South</text>
+
+              <text x="180" y="315" font-size="25"
+                    font-weight="bold">B</text>
+              <text x="180" y="339" font-size="15">East</text>
+
+              <text x="46" y="177" font-size="25"
+                    font-weight="bold">C</text>
+              <text x="46" y="199" font-size="15">North</text>
+
+              <text x="180" y="165" font-size="22"
+                    font-weight="bold">South Round</text>
+              <text x="180" y="193" font-size="17">
+                B starts as dealer
+              </text>
+            </g>
+          </svg>
+        </div>
+
+      </figure>
+
+      <figure id="jezemsRotation2"
+              style="margin:18px 0; padding:16px;
+                     background:#f0f4f8; border-radius:14px;">
+
+        <strong style="display:block; text-align:center;">
+          Second Rotation: South Round → West Round
+        </strong>
+
+        <p>
+          After the second round, B moves across to West
+          and A moves across to North.
+          D moves from West to South,
+          while C moves from North to East.
+        </p>
+
+        <svg viewBox="0 0 360 360"
+             role="img"
+             aria-label="Before the second rotation:
+               B at East moves to West; A at South moves
+               to North; D at West moves to South;
+               C at North moves to East."
+             style="display:block; width:100%;
+                    max-width:360px; margin:auto; height:auto;">
+
+          <defs>
+            <marker id="jezemsRotate2Gold"
+                    viewBox="0 0 10 10" refX="8" refY="5"
+                    markerWidth="3" markerHeight="3"
+                    orient="auto">
+              <path d="M0 0 L10 5 L0 10 Z" fill="#d4a72c"/>
+            </marker>
+            <marker id="jezemsRotate2Blue"
+                    viewBox="0 0 10 10" refX="8" refY="5"
+                    markerWidth="3" markerHeight="3"
+                    orient="auto">
+              <path d="M0 0 L10 5 L0 10 Z" fill="#548bc1"/>
+            </marker>
+          </defs>
+
+          <rect x="90" y="90" width="180" height="180"
+                rx="6" fill="#eaf4e8"
+                stroke="#58796c" stroke-width="2"/>
+
+          <path d="M180 252 V110"
+                fill="none" stroke="#d4a72c" stroke-width="10"
+                marker-end="url(#jezemsRotate2Gold)"/>
+          <path d="M252 180 H110"
+                fill="none" stroke="#d4a72c" stroke-width="10"
+                marker-end="url(#jezemsRotate2Gold)"/>
+
+          <path d="M215 58 H252 Q302 58 302 108 V145"
+                fill="none" stroke="#548bc1" stroke-width="10"
+                marker-end="url(#jezemsRotate2Blue)"/>
+          <path d="M58 215 V252 Q58 302 108 302 H145"
+                fill="none" stroke="#548bc1" stroke-width="10"
+                marker-end="url(#jezemsRotate2Blue)"/>
+
+          <g text-anchor="middle" fill="#222">
+            <text x="180" y="39" font-size="25"
+                  font-weight="bold">D</text>
+            <text x="180" y="61" font-size="15">West</text>
+            <text x="314" y="177" font-size="25"
+                  font-weight="bold">A</text>
+            <text x="314" y="199" font-size="15">South</text>
+            <text x="180" y="315" font-size="25"
+                  font-weight="bold">B</text>
+            <text x="180" y="339" font-size="15">East</text>
+            <text x="46" y="177" font-size="25"
+                  font-weight="bold">C</text>
+            <text x="46" y="199" font-size="15">North</text>
+          </g>
+        </svg>
+
+        <div style="border-top:1px solid #ccd4dc;
+                    margin-top:20px; padding-top:16px;">
+
+          <strong style="display:block; text-align:center;">
+            After Rotation: West Round (Round 3)
+          </strong>
+
+          <svg viewBox="0 0 360 360"
+               role="img"
+               aria-label="West Round seating:
+                 C at East, D at South,
+                 B at West, A at North."
+               style="display:block; width:100%;
+                      max-width:360px; margin:auto; height:auto;">
+
+            <rect x="90" y="90" width="180" height="180"
+                  rx="6" fill="#eaf4e8"
+                  stroke="#58796c" stroke-width="2"/>
+
+            <g text-anchor="middle" fill="#222">
+              <text x="180" y="39" font-size="25"
+                    font-weight="bold">B</text>
+              <text x="180" y="61" font-size="15">West</text>
+              <text x="314" y="177" font-size="25"
+                    font-weight="bold">D</text>
+              <text x="314" y="199" font-size="15">South</text>
+              <text x="180" y="315" font-size="25"
+                    font-weight="bold">C</text>
+              <text x="180" y="339" font-size="15">East</text>
+              <text x="46" y="177" font-size="25"
+                    font-weight="bold">A</text>
+              <text x="46" y="199" font-size="15">North</text>
+
+              <text x="180" y="165" font-size="22"
+                    font-weight="bold">West Round</text>
+              <text x="180" y="193" font-size="17">
+                C starts as dealer
+              </text>
+            </g>
+          </svg>
+        </div>
+      </figure>
+
+      <figure id="jezemsRotation3"
+              style="margin:18px 0; padding:16px;
+                     background:#f0f4f8; border-radius:14px;">
+
+        <strong style="display:block; text-align:center;">
+          Third Rotation: West Round → North Round
+        </strong>
+
+        <p>
+          After the third round, C and D swap seats,
+          and B and A swap seats.
+          We’re ready for the fourth and final round.
+        </p>
+
+        <svg viewBox="0 0 360 360"
+             role="img"
+             aria-label="Third rotation: C moves from East
+               to South, D from South to East, B from West
+               to North, and A from North to West."
+             style="display:block; width:100%;
+                    max-width:360px; margin:auto; height:auto;">
+
+          <defs>
+            <marker id="jezemsRotate3Gold"
+                    viewBox="0 0 10 10" refX="8" refY="5"
+                    markerWidth="3" markerHeight="3"
+                    orient="auto">
+              <path d="M0 0 L10 5 L0 10 Z" fill="#d4a72c"/>
+            </marker>
+            <marker id="jezemsRotate3Blue"
+                    viewBox="0 0 10 10" refX="8" refY="5"
+                    markerWidth="3" markerHeight="3"
+                    orient="auto">
+              <path d="M0 0 L10 5 L0 10 Z" fill="#548bc1"/>
+            </marker>
+          </defs>
+
+          <rect x="90" y="90" width="180" height="180"
+                rx="6" fill="#eaf4e8"
+                stroke="#58796c" stroke-width="2"/>
+
+          <path d="M180 252 V220 Q180 180 220 180 H250"
+                fill="none" stroke="#d4a72c" stroke-width="10"
+                marker-end="url(#jezemsRotate3Gold)"/>
+          <path d="M180 108 V140 Q180 180 140 180 H110"
+                fill="none" stroke="#d4a72c" stroke-width="10"
+                marker-end="url(#jezemsRotate3Gold)"/>
+
+          <path d="M302 215 V252 Q302 302 252 302 H215"
+                fill="none" stroke="#548bc1" stroke-width="10"
+                marker-end="url(#jezemsRotate3Blue)"/>
+          <path d="M58 145 V108 Q58 58 108 58 H145"
+                fill="none" stroke="#548bc1" stroke-width="10"
+                marker-end="url(#jezemsRotate3Blue)"/>
+
+          <g text-anchor="middle" fill="#222">
+            <text x="180" y="39" font-size="25"
+                  font-weight="bold">B</text>
+            <text x="180" y="61" font-size="15">West</text>
+            <text x="314" y="177" font-size="25"
+                  font-weight="bold">D</text>
+            <text x="314" y="199" font-size="15">South</text>
+            <text x="180" y="315" font-size="25"
+                  font-weight="bold">C</text>
+            <text x="180" y="339" font-size="15">East</text>
+            <text x="46" y="177" font-size="25"
+                  font-weight="bold">A</text>
+            <text x="46" y="199" font-size="15">North</text>
+          </g>
+        </svg>
+
+        <div style="border-top:1px solid #ccd4dc;
+                    margin-top:20px; padding-top:16px;">
+
+          <strong style="display:block; text-align:center;">
+            After Rotation: North Round (Round 4)
+          </strong>
+
+          <svg viewBox="0 0 360 360"
+               role="img"
+               aria-label="North Round seating:
+                 D at East, C at South,
+                 A at West, B at North."
+               style="display:block; width:100%;
+                      max-width:360px; margin:auto; height:auto;">
+
+            <rect x="90" y="90" width="180" height="180"
+                  rx="6" fill="#eaf4e8"
+                  stroke="#58796c" stroke-width="2"/>
+
+            <g text-anchor="middle" fill="#222">
+              <text x="180" y="39" font-size="25"
+                    font-weight="bold">A</text>
+              <text x="180" y="61" font-size="15">West</text>
+              <text x="314" y="177" font-size="25"
+                    font-weight="bold">C</text>
+              <text x="314" y="199" font-size="15">South</text>
+              <text x="180" y="315" font-size="25"
+                    font-weight="bold">D</text>
+              <text x="180" y="339" font-size="15">East</text>
+              <text x="46" y="177" font-size="25"
+                    font-weight="bold">B</text>
+              <text x="46" y="199" font-size="15">North</text>
+
+              <text x="180" y="165" font-size="22"
+                    font-weight="bold">North Round</text>
+              <text x="180" y="193" font-size="17">
+                D starts as dealer
+              </text>
+            </g>
+          </svg>
+        </div>
+
+        <figcaption>
+          After the North Round’s four hands,
+          the full game is complete:
+          four rounds, 16 hands.
+        </figcaption>
+      </figure>
+
+
+    </div>
+
+    <div class="dialog-actions"
+         style="flex-shrink:0; display:flex;
+                flex-wrap:wrap; justify-content:center;
+                gap:8px; padding-top:16px;">
+
+      <button type="button"
+              class="dialog-button secondary"
+              onclick="
+                closeDialog('jezemsSeatRotationDialog');
+                openDialog('jezemsSetupDialog');
+              ">
+        Back to Contents
+      </button>
+
+                  <button type="button"
+              class="dialog-button primary"
+              onclick="
+                const returnTo = document.getElementById(
+                  'jezemsSeatRotationDialog'
+                ).dataset.returnTo || 'jezemsSetupChapter3Dialog';
+                closeDialog('jezemsSeatRotationDialog');
+                openDialog(returnTo);
+              ">
+        Close
+      </button>
     </div>
   </div>
 </div>
@@ -15694,7 +17031,7 @@ document.addEventListener("touchend", function(e) {
   }
 </script>
 
-<!-- PLAYING MJC — PREVIOUS / NEXT CHAPTER NAVIGATION -->
+<!-- Learn to Use MJC — PREVIOUS / NEXT CHAPTER NAVIGATION -->
 <script>
 (function() {
   const chapters = [];
