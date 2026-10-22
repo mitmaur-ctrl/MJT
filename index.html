@@ -567,7 +567,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
             .scrollTo({ top: 0, behavior: 'instant' });
         });
       "
-    >Learn to Use MJC</button>
+    >Discover MJC</button>
 
     <button
       type="button"
@@ -673,7 +673,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     </div>
 
     <div class="dialog-option">
-      <label><input type="radio" name="rulesetRadio" value="chinese13" onclick="featureComingSoon(this)"> Chinese 13-Tile</label>
+      <label><input type="radio" name="rulesetRadio" value="chinese13" onclick="featureComingSoon(this)"> Chinese (Hong Kong) 13-Tile</label>
     </div>
     <div class="feature-note">Feature Coming Soon</div>
 
@@ -1051,8 +1051,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     <p>
       Built on Six Box Theory™ (6BT), originally developed
       for Filipino and Taiwanese 16-Tile Mahjong, MJC
-      will also bring this approach to Chinese 13-Tile
-      Mahjong in an upcoming adaptation.
+      will also bring this approach to Chinese (Hong Kong) 13-Tile Mahjong in an upcoming adaptation.
     </p>
    
 
@@ -1075,6 +1074,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
   </div>
 </div>
 
+
 <div id="welcomeDialog" class="dialog-backdrop hidden">
   <div class="dialog">
     <h2>Welcome to Mahjong Coach</h2>
@@ -1084,7 +1084,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     </p>
 
     <p>
-      <strong>First time visiting? We’re glad you’re here!</strong>
+      <strong>New to Mahjong Coach? We're glad you're here!</strong>
     </p>
 
     <p>
@@ -1099,29 +1099,30 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     </p>
 
     <p>
-      Mahjong Coach shows you your hand in a different
+      Mahjong Coach (MJC) shows you your hand in a different
       light—revealing its structure and helping you
       make better playing decisions.
     </p>
 
     <p>
-      Before starting your next game, let’s walk through
-      a hand together.
-    </p>
+  Come learn what MJC is all about.
+</p>
 
     <div class="dialog-actions">
       <button
         type="button"
         class="dialog-button primary"
+
         onclick="
-          closeDialog('welcomeDialog');
-          openDialog('playingMJCDialog');
-          requestAnimationFrame(function() {
-            document.getElementById('playingMJCContents')
-              .scrollTo({ top: 0, behavior: 'instant' });
-          });
-        "
-      >Learn to Use MJC</button>
+  closeDialog('welcomeDialog');
+  openDialog('playingMJCDialog');
+  requestAnimationFrame(function() {
+    document.getElementById('playingMJCContents')
+      .scrollTo({ top: 0, behavior: 'instant' });
+  });
+"
+
+      >Discover MJC</button>
 
       <button
         type="button"
@@ -1147,7 +1148,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
             <li>
         <strong>Select your Ruleset:</strong> Choose the Mahjong rules
         you play by. (Currently, MJC supports Filipino and Taiwanese 16-Tile Mahjong.
-        Chinese 13-Tile adaptation coming soon.)
+        Chinese (Hong Kong) 13-Tile adaptation coming soon.)
       </li>
 
       <li><strong>Select your Display preferences:</strong> Choose the order in which your tiles are displayed.</li>
@@ -1177,7 +1178,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
       such as Filipino and Taiwanese, 6BT uses five
       meld boxes and one Eye box to explain the
       structure of a completed hand.
-      An adaptation for Chinese 13-Tile Mahjong,
+      An adaptation for Chinese (Hong Kong) 13-Tile Mahjong,
       using four meld boxes and one Eye box,
       is coming soon.
     </p>
@@ -3537,7 +3538,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
 
         <p>
           <span style="color:#6b3fa0;">82</span>
-          ○ Chinese 13-Tile
+          ○ Chinese (Hong Kong) 13-Tile
         </p>
 
         <p style="color:#666; font-size:14px;">
@@ -3600,7 +3601,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
 
       <p>
         <strong><span style="color:#6b3fa0;">82</span>
-          Chinese 13-Tile</strong><br>
+          Chinese (Hong Kong) 13-Tile</strong><br>
         Marks a planned ruleset.
         This option is not yet available.
       </p>
@@ -5789,7 +5790,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
 
       <p>
         Tap <strong>Save</strong> when finished.
-        Chinese 13-Tile is marked
+        Chinese (Hong Kong) 13-Tile is marked
         <em>Feature Coming Soon</em>.
       </p>
 
@@ -10621,16 +10622,20 @@ Leaves this Double-Sided Wait:
         <strong>Previous entry</strong>
 
         <div style="display:inline-block;
-                    background:#f8d7d7;
-                    border:3px solid #c62828;
-                    border-radius:10px;
-                    padding:20px; margin-top:16px;">
-          5 Char
-        </div>
+            background:#f8d7d7;
+            border:3px solid #c62828;
+            border-radius:10px;
+            padding:8px; margin-top:16px;">
+
+  <div class="chiclet-tiles"
+       data-chiclets="char5"
+       style="justify-content:center;
+              margin-top:0;"></div>
+
+</div>
 
         <p style="color:#666; margin-bottom:0;">
-          Red identifies the previous entry.
-          The tile name replaces its image.
+          Red identifies the previous entry.     
         </p>
       </div>
 
@@ -11780,7 +11785,7 @@ Leaves this Double-Sided Wait:
        style="display:flex; flex-direction:column;
               max-height:85vh; overflow:hidden;">
 
-    <h2>Learn to Use MJC</h2>
+    <h2>Discover MJC</h2>
 
     <div id="playingMJCContents"
          style="overflow-y:auto; min-height:0; flex:1;">
@@ -12025,10 +12030,9 @@ Leaves this Double-Sided Wait:
       </nav>
 
       <p>
-        Before we sit down and play,
-        let me tell you what I hope
-        you’ll get out of MJC.
-      </p>
+  Before we begin, let me tell you what I hope
+  you’ll get out of MJC.
+</p>
 
       <p>
         MJC is here to help you learn
@@ -12058,11 +12062,39 @@ Leaves this Double-Sided Wait:
         your hand.
       </p>
 
+<p>
+  <strong>How much of Mahjong is luck?
+  How much is skill?</strong>
+</p>
+
+<p>
+  According to our highly scientific PFA method,
+  precisely <strong>68.74%</strong> of winning
+  at Mahjong is luck. That leaves
+  <strong>31.26%</strong> for skill!
+</p>
+
+<p>
+  <em>Disclaimer: PFA stands for
+  "Plucked From Air."
+  We made those numbers up!</em>
+</p>
+
+<p>
+  But seriously, here's something we believe:
+</p>
+
+<p>
+  <strong>
+    Luck is the tiles you get.
+    Skill is what you do with them.
+  </strong>
+</p>
+
       <h3>Give Yourself Time</h3>
 
       <p>
-        And getting comfortable with it
-        takes a little time.
+        And developing that skill takes time—and practice.
       </p>
 
       <p>
@@ -12784,6 +12816,60 @@ Leaves this Double-Sided Wait:
         after every draw.
       </p>
 
+<p>
+  <strong>Box Power Buys You Time</strong>
+</p>
+
+<p>
+  Mahjong players often rearrange their tiles,
+  searching for combinations that work together.
+  We call it <em>dancing the tiles</em>.
+</p>
+
+<p>
+  MJC does that dancing for you! By organizing your
+  hand into boxes, it frees you to spend less time
+  rearranging tiles and more time watching the table,
+  recognizing opportunities, and thinking about
+  your next move.
+</p>
+
+<p>
+  <strong>
+    Box Power doesn't give you more time on the clock.
+    It gives you more time to think.
+  </strong>
+</p>
+
+<div style="background:#faf4e5;
+            padding:12px;
+            border-radius:10px;
+            margin:12px 0;">
+
+<div style="font-weight:bold; margin-bottom:10px;">
+  Developing Boxes
+</div>
+
+  <div style="background:white;
+              border-radius:8px;
+              padding:12px;">
+    <strong>Double-Sided Wait</strong>
+    <div class="chiclet-tiles"
+         data-chiclets="bam7 bam8">
+    </div>
+  </div>
+
+  <div style="background:white;
+              border-radius:8px;
+              padding:12px;
+              margin-top:10px;">
+    <strong>Middle Wait</strong>
+    <div class="chiclet-tiles"
+         data-chiclets="dot2 dot4">
+    </div>
+  </div>
+
+</div>
       <p>
         Look at those
         <strong>7 and 8 Bam</strong>.
@@ -12796,6 +12882,44 @@ Leaves this Double-Sided Wait:
         Each box gives you something
         specific to look for.
       </p>
+
+<h3>Meet Your Target Tiles</h3>
+
+<p>
+  Every Developing Box has tiles that can help it
+  advance or become complete. We call these
+  <strong>Target Tiles (TT)</strong>.
+</p>
+
+<div style="background:#faf4e5;
+            padding:12px;
+            border-radius:10px;
+            margin:12px 0;">
+
+  <div style="font-weight:bold; margin-bottom:10px;">
+    Target Tiles
+  </div>
+
+  <div style="background:white;
+              border-radius:8px;
+              padding:12px;">
+    <strong>For 7–8 Bam</strong>
+    <div class="chiclet-tiles"
+         data-chiclets="bam6 bam9">
+    </div>
+  </div>
+
+  <div style="background:white;
+              border-radius:8px;
+              padding:12px;
+              margin-top:10px;">
+    <strong>For 2–4 Dot</strong>
+    <div class="chiclet-tiles"
+         data-chiclets="dot3">
+    </div>
+  </div>
+
+</div>
 
       <p>
         Now turn <strong>Pathways On</strong>
@@ -12829,6 +12953,59 @@ Leaves this Double-Sided Wait:
         Hence the name—Six Box Theory™!
       </p>
 
+<div style="background:#faf4e5;
+            padding:12px;
+            border-radius:10px;
+            margin:12px 0;">
+
+  <div style="font-weight:bold; margin-bottom:10px;">
+    Six Complete Boxes — A Winning Hand
+  </div>
+
+  <div style="display:grid;
+              grid-template-columns:repeat(3,1fr);
+              gap:8px;">
+
+    <div style="background:white; border-radius:8px;
+                padding:14px 4px; text-align:center;">
+      <strong>CB1</strong>
+    </div>
+
+    <div style="background:white; border-radius:8px;
+                padding:14px 4px; text-align:center;">
+      <strong>CB2</strong>
+    </div>
+
+    <div style="background:white; border-radius:8px;
+                padding:14px 4px; text-align:center;">
+      <strong>CB3</strong>
+    </div>
+
+    <div style="background:white; border-radius:8px;
+                padding:14px 4px; text-align:center;">
+      <strong>CB4</strong>
+    </div>
+
+    <div style="background:white; border-radius:8px;
+                padding:14px 4px; text-align:center;">
+      <strong>CB5</strong>
+    </div>
+
+    <div style="background:white; border-radius:8px;
+                padding:14px 4px; text-align:center;">
+      <strong>Eye</strong>
+    </div>
+
+  </div>
+
+  <div style="text-align:center;
+              margin-top:10px;
+              font-size:0.9em;">
+    Five melds and one Eye
+  </div>
+
+</div>
+
       <p>
         Think of those as the six groupings
         you’re working toward.
@@ -12844,16 +13021,6 @@ Leaves this Double-Sided Wait:
         that could become a Pong.
         Or it might hold the pair
         you’re considering for your Eye.
-      </p>
-
-      <p>
-        In our example, 7 Bam · 8 Bam
-        could become a Chow with
-        6 Bam or 9 Bam.
-        And 2 Dot · 4 Dot
-        needs 3 Dot.
-        Already, you have something
-        specific to look for.
       </p>
 
       <p>
@@ -13471,6 +13638,12 @@ Leaves this Double-Sided Wait:
         Did a new possibility appear?
       </p>
 
+<p>
+  Was the tile you just acquired one of your
+  <strong>Target Tiles</strong>? If so, look at how
+  it helped advance or complete a Developing Box.
+</p>
+
       <h3>Make Your Claim First</h3>
 
       <p>
@@ -13785,15 +13958,14 @@ Leaves this Double-Sided Wait:
       </p>
 
       <p>
-        Pathways can help you examine
-        the supported groupings.
-        Look at the completing tiles
-        and their opportunities.
-        You don’t have to calculate
-        everything in your head.
-        That’s part of what MJC
-        is helping you visualize.
-      </p>
+  Pathways can help you examine the supported
+  groupings. Look at their
+  <strong>Target Tiles</strong>—the tiles that can
+  advance or complete a Developing Box—and the
+  opportunities to acquire them. You don’t have
+  to calculate everything in your head. That’s
+  part of what MJC is helping you visualize.
+</p>
 
       <p>
         If a label or marker is
@@ -14950,13 +15122,24 @@ Leaves this Double-Sided Wait:
     </text>
 
     <!-- Each flat tile: 1 5/12 inches long, 7/8 inch thick. -->
-    <rect x="205.6" y="101.7" width="94.4" height="58.3"
-          rx="4" fill="#dce9e1" stroke="#58796c"
-          stroke-width="2"/>
 
-    <rect x="205.6" y="43.4" width="94.4" height="58.3"
-          rx="4" fill="#dce9e1" stroke="#58796c"
-          stroke-width="2"/>
+<!-- Lower tile -->
+<rect x="205.6" y="101.7" width="94.4" height="58.3"
+      rx="4" fill="#f7f7f2" stroke="#58796c"
+      stroke-width="2"/>
+
+<!-- Lower tile green backing -->
+<rect x="207" y="102.7" width="91.6" height="5"
+      fill="#568a72"/>
+
+<!-- Upper tile -->
+<rect x="205.6" y="43.4" width="94.4" height="58.3"
+      rx="4" fill="#f7f7f2" stroke="#58796c"
+      stroke-width="2"/>
+
+<!-- Upper tile green backing -->
+<rect x="207" y="44.4" width="91.6" height="5"
+      fill="#568a72"/>
 
     <!-- Green backs face upward. -->
     <path d="M210 46 H295 M210 104 H295"
@@ -15392,25 +15575,39 @@ Leaves this Double-Sided Wait:
         </strong>
 
         <svg viewBox="0 0 480 150"
-             role="img"
-             aria-label="Four stacks with two tiles in each
-                         stack, making one delivery of eight tiles."
-             style="display:block; width:100%; height:auto;">
-          <g fill="#dce9e1" stroke="#58796c" stroke-width="2">
-            <rect x="90"  y="72" width="75" height="28" rx="3"/>
-            <rect x="90"  y="44" width="75" height="28" rx="3"/>
-            <rect x="165" y="72" width="75" height="28" rx="3"/>
-            <rect x="165" y="44" width="75" height="28" rx="3"/>
-            <rect x="240" y="72" width="75" height="28" rx="3"/>
-            <rect x="240" y="44" width="75" height="28" rx="3"/>
-            <rect x="315" y="72" width="75" height="28" rx="3"/>
-            <rect x="315" y="44" width="75" height="28" rx="3"/>
-          </g>
-          <text x="240" y="132" text-anchor="middle"
-                font-size="19" fill="#333">
-            4 stacks × 2 tiles = 8 tiles
-          </text>
-        </svg>
+     role="img"
+     aria-label="Four stacks with two face-down tiles in each stack, making one delivery of eight tiles."
+     style="display:block; width:100%; height:auto;">
+
+  <!-- Eight white tile bodies -->
+  <g fill="#f7f7f2" stroke="#58796c" stroke-width="2">
+    <rect x="90"  y="72" width="75" height="28" rx="3"/>
+    <rect x="90"  y="44" width="75" height="28" rx="3"/>
+    <rect x="165" y="72" width="75" height="28" rx="3"/>
+    <rect x="165" y="44" width="75" height="28" rx="3"/>
+    <rect x="240" y="72" width="75" height="28" rx="3"/>
+    <rect x="240" y="44" width="75" height="28" rx="3"/>
+    <rect x="315" y="72" width="75" height="28" rx="3"/>
+    <rect x="315" y="44" width="75" height="28" rx="3"/>
+  </g>
+
+  <!-- Thin green backing on each tile -->
+  <g fill="#568a72">
+    <rect x="91.5"  y="45" width="72" height="4"/>
+    <rect x="91.5"  y="73" width="72" height="4"/>
+    <rect x="166.5" y="45" width="72" height="4"/>
+    <rect x="166.5" y="73" width="72" height="4"/>
+    <rect x="241.5" y="45" width="72" height="4"/>
+    <rect x="241.5" y="73" width="72" height="4"/>
+    <rect x="316.5" y="45" width="72" height="4"/>
+    <rect x="316.5" y="73" width="72" height="4"/>
+  </g>
+
+  <text x="240" y="132" text-anchor="middle"
+        font-size="19" fill="#333">
+    4 stacks × 2 tiles = 8 tiles
+  </text>
+</svg>
 
         <figcaption style="text-align:center; color:#555;">
           Side view of one delivery.
@@ -15557,31 +15754,38 @@ Leaves this Double-Sided Wait:
         </strong>
 
         <svg viewBox="0 0 440 230"
-             role="img"
-             aria-label="The initial four-tile Flower Wall tail:
-                         take the top tile first, then the second,
-                         third, and bottom tile."
-             style="display:block; width:100%; height:auto;">
+     role="img"
+     aria-label="The initial four-tile Flower Wall tail: take the top tile first, then the second, third, and bottom tile."
+     style="display:block; width:100%; height:auto;">
 
-          <g fill="#dce9e1" stroke="#58796c" stroke-width="2">
-            <rect x="150" y="35"  width="140" height="35" rx="3"/>
-            <rect x="150" y="70"  width="140" height="35" rx="3"/>
-            <rect x="150" y="105" width="140" height="35" rx="3"/>
-            <rect x="150" y="140" width="140" height="35" rx="3"/>
-          </g>
+  <!-- Four predominantly white tile bodies -->
+  <g fill="#f7f7f2" stroke="#58796c" stroke-width="2">
+    <rect x="150" y="35"  width="140" height="35" rx="3"/>
+    <rect x="150" y="70"  width="140" height="35" rx="3"/>
+    <rect x="150" y="105" width="140" height="35" rx="3"/>
+    <rect x="150" y="140" width="140" height="35" rx="3"/>
+  </g>
 
-          <g text-anchor="middle" font-size="20" fill="#222">
-            <text x="220" y="59">1st</text>
-            <text x="220" y="94">2nd</text>
-            <text x="220" y="129">3rd</text>
-            <text x="220" y="164">4th</text>
-          </g>
+  <!-- Thin green backing on each face-down tile -->
+  <g fill="#568a72">
+    <rect x="151.5" y="36"  width="137" height="5"/>
+    <rect x="151.5" y="71"  width="137" height="5"/>
+    <rect x="151.5" y="106" width="137" height="5"/>
+    <rect x="151.5" y="141" width="137" height="5"/>
+  </g>
 
-          <text x="220" y="210" text-anchor="middle"
-                font-size="18" fill="#555">
-            Work from the top down.
-          </text>
-        </svg>
+  <g text-anchor="middle" font-size="20" fill="#222">
+    <text x="220" y="59">1st</text>
+    <text x="220" y="94">2nd</text>
+    <text x="220" y="129">3rd</text>
+    <text x="220" y="164">4th</text>
+  </g>
+
+  <text x="220" y="210" text-anchor="middle"
+        font-size="18" fill="#555">
+    Work from the top down.
+  </text>
+</svg>
 
         <figcaption style="text-align:center; color:#555;">
           The raised tail begins four tiles high.
