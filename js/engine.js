@@ -2790,6 +2790,15 @@ function getMMRStructureMetrics(result) {
 reserveCount:
   reserves.length,
 
+meldTerminality:
+  result.candidate.tiles.reduce(function(total, tileKey) {
+    const match = tileKey.match(/^(char|bam|dot)([1-9])$/);
+
+    return total +
+      (match ? Math.abs(5 - Number(match[2])) : 0);
+  }, 0) / result.candidate.tiles.length,
+
+
 reserveCentricity:
   reserves.reduce(function(total, tileKey) {
     return total +
@@ -2857,7 +2866,12 @@ if (
   );
 }
 
-// Structurally tied for now.
+// 6. With all earlier comparisons tied, favor Terminality.
+if (a.meldTerminality !== b.meldTerminality) {
+  return b.meldTerminality - a.meldTerminality;
+}
+
+// Structurally tied.
 return 0;
 }
 
