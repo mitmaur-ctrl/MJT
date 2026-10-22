@@ -268,6 +268,24 @@ const mjcGlossaryEntries = [
       "A suited tile numbered 1 or 9."
   },
   {
+    term: "Terminality",
+    definition:
+      "A Six Box Theory™ principle that favors completed Chows " +
+      "closer to the terminal tiles (1 and 9) when evaluating " +
+      "otherwise comparable meld choices. Terminality helps " +
+      "preserve the flexibility of more central tiles, which " +
+      "generally offer greater opportunities for forming " +
+      "additional combinations. For example, when choosing " +
+      "between completing a 2–3–4 Chow or a 3–4–5 Chow, MJC " +
+      "may favor 2–3–4 because it is closer to the terminal " +
+      "edge, preserving more central tiles for further " +
+      "development. Terminality complements Centricity, which " +
+      "recognizes the greater combination potential of tiles " +
+      "nearer the center of a suit. Terminality is a preference, " +
+      "not an absolute rule."
+  },
+
+  {
     term: "Ordinal",
     definition:
       "MJC's term for a suited tile numbered 2 through 8."
@@ -318,7 +336,7 @@ const mjcGlossaryEntries = [
     term: "Hand History",
     definition:
       "The collection of hands saved in this browser on this " +
-      "device. MJC keeps the most recent 20 saved hands."
+            "device. MJC keeps your 80 most recent hands."
   },
   {
     term: "New Hand",
@@ -656,6 +674,7 @@ function showGlossaryEntry(index) {
   const definition = document.createElement("p");
   definition.textContent = entry.definition;
   content.appendChild(definition);
+  appendGlossaryChiclets(content, entry.term);
 
   const groupName = Object.keys(mjcGlossaryGroups).find(
     function(name) {
@@ -720,6 +739,7 @@ const mjcGlossaryGroups = {
     "Insight",
     "Connectivity",
     "Centricity",
+    "Terminality",
     "Orphaned Tile",
     "Lone Honor",
     "Release Tile",
@@ -795,6 +815,7 @@ function showGlossaryGroup(groupName) {
     const definition = document.createElement("p");
     definition.textContent = entry.definition;
     content.appendChild(definition);
+    appendGlossaryChiclets(content, entry.term);
   });
 
   const backButton = document.createElement("button");
@@ -1095,9 +1116,13 @@ function buildMMRInsight() {
           "reserveCount",
           "The recommended choices leave fewer Reserves."
         ],
-        [
+                [
           "reserveCentricity",
           "With the other comparisons tied, MJC favors keeping more central Reserve tiles."
+        ],
+        [
+          "meldTerminality",
+          "With all earlier comparisons tied, MJC uses Terminality: it favors completing the meld closer to the terminals, 1 or 9."
         ]
       ];
 
@@ -2399,7 +2424,7 @@ function openGameHistoryDialog() {
 
     const note = document.createElement("p");
     note.textContent = games.length
-                  ? "Saved Hands: " + games.length + " (Keeps your 20 most recent hands.)"
+                                    ? "Saved Hands: " + games.length + ". MJC keeps your 80 most recent hands."
       : "No saved hands.";
     content.appendChild(note);
     if (games.length > 0) {
@@ -2935,4 +2960,66 @@ function editSavedHandDetails(id) {
     console.error("Hand details editor failed:", error);
     showToast("Unable to open hand details.");
   }
+}
+
+function appendGlossaryChiclets(content, term) {
+  const examples = {
+    "Chow": [
+      ["Example Chow", "char1 char2 char3"]
+    ],
+    "Pong": [
+      ["Example Pong", "red red red"]
+    ],
+    "Kang": [
+      ["Example Kang", "dot7 dot7 dot7 dot7"]
+    ],
+    "Eye": [
+      ["Example Eye", "red red"]
+    ],
+    "Eye Candidate": [
+      ["Example pair considered for the Eye", "red red"]
+    ],
+    "Eye-Pong Candidate": [
+      ["A pair with Eye and Pong possibilities", "red red"]
+    ],
+    "Chow Candidate": [
+      ["Example: needs 3 or 6 Bam", "bam4 bam5"]
+    ],
+    "Chow-Pong Candidate": [
+      ["Example: Chow and Pong possibilities", "char2 char2 char3"]
+    ],
+    "Double-Sided Wait": [
+      ["Example: needs 3 or 6 Bam", "bam4 bam5"]
+    ],
+    "Middle Wait": [
+      ["Example: needs 5 Dot", "dot4 dot6"]
+    ],
+    "Edge Wait": [
+      ["Needs 3 Char", "char1 char2"],
+      ["Needs 7 Char", "char8 char9"]
+    ]
+  };
+
+  const rows = examples[term];
+  if (!rows) return;
+
+  const illustration = document.createElement("div");
+  illustration.style.cssText =
+    "background:#f0f4f8; border-radius:10px;" +
+    "padding:12px; margin:12px 0 20px;";
+
+  rows.forEach(function(row, index) {
+    const label = document.createElement("p");
+    label.textContent = row[0];
+    label.style.margin = index === 0 ? "0 0 8px" : "16px 0 8px";
+    illustration.appendChild(label);
+
+    const tiles = document.createElement("div");
+    tiles.className = "chiclet-tiles";
+    tiles.dataset.chiclets = row[1];
+    illustration.appendChild(tiles);
+  });
+
+  content.appendChild(illustration);
+  renderChiclets(illustration);
 }

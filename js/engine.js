@@ -671,7 +671,9 @@ const pkcCandidates =
     remainingCounts,
     engineInput.deferredKangTileKeys || [],
     engineInput.context &&
-      engineInput.context.phase === "starting"
+      engineInput.context.phase === "starting",
+    engineInput.context?.ruleset === "filipino16" &&
+      engineInput.context?.newsAllowed === true
   );
 
 const pkcAdjustedCounts = {
@@ -1520,7 +1522,8 @@ function getRemainingCounts(originalCounts, completeBoxes) {
 function findPKCDevelopingBoxes(
   remainingCounts,
   deferredKangTileKeys = [],
-  isStartingHand = false
+  isStartingHand = false,
+  newsAllowed = false
 ) {
 
   const pkcBoxes = [];
@@ -1535,6 +1538,7 @@ const hasNEWS =
   (remainingCounts.south || 0) >= 1;
 
 const shouldCreateNEWSPKC =
+  newsAllowed &&
   hasNEWS &&
   (
     isStartingHand ||
