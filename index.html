@@ -123,6 +123,40 @@ V4 = Photo Recognition
 <div id="mainContainer" class="container">
 
   <div id="tdScreen">
+
+    <!-- TSS New Visitor Invitation -->
+    <div id="tssInvitation" class="hidden">
+
+      <button
+        type="button"
+        id="tssInvitationTab"
+        aria-expanded="false"
+        aria-controls="tssInvitationPanel"
+      >
+        New to MJC? Click here! ▼
+      </button>
+
+      <div id="tssInvitationPanel" class="hidden">
+
+        <h3>New to Mahjong Coach?</h3>
+
+        <p>We're glad you're here!</p>
+
+        <p><strong>Learn what MJC is all about!</strong></p>
+
+        <div class="dialog-actions">
+          <button type="button" class="dialog-button primary">
+            Discover MJC
+          </button>
+
+          <button type="button" class="dialog-button">
+            Close
+          </button>
+        </div>
+
+      </div>
+    </div>
+
     <div id="hcsIntro" class="hcs-panel hidden">
 
   <div class="hcs-title">Fix Hand</div>
@@ -17158,6 +17192,16 @@ overPairedDialogs.forEach(function(dialogId) {
   updateWindIcons();
   updateContextControls();
   updateDisplay();
+
+  // Restore TSS invitation for the new hand.
+  const invitation = document.getElementById("tssInvitation");
+  const invitationPanel = document.getElementById("tssInvitationPanel");
+  const invitationTab = document.getElementById("tssInvitationTab");
+
+  invitation.classList.remove("hidden");
+  invitationPanel.classList.add("hidden");
+  invitationTab.setAttribute("aria-expanded", "false");
+
   showToast("New hand ready.");
 }
 
@@ -17332,9 +17376,65 @@ document.addEventListener("touchend", function(e) {
       });
     });
 
+  
+  // TSS New Visitor Invitation
+  const invitation = document.getElementById("tssInvitation");
+  const invitationTab = document.getElementById("tssInvitationTab");
+  const invitationPanel = document.getElementById("tssInvitationPanel");
+  const invitationButtons = invitationPanel.querySelectorAll("button");
+
+  // First-time visitors receive the Welcome Screen.
+  // Returning visitors see the invitation tab.
+  
+invitation.classList.toggle("hidden", !welcomeSeen);
+
+
+  invitationTab.addEventListener("click", function() {
+    const opening = invitationPanel.classList.contains("hidden");
+    invitationPanel.classList.toggle("hidden", !opening);
+    invitationTab.setAttribute("aria-expanded", String(opening));
+  });
+
+  // Discover MJC
+  invitationButtons[0].addEventListener("click", function() {
+    invitationPanel.classList.add("hidden");
+    invitationTab.setAttribute("aria-expanded", "false");
+
+    openDialog("playingMJCDialog");
+
+    requestAnimationFrame(function() {
+      document.getElementById("playingMJCContents")
+        .scrollTo({ top: 0, behavior: "instant" });
+    });
+  });
+
+  // Close
+  invitationButtons[1].addEventListener("click", function() {
+    invitationPanel.classList.add("hidden");
+    invitationTab.setAttribute("aria-expanded", "false");
+  });
+
+
+  // Hide invitation when tile entry begins.
+  ["characters", "bams", "dots", "winds", "dragons"]
+    .forEach(function(id) {
+      const tileGrid = document.getElementById(id);
+
+      if (!tileGrid) return;
+
+      tileGrid.addEventListener("click", function() {
+        invitation.classList.add("hidden");
+        invitationPanel.classList.add("hidden");
+        invitationTab.setAttribute("aria-expanded", "false");
+      });
+    });
+
+
+
   if (!welcomeSeen) {
     openDialog("welcomeDialog");
   }
+
 </script>
 
 <!-- Learn to Use MJC — PREVIOUS / NEXT CHAPTER NAVIGATION -->
