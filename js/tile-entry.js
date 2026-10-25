@@ -547,7 +547,8 @@ function undoClear() {
 
 let gameTranscript = {
   initialTiles: [],
-  actions: []
+  actions: [],
+  replaySteps: []
 };
 
 let fhTranscriptBefore = null;
@@ -587,6 +588,23 @@ function captureInitialTiles() {
 
   gameTranscript.initialTiles = initialTiles;
   gameTranscript.savedGameId = null;
+
+const replayResult = evaluate17TE(
+  MJC_STATE.getEngineInput()
+);
+
+const replayStructure =
+  replayResult.structureState || replayResult;
+
+gameTranscript.replaySteps.push({
+  type: "starting",
+  structure: JSON.parse(JSON.stringify({
+    completeBoxes: replayStructure.completeBoxes,
+    developingBoxes: replayStructure.developingBoxes,
+    halfEye: replayStructure.halfEye,
+    reserves: replayStructure.reserves
+  }))
+});
 
 }
 
@@ -670,9 +688,12 @@ function saveCurrentGame() {
       boxTarget: specialEscalera
         ? 4
         : (specialSevenPairs ? 2 : 6),
-      initialTiles: [...gameTranscript.initialTiles],
+            initialTiles: [...gameTranscript.initialTiles],
       actions: JSON.parse(
         JSON.stringify(gameTranscript.actions)
+      ),
+      replaySteps: JSON.parse(
+        JSON.stringify(gameTranscript.replaySteps)
       )
     };
 
@@ -683,7 +704,7 @@ function saveCurrentGame() {
 
     localStorage.setItem(
       "mjcSavedGames",
-      JSON.stringify(savedGames.slice(0, 20))
+      JSON.stringify(savedGames.slice(0, 80))
     );
 
     gameTranscript.savedGameId = savedGame.id;

@@ -1100,6 +1100,70 @@ if (
   correctionActionType = null;
 
   showHD();
+  if (lastActionType === "draw") {
+    const actionIndex = gameTranscript.actions.length - 1;
+    const recordedAction = gameTranscript.actions[actionIndex];
+
+    if (
+      recordedAction &&
+      recordedAction.type === "D" &&
+      !gameTranscript.replaySteps.some(
+        step => step.actionIndex === actionIndex
+      )
+    ) {
+      const replayResult = evaluate17TE(
+        MJC_STATE.getEngineInput()
+      );
+
+      const replayStructure =
+        replayResult.structureState || replayResult;
+
+      gameTranscript.replaySteps.push({
+        type: "draw",
+        actionIndex: actionIndex,
+        tileKey: recordedAction.tileKey,
+        structure: JSON.parse(JSON.stringify({
+          completeBoxes: replayStructure.completeBoxes,
+          developingBoxes: replayStructure.developingBoxes,
+          halfEye: replayStructure.halfEye,
+          reserves: replayStructure.reserves
+        }))
+      });
+    }
+  }
+  if (lastActionType === "claim") {
+    const actionIndex = gameTranscript.actions.length - 1;
+    const recordedAction = gameTranscript.actions[actionIndex];
+
+    if (
+      recordedAction &&
+      (recordedAction.type === "C" || recordedAction.type === "P") &&
+      !gameTranscript.replaySteps.some(
+        step => step.actionIndex === actionIndex
+      )
+    ) {
+      const replayResult = evaluate17TE(
+        MJC_STATE.getEngineInput()
+      );
+
+      const replayStructure =
+        replayResult.structureState || replayResult;
+
+      gameTranscript.replaySteps.push({
+        type: recordedAction.type === "C" ? "chow" : "pong",
+        actionIndex: actionIndex,
+        tileKey: recordedAction.tileKey,
+        structure: JSON.parse(JSON.stringify({
+          completeBoxes: replayStructure.completeBoxes,
+          developingBoxes: replayStructure.developingBoxes,
+          halfEye: replayStructure.halfEye,
+          reserves: replayStructure.reserves
+        }))
+      });
+    }
+  }
+
+
 }
 
 function shouldProtectOnlyEC() {
@@ -1148,7 +1212,39 @@ function resumeMMRAction() {
 }
 
 if (mmrState.action === "sagasa-after-draw") {
-  const sagasaBox =
+  // Replay Hand: capture the draw before Sagasa
+  // promotes the Exposed Pong to an Exposed Kang.
+  const drawActionIndex = gameTranscript.actions.length - 1;
+  const drawAction = gameTranscript.actions[drawActionIndex];
+
+  if (
+    drawAction &&
+    drawAction.type === "D" &&
+    !gameTranscript.replaySteps.some(
+      step => step.actionIndex === drawActionIndex
+    )
+  ) {
+    const replayResult = evaluate17TE(
+      MJC_STATE.getEngineInput()
+    );
+
+    const replayStructure =
+      replayResult.structureState || replayResult;
+
+    gameTranscript.replaySteps.push({
+      type: "draw",
+      actionIndex: drawActionIndex,
+      tileKey: drawAction.tileKey,
+      structure: JSON.parse(JSON.stringify({
+        completeBoxes: replayStructure.completeBoxes,
+        developingBoxes: replayStructure.developingBoxes,
+        halfEye: replayStructure.halfEye,
+        reserves: replayStructure.reserves
+      }))
+    });
+  }  
+
+const sagasaBox =
     mmrState.selectedCandidate;
 
   const sagasaTileKey =
@@ -1237,15 +1333,83 @@ if (mmrState.action === "sagasa-after-draw") {
   correctionTargetTileKey = null;
   correctionActionType = null;
 
-  mmrState = null;
+    mmrState = null;
 
   showHD();
+
+  // Replay Hand: record the completed Sagasa Kang.
+  const actionIndex = gameTranscript.actions.length - 1;
+  const recordedAction = gameTranscript.actions[actionIndex];
+
+  if (
+    recordedAction &&
+    recordedAction.type === "K" &&
+    !gameTranscript.replaySteps.some(
+      step => step.actionIndex === actionIndex
+    )
+  ) {
+    const replayResult = evaluate17TE(
+      MJC_STATE.getEngineInput()
+    );
+
+    const replayStructure =
+      replayResult.structureState || replayResult;
+
+    gameTranscript.replaySteps.push({
+      type: "kang",
+      actionIndex: actionIndex,
+      tileKey: recordedAction.tileKey,
+      structure: JSON.parse(JSON.stringify({
+        completeBoxes: replayStructure.completeBoxes,
+        developingBoxes: replayStructure.developingBoxes,
+        halfEye: replayStructure.halfEye,
+        reserves: replayStructure.reserves
+      }))
+    });
+  }
+
   return;
 }
 
 
 
 if (mmrState.action === "hidden-kang-after-draw") {
+  // Replay Hand: capture the draw before
+  // declaring the Hidden Kang.
+  if (
+  mmrState.selectedCandidate?.type === "kang" ||
+  mmrState.selectedCandidate?.type === "news"
+) {
+    const actionIndex = gameTranscript.actions.length - 1;
+    const recordedAction = gameTranscript.actions[actionIndex];
+
+    if (
+      recordedAction &&
+      recordedAction.type === "D" &&
+      !gameTranscript.replaySteps.some(
+        step => step.actionIndex === actionIndex
+      )
+    ) {
+      const replayResult = evaluate17TE(
+        MJC_STATE.getEngineInput()
+      );
+
+      const replayStructure =
+        replayResult.structureState || replayResult;
+
+      gameTranscript.replaySteps.push({
+        type: "draw",
+        actionIndex: actionIndex,
+        tileKey: recordedAction.tileKey,
+        structure: JSON.parse(JSON.stringify({
+          completeBoxes: replayStructure.completeBoxes,
+          developingBoxes: replayStructure.developingBoxes,
+          halfEye: replayStructure.halfEye,
+          reserves: replayStructure.reserves
+        }))
+      });
+    }
+  }
   const kangBox =
   mmrState.selectedCandidate;
 
@@ -1381,9 +1545,40 @@ deferredKangTileKeys =
   correctionTargetTileKey = null;
   correctionActionType = null;
 
-  mmrState = null;
+    mmrState = null;
 
   showHD();
+
+  const actionIndex = gameTranscript.actions.length - 1;
+  const recordedAction = gameTranscript.actions[actionIndex];
+
+  if (
+    recordedAction &&
+    recordedAction.type === "K" &&
+    !gameTranscript.replaySteps.some(
+      step => step.actionIndex === actionIndex
+    )
+  ) {
+    const replayResult = evaluate17TE(
+      MJC_STATE.getEngineInput()
+    );
+
+    const replayStructure =
+      replayResult.structureState || replayResult;
+
+    gameTranscript.replaySteps.push({
+      type: "kang",
+      actionIndex: actionIndex,
+      tileKey: recordedAction.tileKey,
+      structure: JSON.parse(JSON.stringify({
+        completeBoxes: replayStructure.completeBoxes,
+        developingBoxes: replayStructure.developingBoxes,
+        halfEye: replayStructure.halfEye,
+        reserves: replayStructure.reserves
+      }))
+    });
+  }
+
   return;
 }
 
@@ -1496,21 +1691,21 @@ const claimedMeldType =
     ? mmrState.selectedCandidate?.type
     : null;
 
-if (
-  claimedMeldType === "pong" ||
-  claimedMeldType === "kang"
-) {
-  captureInitialTiles();
-}
+// Capture the starting hand before adding the incoming tile.
+captureInitialTiles();
 
 counts[selectedTileKey] += 1;
 
-if (claimedMeldType === "pong") {
+if (mmrState.action === "draw") {
+  recordGameAction("D", selectedTileKey);
+} else if (claimedMeldType === "chow") {
+  recordGameAction("C", selectedTileKey);
+} else if (claimedMeldType === "pong") {
   recordGameAction("P", selectedTileKey);
-}
-
-if (claimedMeldType === "kang") {
+} else if (claimedMeldType === "kang") {
   recordGameAction("K", selectedTileKey);
+} else if (claimedMeldType === "news") {
+  recordGameAction("K", "NEWS");
 }
 
 syncEscaleraAfterHandChange();
@@ -1588,6 +1783,46 @@ lastDrawnTileKey =
   mmrState = null;
 
   showHD();
+  const actionIndex = gameTranscript.actions.length - 1;
+  const recordedAction = gameTranscript.actions[actionIndex];
+
+  if (
+  recordedAction &&
+  (
+    recordedAction.type === "C" ||
+        (
+      recordedAction.type === "K" &&
+      (
+        claimedMeldType === "kang" ||
+        claimedMeldType === "news"
+      )
+    )
+  ) &&
+  !gameTranscript.replaySteps.some(
+    step => step.actionIndex === actionIndex
+  )
+) {
+
+    const replayResult = evaluate17TE(
+      MJC_STATE.getEngineInput()
+    );
+
+    const replayStructure =
+      replayResult.structureState || replayResult;
+
+    gameTranscript.replaySteps.push({
+      type: recordedAction.type === "K" ? "kang" : "chow",
+      actionIndex: actionIndex,
+      tileKey: recordedAction.tileKey,
+      structure: JSON.parse(JSON.stringify({
+        completeBoxes: replayStructure.completeBoxes,
+        developingBoxes: replayStructure.developingBoxes,
+        halfEye: replayStructure.halfEye,
+        reserves: replayStructure.reserves
+      }))
+    });
+  }
+
 }
 
 function cancelDraw() {
@@ -1813,6 +2048,36 @@ function confirmDiscard() {
   correctionActionType = null;
 
   showHD();
+  const actionIndex = gameTranscript.actions.length - 1;
+  const recordedAction = gameTranscript.actions[actionIndex];
+
+  if (
+    recordedAction &&
+    recordedAction.type === "Di" &&
+    !gameTranscript.replaySteps.some(
+      step => step.actionIndex === actionIndex
+    )
+  ) {
+    const replayResult = evaluate17TE(
+      MJC_STATE.getEngineInput()
+    );
+
+    const replayStructure =
+      replayResult.structureState || replayResult;
+
+    gameTranscript.replaySteps.push({
+      type: "discard",
+      actionIndex: actionIndex,
+      tileKey: recordedAction.tileKey,
+      structure: JSON.parse(JSON.stringify({
+        completeBoxes: replayStructure.completeBoxes,
+        developingBoxes: replayStructure.developingBoxes,
+        halfEye: replayStructure.halfEye,
+        reserves: replayStructure.reserves
+      }))
+    });
+  }
+
 }
 
 
@@ -2200,7 +2465,6 @@ while (
   showToast("Correct the last discard entry. Red shows the previous entry.");
   openDiscardScreen();
 }
-
 }
 
 function applyCorrectionHighlight(action) {

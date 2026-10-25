@@ -2605,6 +2605,195 @@ function viewSavedGameTranscript(index) {
       editSavedHandDetails(game.id);
     };
     transcriptButtons.appendChild(detailsButton);
+    const replayButton = document.createElement("button");
+    replayButton.className = "dialog-button";
+    replayButton.textContent = "Replay Hand";
+
+    const hasReplay =
+      Array.isArray(game.replaySteps) &&
+      game.replaySteps.length > 0;
+
+    replayButton.disabled = !hasReplay;
+
+    replayButton.onclick = function() {
+      if (!hasReplay) return;
+
+      content.replaceChildren();
+
+      const replayHeader = document.createElement("div");
+      replayHeader.id = "replayStickyHeader";
+      replayHeader.style.position = "sticky";
+      replayHeader.style.top = "0";
+      replayHeader.style.zIndex = "10";
+      replayHeader.style.background = "#ffffff";
+      replayHeader.style.padding = "8px 0 10px";
+      replayHeader.style.borderBottom = "1px solid #dddddd";
+
+      const title = document.createElement("h3");
+      title.textContent = "Replay Hand";
+      title.style.margin = "0 0 8px";
+      replayHeader.appendChild(title);
+
+      let replayIndex = 0;
+
+      const stepCounter = document.createElement("p");
+      stepCounter.style.margin = "4px 0";
+      replayHeader.appendChild(stepCounter);
+
+      const actionLabel = document.createElement("h4");
+      actionLabel.style.margin = "8px 0 0";
+      replayHeader.appendChild(actionLabel);
+
+      content.appendChild(replayHeader);
+
+      const viewer = document.createElement("div");
+      viewer.id = "replayHandViewer";
+
+      const navigation = document.createElement("div");
+      navigation.style.display = "flex";
+      navigation.style.justifyContent = "center";
+      navigation.style.gap = "12px";
+      navigation.style.margin = "16px 0";
+
+      const previousButton = document.createElement("button");
+      previousButton.className = "dialog-button";
+      previousButton.textContent = "Previous";
+
+      const nextButton = document.createElement("button");
+      nextButton.className = "dialog-button";
+      nextButton.textContent = "Next";
+
+            navigation.append(previousButton, nextButton);
+
+      const dialogFooter = document.querySelector(
+        "#gameHistoryDialog .dialog-actions"
+      );
+
+      dialogFooter.insertBefore(
+        navigation,
+        dialogFooter.firstChild
+      );
+
+      content.appendChild(viewer);
+
+      function showReplayStep() {
+        const step = game.replaySteps[replayIndex];
+
+        stepCounter.textContent =
+          "Step " + (replayIndex + 1) +
+          " of " + game.replaySteps.length;
+
+        if (step.type === "starting") {
+          actionLabel.textContent = "Starting Hand";
+        } else {
+          const actionName =
+            step.type.charAt(0).toUpperCase() +
+            step.type.slice(1);
+
+          const tileName = step.tileKey
+            ? (tileLabels[step.tileKey] || step.tileKey)
+            : "";
+
+          actionLabel.textContent =
+            actionName +
+            (tileName ? " — " + tileName : "");
+        }
+
+        viewer.innerHTML =
+          renderReplayReserves(step.structure) +
+          renderReplayDevelopingBoxes(step.structure) +
+          renderReplayCompleteBoxes(step.structure);
+
+                previousButton.disabled = replayIndex === 0;
+
+        nextButton.disabled =
+          replayIndex === game.replaySteps.length - 1;
+
+        previousButton.style.opacity =
+          previousButton.disabled ? "0.35" : "1";
+
+        nextButton.style.opacity =
+          nextButton.disabled ? "0.35" : "1";
+
+        previousButton.style.cursor =
+          previousButton.disabled ? "not-allowed" : "pointer";
+
+        nextButton.style.cursor =
+          nextButton.disabled ? "not-allowed" : "pointer";
+
+      }
+
+      previousButton.onclick = function() {
+        if (replayIndex === 0) return;
+        replayIndex--;
+        showReplayStep();
+      };
+
+      nextButton.onclick = function() {
+        if (replayIndex >= game.replaySteps.length - 1) {
+          return;
+        }
+
+        replayIndex++;
+        showReplayStep();
+      };
+
+      showReplayStep();
+
+      const closeButton = document.createElement("button");
+      closeButton.className = "dialog-button";
+      closeButton.textContent = "Back to Transcript";
+
+      const dialogCloseButton =
+        dialogFooter.querySelector(".dialog-button.primary");
+
+      const originalFooterStyle =
+        dialogFooter.getAttribute("style");
+
+      dialogFooter.style.display = "flex";
+      dialogFooter.style.flexDirection = "column";
+      dialogFooter.style.alignItems = "center";
+      dialogFooter.style.gap = "12px";
+
+      navigation.style.margin = "0";
+      dialogFooter.insertBefore(
+        closeButton,
+        dialogCloseButton
+      );
+
+      function cleanupReplayFooter() {
+        navigation.remove();
+        closeButton.remove();
+
+        if (originalFooterStyle === null) {
+          dialogFooter.removeAttribute("style");
+        } else {
+          dialogFooter.setAttribute(
+            "style",
+            originalFooterStyle
+          );
+        }
+
+        dialogCloseButton.removeEventListener(
+          "click",
+          cleanupReplayFooter
+        );
+      }
+
+      closeButton.onclick = function() {
+        cleanupReplayFooter();
+        viewSavedGameTranscript(index);
+      };
+
+      dialogCloseButton.addEventListener(
+        "click",
+        cleanupReplayFooter
+      );
+
+    };
+
+    transcriptButtons.appendChild(replayButton);
+
     const body = document.createElement("div");
     body.style.maxHeight = "50vh";
     body.style.overflowY = "auto";

@@ -3356,6 +3356,7 @@ if (coachingOn) {
   renderCoachView();
 }
 
+
 if (
   hdMode === "current" &&
   coachingOn &&
@@ -3369,3 +3370,131 @@ if (
 }
 }
 
+function renderReplayCompleteBoxes(structure) {
+  const boxes = structure.completeBoxes || [];
+
+  if (boxes.length === 0) {
+    return "";
+  }
+
+  let html =
+    '<div class="completed-area">' +
+      '<div class="engine-title">Completed Boxes</div>';
+
+  boxes.forEach(function(box, index) {
+    const tileHtml = box.tiles
+      .map(function(tileKey) {
+        return renderCoachTile(tileKey);
+      })
+      .join("");
+
+    const typeLabel =
+      box.type.charAt(0).toUpperCase() +
+      box.type.slice(1);
+
+    const visibilityLabel =
+      box.visibility === "exposed"
+        ? "Exposed"
+        : "Hidden";
+
+    const wideClass =
+      box.type === "kang" || box.type === "news"
+        ? " wide-box"
+        : "";
+
+    html +=
+      '<div class="hand-section box-card complete-box' +
+        wideClass + '">' +
+        '<div class="hand-section-title">CB' +
+          (box.boxId || index + 1) +
+          ' — ' + typeLabel +
+          (box.type === "eye"
+            ? ""
+            : " — " + visibilityLabel) +
+        '</div>' +
+        '<div class="cb-tile-row">' +
+          tileHtml +
+        '</div>' +
+      '</div>';
+  });
+
+  html += '</div>';
+
+  return html;
+}
+
+function renderReplayReserves(structure) {
+  const reserves = structure.reserves || [];
+
+  let html =
+    '<div class="reserve-area">' +
+      '<div class="engine-title">Reserves (' +
+        reserves.length +
+      ')</div>';
+
+  if (reserves.length === 0) {
+    html +=
+      '<span class="empty-note">No reserves</span>';
+  } else {
+    html += reserves
+      .map(function(tileKey) {
+        return renderCoachTile(tileKey);
+      })
+      .join("");
+  }
+
+  html += '</div>';
+
+  return html;
+}
+
+function renderReplayDevelopingBoxes(structure) {
+  const boxes = structure.developingBoxes || [];
+  const halfEye = structure.halfEye || [];
+  const completeCount =
+    (structure.completeBoxes || []).length;
+
+  let html =
+    '<div class="developing-area">' +
+      '<div class="engine-title">Developing Boxes</div>';
+
+  const allBoxes = boxes.concat(halfEye);
+
+  allBoxes.forEach(function(box, index) {
+    const boxNumber = completeCount + index + 1;
+
+    const tileHtml = box.tiles
+      .map(function(tileKey) {
+        return renderCoachTile(tileKey);
+      })
+      .join("");
+
+    const typeLabel =
+      box.type === "he"
+        ? "HE"
+        : getBoxTypeLabel(box.type);
+
+    const wideClass =
+      box.type === "cpc" ? " wide-box" : "";
+
+    html +=
+      '<div class="hand-section box-card developing-box' +
+        wideClass + '">' +
+        '<div class="hand-section-title">DB' +
+          boxNumber + ' — ' + typeLabel +
+        '</div>' +
+        tileHtml +
+      '</div>';
+  });
+
+  if (allBoxes.length === 0) {
+    html +=
+      '<div class="hand-section box-card empty-box">' +
+        '<span class="empty-note">No Developing Boxes</span>' +
+      '</div>';
+  }
+
+  html += '</div>';
+
+  return html;
+}
