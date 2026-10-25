@@ -157,6 +157,12 @@ const mjcGlossaryEntries = [
       "determines which declarations and winning patterns " +
       "MJC permits."
   },
+  {
+    term: "Sagasa",
+    definition:
+      "A Mahjong move in which a player adds a fourth matching " +
+      "tile to an existing exposed Pong, converting it into a Kang."
+  },
 
   {
     term: "Mahjong Coach",
@@ -344,6 +350,16 @@ const mjcGlossaryEntries = [
       "Clears the current hand and returns you to starting tile " +
       "entry. Save the current hand first if you want to keep " +
       "its transcript."
+  },
+  {
+    term: "NEWS",
+    definition:
+      "North, East, West, and South. A special four-tile " +
+      "combination containing one of each Wind tile. In " +
+      "JEZEMS-style Filipino Mahjong, NEWS is recognized " +
+      "as a special meld that may be Hidden or Exposed. " +
+      "NEWS is not recognized as a meld in MJC's " +
+      "Taiwanese ruleset."
   },
   {
     term: "Transcript",
@@ -593,9 +609,12 @@ function openGlossaryDialog() {
   openDialog("glossaryDialog");
 }
 
+
 function showGlossaryIndex() {
   const content = document.getElementById("glossaryContent");
+  document.getElementById("glossaryAlphabet").style.display = "grid";
   content.replaceChildren();
+
 
   const heading = document.createElement("h3");
   heading.textContent = "Alphabetical Index";
@@ -655,15 +674,47 @@ function showGlossaryIndex() {
     content.appendChild(row);
   });
 
+  
   content.scrollTop = 0;
 }
+
+function jumpGlossaryToLetter(letter) {
+  const content = document.getElementById("glossaryContent");
+
+  const hasMatch = mjcGlossaryEntries.some(function(entry) {
+    return entry.term.toUpperCase().startsWith(letter) ||
+      (entry.abbreviation || "").toUpperCase().startsWith(letter);
+  });
+
+  if (!hasMatch) return;
+
+  showGlossaryIndex();
+
+  const links = Array.from(
+    content.querySelectorAll("button.six-box-link")
+  );
+
+  const target = links.find(function(button) {
+    return button.textContent.trim()
+      .toUpperCase().startsWith(letter);
+  });
+
+  if (!target) return;
+
+  content.scrollTop +=
+    target.getBoundingClientRect().top -
+    content.getBoundingClientRect().top;
+}
+
 
 function showGlossaryEntry(index) {
   const entry = mjcGlossaryEntries[index];
   if (!entry) return;
 
   const content = document.getElementById("glossaryContent");
+  document.getElementById("glossaryAlphabet").style.display = "none";
   content.replaceChildren();
+
 
   const heading = document.createElement("h3");
     heading.textContent = entry.abbreviation
@@ -789,12 +840,15 @@ const mjcGlossaryGroups = {
   ]
 };
 
+
 function showGlossaryGroup(groupName) {
   const terms = mjcGlossaryGroups[groupName];
   if (!terms) return;
 
   const content = document.getElementById("glossaryContent");
+  document.getElementById("glossaryAlphabet").style.display = "none";
   content.replaceChildren();
+
 
   const heading = document.createElement("h3");
   heading.textContent = groupName;
