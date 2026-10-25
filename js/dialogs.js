@@ -350,7 +350,7 @@ const mjcGlossaryEntries = [
       "Clears the current hand and returns you to starting tile " +
       "entry. Save the current hand first if you want to keep " +
       "its transcript."
-  },
+  },  
   {
     term: "NEWS",
     definition:
@@ -358,9 +358,10 @@ const mjcGlossaryEntries = [
       "combination containing one of each Wind tile. In " +
       "JEZEMS-style Filipino Mahjong, NEWS is recognized " +
       "as a special meld that may be Hidden or Exposed. " +
-      "NEWS is not recognized as a meld in MJC's " +
-      "Taiwanese ruleset."
+      "NEWS is not recognized in Taiwanese or Chinese " +
+      "Mahjong rulesets."
   },
+
   {
     term: "Transcript",
     definition:
@@ -600,7 +601,51 @@ const mjcGlossaryEntries = [
       "by each grouping and explains the recommendations, including ties. " +
       "Insight helps you understand the choices while leaving " +
       "the playing decision to you."
+  },
+  {
+    term: "Rack",
+    definition:
+      "A holder placed on the table in front of a player to keep " +
+      "their tiles upright, organized, and concealed from other players."
+  },
+  {
+    term: "Chars",
+    definition:
+      "Short for Characters. One of the three numbered Mahjong suits. " +
+      "Character tiles are numbered 1 through 9."
+  },
+  {
+    term: "Bams",
+    definition:
+      "Short for Bamboo. One of the three numbered Mahjong suits. " +
+      "Bamboo tiles are numbered 1 through 9."
+  },
+  {
+    term: "Dots",
+    definition:
+      "Also called Circles. One of the three numbered Mahjong suits. " +
+      "Dot tiles are numbered 1 through 9."
+  },
+  {
+    term: "Honors",
+    definition:
+      "The Mahjong tiles consisting of Winds and Dragons. " +
+      "Unlike numbered suit tiles, Honor tiles cannot form Chows."
+  },
+  {
+    term: "Dragons",
+    definition:
+      "A group of Honor tiles consisting of Red Dragon, " +
+      "Green Dragon, and White Dragon."
+  },
+  {
+    term: "Winds",
+    definition:
+      "A group of Honor tiles consisting of East, South, West, and North."
   }
+
+
+
 ];
 
 function openGlossaryDialog() {
