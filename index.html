@@ -15350,52 +15350,50 @@ Complete Boxes (hidden)
       Side view—looking along the wall
     </text>
 
-    <!-- Pusher: 1½ inches square. -->
-    <rect x="300" y="60" width="100" height="100"
-          fill="#d0b37a" stroke="#927342"
-          stroke-width="2"/>
+    
 
-    <text x="350" y="106" text-anchor="middle"
-          font-size="16" fill="#342817">
-      Wooden
-    </text>
-    <text x="350" y="127" text-anchor="middle"
-          font-size="16" fill="#342817">
-      pusher
-    </text>
+<!-- Square wooden pusher: 100 × 100 -->
+<rect x="300" y="60" width="100" height="100"
+      fill="#d0b37a" stroke="#927342"
+      stroke-width="2"/>
 
-    <!-- Each flat tile: 1 5/12 inches long, 7/8 inch thick. -->
+<text x="350" y="106" text-anchor="middle"
+      font-size="16" fill="#342817">
+  Wooden
+</text>
+<text x="350" y="127" text-anchor="middle"
+      font-size="16" fill="#342817">
+  pusher
+</text>
+
+<!-- Two tiles, each 48 units thick -->
 
 <!-- Lower tile -->
-<rect x="205.6" y="101.7" width="94.4" height="58.3"
+<rect x="205.6" y="112" width="94.4" height="48"
       rx="4" fill="#f7f7f2" stroke="#58796c"
       stroke-width="2"/>
 
-<!-- Lower tile green backing -->
-<rect x="207" y="102.7" width="91.6" height="5"
+<rect x="207" y="113" width="91.6" height="5"
       fill="#568a72"/>
 
 <!-- Upper tile -->
-<rect x="205.6" y="43.4" width="94.4" height="58.3"
+<rect x="205.6" y="64" width="94.4" height="48"
       rx="4" fill="#f7f7f2" stroke="#58796c"
       stroke-width="2"/>
 
-<!-- Upper tile green backing -->
-<rect x="207" y="44.4" width="91.6" height="5"
+<rect x="207" y="65" width="91.6" height="5"
       fill="#568a72"/>
 
-    <!-- Green backs face upward. -->
-    <path d="M210 46 H295 M210 104 H295"
-          stroke="#58796c" stroke-width="4"/>
+<!-- Tile labels -->
+<text x="252.8" y="92" text-anchor="middle"
+      font-size="15" fill="#222">
+  Upper tile
+</text>
 
-    <text x="252.8" y="78" text-anchor="middle"
-          font-size="15" fill="#222">
-      Upper tile
-    </text>
-    <text x="252.8" y="137" text-anchor="middle"
-          font-size="15" fill="#222">
-      Lower tile
-    </text>
+<text x="252.8" y="140" text-anchor="middle"
+      font-size="15" fill="#222">
+  Lower tile
+</text>
 
     <path d="M155 162 H445"
           stroke="#777" stroke-width="3"/>
@@ -15619,56 +15617,86 @@ Complete Boxes (hidden)
       <figure style="margin:16px 0; padding:12px;
                      border:1px solid #ccc;
                      border-radius:12px;">
-        <svg viewBox="0 0 520 255"
-             role="img"
-             aria-label="Close-up of the wall break.
-               Count from West's right.
-               Move the two tiles of stack twelve
-               onto stack eleven, creating a four-high
-               Flower Wall tail. Stack thirteen
-               begins the Playing Wall."
-             style="display:block; width:100%; height:auto;">
-          <g font-size="18" text-anchor="middle" fill="#222">
-            <text x="260" y="23">Count from West’s right: ←</text>
-            <text x="197" y="48">13</text>
-            <text x="260" y="48">12</text>
-            <text x="323" y="48">11</text>
-          </g>
+<svg viewBox="0 0 900 310"
+     role="img"
+     aria-label="Flower Wall break with four neighboring
+       two-tile stacks on each side of positions
+       13, 12, and 11."
+     style="display:block; width:100%; height:auto;">
 
-          <g fill="#f8faf7" stroke="#7b9e90" stroke-width="1.5">
-          <rect x="168" y="118" width="60" height="24" rx="2"/>
-          <rect x="168" y="142" width="60" height="24" rx="2"/>
+  <defs>
+    <!-- One normal two-tile stack -->
+    <g id="jezemsTwoStack">
+      <rect x="0" y="0" width="60" height="24"
+            rx="2" fill="#f8faf7"
+            stroke="#7b9e90" stroke-width="1.5"/>
+      <rect x="0" y="24" width="60" height="24"
+            rx="2" fill="#f8faf7"
+            stroke="#7b9e90" stroke-width="1.5"/>
 
-          <rect x="290" y="70" width="60" height="24" rx="2"/>
-          <rect x="290" y="94" width="60" height="24" rx="2"/>
-          <rect x="290" y="118" width="60" height="24" rx="2"/>
-          <rect x="290" y="142" width="60" height="24" rx="2"/>
+      <!-- Green tile edges -->
+      <path d="M1 2 H59 M1 26 H59"
+            stroke="#7b9e90" stroke-width="3"/>
+    </g>
+  </defs>
 
-<!-- Subtle green top edges -->
-<g fill="#7b9e90" stroke="none">
-  <rect x="168" y="118" width="60" height="4"/>
-  <rect x="168" y="142" width="60" height="4"/>
+  <!-- Direction of count -->
+  <text x="430" y="25" text-anchor="middle"
+        font-size="28" fill="#222">
+    Count from West's right: ←
+  </text>
 
-  <rect x="290" y="70" width="60" height="4"/>
-  <rect x="290" y="94" width="60" height="4"/>
-  <rect x="290" y="118" width="60" height="4"/>
-  <rect x="290" y="142" width="60" height="4"/>
-</g>
+  <!-- Numbered positions -->
+  <g font-size="28" text-anchor="middle" fill="#222">
+    <text x="370" y="60">13</text>
+    <text x="430" y="60">12</text>
+    <text x="490" y="60">11</text>
+  </g>
 
-</g>
+  <!-- Four additional stacks to the left of 13 -->
+  <use href="#jezemsTwoStack" x="100" y="122"/>
+  <use href="#jezemsTwoStack" x="160" y="122"/>
+  <use href="#jezemsTwoStack" x="220" y="122"/>
+  <use href="#jezemsTwoStack" x="280" y="122"/>
 
-<path d="M230 118 H290 V166 H230 Z"
-      fill="none" stroke="#aaa" stroke-dasharray="5 4"/>
-          <g font-size="17" text-anchor="middle" fill="#222">
-            <text x="260" y="192">Stack 12 moved onto 11</text>
-            <text x="198" y="222">Playing Wall</text>
-<text x="198" y="245">starts at 13</text>
-<text x="320" y="222">Flower Wall</text>
-<text x="320" y="245">raised tail</text>
-          </g>
-        </svg>
+  <!-- Stack 13: Playing Wall begins -->
+  <use href="#jezemsTwoStack" x="340" y="122"/>
+
+  <!-- Empty position 12 -->
+  <rect x="400" y="122" width="60" height="48"
+        fill="none" stroke="#aaa"
+        stroke-dasharray="5 4"/>
+
+  <!-- Stack 11: four tiles high -->
+  <use href="#jezemsTwoStack" x="460" y="74"/>
+  <use href="#jezemsTwoStack" x="460" y="122"/>
+
+  <!-- Four additional stacks to the right of 11 -->
+  <use href="#jezemsTwoStack" x="520" y="122"/>
+  <use href="#jezemsTwoStack" x="580" y="122"/>
+  <use href="#jezemsTwoStack" x="640" y="122"/>
+  <use href="#jezemsTwoStack" x="700" y="122"/>
+
+    <!-- Explanatory labels -->
+  <g font-size="25" text-anchor="middle" fill="#222">
+
+    <!-- Center explanation -->
+    <text x="430" y="215">Stack 12 moved onto 11</text>
+
+    <!-- Left: Playing Wall -->
+    <text x="240" y="255">Playing Wall</text>
+    <text x="240" y="277">starts at 13</text>
+
+    <!-- Right: Flower Wall -->
+    <text x="620" y="255">Flower Wall</text>
+    <text x="620" y="277">raised tail</text>
+
+  </g>
+
+</svg>
+
         <figcaption style="color:#666; text-align:center;">
-          Close-up only: the other stacks are omitted.
+          Schematic view showing four neighboring stacks on each side.
           The numbered positions refer to
           West’s count before moving stack 12.
         </figcaption>
