@@ -338,12 +338,34 @@ const mjcGlossaryEntries = [
       "for later review. You can save an incomplete hand as well " +
       "as a winning hand."
   },
+  
   {
     term: "Hand History",
     definition:
       "The collection of hands saved in this browser on this " +
-            "device. MJC keeps your 80 most recent hands."
+      "device. MJC keeps your 80 most recent hands. You can " +
+      "review a hand's Transcript and, when Replay data is " +
+      "available, use Replay Hand Viewer to examine how its " +
+      "structure changed throughout play."
   },
+
+  {
+    term: "Replay",
+    definition:
+      "The process of reviewing a previously saved Mahjong hand, " +
+      "one recorded step at a time, to observe how the hand " +
+      "developed throughout play."
+  },
+  {
+    term: "Replay Hand Viewer",
+    definition:
+      "An MJC feature that lets you revisit a saved hand and " +
+      "observe its structure at each recorded step. Use Previous " +
+      "and Next to examine changes to Complete Boxes, Developing " +
+      "Boxes, and Reserves. Available for hands saved with Replay data."
+  },
+
+
   {
     term: "New Hand",
     definition:
@@ -854,6 +876,7 @@ const mjcGlossaryGroups = {
     "Labels",
     "Tiles In Hand"
   ],
+  
   "Corrections and Hand History": [
     "Correct Last Entry",
     "Fix Hand",
@@ -861,8 +884,11 @@ const mjcGlossaryGroups = {
     "Save Hand",
     "Hand History",
     "New Hand",
-    "Transcript"
+    "Transcript",
+    "Replay",
+    "Replay Hand Viewer"
   ],
+
   "Melds and Tile Terms": [
     "Meld",
     "Chow",
