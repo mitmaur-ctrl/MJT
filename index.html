@@ -1229,10 +1229,22 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
 <div id="glossaryDialog" class="dialog-backdrop hidden">
   <div class="dialog"
        style="display:flex; flex-direction:column; max-height:85vh; overflow:hidden;">
-    <h2>Glossary</h2>
 
-    <div id="glossaryContent"
-         style="overflow-y:auto; min-height:0; flex:1;">
+    
+<h2>Glossary</h2>
+
+<div id="glossaryAlphabet"
+     style="display:grid;
+            grid-template-columns:repeat(13,minmax(0,1fr));
+            gap:3px;
+            margin-bottom:12px;
+            flex-shrink:0;">
+</div>
+
+<div id="glossaryContent"
+     style="overflow-y:auto; min-height:0; flex:1;">
+
+
       <h3>Alphabetical Index</h3>
       <p>Glossary entries will be added next.</p>
     </div>
@@ -1246,6 +1258,37 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     </div>
   </div>
 </div>
+
+
+<script>
+(function () {
+  const alphabet = document.getElementById('glossaryAlphabet');
+  const content = document.getElementById('glossaryContent');
+
+  if (!alphabet || !content) return;
+
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach(function(letter) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.textContent = letter;
+
+    button.style.cssText =
+      'min-width:0;padding:7px 0;' +
+      'border:1px solid #ccc;border-radius:5px;' +
+      'background:#f0f4f8;color:#222;' +
+      'font-size:13px;font-weight:600;cursor:pointer;';
+
+    
+    button.addEventListener('click', function() {
+      jumpGlossaryToLetter(letter);
+    });
+
+
+    alphabet.appendChild(button);
+  });
+})();
+</script>
+
 
 <div id="understandingBoxesDialog" class="dialog-backdrop hidden">
   <div class="dialog">
@@ -12118,21 +12161,37 @@ Leaves this Double-Sided Wait:
 <p>
   There’s a lot to MJC, so before we begin, let me tell you
   what Mahjong Coach (MJC) is and what it can do for you.
-  MJC is a teaching app designed to help you learn
-  Six Box Theory™ (6BT), a method for understanding
-  Mahjong hand structure. By helping you recognize
+ 
+MJC is a teaching app designed to introduce
+beginning and intermediate Mahjong players
+to Six Box Theory™ (6BT), a method for
+understanding Mahjong hand structure.
+ By helping you recognize
   that structure, MJC can help you improve your tile
   efficiency and make better discard decisions.
 </p>
 
+
 <p>
-  Using MJC begins with you entering the tiles in your hand.
-  As you draw, discard, and acquire tiles, MJC organizes
-  your hand into Complete Boxes, Developing Boxes,
-  and Reserves, revealing its structure and helping you
-  recognize opportunities. You make the decisions;
-  MJC helps you understand them.
+  Using MJC begins with entering the tiles
+  in your starting hand. As you play, you'll
+  continue entering the tiles you draw,
+  discard, or acquire.
 </p>
+
+<p>
+  From there, MJC does the organizing—
+  arranging your hand into Complete Boxes,
+  Developing Boxes, and Reserves, revealing
+  its structure, and helping you recognize
+  opportunities.
+</p>
+
+<p>
+  You make the decisions; MJC helps you
+  understand them.
+</p>
+
 
 
       
