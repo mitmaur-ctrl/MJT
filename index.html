@@ -9,7 +9,7 @@ Project:
 Mahjong Coach
 
 Version:
-MJC Beta v9.0
+MJC Beta v10.0
 
 Purpose:
 - Smartphone-optimized tile management vehicle
@@ -339,6 +339,27 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
 <div id="handDisplay" class="hand-display"></div>
 <div id="enginePanel" class="engine-panel hidden"></div>
 
+<details id="targetTilesPanel"
+         class="target-tiles-panel"
+         hidden>
+  <summary class="target-tiles-tab">
+    Target Tiles
+  </summary>
+
+  <section class="target-tiles-content"
+           aria-labelledby="targetTilesHeading">
+    <h3 id="targetTilesHeading">Target Tiles</h3>
+
+    <div id="targetTilesGrid"
+         class="target-tiles-grid"></div>
+
+    <p id="targetTilesEmpty"
+       class="target-tiles-empty">
+      No target tiles for the current hand.
+    </p>
+  </section>
+</details>
+
   <div id="hdActions" class="hd-actions">
 
   <div id="hdPrimaryRow" class="hd-action-row primary-action-row">
@@ -633,11 +654,11 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     <button onclick="openSupportDialog()">Support MJC</button>
   </div>
 
-    <div class="footer-version">Beta v9.0</div>
+    <div class="footer-version">Beta v10.0</div>
 
-  <div class="footer-credit">
-    Created by Mithras C. Maurille<br>
-    &copy; 2026 Mithras C. Maurille. All rights reserved.
+    <div class="footer-credit">
+    &copy; 2026 Mithras C. Maurille &middot; Creator of MJC and 6BT<br>
+    All rights reserved.
   </div>
 </div>
 
@@ -12249,9 +12270,10 @@ understanding Mahjong hand structure.
 
 
       <p>
-        Six Box Theory™ began with 16-tile Mahjong,
-        where a standard completed hand contains
-        five melds and a pair—six boxes.
+                Six Box Theory™ began with 16-tile Mahjong.
+        A regular winning hand contains
+        17 tiles: five melds and a pair—six boxes.
+        Each Kang adds one extra tile to that total.
         That’s where the name comes from.
         The Chinese 13-tile adaptation will use
         four melds and a pair—five boxes,
@@ -12641,8 +12663,8 @@ understanding Mahjong hand structure.
         you can see and reach comfortably,
         without blocking your view
         of the table.
-        You’ll be moving between your tiles,
-        MJC, and the other players.
+        You’ll be shifting your attention between
+        your tiles, MJC, and the other players.
         Make that as easy on yourself
         as you can.
       </p>
@@ -12928,9 +12950,9 @@ understanding Mahjong hand structure.
 </p>
 
       <p>
-  Here’s how we can look at
+    Here’s how we can look at
   those same 16 tiles from
-  a different perspective:
+  a 6BT perspective:
 </p>
 
       <div role="img"
@@ -12974,18 +12996,20 @@ understanding Mahjong hand structure.
           <div style="background:white;
                       border-radius:8px; padding:12px;
                       margin-top:10px;">
-            <strong>Double-Sided Wait</strong>
-            <div class="chiclet-tiles"
-                 data-chiclets="bam7 bam8">
+                <strong>Double-Sided Wait</strong>
+    <div class="chiclet-tiles"
+
+         data-chiclets="bam7 bam8">
             </div>
           </div>
 
           <div style="background:white;
                       border-radius:8px; padding:12px;
                       margin-top:10px;">
-            <strong>Middle Wait</strong>
-            <div class="chiclet-tiles"
-                 data-chiclets="dot2 dot4">
+                <strong>Middle Wait</strong>
+    <div class="chiclet-tiles"
+
+         data-chiclets="dot2 dot4">
             </div>
           </div>
 
@@ -13119,6 +13143,7 @@ understanding Mahjong hand structure.
               padding:12px;">
     <strong>Double-Sided Wait</strong>
     <div class="chiclet-tiles"
+     style="justify-content:center;"
          data-chiclets="bam7 bam8">
     </div>
   </div>
@@ -13129,6 +13154,7 @@ understanding Mahjong hand structure.
               margin-top:10px;">
     <strong>Middle Wait</strong>
     <div class="chiclet-tiles"
+     style="justify-content:center;"
          data-chiclets="dot2 dot4">
     </div>
   </div>
@@ -13162,29 +13188,55 @@ understanding Mahjong hand structure.
             border-radius:10px;
             margin:12px 0;">
 
-  <div style="font-weight:bold; margin-bottom:10px;">
-    Target Tiles
-  </div>
+  <div style="display:grid;
+              grid-template-columns:repeat(2,minmax(0,1fr));
+              gap:10px;
+              text-align:center;">
 
-  <div style="background:white;
-              border-radius:8px;
-              padding:12px;">
-    <strong>For 7–8 Bam</strong>
-    <div class="chiclet-tiles"
-         data-chiclets="bam6 bam9">
+    <strong>Chow Candidate</strong>
+    <strong>Target Tiles</strong>
+
+    <div style="background:white;
+                border-radius:8px;
+                padding:12px 4px;">
+      <div>Double-Sided Wait</div>
+      <div class="chiclet-tiles"
+           style="justify-content:center;"
+           data-chiclets="bam7 bam8">
+      </div>
     </div>
-  </div>
 
-  <div style="background:white;
-              border-radius:8px;
-              padding:12px;
-              margin-top:10px;">
-    <strong>For 2–4 Dot</strong>
-    <div class="chiclet-tiles"
-         data-chiclets="dot3">
+    <div style="background:white;
+                border-radius:8px;
+                padding:12px 4px;">
+      <div>6 or 9 Bam</div>
+      <div class="chiclet-tiles"
+           style="justify-content:center;"
+           data-chiclets="bam6 bam9">
+      </div>
     </div>
-  </div>
 
+    <div style="background:white;
+                border-radius:8px;
+                padding:12px 4px;">
+      <div>Middle Wait</div>
+      <div class="chiclet-tiles"
+           style="justify-content:center;"
+           data-chiclets="dot2 dot4">
+      </div>
+    </div>
+
+    <div style="background:white;
+                border-radius:8px;
+                padding:12px 4px;">
+      <div>3 Dot</div>
+      <div class="chiclet-tiles"
+           style="justify-content:center;"
+           data-chiclets="dot3">
+      </div>
+    </div>
+
+  </div>
 </div>
 
       
@@ -13202,6 +13254,46 @@ understanding Mahjong hand structure.
         The possibilities become
         easier to see and compare.
       </p>
+
+      <div style="background:#faf4e5;
+                  border-radius:10px;
+                  padding:16px;
+                  margin:16px 0;
+                  text-align:center;">
+
+        <strong>Middle Wait — 2–4 Dot</strong>
+
+        <div style="display:flex;
+                    justify-content:center;
+                    align-items:center;
+                    gap:10px;
+                    margin-top:12px;">
+
+          <div class="chiclet-tiles"
+               style="margin-top:0;"
+               data-chiclets="dot2">
+          </div>
+
+          <div style="color:#2e8b57;
+                      text-align:center;">
+            <div style="font-size:15px;">4</div>
+            <div style="font-size:28px;">↓</div>
+          </div>
+
+          <div class="chiclet-tiles"
+               style="margin-top:0;"
+               data-chiclets="dot4">
+          </div>
+
+        </div>
+
+        <p style="margin:12px 0 0;">
+          The middle Pathway identifies
+          <strong>3 Dot</strong>.
+          With no 3 Dots in your recorded hand,
+          MJC calculates four potential copies.
+        </p>
+      </div>
 
       <p>
         As your hand changes,
@@ -13471,7 +13563,15 @@ understanding Mahjong hand structure.
         someone is waiting for your discard.
       </p>
 
-      <h3>Bring the Structure onto Your Rack</h3>
+            <h3>Bring the Structure onto Your Rack</h3>
+
+      <p>
+        Arrange the tiles on your physical rack
+        to match the groupings shown in MJC.
+        This helps you recognize your hand’s
+        structure at the table and use it
+        to guide your decisions.
+      </p>
 
       <p>
         Here’s the arrangement I recommend:
@@ -13865,13 +13965,12 @@ Complete Boxes (hidden)
         </p>
       </div>
 
-      <p>
-        Of course, keep following
-        the actual game.
-        Having the Draw screen open
-        doesn’t make it your turn
-        at the table.
-      </p>
+        <p>
+        You can open the Draw Tile screen
+        while waiting for your turn.
+        When your turn comes, draw from
+        the wall and record the tile in MJC.
+        </p>
 
       <h3>Record It While It’s Clear</h3>
 
@@ -14300,16 +14399,11 @@ Complete Boxes (hidden)
         when comparing its discard choices.
       </p>
 
-      <p>
-        And what if there are
-        no Reserves?
-        Then something in a developing
-        grouping may have to change.
-        That’s a good time to slow
-        down and read the explanation.
-        Breaking a candidate has
-        a different effect from
-        removing a Reserve.
+                        <p>
+        And what if there are no Reserves?
+        Then a Developing Box may have to change.
+        Consider how discarding a tile from that
+        box affects your hand’s structure.
       </p>
 
       <h3>Ask MJC Why</h3>
@@ -14410,61 +14504,43 @@ Complete Boxes (hidden)
                   margin:16px 0;">
         <strong>Your Eyes on the Table Change the Picture</strong>
 
-        <p>
-          Suppose you hold two Red Dragons.
+         <p>
+          Suppose you hold a pair of 5 Bams.
           They could become a Pong,
           or serve as your Eye.
         </p>
 
         <p><strong>In your hand:</strong></p>
         <div class="chiclet-tiles"
-             data-chiclets="red red">
+             data-chiclets="bam5 bam5">
         </div>
 
         <p>
-          There are four Red Dragons
-          in the set. You already hold
-          two, leaving two potential
-          tile opportunities for the Pong.
+          There are four copies of 5 Bam
+          in the set. You hold two.
+          You can see the other two on the table:
+          one in the discard pile and one
+          in an opponent’s exposed meld.
         </p>
 
         <p>
-          But you spot the other two
-          in the discard pile.
+          How many copies remain available
+          to complete your Pong?
+          <strong>Zero.</strong>
         </p>
-
-        <p><strong>Already discarded:</strong></p>
-        <div class="chiclet-tiles"
-             data-chiclets="red red">
-        </div>
-
-        
-<p>
-  How many Red Dragons are
-  actually still available
-  to complete that Pong?
-  <strong>Zero.</strong>
-  No further Red Dragon
-  can reach your hand.
-</p>
-
 
         <p>
           MJC may still label your pair
           an Eye-Pong Candidate because
-          those table discards aren’t
-          recorded in its analysis.
+          those discards and exposed tiles
+          aren’t recorded in its analysis.
           You supply that missing
           <strong>Table Awareness (TA)</strong>
           by watching the game.
         </p>
 
         <p>
-          The pair still has value:
-          it can serve as your Eye.
-          Treat it as an Eye option
-          rather than waiting for
-          an unavailable third Red.
+          Your pair can still serve as an Eye.
           Whether you keep it depends
           on the rest of your hand.
         </p>
@@ -14766,11 +14842,9 @@ Complete Boxes (hidden)
       </p>
 
       <p>
-        The User Guide’s Chapter 11
+                The User Guide’s Chapter 11
         explains saving, transcripts,
-        notes, and sharing.
-        You can return to those
-        instructions whenever you need them.
+        replaying hands, notes, and sharing.
       </p>
 
       <h3>Give Yourself Credit for Learning</h3>
@@ -16841,7 +16915,7 @@ Complete Boxes (hidden)
     <h2>Feedback</h2>
     <p>Thank you for helping us improve Mahjong Coach.</p>
     <p>We welcome bug reports, suggestions, comments, and feature requests.</p>
-    <p><strong>Email:</strong> <a href="mailto:mjcfeedbackteam@gmail.com?subject=Mahjong%20Coach%20Feedback%20-%20Beta%20v9.0">mjcfeedbackteam@gmail.com</a></p>
+    <p><strong>Email:</strong> <a href="mailto:mjcfeedbackteam@gmail.com?subject=Mahjong%20Coach%20Feedback%20-%20Beta%20v10.0">mjcfeedbackteam@gmail.com</a></p>
     <p><em>Every message is read and appreciated.</em></p>
     <div class="dialog-actions">
       <button class="dialog-button primary" onclick="closeDialog('feedbackDialog')">Close</button>
@@ -17079,7 +17153,7 @@ Acceptance standard:
 ==================================================
 */
 
-const MJC_VERSION_LABEL = "Beta v9.0";
+const MJC_VERSION_LABEL = "Beta v10.0";
 
 const MJC_RULESET_BASE_HAND_SIZES = Object.freeze({
   filipino16: 16,
