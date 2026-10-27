@@ -2760,6 +2760,20 @@ function evaluateMMRCandidate(
   };
 }
 
+function isMMRWinningResult(result) {
+  const completeBoxes = result.completeBoxes || [];
+  const developingBoxes = result.developingBoxes || [];
+
+  return (
+    completeBoxes.length === 5 &&
+    developingBoxes.length === 1 &&
+    developingBoxes[0].type === "ec" &&
+    developingBoxes[0].tiles.length === 2 &&
+    (result.halfEye || []).length === 0 &&
+    (result.reserves || []).length === 0
+  );
+}
+
 function getMMRStructureMetrics(result) {
   const developingBoxes =
     result.developingBoxes || [];
@@ -2815,6 +2829,13 @@ function compareMMRResults(
   resultA,
   resultB
 ) {
+  const aWins = isMMRWinningResult(resultA);
+  const bWins = isMMRWinningResult(resultB);
+
+  if (aWins !== bWins) {
+    return aWins ? -1 : 1;
+  }
+
   const a =
     getMMRStructureMetrics(resultA);
 

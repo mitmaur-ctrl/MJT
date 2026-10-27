@@ -58,6 +58,37 @@ function closeDialog(id) {
 const mjcGlossaryEntries = [
 
   {
+    term: "Deferred",
+    definition:
+      "A declaration you have postponed. " +
+      "MJC tracks the deferred grouping while you continue playing. " +
+      "It has not been declared, so no replacement draw " +
+      "is recorded for it yet."
+  },
+  {
+    term: "Ignored",
+    definition:
+      "An offer you have declined, such as a Kang, NEWS, or Sagasa. " +
+      "Ignoring the offer does not remove the incoming tile " +
+      "or undo the action you recorded. " +
+      "Follow MJC’s next instruction."
+  },
+  {
+    term: "Over-paired / Over-pairing",
+    definition:
+      "Having more pairs than a regular hand can keep as pairs. " +
+      "A regular winning hand needs one Eye; additional pairs " +
+      "must develop into melds or be broken apart as the hand " +
+      "progresses. A Seven Pairs pursuit uses a different structure."
+  },
+  {
+    term: "Discard Pile",
+    definition:
+      "The area in the middle of the table where discarded tiles " +
+      "remain face up unless claimed. These visible tiles help " +
+      "players assess which copies remain available."
+  },
+  {
     term: "Game State",
     definition:
       "A Six Box Theory™ concept describing approximately how far " +
@@ -1426,6 +1457,14 @@ if (recommendedCandidates.length > 1) {
         getCompleteBoxSignature(candidate)
       );
 
+      const isWinning = isMMRWinningResult(
+        evaluateMMRCandidate(
+          MJC_STATE.getEngineInput(),
+          mmrState.tileKey,
+          candidate
+        )
+      );
+
 
 
    if (isSingleSpecialMeld) {
@@ -1468,11 +1507,15 @@ if (recommendedCandidates.length > 1) {
     '</span>' +
 
     (
-      isRecommended
+            isWinning
         ? '<span class="mmr-recommended">' +
-            'MJC Recommended' +
+            'MJC: Recommended — For the win!' +
           '</span>'
-        : ""
+        : isRecommended
+          ? '<span class="mmr-recommended">' +
+              'MJC: Recommended' +
+            '</span>'
+          : ""
     );
 }
 
@@ -2561,12 +2604,18 @@ function openGameHistoryDialog() {
     }
 
     games.forEach(function(game, index) {
+            const moveCount = (game.actions || []).filter(
+        action =>
+          ["D", "Di", "C", "P", "K"].includes(action.type)
+      ).length;
+
       const row = document.createElement("p");
       row.textContent =
         (index + 1) + ". " +
         new Date(game.savedAt).toLocaleString() +
         " — " + game.status +
-        " — " + game.ruleset;
+        " — " + moveCount +
+                (moveCount === 1 ? "\u00A0move" : "\u00A0moves");
       const viewButton = document.createElement("button");
       viewButton.className = "dialog-button";
       viewButton.textContent = "View Transcript";
@@ -2614,6 +2663,7 @@ function viewSavedGameTranscript(index) {
     const shareButton = document.createElement("button");
     shareButton.className = "dialog-button";
     shareButton.textContent = "Share";
+    shareButton.id = "handTranscriptShareButton";
     shareButton.onclick = function() {
       shareSavedGameById(game.id);
     };
@@ -2655,10 +2705,19 @@ function viewSavedGameTranscript(index) {
       replayHeader.style.padding = "8px 0 10px";
       replayHeader.style.borderBottom = "1px solid #dddddd";
 
-      const title = document.createElement("h3");
-      title.textContent = "Replay Hand";
-      title.style.margin = "0 0 8px";
-      replayHeader.appendChild(title);
+                  const dialogTitle = document.querySelector(
+        "#gameHistoryDialog h2"
+      );
+      dialogTitle.textContent = "Replay Hand";
+      const handDetails = document.createElement("p");
+      handDetails.style.margin = "0 0 6px";
+      handDetails.style.fontSize = "0.85em";
+      handDetails.style.color = "#555";
+      handDetails.textContent =
+        "Hand " + (index + 1) + " — " +
+        new Date(game.savedAt).toLocaleString();
+      replayHeader.appendChild(handDetails);
+
 
       let replayIndex = 0;
 
@@ -2668,7 +2727,22 @@ function viewSavedGameTranscript(index) {
 
       const actionLabel = document.createElement("h4");
       actionLabel.style.margin = "8px 0 0";
-      replayHeader.appendChild(actionLabel);
+            const actionRow = document.createElement("div");
+      actionRow.style.display = "flex";
+      actionRow.style.justifyContent = "space-between";
+      actionRow.style.alignItems = "baseline";
+      actionRow.style.flexWrap = "wrap";
+      actionRow.style.gap = "4px 16px";
+      actionRow.style.marginTop = "8px";
+
+      actionLabel.style.margin = "0";
+      actionRow.appendChild(actionLabel);
+      replayHeader.appendChild(actionRow);
+      const resultLabel = document.createElement("p");
+      resultLabel.style.margin = "0";
+      resultLabel.style.fontWeight = "bold";
+      resultLabel.hidden = true;
+      actionRow.appendChild(resultLabel);
 
       content.appendChild(replayHeader);
 
@@ -2725,10 +2799,67 @@ function viewSavedGameTranscript(index) {
             (tileName ? " — " + tileName : "");
         }
 
+               const highlightState = {
+          tileKey: step.tileKey,
+          destination: getReplayDrawDestination(
+            step,
+            game.replaySteps[replayIndex - 1]
+          ),
+          used: false
+        };
+
+        const destination = highlightState.destination;
+        resultLabel.textContent = "";
+        resultLabel.hidden = !destination;
+
+        if (destination) {
+          if (destination.section === "reserves") {
+            resultLabel.textContent = "Result: Reserves";
+          } else {
+            const box = destination.box;
+            const structure = step.structure;
+            let boxNumber;
+            let typeLabel;
+            let prefix;
+
+            if (destination.section === "complete") {
+              const boxes = structure.completeBoxes || [];
+              boxNumber =
+                box.boxId || (boxes.indexOf(box) + 1);
+              prefix = "CB";
+              typeLabel =
+                box.type.charAt(0).toUpperCase() +
+                box.type.slice(1);
+            } else {
+              const boxes =
+                (structure.developingBoxes || [])
+                  .concat(structure.halfEye || []);
+
+              boxNumber =
+                (structure.completeBoxes || []).length +
+                boxes.indexOf(box) + 1;
+              prefix = "DB";
+              typeLabel = box.type === "he"
+                ? "HE"
+                : getBoxTypeLabel(box.type);
+            }
+
+            resultLabel.textContent =
+              "Result: " + typeLabel +
+              " — " + prefix + boxNumber;
+          }
+        }
+
         viewer.innerHTML =
-          renderReplayReserves(step.structure) +
-          renderReplayDevelopingBoxes(step.structure) +
-          renderReplayCompleteBoxes(step.structure);
+          renderReplayReserves(
+            step.structure, highlightState
+          ) +
+          renderReplayDevelopingBoxes(
+            step.structure, highlightState
+          ) +
+          renderReplayCompleteBoxes(
+            step.structure, highlightState
+          );
 
                 previousButton.disabled = replayIndex === 0;
 
@@ -2787,7 +2918,8 @@ function viewSavedGameTranscript(index) {
         dialogCloseButton
       );
 
-      function cleanupReplayFooter() {
+            function cleanupReplayFooter() {
+        dialogTitle.textContent = "Hand History";
         navigation.remove();
         closeButton.remove();
 
@@ -3026,7 +3158,21 @@ async function shareSavedGameById(id, suppliedName) {
         existing.querySelector("input").focus();
         return;
       }
+      const shareButton = document.getElementById(
+        "handTranscriptShareButton"
+      );
 
+      if (shareButton) {
+        shareButton.hidden = true;
+      }
+
+      function closeShareForm() {
+        form.remove();
+
+        if (shareButton) {
+          shareButton.hidden = false;
+        }
+      }
       const form = document.createElement("form");
       form.id = "handShareForm";
       form.style.margin = "12px 0";
@@ -3051,8 +3197,8 @@ async function shareSavedGameById(id, suppliedName) {
       cancel.type = "button";
       cancel.className = "dialog-button";
       cancel.textContent = "Cancel";
-      cancel.onclick = function() {
-        form.remove();
+            cancel.onclick = function() {
+        closeShareForm();
       };
       form.appendChild(cancel);
 
@@ -3065,7 +3211,7 @@ async function shareSavedGameById(id, suppliedName) {
           return;
         }
 
-        form.remove();
+                closeShareForm();
         shareSavedGameById(id, name);
       };
 

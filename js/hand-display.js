@@ -647,6 +647,14 @@ function buildHandDisplay() {
 }
 
 function configureHDMode() {
+  const targetTilesPanel =
+    document.getElementById("targetTilesPanel");
+
+  if (targetTilesPanel) {
+        targetTilesPanel.hidden = !coachingOn || hdMode !== "current";
+  }
+
+  requestAnimationFrame(positionTargetTilesPanel);
   const handTitle = document.getElementById("handTitle");
   const handMeta = document.getElementById("handMeta");
   const handInstruction = document.getElementById("handInstruction");
@@ -2894,6 +2902,9 @@ enginePanel.classList.toggle(
   const structureState =
     result.structureState || result;
 
+  renderTargetTiles(structureState);
+  requestAnimationFrame(positionTargetTilesPanel);
+
 const hasReserves =
   (structureState.reserves || []).length > 0;
 
@@ -3329,6 +3340,12 @@ function focusLastDrawDestination() {
 }
 
 function showHD() {
+  const targetTilesPanel =
+    document.getElementById("targetTilesPanel");
+
+  if (targetTilesPanel) {
+    targetTilesPanel.open = false;
+  }
   document.getElementById("tdScreen").classList.add("hidden");
   document.getElementById("drawScreen").classList.add("hidden");
   document.getElementById("discardScreen").classList.add("hidden");
@@ -3370,7 +3387,83 @@ if (
 }
 }
 
-function renderReplayCompleteBoxes(structure) {
+function getReplayDrawDestination(step, previousStep) {
+  if (
+        !["draw", "chow", "pong", "kang"].includes(step.type) ||
+    !step.tileKey ||
+    !previousStep ||
+    !previousStep.structure
+  ) {
+    return null;
+  }
+
+  function getGroups(structure) {
+    return [
+      ...(structure.completeBoxes || []).map(box => ({
+        section: "complete",
+        box: box,
+        tiles: box.tiles
+      })),
+      ...(structure.developingBoxes || [])
+        .concat(structure.halfEye || [])
+        .map(box => ({
+          section: "developing",
+          box: box,
+          tiles: box.tiles
+        })),
+      {
+        section: "reserves",
+        box: null,
+        tiles: structure.reserves || []
+      }
+    ];
+  }
+
+  function signature(group) {
+    return JSON.stringify([
+      group.section,
+      group.box ? group.box.type : "",
+      group.box ? group.box.visibility : "",
+      [...group.tiles].sort()
+    ]);
+  }
+
+  const previous = getGroups(previousStep.structure)
+    .map(signature);
+
+  const changed = getGroups(step.structure).filter(group => {
+    const match = previous.indexOf(signature(group));
+
+    if (match !== -1) {
+      previous.splice(match, 1);
+      return false;
+    }
+
+    return group.tiles.includes(step.tileKey);
+  });
+
+  return changed.length === 1 ? changed[0] : null;
+}
+
+function renderReplayTile(tileKey, highlightState, box) {
+  const isLastDrawn =
+    highlightState &&
+    highlightState.destination &&
+    highlightState.destination.box === box &&
+    tileKey === highlightState.tileKey &&
+    !highlightState.used;
+
+  if (isLastDrawn) {
+    highlightState.used = true;
+  }
+
+  return renderCoachTile(tileKey, {
+    extraClass: isLastDrawn ? "last-drawn" : ""
+  });
+}
+
+
+function renderReplayCompleteBoxes(structure, highlightState) {
   const boxes = structure.completeBoxes || [];
 
   if (boxes.length === 0) {
@@ -3384,7 +3477,7 @@ function renderReplayCompleteBoxes(structure) {
   boxes.forEach(function(box, index) {
     const tileHtml = box.tiles
       .map(function(tileKey) {
-        return renderCoachTile(tileKey);
+             return renderReplayTile(tileKey, highlightState, box);
       })
       .join("");
 
@@ -3423,7 +3516,7 @@ function renderReplayCompleteBoxes(structure) {
   return html;
 }
 
-function renderReplayReserves(structure) {
+function renderReplayReserves(structure, highlightState) {
   const reserves = structure.reserves || [];
 
   let html =
@@ -3438,7 +3531,7 @@ function renderReplayReserves(structure) {
   } else {
     html += reserves
       .map(function(tileKey) {
-        return renderCoachTile(tileKey);
+             return renderReplayTile(tileKey, highlightState, null);
       })
       .join("");
   }
@@ -3448,7 +3541,7 @@ function renderReplayReserves(structure) {
   return html;
 }
 
-function renderReplayDevelopingBoxes(structure) {
+function renderReplayDevelopingBoxes(structure, highlightState) {
   const boxes = structure.developingBoxes || [];
   const halfEye = structure.halfEye || [];
   const completeCount =
@@ -3465,7 +3558,7 @@ function renderReplayDevelopingBoxes(structure) {
 
     const tileHtml = box.tiles
       .map(function(tileKey) {
-        return renderCoachTile(tileKey);
+             return renderReplayTile(tileKey, highlightState, box);
       })
       .join("");
 
@@ -3498,3 +3591,185 @@ function renderReplayDevelopingBoxes(structure) {
 
   return html;
 }
+
+function collectTargetTiles(structure) {
+  const targets = new Map();
+  const completeCount =
+    (structure.completeBoxes || []).length;
+
+  const boxes =
+    (structure.developingBoxes || [])
+      .concat(structure.halfEye || []);
+
+  boxes.forEach(function(box, index) {
+    const boxLabel = "DB" + (completeCount + index + 1);
+    const fp = box.fp || {};
+
+    const pathways = [
+      ...(fp.pathways || []),
+      ...(fp.structuralPossibilities || []).filter(
+        pathway =>
+          pathway.structureType === "chow" ||
+          pathway.structureType === "pong"
+      )
+    ];
+
+    pathways.forEach(function(pathway) {
+      const tileKey =
+        pathway.completingTile || pathway.keyTile;
+
+      if (!tileKey) return;
+
+      const availability = pathway.effectiveAcceptance;
+
+      if (!targets.has(tileKey)) {
+        targets.set(tileKey, {
+          tileKey: tileKey,
+          boxes: new Set(),
+          availability: null
+        });
+      }
+
+      const target = targets.get(tileKey);
+      target.boxes.add(boxLabel);
+
+      if (Number.isFinite(availability)) {
+        target.availability =
+          target.availability === null
+            ? availability
+            : Math.max(target.availability, availability);
+      }
+    });
+  });
+
+    const tileOrder =
+    getTileGroups().flatMap(group => group.keys);
+
+  return [...targets.values()].sort(function(a, b) {
+    return (
+      tileOrder.indexOf(a.tileKey) -
+      tileOrder.indexOf(b.tileKey)
+    );
+  });
+}
+
+function renderTargetTiles(structure) {
+  const panel = document.getElementById("targetTilesPanel");
+  const grid = document.getElementById("targetTilesGrid");
+  const empty = document.getElementById("targetTilesEmpty");
+
+  if (!panel || !grid || !empty) return;
+
+    panel.hidden = !coachingOn || hdMode !== "current";
+  grid.replaceChildren();
+
+  const targets = collectTargetTiles(structure);
+  empty.hidden = targets.length > 0;
+
+  targets.forEach(function(target) {
+    const item = document.createElement("div");
+    item.className = "target-tile-item";
+
+    const unavailable = target.availability === 0;
+    item.classList.toggle("is-unavailable", unavailable);
+
+    item.title =
+      (tileLabels[target.tileKey] || target.tileKey) +
+      " — " + [...target.boxes].join(", ") +
+      (unavailable ? " — No remaining opportunities" : "");
+
+    const tile = document.createElement("div");
+    tile.innerHTML = renderCoachTile(target.tileKey);
+
+    const references = document.createElement("div");
+    references.className = "target-tile-boxes";
+    references.textContent = [...target.boxes].join(", ");
+
+    const taSpace = document.createElement("div");
+    taSpace.className = "target-tile-ta";
+    taSpace.setAttribute("aria-hidden", "true");
+
+    item.append(tile, references, taSpace);
+    grid.appendChild(item);
+  });
+}
+
+function positionTargetTilesPanel() {
+  const panel = document.getElementById("targetTilesPanel");
+  const screen = document.getElementById("hdScreen");
+
+  if (
+    !panel ||
+    panel.hidden ||
+    !screen ||
+    screen.classList.contains("hidden")
+  ) {
+    return;
+  }
+
+  const header = document.getElementById("handStickyHeader");
+  const masthead = document.querySelector(".fixed-header");
+  const acquire = document.getElementById("acquireActionGroup");
+
+  const viewportHeight = window.innerHeight;
+
+  const displayControls = document.querySelector(
+    "#enginePanel .coach-top-row"
+  );
+
+  const top = Math.max(
+    0,
+    header ? header.getBoundingClientRect().bottom : 0,
+    masthead ? masthead.getBoundingClientRect().bottom : 0,
+    displayControls
+      ? displayControls.getBoundingClientRect().bottom
+      : 0
+  ) + 8;
+
+  let bottom = 16;
+
+  if (acquire) {
+    const rect = acquire.getBoundingClientRect();
+
+    if (
+      rect.width > 0 &&
+      rect.height > 0 &&
+      rect.top >= 0 &&
+      rect.top < viewportHeight
+    ) {
+      bottom = viewportHeight - rect.top + 8;
+    }
+  }
+
+  panel.style.setProperty("--tt-top", top + "px");
+  panel.style.setProperty("--tt-bottom", bottom + "px");
+
+  const content = panel.querySelector(".target-tiles-content");
+
+  if (content) {
+    content.style.maxHeight =
+      Math.max(0, viewportHeight - top - bottom - 52) + "px";
+  }
+}
+
+window.addEventListener("resize", positionTargetTilesPanel);
+window.addEventListener("scroll", positionTargetTilesPanel, true);
+
+function updateTargetTilesTab() {
+  const panel =
+    document.getElementById("targetTilesPanel");
+
+  if (!panel) return;
+
+  panel.querySelector("summary").textContent =
+    panel.open
+      ? "Target Tiles: Hide"
+      : "Target Tiles: Show";
+
+  positionTargetTilesPanel();
+}
+
+document.getElementById("targetTilesPanel")
+  ?.addEventListener("toggle", updateTargetTilesTab);
+
+updateTargetTilesTab();
