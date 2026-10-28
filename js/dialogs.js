@@ -182,7 +182,15 @@ function searchUserGuide() {
           behavior: "auto"
         });
 
-        match.target.setAttribute("tabindex", "-1");
+                match.target.setAttribute("tabindex", "-1");
+        match.target.style.outline = "2px solid #2e8b57";
+        match.target.style.outlineOffset = "2px";
+
+        match.target.addEventListener("blur", function() {
+          match.target.style.removeProperty("outline");
+          match.target.style.removeProperty("outline-offset");
+        }, { once: true });
+
         match.target.focus({ preventScroll: true });
       });
     };
@@ -215,7 +223,33 @@ function openAboutDialog() {
 }
 
 function openDialog(id) {
-  document.getElementById(id).classList.remove("hidden");
+  const dialog = document.getElementById(id);
+
+  if (/^userGuideChapter\d+Dialog$/.test(id)) {
+    const results =
+      document.getElementById("userGuideSearchResults");
+
+    const hasResults =
+      results &&
+      !results.hidden &&
+      results.childElementCount > 0;
+
+    dialog.querySelectorAll(".dialog-actions button")
+      .forEach(function(button) {
+        const label = button.textContent.trim();
+
+        if (
+          label === "Back to Contents" ||
+          label === "Back to Results"
+        ) {
+          button.textContent = hasResults
+            ? "Back to Results"
+            : "Back to Contents";
+        }
+      });
+  }
+
+  dialog.classList.remove("hidden");
 }
 
 function closeDialog(id) {
