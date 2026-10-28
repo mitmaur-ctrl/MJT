@@ -43,6 +43,173 @@ function openDisplayDialog() {
   openDialog("displayDialog");
 }
 
+function searchUserGuide() {
+  const input = document.getElementById("userGuideSearchInput");
+  const results = document.getElementById("userGuideSearchResults");
+  const status = document.getElementById("userGuideSearchStatus");
+
+  if (!input || !results || !status) return;
+
+  results.replaceChildren();
+
+  const query = input.value.trim();
+  if (!query) {
+    results.hidden = true;
+    status.textContent = "Enter a word or phrase to search the User Guide.";
+    input.focus();
+    return;
+  }
+
+  const normalize = function(text) {
+    return text.toLowerCase().replace(/\s+/g, " ").trim();
+  };
+
+  const words = normalize(query).split(" ");
+  const matches = [];
+
+  document.querySelectorAll(
+    '[id^="userGuideChapter"][id$="Dialog"]'
+  ).forEach(function(chapter) {
+    const title = chapter.querySelector("h2");
+    const nav = chapter.querySelector("nav");
+    if (!title || !nav) return;
+
+    const scroller = nav.parentElement;
+    const sections = [];
+    let section = {
+      name: "Introduction",
+      heading: title,
+      passages: []
+    };
+    sections.push(section);
+
+    scroller.querySelectorAll("h3, h4, p, li").forEach(function(node) {
+      if (node.closest("nav")) return;
+
+      const text = node.textContent.replace(/\s+/g, " ").trim();
+      if (!text) return;
+
+      if (node.matches("h3, h4")) {
+        section = {
+          name: text,
+          heading: node,
+          passages: []
+        };
+        sections.push(section);
+        return;
+      }
+
+      // Avoid indexing a list item twice when it contains paragraphs.
+      if (node.matches("li") && node.querySelector("p, li")) return;
+
+      section.passages.push({ node: node, text: text });
+    });
+
+    sections.forEach(function(item) {
+      const sectionText = normalize(
+        title.textContent + " " + item.name + " " +
+        item.passages.map(function(passage) {
+          return passage.text;
+        }).join(" ")
+      );
+
+      if (!words.every(function(word) {
+        return sectionText.includes(word);
+      })) return;
+
+      const passage = item.passages.find(function(candidate) {
+        const text = normalize(candidate.text);
+        return words.every(function(word) {
+          return text.includes(word);
+        });
+      }) || item.passages.find(function(candidate) {
+        const text = normalize(candidate.text);
+        return words.some(function(word) {
+          return text.includes(word);
+        });
+      }) || item.passages[0];
+
+      matches.push({
+        chapter: chapter,
+        title: title.textContent.trim(),
+        section: item.name,
+        target: passage ? passage.node : item.heading,
+        scroller: scroller,
+                excerpt: passage ? passage.text : item.name,
+        relevance:
+          (normalize(item.name).includes(normalize(query)) ? 100 : 0) +
+          (normalize(title.textContent).includes(normalize(query)) ? 50 : 0) +
+          (sectionText.includes(normalize(query)) ? 20 : 0)
+      });
+    });
+  });
+
+    matches.sort(function(a, b) {
+    return b.relevance - a.relevance;
+  });
+
+  results.hidden = false;
+  status.textContent = matches.length
+    ? matches.length + " matching section" +
+      (matches.length === 1 ? "." : "s.")
+    : "No matches in the User Guide. Try a different word or phrase.";
+
+  matches.forEach(function(match) {
+    const card = document.createElement("div");
+    card.style.cssText =
+      "border:1px solid #ddd;border-radius:10px;" +
+      "padding:12px;margin-bottom:10px;";
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.style.cssText =
+      "display:block;width:100%;background:none;border:0;" +
+      "padding:0;text-align:left;color:#2459b4;" +
+      "text-decoration:underline;font-size:16px;cursor:pointer;";
+    button.textContent = match.title + " — " + match.section;
+
+    button.onclick = function() {
+      closeDialog("userGuideDialog");
+      openDialog(match.chapter.id);
+
+      requestAnimationFrame(function() {
+        const top = match.scroller.scrollTop +
+          match.target.getBoundingClientRect().top -
+          match.scroller.getBoundingClientRect().top - 12;
+
+        match.scroller.scrollTo({
+          top: Math.max(0, top),
+          behavior: "auto"
+        });
+
+        match.target.setAttribute("tabindex", "-1");
+        match.target.focus({ preventScroll: true });
+      });
+    };
+
+    const excerpt = document.createElement("p");
+    excerpt.style.cssText = "margin:8px 0 0;line-height:1.5;";
+
+    let text = match.excerpt;
+    if (text.length > 240) {
+      const lower = normalize(text);
+      const firstMatch = words.reduce(function(best, word) {
+        const position = lower.indexOf(word);
+        return position >= 0 ? Math.min(best, position) : best;
+      }, text.length);
+
+      const start = Math.max(0, firstMatch - 70);
+      text = (start ? "…" : "") +
+        text.slice(start, start + 240) +
+        (start + 240 < text.length ? "…" : "");
+    }
+
+    excerpt.textContent = text;
+    card.append(button, excerpt);
+    results.appendChild(card);
+  });
+}
+
 function openAboutDialog() {
   openDialog("aboutDialog");
 }
@@ -57,6 +224,13 @@ function closeDialog(id) {
 
 const mjcGlossaryEntries = [
 
+  {
+    term: "Principle of Contribution",
+    definition:
+      "A tile’s value is shaped by what it contributes " +
+      "to the hand as a whole. That contribution is " +
+      "dynamic: a tile’s role can change as the hand develops."
+  },
   {
     term: "Deferred",
     definition:
@@ -298,6 +472,27 @@ const mjcGlossaryEntries = [
     definition:
       "Describes a meld revealed to the other players, usually " +
       "after claiming a discard."
+  },
+  {
+    term: "Target Tiles",
+    abbreviation: "TT",
+    definition:
+      "Tiles that can help your current Developing Boxes " +
+      "advance or become complete. For example, 7 and 8 Bam " +
+      "in a Double-Sided Wait have two Target Tiles: " +
+      "6 Bam and 9 Bam. Your targets can change as your " +
+      "hand develops. A Target Tile is useful to your hand, " +
+      "but this does not guarantee that a copy is still available."
+  },
+  {
+    term: "Target Tiles Panel",
+    abbreviation: "TTP",
+    definition:
+      "The panel that displays the Target Tiles for your " +
+      "current hand. Tap the Target Tiles tab to open or " +
+      "close it. Recheck your targets as your groupings " +
+      "change, and watch the discards and exposed melds " +
+      "to help judge availability."
   },
   {
     term: "Terminal",
@@ -736,10 +931,11 @@ function showGlossaryIndex() {
     }
   });
 
-  const aliases = {
+    const aliases = {
     "Save Game": "Save Hand",
     "Game History": "Hand History",
-    "New Game": "New Hand"
+    "New Game": "New Hand",
+    "Contribution": "Principle of Contribution"
   };
 
   Object.keys(aliases).forEach(function(label) {
@@ -869,6 +1065,7 @@ const mjcGlossaryGroups = {
     "Mahjong Coach",
     "Six Box Theory",
     "Hand Structure",
+    "Principle of Contribution",
     "Organized",
     "Box",
     "Complete Box",
@@ -876,8 +1073,10 @@ const mjcGlossaryGroups = {
     "Reserve",
     "Groupings"
   ],
-  "Understanding Pathways": [
+    "Understanding Pathways": [
     "Pathways",
+    "Target Tiles",
+    "Target Tiles Panel",
     "Acceptance",
     "Effective Acceptance",
     "Sources",
@@ -1102,8 +1301,8 @@ function buildMMRAffectedBoxes() {
   area.appendChild(heading);
 
   const explanation = document.createElement("p");
-  explanation.textContent =
-    "These boxes show your tiles before the incoming tile is added.";
+    explanation.textContent =
+        "The boxes shown below are what you have before the incoming tile is added.";
   area.appendChild(explanation);
 
   const incoming = document.createElement("div");
