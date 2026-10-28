@@ -1214,6 +1214,16 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
       <li><strong>Enter your starting tiles:</strong> Tap each tile to enter the tiles in your hand.</li>
       <li><strong>Review your settings and tiles:</strong> Make sure everything is correct.</li>
       <li><strong>Press Play On!</strong> MJC will organize your hand according to Six Box Theory™.</li>
+      <li>
+        <strong>Arrange your rack using the Six Box Rack Layout:</strong>
+        Place your Complete Boxes (hidden melds) on the left,
+        Developing Boxes in the middle, and Reserves on the right.
+        Keep exposed melds on the table.
+        This helps you connect the groupings on your MJC
+        hand display with the physical tiles on your rack.
+        Adjust your rack as your hand develops, when practical.
+      </li>
+
     </ol>
 
     <div class="dialog-actions">
@@ -1579,9 +1589,42 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
   <div class="dialog"
        style="display:flex; flex-direction:column; max-height:85vh; overflow:hidden;">
 
-    <h2>User Guide</h2>
+        <h2>User Guide</h2>
 
     <div style="overflow-y:auto; min-height:0; flex:1;">
+
+      <form role="search"
+            aria-label="Search the User Guide"
+            onsubmit="event.preventDefault(); searchUserGuide();"
+            style="margin-bottom:20px;">
+
+        <label for="userGuideSearchInput">
+          <strong>Search the User Guide</strong>
+        </label>
+
+        <div style="display:flex; gap:8px; margin-top:8px;">
+          <input id="userGuideSearchInput"
+                 type="search"
+                 placeholder="Enter a word or phrase"
+                 style="flex:1; min-width:0; width:100%;
+                        padding:10px; font-size:16px;
+                        border:1px solid #aaa; border-radius:8px;">
+
+          <button type="submit"
+                  class="dialog-button">
+            Search
+          </button>
+        </div>
+      </form>
+
+      <p id="userGuideSearchStatus"
+         role="status"
+         aria-live="polite"></p>
+
+      <div id="userGuideSearchResults"
+           hidden
+           style="margin-bottom:20px;"></div>
+
       <h3>Table of Contents</h3>
 
       <ol style="padding-left:2.5em; line-height:1.6;"
@@ -1874,7 +1917,33 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
       </ol>
     </div>
 
-    <div class="dialog-actions" style="flex-shrink:0;">
+        <div class="dialog-actions"
+         style="flex-shrink:0; flex-wrap:wrap;">
+
+      <button type="button"
+              class="dialog-button"
+              onclick="
+                document.getElementById('userGuideSearchInput').value = '';
+
+                const results =
+                  document.getElementById('userGuideSearchResults');
+                results.replaceChildren();
+                results.hidden = true;
+
+                document.getElementById(
+                  'userGuideSearchStatus'
+                ).textContent = '';
+
+                this.closest('.dialog')
+                  .querySelector('form')
+                  .parentElement.scrollTo({
+                    top: 0,
+                    behavior: 'auto'
+                  });
+              ">
+        Table of Contents
+      </button>
+
       <button type="button"
               class="dialog-button primary"
               onclick="closeDialog('userGuideDialog')">
@@ -8356,6 +8425,13 @@ This option is not yet available.
               Use Pathways in Your Decisions
             </a>
           </li>
+          <li>
+            <a href="#"
+               data-section="7. Target Tiles and the Target Tiles Panel">
+              Target Tiles and the Target Tiles Panel
+            </a>
+          </li>
+
         </ul>
       </nav>
 
@@ -8758,6 +8834,70 @@ This option is not yet available.
         Chapter 9 explains that coaching.
       </p>
 
+      <h3>7. Target Tiles and the Target Tiles Panel</h3>
+
+      <p>
+        <strong>Target Tiles (TT)</strong>
+        are tiles that can help your current
+        Developing Boxes advance or become complete.
+        They give you specific tiles to watch for
+        as you play.
+      </p>
+
+      <p>
+        For example, a Double-Sided Wait containing
+        <strong>7 and 8 Bam</strong> has two
+        Target Tiles:
+        <strong>6 Bam and 9 Bam</strong>.
+        Either can complete a Chow.
+      </p>
+
+      <div class="chiclet-tiles"
+           data-chiclets="bam7 bam8"
+           style="justify-content:center;"></div>
+
+      <p style="text-align:center;">
+        <strong>Target Tiles</strong>
+      </p>
+
+      <div class="chiclet-tiles"
+           data-chiclets="bam6 bam9"
+           style="justify-content:center;"></div>
+
+      <h4>Using the Target Tiles Panel</h4>
+
+      <p>
+        The <strong>Target Tiles Panel (TTP)</strong>
+        brings your current targets together
+        in one place. Tap the
+        <strong>Target Tiles</strong> tab
+        to open the panel. Tap it again
+        to close it.
+      </p>
+
+      <p>
+        Your targets can change as your hand
+        develops. Recheck the panel after
+        your groupings change rather than
+        relying on an earlier list.
+      </p>
+
+      <h4>Keep Watching the Table</h4>
+
+      <p>
+        A Target Tile is useful to your hand,
+        but that does not guarantee that a copy
+        is still available. Watch the discards
+        and exposed melds to help judge
+        your opportunities.
+      </p>
+
+      <p>
+        Use the panel as a quick reference,
+        then return your attention to your
+        physical hand and the table.
+      </p>
+
     </div>
 
     <div class="dialog-actions"
@@ -8794,19 +8934,6 @@ This option is not yet available.
     </div>
   </div>
 </div>
-
-<!--
-  FUTURE USER GUIDE CHAPTER — TARGET TILES AND TARGET PANEL
-
-  Position: After Understanding Pathways
-  and before Understanding Release Tile (RT).
-
-  Add when v9.0 Target Tiles and Target Panel
-  are implemented and tested.
-
-  Update the Table of Contents, chapter numbering,
-  and navigation at that time.
--->
 
 <!-- USER GUIDE — CHAPTER 8 -->
 <div id="userGuideChapter8Dialog"
@@ -11718,21 +11845,20 @@ Leaves this Double-Sided Wait:
         EA appears above the marker.d
       </p>
 
-      <!--
-        FUTURE QUICK REFERENCE — TARGET TILES / TARGET PANEL
+      <p>
+        <strong>Target Tiles (TT):</strong>
+        tiles that can help your current
+        Developing Boxes advance or become complete.
+      </p>
 
-        Insert after Pathways and before Insight
-        when the v9.0 features are implemented.
-
-        Target Tiles:
-        Tiles that can advance Developing Boxes.
-
-        Target Panel:
-        Player-controlled slide-out panel displaying
-        Target Tiles and their associated DBs.
-
-        Update the chapter references when released.
-      -->
+      <p>
+        <strong>Target Tiles Panel (TTP):</strong>
+        displays the Target Tiles for your
+        current hand. Tap the
+        <strong>Target Tiles</strong> tab
+        to open or close the panel.
+        Recheck your targets as your hand develops.
+      </p>
 
       <p>
         <strong>Insight:</strong>
@@ -12273,7 +12399,6 @@ understanding Mahjong hand structure.
                 Six Box Theory™ began with 16-tile Mahjong.
         A regular winning hand contains
         17 tiles: five melds and a pair—six boxes.
-        Each Kang adds one extra tile to that total.
         That’s where the name comes from.
         The Chinese 13-tile adaptation will use
         four melds and a pair—five boxes,
@@ -13424,6 +13549,14 @@ understanding Mahjong hand structure.
   you’re building.
 </p>
 
+<p>
+  This is the <strong>Principle of Contribution</strong>:
+  a tile’s value is shaped by what it contributes
+  to the hand as a whole. That contribution is
+  <strong>dynamic</strong>: a tile’s role can
+  change as the hand develops.
+</p>
+
 
       <p>
         So when you look at your hand,
@@ -13573,8 +13706,12 @@ understanding Mahjong hand structure.
         to guide your decisions.
       </p>
 
-      <p>
-        Here’s the arrangement I recommend:
+            <p>
+        I call this the
+        <strong>Six Box Rack Layout</strong>:
+        Complete Boxes (hidden melds) on the left,
+        Developing Boxes in the middle,
+        and Reserves on the right.
       </p>
 
       <ul style="padding-left:1.3em; line-height:1.6;">
@@ -13610,8 +13747,9 @@ understanding Mahjong hand structure.
         <div style="background:#eaf4e8;
                     border-radius:8px; padding:12px;
                     margin-top:16px; text-align:center;">
-          <strong>On the table</strong><br>
-          Exposed melds
+                    <strong>On the table</strong><br>
+          Complete Boxes<br>
+          (Exposed Melds)
         </div>
 
         <p><strong>On your rack — left to right</strong></p>
@@ -13628,7 +13766,8 @@ understanding Mahjong hand structure.
                       border-radius:8px; padding:12px 4px;">
             
 <strong>Left</strong><br>
-Complete Boxes (hidden)
+Complete Boxes<br>
+(Hidden Melds)
 
           </div>
 
