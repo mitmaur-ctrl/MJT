@@ -183,7 +183,7 @@ function searchUserGuide() {
         });
 
                 match.target.setAttribute("tabindex", "-1");
-        match.target.style.outline = "2px solid #2e8b57";
+                match.target.style.outline = "2px solid #2459b4";
         match.target.style.outlineOffset = "2px";
 
         match.target.addEventListener("blur", function() {
