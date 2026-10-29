@@ -1,43 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <!--
 ==================================================
 MAHJONG COACH DEVELOPMENT MANIFEST
 ==================================================
+
 Project:
-Mahjong Coach
+Mahjong Coach (MJC)
 
 Version:
 MJC Beta v10.0
 
-Purpose:
-- Smartphone-optimized tile management vehicle
-- Patch A Rev 4 implementation
-- Rules and Display dialogs
-- Role / Seat / Round controls with defaults
-- Seat / Round setup controls use text-only dropdowns; wind icons removed throughout the UI
-- Hand Context Lock after gameplay begins
-- Draw Tile Screen: compact single-tile selector, then Confirm
-- Discard Tile Screen: select tile, then Confirm
-- Correct Last Entry workflow for last draw/discard entry with single-tile red correction highlight
-- Display order applied across TSS, HD, Draw, and Discard screens
-- 6BT intro message sequence added to starting tile selection
-- Preserve stable v1.16 tile entry, revise, draw, discard foundationst
-- Hand Correction Screen and New Game workflow complete the V1 input layer
-- v1.19.6 UI Hot Fix and Input Layer Stabilization Build
-- v1.20 Modularity Build: prepare code architecture for engine integration
-- No engine logic added in this version
-- v1.21 CSS Refactor: externalized stylesheet into css/styles.css; no intended UI or workflow changes
-- v1.24 Tile Entry Modularization: externalized TSS, revision, HCS, tile validation, and tile-entry display     logic into js/tile-entry.js; no intended workflow changes
+Foundation:
+Six Box Theory™ (6BT)
+A method for understanding Mahjong hand structure.
 
-Roadmap:
-V1 = Input Layer
-V2 = Mahjong Coach Engine
-V3 = Graphics & Polish
-V4 = Photo Recognition
+Mission:
+Help beginning and intermediate Mahjong players
+learn, understand, and improve by revealing the
+structure of their hands.
+
+Supported Rulesets:
+- JEZEMS Filipino 16-Tile
+- Taiwanese 16-Tile
+
+Planned Ruleset:
+- Chinese 13-Tile (Hong Kong / Cantonese)
+
+Core Capabilities:
+- Starting Hand and Current Hand Displays
+- Six Box Theory™ hand organization
+- Complete Boxes, Developing Boxes, and Reserves
+- Coaching View and Standard View
+- Draw, Discard, Chow, Pong, and Kang workflows
+- Discard Recommendations and Insight
+- Pathways and Target Tiles Panel
+- Correct Last Entry and Fix Hand
+- Save Hand, Hand History, and Replay Hand Viewer
+- User Guide, Glossary, and searchable help
+
+Design Principles:
+- MJC coaches. You decide. Play On!
+- Reveal hand structure without taking over gameplay
+- Keep the Current Hand Display focused and uncluttered
+- Preserve player choice and ruleset distinctions
+- Favor clarity, simplicity, and mobile usability
+
+Development:
+- Modular HTML, CSS, and JavaScript architecture
+- GitHub Pages deployment
+- Versioned incremental enhancements
+
 ==================================================
 -->
+
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -348,7 +366,17 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
 
   <section class="target-tiles-content"
            aria-labelledby="targetTilesHeading">
-    <h3 id="targetTilesHeading">Target Tiles</h3>
+        <div class="target-tiles-heading-row">
+      <h3 id="targetTilesHeading">Target Tiles</h3>
+
+      <button type="button"
+        class="target-tiles-close"
+        aria-label="Hide Target Tiles"
+        title="Hide Target Tiles"
+        onclick="closeTargetTilesPanel()">
+  ←
+</button>
+    </div>
 
     <div id="targetTilesGrid"
          class="target-tiles-grid"></div>
@@ -5980,11 +6008,13 @@ This option is not yet available.
         before Winds. Tap <strong>Save</strong>.
       </p>
 
-      <p>
-        Use an order you find easy to follow.
-        This setting controls how suit and honor
-        groups appear in MJC’s tile displays and
-        selection screens.
+            <p>
+        Choose the same suit order you normally
+        use when arranging tiles on your rack.
+        This makes entering your starting tiles
+        easier because you can work through
+        your rack in the same order shown on
+        MJC's Tile Selection Screen.
       </p>
 
       <h3>4. Enter Your Starting Tiles</h3>
@@ -9483,15 +9513,7 @@ on the full recorded hand.
         still applies.
       </p>
 
-      <p>
-        The separate <strong>Insight</strong>
-        control on the Discard Tile Screen
-        currently displays a coming-soon
-        message. Use the hand-display
-        recommendation’s Insight for
-        the working explanation.
-      </p>
-
+    
       <h3>3. Understand the Reasoning</h3>
 
       <h4>When Reserves are available</h4>
@@ -12389,7 +12411,7 @@ understanding Mahjong hand structure.
       <p>
                 Six Box Theory™ began with 16-tile Mahjong.
         A regular winning hand contains
-        17 tiles: five melds and a pair—six boxes.
+        five melds and a pair—six boxes.
         That’s where the name comes from.
         The Chinese 13-tile adaptation will use
         four melds and a pair—five boxes,
@@ -12962,6 +12984,18 @@ understanding Mahjong hand structure.
         A big part of that is
         helping you see what’s
         already there.
+            </p>
+
+      <p>
+        Your job is to record your tiles
+        as you play. MJC's job is to
+        organize and present those tiles
+        using Six Box Theory™.
+      </p>
+
+      <p>
+        You play the hand. MJC helps
+        you see its structure.
       </p>
 
       <h3>The Hand You Recognize</h3>
@@ -13209,10 +13243,15 @@ understanding Mahjong hand structure.
 
       <h3>Box Power, Baby!</h3>
 
+            <p>
+        With 6BT, your tiles are organized
+        by boxes, not by suits.
+      </p>
+
       <p>
         Here’s the power of organizing
         your tiles into boxes:
-        you can see what each grouping
+        you can see what each Developing Box
         needs, instead of searching
         through your entire hand
         after every draw.
@@ -13697,7 +13736,15 @@ understanding Mahjong hand structure.
         to guide your decisions.
       </p>
 
-            <p>
+                  <p>
+        Completed hidden melds stay on
+        your rack. Exposed melds are placed
+        face up on the table in front of
+        your rack, where the other players
+        can see them.
+      </p>
+
+      <p>
         I call this the
         <strong>Six Box Rack Layout</strong>:
         Complete Boxes (hidden melds) on the left,
