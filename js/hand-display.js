@@ -3755,16 +3755,44 @@ function positionTargetTilesPanel() {
 window.addEventListener("resize", positionTargetTilesPanel);
 window.addEventListener("scroll", positionTargetTilesPanel, true);
 
+function closeTargetTilesPanel() {
+  const panel = document.getElementById("targetTilesPanel");
+
+  if (!panel || !panel.open) return;
+
+  const content = panel.querySelector(".target-tiles-content");
+
+  if (!content) {
+    panel.open = false;
+    return;
+  }
+
+  content.classList.add("target-tiles-closing");
+
+    window.setTimeout(function() {
+    panel.open = false;
+    content.classList.remove("target-tiles-closing");
+
+    // Reset the opening animation for the next Show.
+    content.style.animation = "none";
+    void content.offsetWidth;
+    content.style.animation = "";
+  }, 280);
+}
+
 function updateTargetTilesTab() {
   const panel =
     document.getElementById("targetTilesPanel");
 
   if (!panel) return;
 
-  panel.querySelector("summary").textContent =
-    panel.open
-      ? "Target Tiles: Hide"
-      : "Target Tiles: Show";
+    const tab = panel.querySelector("summary");
+
+  if (tab) {
+    tab.textContent = "Target Tiles: Show";
+    tab.style.visibility = panel.open ? "hidden" : "visible";
+    tab.style.pointerEvents = panel.open ? "none" : "auto";
+  }
 
   positionTargetTilesPanel();
 }

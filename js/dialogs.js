@@ -570,6 +570,14 @@ const mjcGlossaryEntries = [
   },
 
   {
+    term: "Recording",
+    definition:
+      "Entering your starting tiles, draws, discards, " +
+      "and claims into MJC as you play. Recording allows " +
+      "MJC to follow your hand, organize your tiles using " +
+      "Six Box Theory™, and keep its display current."
+  },
+  {
     term: "Correct Last Entry",
     abbreviation: "CLE",
     definition:
@@ -763,13 +771,16 @@ const mjcGlossaryEntries = [
       "tile opportunities that can advance the Developing Box " +
       "toward completion through that pathway."
   },
-  {
+    {
     term: "Sources",
     definition:
       "How a needed tile can enter your hand: through your own " +
       "draw or an opponent's discard that you can legally claim. " +
-      "A Chow has two sources: your draw and the player to your " +
-      "left. A Pong has four: your draw and any of the other players."
+      "A Chow normally has two sources: your draw and the player " +
+      "to your left. A Pong has four: your draw and any of the " +
+      "other players. If the tile completes your winning hand, " +
+      "a Chow may also have four sources, where your rules allow " +
+      "a winning claim from any opponent."
   },
   {
     term: "Connectivity",
@@ -2961,11 +2972,11 @@ function viewSavedGameTranscript(index) {
       const actionLabel = document.createElement("h4");
       actionLabel.style.margin = "8px 0 0";
             const actionRow = document.createElement("div");
+ 
       actionRow.style.display = "flex";
-      actionRow.style.justifyContent = "space-between";
-      actionRow.style.alignItems = "baseline";
-      actionRow.style.flexWrap = "wrap";
-      actionRow.style.gap = "4px 16px";
+      actionRow.style.flexDirection = "column";
+      actionRow.style.alignItems = "flex-start";
+      actionRow.style.gap = "4px";
       actionRow.style.marginTop = "8px";
 
       actionLabel.style.margin = "0";
