@@ -1866,8 +1866,14 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 
 }
 
 .target-tiles-content {
+  background: #fffbea;
   width: 280px;
   max-width: calc(100vw - 16px);
+  transform-origin: left center;
+  animation: targetTilesSlideIn 280ms ease-out both;
+  border: 2px solid #8fa99a;
+  border-radius: 10px;
+  box-shadow: 3px 4px 12px rgba(0, 0, 0, 0.18);
   max-height: calc(
     100dvh -
     var(--tt-top, calc(var(--header-height) + 12px)) -
@@ -1879,16 +1885,41 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 
   overscroll-behavior: contain;
   margin-top: 6px;
   padding: 12px;
-  background: #fff;
-  border: 1px solid #b8cbbd;
-  border-radius: 12px;
-  box-shadow: 0 5px 18px rgba(0, 0, 0, .2);
+}
+
+.target-tiles-heading-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  width: 100%;
+  gap: 8px;
+  margin-bottom: 12px;
 }
 
 .target-tiles-content h3 {
-  margin: 0 0 12px;
+  margin: 0;
   color: #1f5a32;
   font-size: 18px;
+}
+
+.target-tiles-close {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  background: #e8f2e9;
+  color: #1f5a32;
+  border: 1px solid #8fa99a;
+  border-radius: 6px;
+  font-size: 22px;
+  font-weight: bold;
+  line-height: 1;
+  cursor: pointer;
 }
 
 .target-tiles-grid {
@@ -1943,4 +1974,34 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 
 .target-tiles-tab,
 .target-tiles-content {
   pointer-events: auto;
+}
+
+/* Target Tiles — slide in from CHD's left edge */
+@keyframes targetTilesSlideIn {
+  from {
+    transform: translateX(-105%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Target Tiles — slide out toward CHD's left edge */
+.target-tiles-content.target-tiles-closing {
+  animation: targetTilesSlideOut 280ms ease-in both;
+}
+
+@keyframes targetTilesSlideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+
+  to {
+    transform: translateX(-105%);
+    opacity: 0;
+  }
 }
