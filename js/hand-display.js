@@ -3786,10 +3786,20 @@ function updateTargetTilesTab() {
 
   if (!panel) return;
 
+if (panel.open) {
+  const content = panel.querySelector(".target-tiles-content");
+
+  if (content) {
+    content.style.animation = "none";
+    void content.offsetWidth;
+    content.style.animation = "";
+  }
+}
+
     const tab = panel.querySelector("summary");
 
   if (tab) {
-    tab.textContent = "Target Tiles: Show";
+   tab.textContent = "Target Tiles →";
     tab.style.visibility = panel.open ? "hidden" : "visible";
     tab.style.pointerEvents = panel.open ? "none" : "auto";
   }
