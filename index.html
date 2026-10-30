@@ -11,7 +11,7 @@ Project:
 Mahjong Coach (MJC)
 
 Version:
-MJC Beta v10.0
+MJC Beta v10.1
 
 Foundation:
 Six Box Theory™ (6BT)
@@ -682,7 +682,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     <button onclick="openSupportDialog()">Support MJC</button>
   </div>
 
-    <div class="footer-version">Beta v10.0</div>
+    <div class="footer-version">Beta v10.1</div>
 
     <div class="footer-credit">
     &copy; 2026 Mithras C. Maurille &middot; Creator of MJC and 6BT<br>
@@ -17092,7 +17092,7 @@ Complete Boxes<br>
     <h2>Feedback</h2>
     <p>Thank you for helping us improve Mahjong Coach.</p>
     <p>We welcome bug reports, suggestions, comments, and feature requests.</p>
-    <p><strong>Email:</strong> <a href="mailto:mjcfeedbackteam@gmail.com?subject=Mahjong%20Coach%20Feedback%20-%20Beta%20v10.0">mjcfeedbackteam@gmail.com</a></p>
+    <p><strong>Email:</strong> <a href="mailto:mjcfeedbackteam@gmail.com?subject=Mahjong%20Coach%20Feedback%20-%20Beta%20v10.1">mjcfeedbackteam@gmail.com</a></p>
     <p><em>Every message is read and appreciated.</em></p>
     <div class="dialog-actions">
       <button class="dialog-button primary" onclick="closeDialog('feedbackDialog')">Close</button>
@@ -17330,7 +17330,7 @@ Acceptance standard:
 ==================================================
 */
 
-const MJC_VERSION_LABEL = "Beta v10.0";
+const MJC_VERSION_LABEL = "Beta v10.1";
 
 const MJC_RULESET_BASE_HAND_SIZES = Object.freeze({
   filipino16: 16,
@@ -17542,6 +17542,9 @@ function confirmNewGame() {
 
 function startNewGame() {
   for (const key in counts) counts[key] = 0;
+
+  // Clear player-recorded Target Tile decrements.
+  window.targetTileDecrements = {};
 
   role = "player";
   seatWind = "east";
