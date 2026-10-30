@@ -3592,6 +3592,42 @@ function renderReplayDevelopingBoxes(structure, highlightState) {
   return html;
 }
 
+// Player-recorded unavailable copies, keyed by tile.
+window.targetTileDecrements = {};
+
+function getTargetTileRemaining(tileKey) {
+  const knownInHand = counts[tileKey] || 0;
+  const decrements = window.targetTileDecrements[tileKey] || 0;
+
+  return Math.max(0, 4 - knownInHand - decrements);
+}
+
+function decrementTargetTile(tileKey) {
+  const knownInHand = counts[tileKey] || 0;
+  const baseline = Math.max(0, 4 - knownInHand);
+
+  const current = window.targetTileDecrements[tileKey] || 0;
+
+  window.targetTileDecrements[tileKey] =
+    current >= baseline ? 0 : current + 1;
+
+  const remaining = getTargetTileRemaining(tileKey);
+
+  document.querySelectorAll(".target-tile-item").forEach(function(item) {
+    if (item.dataset.tileKey !== tileKey) return;
+
+    const count = item.querySelector(".target-tile-ta");
+    if (!count) return;
+
+    count.textContent = remaining;
+    count.style.color = remaining === 0 ? "red" : "";
+    count.setAttribute(
+      "aria-label",
+      remaining + " copies remaining"
+    );
+  });
+}
+
 function collectTargetTiles(structure) {
   const targets = new Map();
   const completeCount =
@@ -3666,9 +3702,14 @@ function renderTargetTiles(structure) {
   const targets = collectTargetTiles(structure);
   empty.hidden = targets.length > 0;
 
-  targets.forEach(function(target) {
+    targets.forEach(function(target) {
     const item = document.createElement("div");
     item.className = "target-tile-item";
+    item.dataset.tileKey = target.tileKey;
+
+    item.addEventListener("click", function() {
+      decrementTargetTile(target.tileKey);
+    });
 
     const unavailable = target.availability === 0;
     item.classList.toggle("is-unavailable", unavailable);
@@ -3685,9 +3726,17 @@ function renderTargetTiles(structure) {
     references.className = "target-tile-boxes";
     references.textContent = [...target.boxes].join(", ");
 
-    const taSpace = document.createElement("div");
+        const taSpace = document.createElement("div");
     taSpace.className = "target-tile-ta";
-    taSpace.setAttribute("aria-hidden", "true");
+
+    const remaining = getTargetTileRemaining(target.tileKey);
+
+    taSpace.textContent = remaining;
+    taSpace.style.color = remaining === 0 ? "red" : "";
+    taSpace.setAttribute(
+      "aria-label",
+      remaining + " copies remaining"
+    );
 
     item.append(tile, references, taSpace);
     grid.appendChild(item);
