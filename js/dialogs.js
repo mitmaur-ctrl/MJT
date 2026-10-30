@@ -2184,6 +2184,19 @@ function closeMeetCandidatesDialog() {
 }
 
 function openUserGuideDialog() {
+  const input = document.getElementById("userGuideSearchInput");
+  const results = document.getElementById("userGuideSearchResults");
+  const status = document.getElementById("userGuideSearchStatus");
+
+  if (input) input.value = "";
+
+  if (results) {
+    results.replaceChildren();
+    results.hidden = true;
+  }
+
+  if (status) status.textContent = "";
+
   openDialog("userGuideDialog");
 }
 
