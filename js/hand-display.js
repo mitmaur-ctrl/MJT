@@ -3780,9 +3780,17 @@ function positionTargetTilesPanel() {
 
   const content = panel.querySelector(".target-tiles-content");
 
-  if (content) {
+    if (content) {
+    const availableHeight =
+      Math.max(0, viewportHeight - top - bottom - 52);
+
+    const heightLimit =
+      window.matchMedia("(max-width: 600px)").matches
+        ? 300
+        : availableHeight;
+
     content.style.maxHeight =
-      Math.max(0, viewportHeight - top - bottom - 52) + "px";
+      Math.min(availableHeight, heightLimit) + "px";
   }
 }
 
