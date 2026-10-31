@@ -2847,10 +2847,16 @@ function openGameHistoryDialog() {
     const content = document.getElementById("gameHistoryContent");
     content.replaceChildren();
 
-    const note = document.createElement("p");
+        const note = document.createElement("p");
     note.textContent = games.length
-                                    ? "Saved Hands: " + games.length + ". MJC keeps your 80 most recent hands."
+      ? "Saved Hands: " + games.length
       : "No saved hands.";
+
+    note.appendChild(document.createElement("br"));
+    note.appendChild(document.createTextNode(
+      "(MJC keeps your 80 most recent hands.)"
+    ));
+
     content.appendChild(note);
     if (games.length > 0) {
       const clearButton = document.createElement("button");
