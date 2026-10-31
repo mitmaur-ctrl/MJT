@@ -522,11 +522,32 @@ const mjcGlossaryEntries = [
     term: "Target Tiles Panel",
     abbreviation: "TTP",
     definition:
-      "The panel that displays the Target Tiles for your " +
-      "current hand. Tap the Target Tiles tab to open or " +
-      "close it. Recheck your targets as your groupings " +
-      "change, and watch the discards and exposed melds " +
-      "to help judge availability."
+      "The panel that displays your current Target Tiles and " +
+      "their remaining counts. Tap the Target Tiles tab to open " +
+      "or close it. Tap a tile to record a copy discarded or " +
+      "exposed by another player. Recorded decrements remain " +
+      "as your targets change; starting a New Hand clears them. " +
+      "Watch the table to help judge availability."
+  },
+  {
+    term: "Decrement",
+    definition:
+      "To reduce a count by one. In the Target Tiles Panel, " +
+      "each tap decrements a tile's remaining count to record " +
+      "a copy discarded or exposed by another player. These " +
+      "reductions are called decrements. Count each physical " +
+      "tile only once. Do not include tiles you claim for " +
+      "yourself; MJC accounts for those in your hand."
+  },
+  {
+    term: "Remaining Count",
+    definition:
+      "The number beneath a Target Tile. It starts with four " +
+      "copies, subtracts copies in your hand and your recorded " +
+      "decrements, and cannot fall below zero. Zero appears " +
+      "in red. Tapping again after zero resets that tile's " +
+      "count to its starting value, which already accounts " +
+      "for copies in your hand."
   },
   {
     term: "Terminal",
@@ -767,9 +788,11 @@ const mjcGlossaryEntries = [
     term: "Effective Acceptance",
     abbreviation: "EA",
     definition:
-      "The number above each arrow. It represents the remaining " +
-      "tile opportunities that can advance the Developing Box " +
-      "toward completion through that pathway."
+            "The number above each pathway arrow. It represents the " +
+      "remaining tile copies that can advance the Developing Box " +
+      "through that pathway, accounting for copies in your hand " +
+      "and your recorded Target Tile decrements. These are " +
+      "opportunities, not a guarantee of availability."
   },
     {
     term: "Sources",
@@ -1122,6 +1145,8 @@ const mjcGlossaryGroups = {
     "Pathways",
     "Target Tiles",
     "Target Tiles Panel",
+    "Decrement",
+    "Remaining Count",
     "Acceptance",
     "Effective Acceptance",
     "Sources",
