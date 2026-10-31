@@ -3692,7 +3692,39 @@ function renderTargetTiles(structure) {
     item.className = "target-tile-item";
     item.dataset.tileKey = target.tileKey;
 
+        let startX = 0;
+    let startY = 0;
+    let startScrollTop = 0;
+    let swiped = false;
+
+    item.addEventListener("pointerdown", function(event) {
+      startX = event.clientX;
+      startY = event.clientY;
+      startScrollTop = grid.scrollTop;
+      swiped = false;
+    }, { passive: true });
+
+    item.addEventListener("pointermove", function(event) {
+      if (
+        Math.abs(event.clientX - startX) > 8 ||
+        Math.abs(event.clientY - startY) > 8
+      ) {
+        swiped = true;
+      }
+    }, { passive: true });
+
+    item.addEventListener("pointercancel", function() {
+      swiped = true;
+    }, { passive: true });
+
     item.addEventListener("click", function() {
+      if (
+        swiped ||
+        Math.abs(grid.scrollTop - startScrollTop) > 2
+      ) {
+        return;
+      }
+
       decrementTargetTile(target.tileKey);
     });
 
