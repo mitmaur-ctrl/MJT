@@ -12794,6 +12794,8 @@ understanding Mahjong hand structure.
         in your usual order.
       </p>
 
+
+
       <p>
         Then enter them into MJC.
       </p>
@@ -12828,6 +12830,52 @@ understanding Mahjong hand structure.
         A matching total is a good start,
         but the right tiles matter too.
       </p>
+
+      <p>
+        <button
+          type="button"
+          onclick="document.getElementById('tileEntryVideoDialog').showModal()"
+          style="background:none; border:0; padding:0;
+                 color:#1558a6; text-decoration:underline;
+                 font:inherit; cursor:pointer;"
+        >▶ Watch: Entering Your Tiles</button>
+      </p>
+
+      <dialog
+        id="tileEntryVideoDialog"
+        aria-labelledby="tileEntryVideoTitle"
+        onclose="this.querySelector('video').pause()"
+        style="width:900px; max-width:94vw;
+               max-height:90vh; box-sizing:border-box;
+               padding:16px; border:0; border-radius:12px;
+               overflow:auto;"
+      >
+                <h2 id="tileEntryVideoTitle" style="margin:0 0 12px;">
+          Entering Your Tiles
+        </h2>
+
+        <video
+          controls
+          playsinline
+          preload="none"
+          aria-label="MJC tile-entry walkthrough"
+          style="display:block; width:100%; height:auto;
+                 max-height:65vh; background:#000;"
+        >
+          <source
+            src="videos/MJC_Tile_Entry_1080p.mp4"
+            type="video/mp4"
+          >
+          Your browser does not support embedded video.
+        </video>
+
+        <div style="text-align:right; margin-top:12px;">
+          <button
+            type="button"
+            onclick="document.getElementById('tileEntryVideoDialog').close()"
+          >Close</button>
+        </div>
+      </dialog>     
 
       <h3>Give Yourself a Clear View</h3>
 
@@ -13371,6 +13419,17 @@ understanding Mahjong hand structure.
   that can help it advance or become complete.
   We call these <strong>Target Tiles (TT)</strong>.
 </p>
+
+<p>
+  The <strong>Target Tiles Panel</strong>
+  helps you keep track of those opportunities.
+  MJC accounts for copies in your hand,
+  while you can tap to record copies
+  you see discarded or exposed.
+  It's another reason to keep your eyes
+  on the table!
+</p>
+
 
 
 <div style="background:#faf4e5;
