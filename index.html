@@ -12751,7 +12751,52 @@ understanding Mahjong hand structure.
         on your rack.
       </p>
 
+      <p>
+        <button
+          type="button"
+          onclick="document.getElementById('displayDemoVideoDialog').showModal()"
+          style="background:none; border:0; padding:0;
+                 color:#1558a6; text-decoration:underline;
+                 font:inherit; cursor:pointer;"
+        >▶ See Demo</button>
+      </p>
 
+      <dialog
+        id="displayDemoVideoDialog"
+        aria-labelledby="displayDemoVideoTitle"
+        onclose="this.querySelector('video').pause()"
+        style="width:440px; max-width:94vw;
+               max-height:90vh; box-sizing:border-box;
+               padding:16px; border:0; border-radius:12px;
+               overflow:auto;"
+      >
+        <h2 id="displayDemoVideoTitle" style="margin:0 0 12px;">
+          Display
+        </h2>
+
+        <video
+          controls
+          playsinline
+          preload="none"
+          aria-label="Display settings demonstration"
+          style="display:block; width:auto; height:auto;
+                 max-width:100%; max-height:65vh;
+                 margin:0 auto; background:#000;"
+        >
+          <source
+            src="videos/Display_ED_Portrait_1080p.mp4"
+            type="video/mp4"
+          >
+          Your browser does not support embedded video.
+        </video>
+
+        <div style="text-align:right; margin-top:12px;">
+          <button
+            type="button"
+            onclick="document.getElementById('displayDemoVideoDialog').close()"
+          >Close</button>
+        </div>
+      </dialog>
 <p>
   MJC remembers your Display preferences,
   so you won't need to set them again
