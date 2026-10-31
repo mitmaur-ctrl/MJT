@@ -637,6 +637,9 @@ const savedRTCanonicalStructureState =
   const structuralInput =
     getStructuralEngineInput(engineInput);
 
+  const availabilityCounts =
+    getAvailabilityCounts(engineInput);
+
   const gameTimingProgress =
     getGameTimingProgress(
       engineInput.context?.playerDiscardCount || 0,
@@ -689,7 +692,7 @@ pkcCandidates.forEach(function(box) {
 const cpcCandidates =
   findCPCDevelopingBoxes(
     pkcAdjustedCounts,
-    structuralInput.counts
+    availabilityCounts
   );
 
 
@@ -707,7 +710,7 @@ const ordinaryDevelopingBoxes =
     cpcCandidates,
     pairCandidates,
     completeBoxes,
-    structuralInput.counts
+    availabilityCounts
   );
 
 const developingBoxes = [
@@ -3453,16 +3456,34 @@ function analyzeEPCPongPathways(
   };
 }
 
+function getAvailabilityCounts(engineInput) {
+  const availabilityCounts = {
+    ...engineInput.counts
+  };
 
+  const visibleTileCounts =
+    engineInput.visibleTileCounts || {};
+
+  Object.keys(visibleTileCounts).forEach(function(tileKey) {
+    availabilityCounts[tileKey] =
+      (availabilityCounts[tileKey] || 0) +
+      (visibleTileCounts[tileKey] || 0);
+  });
+
+  return availabilityCounts;
+}
 
 
 function getKnownTileAvailability(
   tileKey,
-  originalCounts
+  originalCounts,
+  visibleTileCounts = {}
 ) {
   return Math.max(
     0,
-    4 - (originalCounts[tileKey] || 0)
+    4 -
+      (originalCounts[tileKey] || 0) -
+      (visibleTileCounts[tileKey] || 0)
   );
 }
 
@@ -3887,7 +3908,7 @@ if (!halfEyeEligible) {
 const knownAvailability =
   getKnownTileAvailability(
     halfEyeTile,
-    engineInput.counts
+    getAvailabilityCounts(engineInput)
   );
 
 return [

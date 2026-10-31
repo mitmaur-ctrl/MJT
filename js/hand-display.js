@@ -3605,27 +3605,12 @@ function getTargetTileRemaining(tileKey) {
 function decrementTargetTile(tileKey) {
   const knownInHand = counts[tileKey] || 0;
   const baseline = Math.max(0, 4 - knownInHand);
-
   const current = window.targetTileDecrements[tileKey] || 0;
 
   window.targetTileDecrements[tileKey] =
     current >= baseline ? 0 : current + 1;
 
-  const remaining = getTargetTileRemaining(tileKey);
-
-  document.querySelectorAll(".target-tile-item").forEach(function(item) {
-    if (item.dataset.tileKey !== tileKey) return;
-
-    const count = item.querySelector(".target-tile-ta");
-    if (!count) return;
-
-    count.textContent = remaining;
-    count.style.color = remaining === 0 ? "red" : "";
-    count.setAttribute(
-      "aria-label",
-      remaining + " copies remaining"
-    );
-  });
+  renderCoachView();
 }
 
 function collectTargetTiles(structure) {
@@ -3773,7 +3758,7 @@ function positionTargetTilesPanel() {
     displayControls
       ? displayControls.getBoundingClientRect().bottom
       : 0
-  ) + 8;
+    ) + 8 + (panel.open ? 120 : 0);
 
   let bottom = 16;
 
