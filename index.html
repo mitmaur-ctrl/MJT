@@ -14044,6 +14044,52 @@ Complete Boxes<br>
       </p>
 
       <p>
+        <button
+          type="button"
+          onclick="document.getElementById('rackViewVideoDialog').showModal()"
+          style="background:none; border:0; padding:0;
+                 color:#1558a6; text-decoration:underline;
+                 font:inherit; cursor:pointer;"
+        >▶ Watch: The Power of Rack View</button>
+      </p>
+
+      <dialog
+        id="rackViewVideoDialog"
+        aria-labelledby="rackViewVideoTitle"
+        onclose="this.querySelector('video').pause()"
+        style="width:900px; max-width:94vw;
+               max-height:90vh; box-sizing:border-box;
+               padding:16px; border:0; border-radius:12px;
+               overflow:auto;"
+      >
+        <h2 id="rackViewVideoTitle" style="margin:0 0 12px;">
+          The Power of Rack View
+        </h2>
+
+        <video
+          controls
+          playsinline
+          preload="none"
+          aria-label="MJC Rack View walkthrough"
+          style="display:block; width:100%; height:auto;
+                 max-height:65vh; background:#000;"
+        >
+          <source
+            src="videos/MJC_Rack_View_Thats_Box_Power.mp4"
+            type="video/mp4"
+          >
+          Your browser does not support embedded video.
+        </video>
+
+        <div style="text-align:right; margin-top:12px;">
+          <button
+            type="button"
+            onclick="document.getElementById('rackViewVideoDialog').close()"
+          >Close</button>
+        </div>
+      </dialog>
+
+      <p>
         All right. Your hand is settled.
         Let’s play a turn.
       </p>
