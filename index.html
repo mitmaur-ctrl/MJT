@@ -17576,9 +17576,14 @@ const MJC_STATE = {
       contextLocked: contextLocked
     };
   },
- getEngineInput: function() {
+  getEngineInput: function() {
   return {
     counts: this.getHandCounts(),
+
+    visibleTileCounts: {
+      ...(window.targetTileDecrements || {})
+    },
+
     context: this.getContext(),
     displayOrder: this.getDisplayOrder(),
 
