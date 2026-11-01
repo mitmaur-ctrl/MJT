@@ -1225,6 +1225,51 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
   <div class="dialog">
     <h2>Quick Start</h2>
 
+    <p style="text-align:left;">
+      <button
+        type="button"
+        onclick="document.getElementById('quickStartVideoDialog').showModal()"
+        style="background:none; border:0; padding:0;
+               color:#1558a6; text-decoration:underline;
+               font:inherit; cursor:pointer; text-align:left;"
+      >▶ Watch: Quick Start</button>
+    </p>
+
+    <dialog
+      id="quickStartVideoDialog"
+      aria-labelledby="quickStartVideoTitle"
+      onclose="const v=this.querySelector('video'); v.pause(); v.currentTime=0;"
+      style="width:440px; max-width:94vw;
+             max-height:90vh; box-sizing:border-box;
+             padding:16px; border:0; border-radius:12px;
+             overflow:auto;"
+    >
+      <h2 id="quickStartVideoTitle" style="margin:0 0 12px;">
+        Quick Start
+      </h2>
+
+      <video
+        controls
+        playsinline
+        preload="none"
+        aria-label="Mahjong Coach Quick Start walkthrough"
+        style="display:block; width:auto; height:auto;
+               max-width:100%; max-height:65vh;
+               margin:0 auto; background:#000;"
+      >
+        <source src="videos/MJC_Quick_Start.mp4" type="video/mp4">
+        Your browser does not support embedded video.
+      </video>
+
+      <div style="text-align:right; margin-top:12px;">
+        <button
+          type="button"
+          onclick="document.getElementById('quickStartVideoDialog').close()"
+        >Close</button>
+      </div>
+    </dialog>
+
+
     <p>Welcome to Mahjong Coach!</p>
 
     <p><strong>Let’s get you started!</strong></p>
