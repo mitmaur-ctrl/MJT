@@ -13209,6 +13209,53 @@ understanding Mahjong hand structure.
       </p>
 
       <p>
+        <button
+          type="button"
+          onclick="document.getElementById('viewsDemoVideoDialog').showModal()"
+          style="background:none; border:0; padding:0;
+                 color:#1558a6; text-decoration:underline;
+                 font:inherit; cursor:pointer;"
+        >▶ See Demo: Standard and Coaching Views</button>
+      </p>
+
+      <dialog
+        id="viewsDemoVideoDialog"
+        aria-labelledby="viewsDemoVideoTitle"
+        onclose="const v=this.querySelector('video'); v.pause(); v.currentTime=0;"
+        style="width:440px; max-width:94vw;
+               max-height:90vh; box-sizing:border-box;
+               padding:16px; border:0; border-radius:12px;
+               overflow:auto;"
+      >
+        <h2 id="viewsDemoVideoTitle" style="margin:0 0 12px;">
+          Standard and Coaching Views
+        </h2>
+
+        <video
+          controls
+          playsinline
+          preload="none"
+          aria-label="Switching between Standard View and Coaching View demonstration"
+          style="display:block; width:auto; height:auto;
+                 max-width:100%; max-height:65vh;
+                 margin:0 auto; background:#000;"
+        >
+          <source
+            src="videos/MJC_Standard_and_Coaching_Views.mp4"
+            type="video/mp4"
+          >
+          Your browser does not support embedded video.
+        </video>
+
+        <div style="text-align:right; margin-top:12px;">
+          <button
+            type="button"
+            onclick="document.getElementById('viewsDemoVideoDialog').close()"
+          >Close</button>
+        </div>
+      </dialog>
+
+      <p>
   Six Box Theory™ gives you
   a method for organizing and
   understanding your hand.
@@ -14479,6 +14526,53 @@ Complete Boxes<br>
         MJC’s recorded meld should agree.
       </p>
 
+      <p>
+        <button
+          type="button"
+          onclick="document.getElementById('claimDemoVideoDialog').showModal()"
+          style="background:none; border:0; padding:0;
+                 color:#1558a6; text-decoration:underline;
+                 font:inherit; cursor:pointer;"
+        >▶ See Demo: Claim a Tile</button>
+      </p>
+
+      <dialog
+        id="claimDemoVideoDialog"
+        aria-labelledby="claimDemoVideoTitle"
+        onclose="const v=this.querySelector('video'); v.pause(); v.currentTime=0;"
+        style="width:440px; max-width:94vw;
+               max-height:90vh; box-sizing:border-box;
+               padding:16px; border:0; border-radius:12px;
+               overflow:auto;"
+      >
+        <h2 id="claimDemoVideoTitle" style="margin:0 0 12px;">
+          Claim a Tile
+        </h2>
+
+        <video
+          controls
+          playsinline
+          preload="none"
+          aria-label="Claiming a tile demonstration"
+          style="display:block; width:auto; height:auto;
+                 max-width:100%; max-height:65vh;
+                 margin:0 auto; background:#000;"
+        >
+          <source
+            src="videos/MJC_Claim_a_Tile.mp4"
+            type="video/mp4"
+          >
+          Your browser does not support embedded video.
+        </video>
+
+        <div style="text-align:right; margin-top:12px;">
+          <button
+            type="button"
+            onclick="document.getElementById('claimDemoVideoDialog').close()"
+          >Close</button>
+        </div>
+      </dialog>
+
       <div role="img"
            aria-label="Suggested claim routine:
              make the claim at the table;
@@ -14841,6 +14935,53 @@ Complete Boxes<br>
         and what possibilities
         the hand retains.
       </p>
+
+      <p>
+        <button
+          type="button"
+          onclick="document.getElementById('discardsDemoVideoDialog').showModal()"
+          style="background:none; border:0; padding:0;
+                 color:#1558a6; text-decoration:underline;
+                 font:inherit; cursor:pointer;"
+        >▶ See Demo: Discards and Insight</button>
+      </p>
+
+      <dialog
+        id="discardsDemoVideoDialog"
+        aria-labelledby="discardsDemoVideoTitle"
+        onclose="const v=this.querySelector('video'); v.pause(); v.currentTime=0;"
+        style="width:440px; max-width:94vw;
+               max-height:90vh; box-sizing:border-box;
+               padding:16px; border:0; border-radius:12px;
+               overflow:auto;"
+      >
+        <h2 id="discardsDemoVideoTitle" style="margin:0 0 12px;">
+          Discards and Insight
+        </h2>
+
+        <video
+          controls
+          playsinline
+          preload="none"
+          aria-label="Discard recommendations and Insight demonstration"
+          style="display:block; width:auto; height:auto;
+                 max-width:100%; max-height:65vh;
+                 margin:0 auto; background:#000;"
+        >
+          <source
+            src="videos/MJC_Discards_and_Insight.mp4"
+            type="video/mp4"
+          >
+          Your browser does not support embedded video.
+        </video>
+
+        <div style="text-align:right; margin-top:12px;">
+          <button
+            type="button"
+            onclick="document.getElementById('discardsDemoVideoDialog').close()"
+          >Close</button>
+        </div>
+      </dialog>
 
       <div role="img"
            aria-label="Questions to ask when reading Insight:
