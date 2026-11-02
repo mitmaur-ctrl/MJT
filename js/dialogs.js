@@ -931,11 +931,23 @@ const mjcGlossaryEntries = [
       "Insight helps you understand the choices while leaving " +
       "the playing decision to you."
   },
+  
   {
     term: "Rack",
     definition:
       "A holder placed on the table in front of a player to keep " +
       "their tiles upright, organized, and concealed from other players."
+  },
+  {
+    term: "Rack View",
+    definition:
+      "A method of arranging your physical Mahjong tiles to mirror " +
+      "MJC's Coaching View. Complete Boxes are grouped on the left, " +
+      "Developing Boxes in the middle, and Reserves on the right. " +      
+      "Exposed melds are placed face up on the table in front of " +
+      "the left side of the rack, directly in front of the hidden " +
+      "Complete Boxes."
+
   },
   {
     term: "Chars",
@@ -1183,12 +1195,14 @@ const mjcGlossaryGroups = {
     "Starting Hand Display",
     "Current Hand Display",
     "Draw Tile Screen",
-    "Discard Tile Screen",
+    "Discard Tile Screen",    
     "Standard View",
     "Coaching View",
+    "Rack View",
     "Indices",
     "Labels",
     "Tiles In Hand"
+
   ],
   
   "Corrections and Hand History": [
