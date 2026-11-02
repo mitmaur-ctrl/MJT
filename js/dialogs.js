@@ -777,22 +777,35 @@ const mjcGlossaryEntries = [
       "are still available or will reach your hand. " +
       "Also see Acceptance, Effective Acceptance, Sources, and Pathways."
   },
-
   {
     term: "Acceptance",
     definition:
       "The number of tile copies that can advance a Developing Box " +
-      "toward completion, before accounting for known unavailable copies."
+      "toward completion. Natural Acceptance describes the grouping's " +
+      "built-in potential; Effective Acceptance accounts for known " +
+      "unavailable copies."
+  },
+  {
+    term: "Natural Acceptance",
+    abbreviation: "NA",
+    definition:
+      "The grouping's built-in acceptance, considering the tiles " +
+      "within that grouping, before accounting for additional " +
+      "unavailable copies elsewhere. A Middle Wait or Edge Wait " +
+      "has NA 4; an Eye-Pong Candidate has NA 2; a Double-Sided " +
+      "Wait has NA 8. Count individual tile copies, not just tile " +
+      "types. Also see Effective Acceptance."
   },
   {
     term: "Effective Acceptance",
     abbreviation: "EA",
     definition:
-            "The number above each pathway arrow. It represents the " +
-      "remaining tile copies that can advance the Developing Box " +
-      "through that pathway, accounting for copies in your hand " +
-      "and your recorded Target Tile decrements. These are " +
-      "opportunities, not a guarantee of availability."
+      "The remaining acceptance after accounting for known " +
+      "unavailable copies. MJC accounts for copies in your hand " +
+      "and melds, plus visible copies you record through the " +
+      "Target Tiles Panel. The number above each pathway arrow " +
+      "shows EA for that pathway. These are opportunities, " +
+      "not a guarantee of availability. Also see Natural Acceptance."
   },
     {
     term: "Sources",
@@ -1148,6 +1161,7 @@ const mjcGlossaryGroups = {
     "Decrement",
     "Remaining Count",
     "Acceptance",
+    "Natural Acceptance",
     "Effective Acceptance",
     "Sources",
     "Partner"
