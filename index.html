@@ -159,8 +159,27 @@ Development:
       <div id="tssInvitationPanel" class="hidden">
 
         <h3>We're glad you're here!</h3>
-<p>Come learn what MJC is all about.</p>
 
+        <p>
+          Ready to begin? Try Quick Start,
+          or explore what MJC can do.
+        </p>
+
+        <div style="text-align:center; margin:16px 0;">
+          <button
+            type="button"
+            style="background:none; border:0; padding:8px;
+                   color:#1558a6; text-decoration:underline;
+                   font:inherit; cursor:pointer;"
+            onclick="
+              document.getElementById('tssInvitationPanel')
+                .classList.add('hidden');
+              document.getElementById('tssInvitationTab')
+                .setAttribute('aria-expanded', 'false');
+              openDialog('gettingStartedDialog');
+            "
+          >Quick Start</button>
+        </div>
         <div class="dialog-actions">
           <button type="button" class="dialog-button primary">
             Discover MJC
@@ -18372,7 +18391,8 @@ document.addEventListener("touchend", function(e) {
   const invitation = document.getElementById("tssInvitation");
   const invitationTab = document.getElementById("tssInvitationTab");
   const invitationPanel = document.getElementById("tssInvitationPanel");
-  const invitationButtons = invitationPanel.querySelectorAll("button");
+  const invitationButtons =
+  invitationPanel.querySelectorAll("button.dialog-button");
 
   // First-time visitors receive the Welcome Screen.
   // Returning visitors see the invitation tab.
