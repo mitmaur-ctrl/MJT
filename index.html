@@ -1192,31 +1192,48 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     </p>
 
     <p>
-  Come learn what MJC is all about.
-</p>
+      Ready to begin? Try Quick Start, or explore what MJC can do.
+    </p>
 
-    <div class="dialog-actions">
+    <div class="dialog-actions"
+         style="display:flex; flex-direction:column;
+                align-items:center; gap:16px;">
+
       <button
         type="button"
-        class="dialog-button primary"
-
+        style="background:none; border:0; padding:8px;
+               color:#1558a6; text-decoration:underline;
+               font:inherit; cursor:pointer;"
         onclick="
-  closeDialog('welcomeDialog');
-  openDialog('playingMJCDialog');
-  requestAnimationFrame(function() {
-    document.getElementById('playingMJCContents')
-      .scrollTo({ top: 0, behavior: 'instant' });
-  });
-"
+          closeDialog('welcomeDialog');
+          openDialog('gettingStartedDialog');
+        "
+      >Quick Start</button>
 
-      >Discover MJC</button>
+      <div style="display:flex; flex-wrap:wrap;
+                  justify-content:center; gap:8px;">
+        <button
+          type="button"
+          class="dialog-button primary"
+          onclick="
+            closeDialog('welcomeDialog');
+            openDialog('playingMJCDialog');
+            requestAnimationFrame(function() {
+              document.getElementById('playingMJCContents')
+                .scrollTo({ top: 0, behavior: 'instant' });
+            });
+          "
+        >Discover MJC</button>
 
-      <button
-        type="button"
-        class="dialog-button"
-        onclick="closeDialog('welcomeDialog')"
-      >Continue to App</button>
+        <button
+          type="button"
+          class="dialog-button"
+          onclick="closeDialog('welcomeDialog')"
+        >Continue to App</button>
+      </div>
+
     </div>
+
   </div>
 </div>
 
