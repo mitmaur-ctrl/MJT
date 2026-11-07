@@ -14679,59 +14679,6 @@ Complete Boxes<br>
         you were supposed to enter.
       </p>
 
-      <p>
-        If you just recorded the wrong tile, tap
-        <strong>Correct Last Entry</strong> and select the tile you
-        actually drew. For more extensive corrections, see
-        <strong>Fix Hand</strong> in the <strong>User Guide</strong>.
-      </p>
-
-      <p>
-        <button
-          type="button"
-          onclick="document.getElementById('cleDemoVideoDialog').showModal()"
-          style="background:none; border:0; padding:0;
-                 color:#1558a6; text-decoration:underline;
-                 font:inherit; cursor:pointer;"
-        >▶ See Demo: Correct Last Entry</button>
-      </p>
-
-      <dialog
-        id="cleDemoVideoDialog"
-        aria-labelledby="cleDemoVideoTitle"
-        onclose="const v=this.querySelector('video'); v.pause(); v.currentTime=0;"
-        style="width:440px; max-width:94vw;
-               max-height:90vh; box-sizing:border-box;
-               padding:16px; border:0; border-radius:12px;
-               overflow:auto;"
-      >
-        <h2 id="cleDemoVideoTitle" style="margin:0 0 12px;">
-          Correct Last Entry
-        </h2>
-
-        <video
-          controls
-          playsinline
-          preload="none"
-          aria-label="Correcting your last tile entry demonstration"
-          style="display:block; width:auto; height:auto;
-                 max-width:100%; max-height:65vh;
-                 margin:0 auto; background:#000;"
-        >
-          <source
-            src="videos/MJC_Correct_Last_Entry.mp4"
-            type="video/mp4"
-          >
-          Your browser does not support embedded video.
-        </video>
-
-        <div style="text-align:right; margin-top:12px;">
-          <button
-            type="button"
-            onclick="document.getElementById('cleDemoVideoDialog').close()"
-          >Close</button>
-        </div>
-      </dialog>
 
       <p>
         Once you record it, MJC updates
@@ -14942,15 +14889,7 @@ Complete Boxes<br>
         at what changed.
       </p>
 
-      <p>
-        If you notice a wrong entry,
-        correct it before continuing.
-        Trying to remember an unrecorded
-        correction while the game
-        moves on makes the next
-        decision harder than it needs
-        to be.
-      </p>
+     
 
       
 <p>
@@ -14964,6 +14903,113 @@ Complete Boxes<br>
   a comfortable rhythm.
 </p>
 
+      <h4>Correct Your Hand</h4>
+
+ <p>
+        If you notice a wrong entry,
+        correct it before continuing.
+        Trying to remember an unrecorded
+        correction while the game
+        moves on makes the next
+        decision harder than it needs
+        to be.
+
+        For more extensive corrections, use <strong>Fix Hand</strong>.
+      </p>
+
+      <p>
+        <button
+          type="button"
+          onclick="document.getElementById('cleDemoVideoDialog').showModal()"
+          style="background:none; border:0; padding:0;
+                 color:#1558a6; text-decoration:underline;
+                 font:inherit; cursor:pointer;"
+        >▶ See Demo: Correct Last Entry</button>
+      </p>
+
+      <dialog
+        id="cleDemoVideoDialog"
+        aria-labelledby="cleDemoVideoTitle"
+        onclose="const v=this.querySelector('video'); v.pause(); v.currentTime=0;"
+        style="width:440px; max-width:94vw;
+               max-height:90vh; box-sizing:border-box;
+               padding:16px; border:0; border-radius:12px;
+               overflow:auto;"
+      >
+        <h2 id="cleDemoVideoTitle" style="margin:0 0 12px;">
+          Correct Last Entry
+        </h2>
+
+        <video
+          controls
+          playsinline
+          preload="none"
+          aria-label="Correcting your last tile entry demonstration"
+          style="display:block; width:auto; height:auto;
+                 max-width:100%; max-height:65vh;
+                 margin:0 auto; background:#000;"
+        >
+          <source
+            src="videos/MJC_Correct_Last_Entry.mp4"
+            type="video/mp4"
+          >
+          Your browser does not support embedded video.
+        </video>
+
+        <div style="text-align:right; margin-top:12px;">
+          <button
+            type="button"
+            onclick="document.getElementById('cleDemoVideoDialog').close()"
+          >Close</button>
+        </div>
+      </dialog>
+
+      <p>
+        <button
+          type="button"
+          onclick="document.getElementById('fixHandWalkthroughVideoDialog').showModal()"
+          style="background:none; border:0; padding:0;
+                 color:#1558a6; text-decoration:underline;
+                 font:inherit; cursor:pointer;"
+        >▶ Watch: Fix Hand</button>
+      </p>
+
+      <dialog
+        id="fixHandWalkthroughVideoDialog"
+        aria-labelledby="fixHandWalkthroughVideoTitle"
+        onclose="const v=this.querySelector('video'); v.pause(); v.currentTime=0;"
+        style="width:440px; max-width:94vw;
+               max-height:90vh; box-sizing:border-box;
+               padding:16px; border:0; border-radius:12px;
+               overflow:auto;"
+      >
+        <h2 id="fixHandWalkthroughVideoTitle" style="margin:0 0 12px;">
+          Fix Hand
+        </h2>
+
+        <video
+          controls
+          playsinline
+          preload="none"
+          aria-label="Fix Hand walkthrough"
+          style="display:block; width:auto; height:auto;
+                 max-width:100%; max-height:65vh;
+                 margin:0 auto; background:#000;"
+        >
+          <source
+            src="videos/MJC_Fix_Hand_Walkthrough.mp4"
+            type="video/mp4"
+          >
+          Your browser does not support embedded video.
+        </video>
+
+        <div style="text-align:right; margin-top:12px;">
+          <button
+            type="button"
+            onclick="document.getElementById('fixHandWalkthroughVideoDialog').close()"
+          >Close</button>
+        </div>
+      </dialog>
 
       <p>
         All right. The incoming tile
