@@ -1035,6 +1035,20 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
   </div>
 </div>
 
+<div id="fourPairNoticeDialog" class="dialog-backdrop hidden">
+  <div class="dialog">
+    <h2>Over-Paired Hand</h2>
+    <p>You have four pairs. Consider breaking up one pair to give your hand more ways to develop.</p>
+    <button
+      type="button"
+      class="dialog-button primary"
+      onclick="document.getElementById('fourPairNoticeDialog').classList.add('hidden')"
+    >
+      Got It
+    </button>
+  </div>
+</div>
+
 <div id="overPairedAdviceDialog" class="dialog-backdrop hidden">
   <div class="dialog">
     <h2>Over-Paired Hand</h2>
@@ -18289,6 +18303,8 @@ let tcsOriginalCounts = {};
 let tcsAddedCounts = {};
 let boloEyesShown = false;
 let overPairedActive = false;
+let sevenPairsOfferShown = false;
+let fourPairNoticeShown = false;
 let sevenPairsMode = false;
 let handStarted = false;
 let sevenPairsStatusAsked = false;
@@ -18333,6 +18349,8 @@ function startNewGame() {
   mahjongWatchECDiscardOverride = false;  
   boloEyesShown = false;
   overPairedActive = false;
+  sevenPairsOfferShown = false;
+  fourPairNoticeShown = false;
   sevenPairsMode = false;
   handStarted = false;
   gameTranscript.initialTiles = [];
@@ -18358,7 +18376,8 @@ const overPairedDialogs = [
   "sevenPairsAcknowledgmentDialog",
   "sevenPairsStatusDialog",
   "sevenPairsCoachingResumeDialog",
-  "overPairedAdviceDialog"
+  "overPairedAdviceDialog",
+  "fourPairNoticeDialog"
 ];
 
 overPairedDialogs.forEach(function(dialogId) {
