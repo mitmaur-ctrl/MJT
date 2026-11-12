@@ -1056,14 +1056,28 @@ const pairCount =
     excludedCounts
   ).length;
 
-const overPairedThreshold = 5;
+const overPairedThreshold = 4;
+const sevenPairsOfferThreshold = 5;
 
+overPairedActive =
+  handStarted && pairCount >= overPairedThreshold;
+
+if (
+  overPairedActive &&
+  pairCount === overPairedThreshold &&
+  (ruleset === "filipino16" || ruleset === "taiwan16") &&
+  !sevenPairsMode &&
+  !fourPairNoticeShown
+) {
+  fourPairNoticeShown = true;
+  document.getElementById("fourPairNoticeDialog").classList.remove("hidden");
+}
     if (pairCount >= 4) {
     sevenPairsStatusAsked = false;
   }
 
-  if (pairCount < overPairedThreshold) {
-  overPairedActive = false;
+if (pairCount < sevenPairsOfferThreshold) {
+  sevenPairsOfferShown = false;
   overPairedDelayOneEvaluation = false;
 
     if (
@@ -1105,7 +1119,7 @@ const overPairedThreshold = 5;
 
 if (
   handStarted &&
-  pairCount >= overPairedThreshold &&
+  pairCount >= sevenPairsOfferThreshold &&
   overPairedDelayOneEvaluation &&
   !sevenPairsMode
 ) {
@@ -1116,13 +1130,13 @@ if (
     .classList.remove("hidden");
 }
 
-  if (
+if (
   handStarted &&
-  pairCount >= overPairedThreshold &&
-  !overPairedActive &&
+  pairCount >= sevenPairsOfferThreshold &&
+  !sevenPairsOfferShown &&
   !sevenPairsMode
 ) {
-  overPairedActive = true;
+  sevenPairsOfferShown = true;
   showOverPairedDialog(pairCount);
 }
 
