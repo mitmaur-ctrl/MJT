@@ -1072,7 +1072,8 @@ if (isRTPreview) {
 
 function findCompleteBoxes(
   engineInput,
-  rtPreviewConstraint = null
+  rtPreviewConstraint = null,
+  appliedCommitments = null
 ) {
   const workingCounts = { ...engineInput.counts };
   const completeBoxes = [];
@@ -1174,6 +1175,7 @@ if (
         );
 
       if (canCommitSelectedBox) {
+appliedCommitments?.add(commitment);
         completeBoxes.push({
   type: selectedBox.type,
   tiles: [...selectedBox.tiles],
@@ -2697,24 +2699,27 @@ function evaluateMMRCandidate(
   testCounts[incomingTileKey] =
     (testCounts[incomingTileKey] || 0) + 1;
 
-  const testInput = {
-    ...engineInput,
-    counts: testCounts,
-    mmrCommittedBoxes: [
-      ...(engineInput.mmrCommittedBoxes || []),
-      {
-        action: "mmr-test",
-        tileKey: incomingTileKey,
-        candidate: {
-          type: candidate.type,
-          tiles: [...candidate.tiles]
-        }
-      }
-    ]
-  };
+const testCommitment = {
+  action: "mmr-test",
+  tileKey: incomingTileKey,
+  candidate: {
+    type: candidate.type,
+    tiles: [...candidate.tiles]
+  }
+};
 
-  const completeBoxes =
-    findCompleteBoxes(testInput);
+const testInput = {
+  ...engineInput,
+  counts: testCounts,
+  mmrCommittedBoxes: [
+    ...(engineInput.mmrCommittedBoxes || []),
+    testCommitment
+  ]
+};
+
+const appliedCommitments = new Set();
+const completeBoxes =
+  findCompleteBoxes(testInput, null, appliedCommitments);
 
   const remainingCounts =
     getRemainingCounts(
@@ -2763,7 +2768,8 @@ function evaluateMMRCandidate(
   );
 
   return {
-        candidate,
+    candidate,
+    candidateApplied: appliedCommitments.has(testCommitment),
     meldTarget: getStandardMeldTarget(engineInput.context?.ruleset),
     completeBoxes,
     developingBoxes,
@@ -2778,7 +2784,8 @@ function isMMRWinningResult(result) {
   const developingBoxes = result.developingBoxes || [];
 
   return (
-        completeBoxes.length === (result.meldTarget ?? 5) &&
+    result.candidateApplied &&
+    completeBoxes.length === (result.meldTarget ?? 5) &&
     developingBoxes.length === 1 &&
     developingBoxes[0].type === "ec" &&
     developingBoxes[0].tiles.length === 2 &&
@@ -2786,6 +2793,7 @@ function isMMRWinningResult(result) {
     (result.reserves || []).length === 0
   );
 }
+
 
 function getMMRStructureMetrics(result) {
   const developingBoxes =
