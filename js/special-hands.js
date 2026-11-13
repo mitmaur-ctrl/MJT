@@ -959,6 +959,7 @@ function checkEscaleraOpportunity(
   tileCounts,
   completeBoxes
 ) {
+  if (ruleset === "chinese13" || gameAction === "mahjong") return;
 
 
   const candidatesBySuit =
@@ -1056,7 +1057,8 @@ const pairCount =
     excludedCounts
   ).length;
 
-const overPairedThreshold = 4;
+const isChinese13 = ruleset === "chinese13";
+const overPairedThreshold = isChinese13 ? 3 : 4;
 const sevenPairsOfferThreshold = 5;
 
 overPairedActive =
@@ -1065,13 +1067,20 @@ overPairedActive =
 if (
   overPairedActive &&
   pairCount === overPairedThreshold &&
-  (ruleset === "filipino16" || ruleset === "taiwan16") &&
+  (isChinese13 || ruleset === "filipino16" || ruleset === "taiwan16") &&
   !sevenPairsMode &&
   !fourPairNoticeShown
 ) {
   fourPairNoticeShown = true;
+  document.getElementById("overPairedNoticePairCount").textContent =
+    isChinese13 ? "three" : "four";
   document.getElementById("fourPairNoticeDialog").classList.remove("hidden");
 }
+
+if (isChinese13) {
+  return eyeCandidates;
+}
+
     if (pairCount >= 4) {
     sevenPairsStatusAsked = false;
   }

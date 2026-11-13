@@ -524,7 +524,12 @@ function getGameTimingProgress(
   return normalizedRotations / theoreticalRotations;
 }
 
+function getStandardMeldTarget(rulesetId) {
+  return rulesetId === "chinese13" ? 4 : 5;
+}
+
 function evaluate17TE(engineInput, options = {}) {
+  const meldTarget = getStandardMeldTarget(engineInput.context?.ruleset);
   
 const isRTPreview =
   Boolean(options.rtPreviewConstraint) &&
@@ -710,7 +715,8 @@ const ordinaryDevelopingBoxes =
     cpcCandidates,
     pairCandidates,
     completeBoxes,
-    availabilityCounts
+        availabilityCounts,
+    meldTarget
   );
 
 const developingBoxes = [
@@ -744,7 +750,7 @@ const mahjongEC =
   });
 
 const mahjong =
-  completeBoxes.length === 5 &&
+    completeBoxes.length === meldTarget &&
   Boolean(mahjongEC) &&
   reserves.length === 0 &&
   halfEye.length === 0;
@@ -947,7 +953,7 @@ if (mahjong) {
   finalCompleteBoxes = [
     ...completeBoxes,
     {
-  boxId: 6,
+    boxId: meldTarget + 1,
   type: "eye",
   tiles: [...mahjongEC.tiles]
 }
@@ -980,7 +986,7 @@ They are NOT stored in Canonical Structure State.
 */
 
 const phase =
-  finalCompleteBoxes.length >= 4
+  finalCompleteBoxes.length >= meldTarget - 1
     ? "finishing"
     : "building";
 
@@ -1016,7 +1022,7 @@ const structuralContext = {
   eyeStatus,
 
 completeBoxesNeeded:
-  Math.max(0, 5 - completeBoxes.length),
+    Math.max(0, meldTarget - completeBoxes.length),
 
 eyeNeed:
   eyeStatus === "secured"
@@ -2349,7 +2355,8 @@ function evaluateDBPartitions(
   cpcCandidates,
   pairCandidates,
   completeBoxes = [],
-  originalCounts = {}
+    originalCounts = {},
+  meldTarget = 5
 ) {
 
   /*
@@ -2638,7 +2645,7 @@ Structure takes priority over DB Opportunity.
 */
 
 if (
-  completeBoxes.length === 4 &&
+    completeBoxes.length === meldTarget - 1 &&
   getPartitionEyeStatus(bestBoxes) === "secured" &&
   chowFirstEyeStatus === "missing"
 ) {
@@ -2733,14 +2740,16 @@ function evaluateMMRCandidate(
     cpcCandidates,
     pairCandidates,
     completeBoxes,
-    testCounts
+        testCounts,
+    getStandardMeldTarget(engineInput.context?.ruleset)
   );
 
   const halfEye =
     findHalfEye(
       remainingCounts,
       developingBoxes,
-      completeBoxes
+            completeBoxes,
+      { context: engineInput.context }
     );
 
   const reserves =
@@ -2754,7 +2763,8 @@ function evaluateMMRCandidate(
   );
 
   return {
-    candidate,
+        candidate,
+    meldTarget: getStandardMeldTarget(engineInput.context?.ruleset),
     completeBoxes,
     developingBoxes,
     halfEye,
@@ -2768,7 +2778,7 @@ function isMMRWinningResult(result) {
   const developingBoxes = result.developingBoxes || [];
 
   return (
-    completeBoxes.length === 5 &&
+        completeBoxes.length === (result.meldTarget ?? 5) &&
     developingBoxes.length === 1 &&
     developingBoxes[0].type === "ec" &&
     developingBoxes[0].tiles.length === 2 &&
@@ -3852,7 +3862,7 @@ function findHalfEye(
   engineInput
 ) {
   // Normal 6BT:
-// HE exists after 5 Complete Boxes.
+// HE exists after all required melds are complete.
 //
 // Escalera 6BT:
 // A completed Escalera is protected outside the
@@ -3865,7 +3875,7 @@ const completedEscalera =
   engineInput.escaleraProtectedTileKeys.length === 9;
 
 const halfEyeEligible =
-  completeBoxes.length === 5 ||
+    completeBoxes.length === getStandardMeldTarget(engineInput?.context?.ruleset) ||
   (
     completedEscalera &&
     completeBoxes.length === 2

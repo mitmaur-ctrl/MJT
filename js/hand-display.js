@@ -278,11 +278,9 @@ function getTilesInHand(structureState) {
 }
 
 function getMahjongResultMessage() {
-  if (
-    ruleset === "filipino16" &&
-    lastActionSource === "draw"
-  ) {
-    return "Bunot!";
+  if (lastActionSource === "draw") {
+    if (ruleset === "filipino16") return "Bunot!";
+    if (ruleset === "chinese13" || ruleset === "taiwan16") return "Zi mo!";
   }
 
   return "That's Mahjong!";
@@ -2047,7 +2045,7 @@ html +=
   (halfEye ? halfEye.length : 0);
 
 const targetBoxCount =
-  escaleraMode ? 3 : 6;
+    escaleraMode ? 3 : getStandardMeldTarget(ruleset) + 1;
 
 if (!options.hideEmptyBoxes) {
   for (
@@ -2807,7 +2805,7 @@ if (!sevenPairsMode) {
   if (
     eyeCandidates.length === 0 &&
     (
-      completeBoxCount >= 4 ||
+            completeBoxCount >= getStandardMeldTarget(ruleset) - 1 ||
       escaleraBOLOReady
     )
   ) {
@@ -2815,7 +2813,7 @@ if (!sevenPairsMode) {
   } else if (
     eyeCandidates.length === 1 &&
     (
-      completeBoxCount >= 4 ||
+            completeBoxCount >= getStandardMeldTarget(ruleset) - 1 ||
       escaleraProtectEyeReady
     )
   ) {
@@ -3116,7 +3114,7 @@ const targetBoxCount =
         sevenPairsMode &&
         sevenPairsBoxState.active
           ? 2
-          : 6
+                    : getStandardMeldTarget(ruleset) + 1
       );
 
 
