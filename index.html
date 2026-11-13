@@ -11,7 +11,7 @@ Project:
 Mahjong Coach (MJC)
 
 Version:
-MJC Beta v10.2
+MJC Beta v11.0
 
 Foundation:
 Six Box Theory™ (6BT)
@@ -25,8 +25,6 @@ structure of their hands.
 Supported Rulesets:
 - JEZEMS Filipino 16-Tile
 - Taiwanese 16-Tile
-
-Planned Ruleset:
 - Chinese 13-Tile (Hong Kong / Cantonese)
 
 Core Capabilities:
@@ -700,7 +698,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     <button onclick="openSupportDialog()">Support MJC</button>
   </div>
 
-    <div class="footer-version">Beta v10.2</div>
+    <div class="footer-version">Beta v11.0</div>
 
     <div class="footer-credit">
     &copy; 2026 Mithras C. Maurille &middot; Creator of MJC and 6BT<br>
@@ -785,9 +783,8 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
     </div>
 
     <div class="dialog-option">
-      <label><input type="radio" name="rulesetRadio" value="chinese13" onclick="featureComingSoon(this)"> Chinese 13-Tile</label>
+            <label><input type="radio" name="rulesetRadio" value="chinese13" onclick="updateFilipinoOptions()"> Chinese 13-Tile</label>
     </div>
-    <div class="feature-note">Feature Coming Soon</div>
 
     <div class="dialog-actions">
       <button class="dialog-button" onclick="closeDialog('rulesDialog')">Cancel</button>
@@ -1038,7 +1035,7 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
 <div id="fourPairNoticeDialog" class="dialog-backdrop hidden">
   <div class="dialog">
     <h2>Over-Paired Hand</h2>
-    <p>You have four pairs. Consider breaking up one pair to give your hand more ways to develop.</p>
+        <p>You have <span id="overPairedNoticePairCount">four</span> pairs. Consider breaking up one pair to give your hand more ways to develop.</p>
     <button
       type="button"
       class="dialog-button primary"
@@ -1174,10 +1171,11 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
       MJC reveals the structure hidden within a Mahjong hand.
     </p>
 
-    <p>
-      Built on Six Box Theory™ (6BT), originally developed
-      for Filipino and Taiwanese 16-Tile Mahjong, MJC
-      will also bring this approach to Chinese 13-Tile Mahjong in an upcoming adaptation.
+        <p>
+      Mahjong Coach began with Filipino 16-Tile Mahjong.
+      It uses Six Box Theory™ to help players understand
+      hand structure in Filipino 16-Tile, Taiwanese
+      16-Tile, and Chinese 13-Tile Mahjong.
     </p>
    
 
@@ -1345,9 +1343,10 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
         <strong>Select your Role:</strong> Tap <strong>Role</strong>
         and choose Player or Dealer.
       </li>
-      <li>
-        <strong>Select your Ruleset:</strong> Choose the mahjong rules
-        you play by. MJC supports Filipino and Taiwanese 16-Tile Mahjong.
+            <li>
+        <strong>Select your Ruleset:</strong> Choose Filipino
+        16-Tile, Taiwanese 16-Tile, or Chinese 13-Tile
+        to match your game.
       </li>
       <li>
         <strong>Select your Display preferences:</strong> Choose the order
@@ -1383,14 +1382,12 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
 
     <p>Six Box Theory™ (6BT) provides a method for understanding Mahjong hand structure.</p>
 
-    <p>
-      Originally developed for 16-Tile Mahjong styles
-      such as Filipino and Taiwanese, 6BT uses five
-      meld boxes and one Eye box to explain the
-      structure of a completed hand.
-      An adaptation for Chinese 13-Tile Mahjong,
-      using four meld boxes and one Eye box,
-      is coming soon.
+        <p>
+      Six Box Theory™ grew out of Filipino 16-Tile Mahjong,
+      where a standard winning hand has five melds and one
+      Eye. MJC applies the same approach to Chinese 13-Tile
+      Mahjong, where a standard winning hand has four
+      melds and one Eye.
     </p>
 
     <p>Rather than viewing a hand as individual tiles, 6BT organizes it into boxes, offering a simpler way to visualize, understand, and develop your hand.</p> 
@@ -2295,10 +2292,12 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
         in MJC’s tile displays and selection screens.
       </p>
 
-     <p><strong><span style="color:#6b3fa0;">4</span> Tiles Entered</strong><br>
-  Shows how many tiles you have entered and the required
-  starting total: 16 for Player or 17 for Dealer.
-</p>
+           <p>
+        <strong><span style="color:#6b3fa0;">4</span>
+          Tiles Entered</strong><br>
+        Shows how many tiles you’ve entered and the
+        starting target for your ruleset and role.
+      </p>
 
       <p><strong><span style="color:#6b3fa0;">5</span> Instruction Message</strong><br>
         Shows guidance or feedback for your current task.
@@ -2821,10 +2820,11 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
 
       <h4>Dealer’s First Discard — Coaching View</h4>
 
-      <p>
-        A Dealer begins with 17 tiles and selects a tile
-        to discard. When available, MJC displays a
-        discard recommendation above the hand.
+            <p>
+        A Dealer starts with 17 tiles in a 16-tile ruleset
+        or 14 in Chinese 13-Tile, then selects a tile to
+        discard. When available, MJC displays a discard
+        recommendation above the hand.
       </p>
 
       <div style="border:1px solid #ccc; border-radius:12px;
@@ -3882,10 +3882,6 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
           ○ Chinese 13-Tile
         </p>
 
-        <p style="color:#666; font-size:14px;">
-          Feature Coming Soon
-        </p>
-
         <div style="display:grid;
                     grid-template-columns:repeat(2, minmax(0, 1fr));
                     gap:8px; text-align:center;
@@ -3940,12 +3936,10 @@ style="flex-basis:100%; width:100%; text-align:center; margin:0 0 8px 0; color:#
         Selects the Taiwanese ruleset.
       </p>
 
-      <p>
+            <p>
         <strong><span style="color:#6b3fa0;">82</span>
           Chinese 13-Tile</strong><br>
-        An upcoming adaptation of MJC for
-Chinese 13-Tile Mahjong.
-This option is not yet available.
+        Selects the Chinese 13-Tile ruleset.
       </p>
 
       <p>
@@ -6080,44 +6074,30 @@ This option is not yet available.
         Tap <strong>Save</strong>.
       </p>
 
-      <div role="img"
-           aria-label="Starting tile targets:
-             Player requires 16 tiles;
-             Dealer requires 17 tiles."
-           style="display:grid;
-                  grid-template-columns:repeat(2, minmax(0, 1fr));
-                  gap:10px; text-align:center;
-                  background:#f0f4f8; border-radius:12px;
+      <div style="background:#f0f4f8; border-radius:12px;
                   padding:16px; margin:16px 0;">
-        <div>
-          <strong>Player</strong><br>
-          <span style="color:#6b3fa0; font-size:1.4em;">
-            16
-          </span><br>
-          starting tiles
-        </div>
-        <div>
-          <strong>Dealer</strong><br>
-          <span style="color:#6b3fa0; font-size:1.4em;">
-            17
-          </span><br>
-          starting tiles
-        </div>
+        <p style="margin-top:0;">
+          <strong>Filipino and Taiwanese 16-Tile:</strong>
+          16 tiles for Player, 17 for Dealer.
+        </p>
+        <p style="margin-bottom:0;">
+          <strong>Chinese 13-Tile:</strong>
+          13 tiles for Player, 14 for Dealer.
+        </p>
       </div>
 
       <p>
-        Check that the target beside
-        <strong>Tiles Entered</strong> matches
-        your role.
+        Check that the target beside <strong>Tiles Entered</strong>
+        matches your ruleset and role.
       </p>
 
       <h3>2. Check Your Ruleset</h3>
 
-      <p>
+            <p>
         Tap <strong>Ruleset</strong> and select
-        <strong>Filipino 16-Tile</strong> or
-        <strong>Taiwanese 16-Tile</strong> to
-        match your game.
+        <strong>Filipino 16-Tile</strong>,
+        <strong>Taiwanese 16-Tile</strong>, or
+        <strong>Chinese 13-Tile</strong> to match your game.
       </p>
 
       <p>
@@ -6130,11 +6110,7 @@ This option is not yet available.
         matches your table’s rules.
       </p>
 
-      <p>
-        Tap <strong>Save</strong> when finished.
-        Chinese 13-Tile is marked
-        <em>Feature Coming Soon</em>.
-      </p>
+            <p>Tap <strong>Save</strong> when finished.</p>
 
       <h3>3. Choose Your Display Order</h3>
 
@@ -6209,12 +6185,10 @@ This option is not yet available.
         Long-press a tile to clear its count.
       </p>
 
-      <p>
-        Watch <strong>Tiles Entered</strong>
-        as you work. Continue until all your
-        starting tiles are recorded:
-        <strong>16 for Player</strong> or
-        <strong>17 for Dealer</strong>.
+            <p>
+        Watch <strong>Tiles Entered</strong> as you work.
+        Continue until the number entered matches the
+        target shown for your ruleset and role.
       </p>
 
       <p>
@@ -11374,12 +11348,10 @@ Leaves this Double-Sided Wait:
         are required and any adjustment needed.
       </p>
 
-      <p>
+            <p>
         Four-tile melds affect the total.
-        Follow the displayed target
-        rather than assuming every
-        corrected hand must contain
-        exactly 16 or 17 physical tiles.
+        Follow the displayed tile target for your
+        ruleset, recorded melds, and next action.
       </p>
 
       <h3>7. Review and Accept</h3>
@@ -11904,9 +11876,11 @@ Leaves this Double-Sided Wait:
       <div style="background:#f0f4f8;
                   border-radius:12px; padding:16px;
                   margin:16px 0;">
-        <p style="margin-top:0;">
-          <strong>Player:</strong> 16 starting tiles.<br>
-          <strong>Dealer:</strong> 17 starting tiles.
+                <p style="margin-top:0;">
+          <strong>Filipino and Taiwanese 16-Tile:</strong>
+          Player starts with 16 tiles. Dealer starts with 17.<br>
+          <strong>Chinese 13-Tile:</strong>
+          Player starts with 13 tiles. Dealer starts with 14.
         </p>
 
         <p style="margin-bottom:0;">
@@ -12643,22 +12617,17 @@ understanding Mahjong hand structure.
 
       
 <p>
-  MJC currently supports Filipino and Taiwanese
-  16-tile Mahjong. An adaptation for
-  Chinese 13-tile Mahjong is coming soon.
+  Mahjong Coach began with Filipino 16-Tile Mahjong.
+  A standard winning hand has five melds and a pair,
+  which gives Six Box Theory™ its name.
 </p>
 
-
-      <p>
-                Six Box Theory™ began with 16-tile Mahjong.
-        A regular winning hand contains
-        five melds and a pair—six boxes.
-        That’s where the name comes from.
-        The Chinese 13-tile adaptation will use
-        four melds and a pair—five boxes,
-        applying the same approach to understanding
-        your hand.
-      </p>
+<p>
+  MJC also supports Taiwanese 16-Tile Mahjong, and
+  we’ve adapted the same approach for Chinese 13-Tile
+  Mahjong. There, a standard winning hand has four
+  melds and a pair, for a total of five boxes.
+</p>
 
 <p>
   <strong>How much of Mahjong is luck?
@@ -17873,7 +17842,7 @@ Complete Boxes<br>
     <h2>Feedback</h2>
     <p>Thank you for helping us improve Mahjong Coach.</p>
     <p>We welcome bug reports, suggestions, comments, and feature requests.</p>
-    <p><strong>Email:</strong> <a href="mailto:mjcfeedbackteam@gmail.com?subject=Mahjong%20Coach%20Feedback%20-%20Beta%20v10.2">mjcfeedbackteam@gmail.com</a></p>
+    <p><strong>Email:</strong> <a href="mailto:mjcfeedbackteam@gmail.com?subject=Mahjong%20Coach%20Feedback%20-%20Beta%20v11.0">mjcfeedbackteam@gmail.com</a></p>
     <p><em>Every message is read and appreciated.</em></p>
     <div class="dialog-actions">
       <button class="dialog-button primary" onclick="closeDialog('feedbackDialog')">Close</button>
@@ -18111,7 +18080,7 @@ Acceptance standard:
 ==================================================
 */
 
-const MJC_VERSION_LABEL = "Beta v10.2";
+const MJC_VERSION_LABEL = "Beta v11.0";
 
 const MJC_RULESET_BASE_HAND_SIZES = Object.freeze({
   filipino16: 16,
