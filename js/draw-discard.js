@@ -1179,7 +1179,7 @@ function shouldProtectOnlyEC() {
     canonicalStructureState.completeBoxes.length;
 
   // EC protection applies only in Completion Phase.
-  if (completeBoxCount < 4) {
+  if (completeBoxCount < getStandardMeldTarget(ruleset) - 1) {
     return false;
   }
 
