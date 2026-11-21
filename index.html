@@ -15855,6 +15855,12 @@ Complete Boxes<br>
         for tutorials and lessons.
       </p>
 
+<p>
+  Enjoying these tutorials?
+  <a href="#supportDialog"
+     onclick="event.preventDefault(); closeDialog('playingMJCChapter7Dialog'); openSupportDialog();">Support MJC</a>
+  and help me make more.
+</p>
 
       <h3>Have Fun. Play On!</h3>
 
@@ -17844,24 +17850,27 @@ Complete Boxes<br>
   <div class="dialog">
     <h2>Support MJC</h2>
 
-    <p>Thank you for your interest in supporting Mahjong Coach.</p>
-
-    <p>
-  Mahjong Coach is free to use. If you find it helpful,
-  please consider making a voluntary contribution to support
-  the continued development of the app and its educational
-  YouTube channel.
+   <p>
+  Mahjong Coach is free to use. If you’ve enjoyed using it or found it
+  helpful at the table, please consider chipping in $2.
 </p>
+
+<p>
+  Your support helps me keep improving Mahjong Coach and creating free
+  Mahjong tutorials for YouTube.
+</p>
+
+<p>Play On!</p>
 
 <p style="text-align:center;">
   <strong>Count me in!</strong>
 </p>
 
 <div class="support-amounts" style="margin-bottom:12px;">
-  <button type="button" onclick="selectSupportAmount(5)">$5</button>
-  <button type="button" onclick="selectSupportAmount(10)">$10</button>
-  <button type="button" onclick="selectSupportAmount(25)">$25</button>
-  <button type="button" onclick="selectSupportAmount(50)">$50</button>
+  <button type="button" onclick="selectSupportAmount(2)">$2</button>
+<button type="button" onclick="selectSupportAmount(5)">$5</button>
+<button type="button" onclick="selectSupportAmount(10)">$10</button>
+<button type="button" onclick="selectSupportAmount(25)">$25</button>
 </div>
 
 <div style="text-align:center; margin:12px 0;">
@@ -17891,7 +17900,7 @@ Complete Boxes<br>
   class="dialog-button primary"
   href="#"
   onclick="return openSupportCheckout(event)"
->Support via PayPal</a>
+>Contribute $2 via PayPal</a>
 
 
       <button
@@ -17907,49 +17916,38 @@ Complete Boxes<br>
 <script>
 
 function resetSupportDialog() {
-  resetSupportSubscriptionCheckout();
-
   document.getElementById("supportMonthly").checked = false;
-
-  document.querySelectorAll(
-    "#supportDialog .support-amounts button"
-  ).forEach(function(button) {
-    button.style.backgroundColor = "";
-    button.style.color = "";
-    button.setAttribute("aria-pressed", "false");
-  });
+  selectSupportAmount(2);
 }
-
 
 function resetSupportSubscriptionCheckout() {
   document.getElementById("supportSubscriptionCheckout")
     .classList.add("hidden");
 
-  document.getElementById("supportPayPalButton")
-    .classList.remove("hidden");
+  const paypalButton = document.getElementById("supportPayPalButton");
+  const selected = document.querySelector(
+    '#supportDialog .support-amounts button[aria-pressed="true"]'
+  );
+
+  const amount = selected ? selected.textContent.trim() : "$2";
+  const monthly = document.getElementById("supportMonthly").checked;
+  paypalButton.textContent = `Contribute ${amount}${monthly ? " monthly" : ""} via PayPal`;
+  paypalButton.classList.remove("hidden");
 }
 
-
 function selectSupportAmount(amount) {
-
-document.getElementById("supportSubscriptionCheckout")
-  .classList.add("hidden");
-
-document.getElementById("supportPayPalButton")
-  .classList.remove("hidden");
-
   const buttons = document.querySelectorAll(
     "#supportDialog .support-amounts button"
   );
 
   buttons.forEach(function(button) {
-    const selected =
-      button.textContent.trim() === "$" + amount;
-
+    const selected = button.textContent.trim() === "$" + amount;
     button.style.backgroundColor = selected ? "#333" : "";
     button.style.color = selected ? "#fff" : "";
     button.setAttribute("aria-pressed", String(selected));
   });
+
+  resetSupportSubscriptionCheckout();
 }
 
 
@@ -17988,10 +17986,10 @@ return false;
 }
 
   const links = {
+    2: "https://www.paypal.com/ncp/payment/5BRDPA3L7U9BW",
     5: "https://www.paypal.com/ncp/payment/VLWKFNE6TRUTQ",
     10: "https://www.paypal.com/ncp/payment/NZB3PVPUEP8N8",
-    25: "https://www.paypal.com/ncp/payment/PVE8NC2YRDY9G",
-    50: "https://www.paypal.com/ncp/payment/V7HAS2MW4YZG8"
+    25: "https://www.paypal.com/ncp/payment/PVE8NC2YRDY9G"
   };
 
   const amount = Number(
@@ -18017,10 +18015,10 @@ function renderSupportSubscription(amount) {
   container.innerHTML = "";
 
 const plans = {
+  2: "P-9TK39246RG432731CNMARY5A",
   5: "P-1CR43293YS778400HNLF356A",
   10: "P-431992113G894594LNLF4AWY",
-  25: "P-2J207181JM580673XNLF4CWI",
-  50: "P-33J2891740262754FNLF4HNY"
+  25: "P-2J207181JM580673XNLF4CWI"
 };
 
 const planId = plans[amount];
