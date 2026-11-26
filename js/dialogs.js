@@ -265,6 +265,24 @@ const mjcGlossaryEntries = [
       "to the hand as a whole. That contribution is " +
       "dynamic: a tile’s role can change as the hand develops."
   },
+
+  {
+    term: "Pertinence",
+    definition:
+      "Selective attention to discarded or exposed tiles that " +
+      "directly affect the Effective Acceptance of your Target Tiles. " +
+      "Focus on the pertinent tiles rather than tracking every discard."
+  },
+  {
+    term: "Pertinent Discard",
+    abbreviation: "PD",
+    definition:
+      "A tile discarded or exposed by another player that reduces " +
+      "the Effective Acceptance (EA) of one of your Target Tiles. " +
+      "Use the Target Tiles Panel to record each newly visible copy " +
+      "once, unless you claim it for your own hand."
+  },
+
   {
     term: "Deferred",
     definition:
@@ -1170,6 +1188,8 @@ const mjcGlossaryGroups = {
     "Pathways",
     "Target Tiles",
     "Target Tiles Panel",
+    "Pertinence",
+    "Pertinent Discard",
     "Decrement",
     "Remaining Count",
     "Acceptance",
