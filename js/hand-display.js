@@ -2203,6 +2203,8 @@ function confirmReleaseTile() {
       }
     );
 
+    configureHDMode();
+
   if (coachingOn) {
     renderCoachView();
   } else {
