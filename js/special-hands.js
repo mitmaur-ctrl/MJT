@@ -1013,14 +1013,16 @@ const escaleraSuitCounts = {
         "Escalera";
 
       escaleraMessage.textContent =
-        "You have 6 distinct numbered tiles in one suit. " +
+        "You have " + escaleraSuitCounts[escaleraSuit] +
+" distinct numbered tiles in one suit. " +
         "Are you pursuing Escalera (a Straight)?";
     } else {
       escaleraTitle.textContent =
         "Straight";
 
       escaleraMessage.textContent =
-        "You have 6 distinct numbered tiles in one suit. " +
+        "You have " + escaleraSuitCounts[escaleraSuit] +
+" distinct numbered tiles in one suit. " +
         "Are you pursuing a Straight?";
     }
 

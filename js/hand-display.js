@@ -1217,7 +1217,14 @@ function renderEscaleraShortForm(
   supporting CBs + Escalera position.
   */
 
+   const winningEye = isEscaleraMahjong()
+    ? supportingDBs.find(function(item) {
+        return item.box.type === "ec";
+      })
+    : null;
+
   supportingDBs.forEach(function(item, index) {
+    if (item === winningEye) return;
     const box = item.box;
 
     const dbNumber =
@@ -1379,6 +1386,28 @@ function renderEscaleraShortForm(
           tileHtml +
         '</div>';
     }
+
+    if (winningEye) {
+      const tileHtml = winningEye.box.tiles.map(function(tileKey) {
+        const isLastDrawn =
+          tileKey === lastDrawnTileKey && !highlightState.used;
+
+        if (isLastDrawn) highlightState.used = true;
+
+        return renderCoachTile(tileKey, {
+          extraClass: isLastDrawn ? "last-drawn" : ""
+        });
+      }).join("");
+
+      html +=
+        '<div class="hand-section box-card complete-box">' +
+          '<div class="hand-section-title">CB4 — Eye</div>' +
+          '<div class="cb-tile-row">' +
+            tileHtml +
+          '</div>' +
+        '</div>';
+    }
+
 
     html += '</div>';
   }
@@ -3125,10 +3154,18 @@ console.log(
   structureState.completeBoxes
 );
 
-  const tih =
-    getTilesInHand(
-      structureState
-    );
+    const tih =
+    isEscaleraMahjong()
+      ? 0
+      : escaleraMode &&
+        escaleraBoxState.active &&
+        escaleraBoxState.complete
+        ? Math.max(
+            0,
+            getTilesInHand(structureState) -
+            escaleraBoxState.candidateTileKeys.length
+          )
+        : getTilesInHand(structureState);
 
 const highlightState = {
   used: false
@@ -3159,10 +3196,16 @@ const coachAlertHtml =
 
 
 const displayedCompleteBoxCount =
-  sevenPairsMode &&
-  sevenPairsBoxState.active
-    ? sevenPairsBoxState.completionOrder.length
-    : structureState.completeBoxes.length;
+  escaleraMode && escaleraBoxState.active
+    ? (
+        isEscaleraMahjong()
+          ? 4
+          : structureState.completeBoxes.length +
+            (escaleraBoxState.complete ? 1 : 0)
+      )
+    : sevenPairsMode && sevenPairsBoxState.active
+      ? sevenPairsBoxState.completionOrder.length
+      : structureState.completeBoxes.length;
 
 
   enginePanel.innerHTML =
